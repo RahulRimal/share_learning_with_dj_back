@@ -86,10 +86,7 @@ class SessionApi {
         // body: postBody,
       );
 
-
-
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        print(response.body);
         return Success(
             code: response.statusCode,
             // response: sessionFromJson(json

@@ -44,12 +44,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<SessionProvider, Users>(
           create: (context) => Users(
             Session(
-              id: '0',
-              userId: '0',
+              // id: '0',
+              // userId: '0',
               accessToken: 'abc',
-              accessTokenExpiry: DateTime(2050),
+              // accessTokenExpiry: DateTime(2050),
               refreshToken: 'abc',
-              refreshTokenExpiry: DateTime(2050),
+              // refreshTokenExpiry: DateTime(2050),
             ),
           ),
           update: (context, session, previousUser) => Users(session.session),

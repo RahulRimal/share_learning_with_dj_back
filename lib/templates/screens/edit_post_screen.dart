@@ -205,7 +205,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
       appBar: AppBar(
         title: Text('Edit Post'),
         actions: <Widget>[
-          loggedInUserSession.userId == _edittedBook.userId
+          // loggedInUserSession.userId == _edittedBook.userId
+          '1' == _edittedBook.userId
               ? IconButton(
                   icon: Icon(Icons.save),
                   onPressed: () async {

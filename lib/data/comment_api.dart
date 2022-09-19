@@ -55,7 +55,7 @@ class CommentApi {
     try {
       Map<String, String> postBody = {
         "id": newComment.id,
-        "userId": currentSession.userId,
+        // "userId": currentSession.userId,
         "postId": newComment.postId,
         "body": newComment.commentBody,
         "createdDate": newComment.createdDate.toIso8601String(),
@@ -107,7 +107,7 @@ class CommentApi {
     try {
       Map<String, String> postBody = {
         "id": updatedComment.id,
-        "userId": currentSession.userId,
+        // "userId": currentSession.userId,
         "postId": updatedComment.postId,
         "body": updatedComment.commentBody,
         "createdDate": updatedComment.createdDate.toIso8601String(),

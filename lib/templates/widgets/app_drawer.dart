@@ -110,7 +110,8 @@ class AppDrawer extends StatelessWidget {
               });
             if (item.route == UserPostsScreen.routeName)
               Navigator.pushNamed(context, item.route, arguments: {
-                'uId': loggedInSession.userId,
+                // 'uId': loggedInSession.userId,
+                'uId': '1',
                 'loggedInUserSession': loggedInSession
               });
             if (item.route == UserProfileScreen.routeName) {
@@ -156,7 +157,8 @@ class AppDrawer extends StatelessWidget {
   _logOut(BuildContext context) async {
     SharedPreferences prefs = await _prefs;
     Provider.of<Books>(context, listen: false).setBooks([]);
-    users.logoutUser(loggedInSession.id);
+    // users.logoutUser(loggedInSession.id);
+    users.logoutUser('1');
 
     Provider.of<Comments>(context, listen: false).setComments([]);
 
@@ -555,7 +557,8 @@ class AppDrawer extends StatelessWidget {
                       onTap: () async {
                         SharedPreferences prefs = await _prefs;
                         Provider.of<Books>(context, listen: false).setBooks([]);
-                        users.logoutUser(loggedInSession.id);
+                        // users.logoutUser(loggedInSession.id);
+                        users.logoutUser('1');
 
                         Provider.of<Comments>(context, listen: false)
                             .setComments([]);

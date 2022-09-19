@@ -14,58 +14,40 @@ String sessionToJson(List<Session> data) =>
 
 class Session {
   Session({
-    required this.id,
-    required this.userId,
+    // required this.id,
+    // required this.userId,
     required this.accessToken,
-    required this.accessTokenExpiry,
+    // required this.accessTokenExpiry,
     required this.refreshToken,
-    required this.refreshTokenExpiry,
+    // required this.refreshTokenExpiry,
   });
 
-  String id;
-  String userId;
+  // String id;
+  // String userId;
   String accessToken;
-  DateTime accessTokenExpiry;
+  // DateTime accessTokenExpiry;
   String refreshToken;
-  DateTime refreshTokenExpiry;
+  // DateTime refreshTokenExpiry;
 
   String get sessionAccessToken {
     return this.accessToken;
   }
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
-        // id: json["id"] == null ? null : json["id"],
-        // id: json["id"] == null ? null : json["id"],
-        id: json["id"].toString(),
-        // userId: json["userId"] == null ? null : json["userId"],
-        userId: json["userId"].toString(),
-        accessToken: json["accessToken"] == null ? null : json["accessToken"],
-        // accessTokenExpiry: json["accessTokenExpiry"] == null ? null : DateTime.parse(json["accessTokenExpiry"]),
-        accessTokenExpiry: DateTime.parse(json["accessTokenExpiry"]),
-        refreshToken:
-            json["refreshToken"] == null ? null : json["refreshToken"],
-        // refreshTokenExpiry: json["refreshTokenExpiry"] == null ? null : DateTime.parse(json["refreshTokenExpiry"]),
-        refreshTokenExpiry: DateTime.parse(json["refreshTokenExpiry"]),
+        
+        // id: json["id"].toString(),
+        // userId: json["userId"].toString(),
+        accessToken: json["access"] == null ? null : json["access"],
+        refreshToken: json["refresh"] == null ? null : json["refresh"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "userId": userId,
+        // "id": id,
+        // "userId": userId,
         "accessToken": accessToken,
-        "accessTokenExpiry": accessTokenExpiry.toIso8601String(),
+        // "accessTokenExpiry": accessTokenExpiry.toIso8601String(),
         "refreshToken": refreshToken,
-        "refreshTokenExpiry": refreshTokenExpiry.toIso8601String(),
-
-        //     "id": id == null ? null : id,
-        // "userId": userId == null ? null : userId,
-        // "accessToken": accessToken == null ? null : accessToken,
-        // "accessTokenExpiry": accessTokenExpiry == null
-        //     ? null
-        //     : accessTokenExpiry.toIso8601String(),
-        // "refreshToken": refreshToken == null ? null : refreshToken,
-        // "refreshTokenExpiry": refreshTokenExpiry == null
-        //     ? null
-        //     : refreshTokenExpiry.toIso8601String(),
+        // "refreshTokenExpiry": refreshTokenExpiry.toIso8601String(),
       };
 }
 

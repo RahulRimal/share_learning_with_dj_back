@@ -24,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // AsyncMemoizer memoizer = AsyncMemoizer();
 
-  User user = new User(
+  User _user = new User(
       id: "temp",
       firstName: 'firstName',
       lastName: 'lastName',
@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _setUserValue(User user) {
     // this.user = user;
-    user = user;
+    _user = user;
   }
 
   @override
@@ -46,8 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     final Session authenticatedSession = args['authSession'] as Session;
 
-    Users users = context.watch<Users>();
-    Books books = context.watch<Books>();
+    Users _users = context.watch<Users>();
+    Books _books = context.watch<Books>();
 
     return Platform.isIOS
         ? CupertinoPageScaffold(
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 child: FutureBuilder(
                   // future: books.getBooks(authenticatedSession),
-                  future: books.getBooksAnnonimusly(authenticatedSession),
+                  future: _books.getBooksAnnonimusly(authenticatedSession),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -130,20 +130,21 @@ class _HomeScreenState extends State<HomeScreen> {
               actions: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: user.id != "temp"
+                  child: _user.id != "temp"
                       ? CircleAvatar(
                           backgroundImage: NetworkImage(
                             // (UserHelper.userProfileImage(users.user as User)),
-                            (UserHelper.userProfileImage(user)),
+                            (UserHelper.userProfileImage(_user)),
                           ),
                         )
                       : FutureBuilder(
-                          future: users.getUserByIdAndSession(
+                          future: _users.getUserByIdAndSession(
                               authenticatedSession,
-                              authenticatedSession.userId),
+                              // authenticatedSession.userId),
+                              '1'),
                           builder: (ctx, snapshot) {
                             if (snapshot.data != null)
-                              user = snapshot.data as User;
+                              _user = snapshot.data as User;
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return CircularProgressIndicator(
@@ -156,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       'https://ojasfilms.org/assets/img/ojas-logo.png'),
                                 );
                               } else {
-                                user = snapshot.data as User;
+                                _user = snapshot.data as User;
                                 return CircleAvatar(
                                   backgroundImage: NetworkImage(
                                     // ((snapshot.data as User).image) as String),
@@ -173,27 +174,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             body: Container(
               child: Container(
-                child: books.books.length > 0
+                child: _books.books.length > 0
                     ? ListView.builder(
-                        itemCount: books.books.length,
+                        itemCount: _books.books.length,
                         itemBuilder: (ctx, index) {
                           return Post(
                             loggedInUserSession: authenticatedSession,
-                            id: books.books[index].id,
-                            title: books.books[index].bookName,
-                            description: books.books[index].description,
-                            author: books.books[index].author,
-                            boughtTime: books.books[index].boughtDate,
-                            price: books.books[index].price,
-                            selling: books.books[index].postType == 'S'
+                            id: _books.books[index].id,
+                            title: _books.books[index].bookName,
+                            description: _books.books[index].description,
+                            author: _books.books[index].author,
+                            boughtTime: _books.books[index].boughtDate,
+                            price: _books.books[index].price,
+                            selling: _books.books[index].postType == 'S'
                                 ? true
                                 : false,
-                            bookCount: books.books[index].bookCount,
+                            bookCount: _books.books[index].bookCount,
                           );
                         },
                       )
                     : FutureBuilder(
-                        future: books.getBooksAnnonimusly(authenticatedSession),
+                        future: _books.getBooksAnnonimusly(authenticatedSession),
                         builder: (ctx, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -252,9 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
               ),
             ),
-            drawer: user.id == "temp"
+            drawer: _user.id == "temp"
                 ? AppDrawer(authenticatedSession, null)
-                : AppDrawer(authenticatedSession, user),
+                : AppDrawer(authenticatedSession, _user),
           );
   }
 }

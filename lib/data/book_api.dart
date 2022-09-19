@@ -11,11 +11,11 @@ import 'package:share_learning/templates/managers/strings_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
 class BookApi {
-  // static Future<Object> getBooks(Session loggedInUser, String uId) async {
   static Future<Object> getBooks(Session loggedInUser) async {
     try {
       var url =
-          Uri.parse(RemoteManager.BASE_URI + '/posts/u/' + loggedInUser.userId);
+          // Uri.parse(RemoteManager.BASE_URI + '/posts/u/' + loggedInUser.userId);
+          Uri.parse(RemoteManager.BASE_URI + '/posts/u/');
 
       var response = await http.get(
         url,
@@ -66,14 +66,15 @@ class BookApi {
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         // print(json.encode(json.decode(response.body)['data']['posts']));
+  
         return Success(
+          
           code: response.statusCode,
           response: bookFromJson(
-            json.encode(json.decode(response.body)['data']['posts']),
+            json.encode(json.decode(response.body)),
           ),
         );
       }
-
       return Failure(
         code: ApiStatusCode.invalidResponse,
         errorResponse: ApiStrings.invalidResponseString,
@@ -89,6 +90,7 @@ class BookApi {
         errorResponse: ApiStrings.invalidFormatString,
       );
     } catch (e) {
+      print(e.toString());
       return Failure(code: 103, errorResponse: e.toString());
       // return Failure(
       //   code: ApiStatusCode.unknownError,

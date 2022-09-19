@@ -171,7 +171,8 @@ class SinglePostScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.all(0),
-            child: loggedInUserSession.userId == selectedPost.userId
+            // child: loggedInUserSession.userId == selectedPost.userId
+            child: '1' == selectedPost.userId
                 ? IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () async {
@@ -210,7 +211,8 @@ class SinglePostScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(0),
-            child: loggedInUserSession.userId == selectedPost.userId
+            // child: loggedInUserSession.userId == selectedPost.userId
+            child: '1' == selectedPost.userId
                 ? IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
@@ -593,7 +595,8 @@ class SinglePostScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: loggedInUserSession.userId != selectedPost.userId
+      // bottomSheet: loggedInUserSession.userId != selectedPost.userId
+      bottomSheet: '1' != selectedPost.userId
           ? (carts.cartItems.length > 0 && _checkBookInCart(carts, selectedPost)
               ? ElevatedButton(
                   style: ElevatedButton.styleFrom(

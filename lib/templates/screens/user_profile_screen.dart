@@ -33,7 +33,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   _logOut(Session session) async {
     SharedPreferences prefs = await _prefs;
     Provider.of<Books>(context, listen: false).setBooks([]);
-    Provider.of<Users>(context, listen: false).logoutUser(session.id);
+    // Provider.of<Users>(context, listen: false).logoutUser(session.id);
+    Provider.of<Users>(context, listen: false).logoutUser('1');
     Provider.of<Comments>(context, listen: false).setComments([]);
     prefs.remove('accessToken');
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);

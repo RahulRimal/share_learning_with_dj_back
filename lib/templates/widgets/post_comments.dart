@@ -371,7 +371,8 @@ class PostComments extends StatelessWidget {
                                               ),
                                             ),
                                             _commentUser.id ==
-                                                    loggedInUser.userId
+                                                    // loggedInUser.userId
+                                                    '1'
                                                 ? Row(
                                                     children: [
                                                       IconButton(

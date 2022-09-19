@@ -122,33 +122,34 @@ class Book {
         id: json["id"].toString(),
         // userId: json["userId"] == null ? null : json["userId"],
         userId: json["userId"].toString(),
-        bookName: json["bookName"] == null ? null : json["bookName"],
+        bookName: json["book_name"] == null ? null : json["book_name"],
         author: json["author"] == null ? 'Unknown' : json["author"],
         description: json["description"] == null ? null : json["description"],
         // boughtDate: json["boughtDate"] == null
         //     ? null
         //     : DateTime.parse(json["boughtDate"]),
-        boughtDate: NepaliDateTime.parse(json["boughtDate"].toString()),
-        price: json["price"] == null ? null : json["price"].toDouble(),
+        boughtDate: NepaliDateTime.parse(json["bought_date"].toString()),
+        // price: json["unit_price"] == null ? null : double.parse((json["unit_price"])),
+        price: double.parse((json["unit_price"])),
         // bookCount: json["bookCount"] == null ? null : int.parse(json["bookCount"]),
         // bookCount: int.parse(json["bookCount"]),
-        bookCount: json["bookCount"],
-        // wishlisted: json["wishlisted"] == null ? null : json["wishlisted"],
-        wishlisted: json["wishlisted"] == '1' ? true : false,
-        postType: json["postType"] == null ? null : json["postType"],
+        bookCount: json["book_count"],
+        wishlisted: json["wishlisted"] == null ? null : json["wishlisted"],
+        // wishlisted: json["wishlisted"] == '1' ? true : false,
+        postType: json["post_type"] == null ? null : json["post_type"],
         // postRating: json["postRating"] == null ? '' : json["postRating"],
         postRating:
-            json["postRating"] == null ? '' : json["postRating"].toString(),
-        pictures: json["pictures"] == null
+            json["post_rating"] == null ? '' : json["postRating"].toString(),
+        pictures: json["images"] == null
             ? null
             // : List<XFile>.from(json["pictures"]),
             // : (List<dynamic>.from(json["pictures"])).isEmpty
             //     ? null
-            : json["pictures"],
+            : json["images"],
         // : ("${RemoteManager.POST_POOL}/$id$/${json['pictures'].toString()}"),
         // postedOn:
         //     json["postedOn"] == null ? null : DateTime.parse(json["postedOn"]),
-        postedOn: NepaliDateTime.parse(json["postedOn"].toString()),
+        postedOn: NepaliDateTime.parse(json["posted_on"].toString()),
       );
 
   Map<String, dynamic> toJson() => {

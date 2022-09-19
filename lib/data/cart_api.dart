@@ -53,7 +53,8 @@ class CartApi {
   static Future<Object> getUserCart(Session loggedInUser) async {
     try {
       var url =
-          Uri.parse(RemoteManager.BASE_URI + '/carts/u/' + loggedInUser.userId);
+          // Uri.parse(RemoteManager.BASE_URI + '/carts/u/' + loggedInUser.userId);
+          Uri.parse(RemoteManager.BASE_URI + '/carts/u/');
 
       var response = await http.get(
         url,
