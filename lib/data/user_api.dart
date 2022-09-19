@@ -14,10 +14,10 @@ class UserApi {
     try {
       // var url = Uri.parse('http://localhost/apiforsharelearn/users/me');
       // var url = Uri.parse('http://10.0.2.2/apiforsharelearn/users');
-      var url = Uri.parse(RemoteManager.BASE_URI + '/users');
+      var url = Uri.parse(RemoteManager.BASE_URI + '/customers/me');
 
       var response = await http.get(url, headers: {
-        HttpHeaders.authorizationHeader: accessToken,
+        HttpHeaders.authorizationHeader: 'SL ' + accessToken,
         "Accept": "application/json",
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
@@ -30,9 +30,9 @@ class UserApi {
         return Success(
             code: response.statusCode,
             // response: userFromJson(
-            //     json.encode(json.decode(response.body)['data']['users'][0])));
+            //     json.encode(json.decode(response.body)['data']['user'][0])));
             response: userFromJson(
-                json.encode(json.decode(response.body)['data']['user'][0])));
+                json.encode(json.decode(response.body))));
       }
 
       return Failure(

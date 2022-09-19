@@ -87,6 +87,7 @@ class Users with ChangeNotifier {
     var response = await UserApi.getUserFromToken(accessToken);
     if (response is Success) {
       setUser(response.response as User);
+      return user;
     }
     if (response is Failure) {
       UserError userError = UserError(
@@ -94,6 +95,7 @@ class Users with ChangeNotifier {
         message: response.errorResponse,
       );
       setUserError(userError);
+      return userError;
     }
     setLoading(false);
     // notifyListeners();

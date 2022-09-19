@@ -138,13 +138,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         )
                       : FutureBuilder(
-                          future: _users.getUserByIdAndSession(
-                              authenticatedSession,
-                              // authenticatedSession.userId),
-                              '1'),
+                          // future: _users.getUserByIdAndSession(
+                          //     authenticatedSession,
+                          //     // authenticatedSession.userId),
+                          //     '1'),
+
+                          future: _users.getUserByToken(
+                              authenticatedSession.accessToken),
                           builder: (ctx, snapshot) {
-                            if (snapshot.data != null)
-                              _user = snapshot.data as User;
+                            // if (snapshot.data != null)
+                            //   _user = snapshot.data as User;
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return CircularProgressIndicator(
@@ -159,11 +162,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               } else {
                                 _user = snapshot.data as User;
                                 return CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    // ((snapshot.data as User).image) as String),
-                                    (UserHelper.userProfileImage(
-                                        snapshot.data as User)),
-                                  ),
+                                  // backgroundImage: NetworkImage(
+                                  //   (UserHelper.userProfileImage(
+                                  //       snapshot.data as User)),
+                                  // ),
+                                  backgroundImage: NetworkImage(_user.image as String),
+                                  
                                 );
                               }
                             }

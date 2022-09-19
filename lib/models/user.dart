@@ -22,6 +22,8 @@
 
 import 'dart:convert';
 
+import 'package:share_learning/templates/managers/api_values_manager.dart';
+
 // import 'dart:io';
 
 // List<User> userFromJson(String str) =>
@@ -67,16 +69,16 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => User(
         // id: json["id"] == null ? null : json["id"],
         id: json["id"].toString(),
-        firstName: json["firstName"] == null ? null : json["firstName"],
-        lastName: json["lastName"] == null ? null : json["lastName"],
+        firstName: json["first_name"] == null ? null : json["first_name"],
+        lastName: json["last_name"] == null ? null : json["last_name"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
-        image: json["picture"] == null ? null : json["picture"],
+        image: json["image"] == null ? null : RemoteManager.BASE_URI + json["image"],
         description: json["description"] == null ? null : json["description"],
-        userClass: json["class"] == null ? null : json["class"],
+        userClass: json["user_class"] == null ? null : json["user_class"],
         followers: json["followers"] == null ? null : json["followers"],
         // createdDate: json["createdDate"] == null ? null : DateTime.parse(json["createdDate"]),
-        createdDate: DateTime.parse(json["createdDate"]),
+        createdDate: DateTime.parse(json["created_at"]),
       );
 
   Map<String, dynamic> toJson() => {
