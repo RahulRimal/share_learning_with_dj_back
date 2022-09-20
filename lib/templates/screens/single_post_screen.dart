@@ -142,15 +142,14 @@ class SinglePostScreen extends StatelessWidget {
       listen: false,
     ).getBookById(bookId);
 
-    Comments comments = context.watch<Comments>();
+    // Comments comments = context.watch<Comments>();
 
     Books books = context.watch<Books>();
 
     Carts carts = Provider.of<Carts>(context, listen: false);
 
     getUserCart(carts, loggedInUserSession);
-    // Carts carts = Provider.of<Carts>(context, listen: false)
-    //     .getUserCart(loggedInUserSession) as Carts;
+
 
     Duration timeDifference =
         NepaliDateTime.now().difference(selectedPost.boughtDate);
@@ -455,141 +454,10 @@ class SinglePostScreen extends StatelessWidget {
                 ),
               ),
 
-              // postComments.isEmpty
-              //     ? Container(
-              //         child: Center(
-              //           child: Text(
-              //             'No Comments Yet',
-              //             style: TextStyle(
-              //               color: Theme.of(context).primaryColor,
-              //               fontWeight: FontWeight.bold,
-              //               fontSize: 16,
-              //             ),
-              //           ),
-              //         ),
-              //       )
-              // :
+              // PostComments(loggedInUserSession, comments, this.bookId),
+              PostComments(loggedInUserSession, this.bookId),
 
-              PostComments(loggedInUserSession, comments, this.bookId),
-
-              // Container(
-              //   height: 200,
-              //   child: FutureBuilder(
-              //     future: comments.getPostComments(bookId),
-              //     builder: (context, snapshot) {
-              //       if (snapshot.connectionState == ConnectionState.waiting) {
-              //         return Center(
-              //           child: CircularProgressIndicator(
-              //             color: ColorManager.primary,
-              //           ),
-              //         );
-              //       } else {
-              //         if (snapshot.hasError) {
-              //           return Center(
-              //             child: Text(
-              //                 'Error fetching data please restart the app'),
-              //             // child: Text(snapshot.error.toString()),
-              //           );
-              //         } else {
-              //           if (comments.comments.isEmpty)
-              //             return Container(
-              //               child: Text(
-              //                 'No Comments Yet',
-              //                 style: getBoldStyle(
-              //                     fontSize: FontSize.s17, color: Colors.black),
-              //               ),
-              //             );
-              //           return ListView.builder(
-              //             // itemCount: snapshot.data.length,
-              //             itemCount: comments.comments.length,
-              //             itemBuilder: (context, index) {
-              //               return PostComment(
-              //                 // snapshot.data[index].user,
-              //                 // snapshot.data[index].commentBody,
-              //                 // comments.comments[index].user,
-              //                 loggedInUserSession,
-              //                 comments.comments[index],
-              //               );
-              //               // return Text('Comment will be here');
-              //             },
-              //           );
-              //         }
-              //       }
-              //     },
-              //   ),
-              // ),
-              // Comments Ends here
-              // Add your comment starts here !!
-              // Container(
-              //   padding: EdgeInsets.symmetric(
-              //     horizontal: 5,
-              //     vertical: 15,
-              //   ),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         'Add Your Comment',
-              //         style: TextStyle(
-              //           color: Theme.of(context).primaryColor,
-              //           fontWeight: FontWeight.bold,
-              //         ),
-              //       ),
-              //       Row(
-              //         children: [
-              //           Form(
-              //             key: _form,
-              //             child: Expanded(
-              //               child: Padding(
-              //                 padding: const EdgeInsets.symmetric(vertical: 10),
-              //                 child: TextFormField(
-              //                   // controller: commentController,
-              //                   initialValue: _editComment != null
-              //                       ? _editComment.commentBody
-              //                       : '',
-              //                   cursorColor: Theme.of(context).primaryColor,
-              //                   decoration: InputDecoration(
-              //                     suffixIcon: IconButton(
-              //                       onPressed: () {
-              //                         print(commentController.text);
-              //                       },
-              //                       icon: Icon(
-              //                         Icons.send,
-              //                         color: Theme.of(context).primaryColor,
-              //                       ),
-              //                     ),
-              //                     border: OutlineInputBorder(
-              //                       borderRadius: BorderRadius.circular(20),
-              //                     ),
-              //                   ),
-              //                 ),
-              //                 // child: TextField(
-              //                 //   controller: commentController,
-              //                 //   cursorColor: Theme.of(context).primaryColor,
-              //                 //   decoration: InputDecoration(
-              //                 //     suffixIcon: IconButton(
-              //                 //       onPressed: () {
-              //                 //         print(commentController.text);
-              //                 //       },
-              //                 //       icon: Icon(
-              //                 //         Icons.send,
-              //                 //         color: Theme.of(context).primaryColor,
-              //                 //       ),
-              //                 //     ),
-              //                 //     border: OutlineInputBorder(
-              //                 //       borderRadius: BorderRadius.circular(20),
-              //                 //     ),
-              //                 //   ),
-              //                 // ),
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
+              
               // Add your comment ends here !!
             ],
           ),

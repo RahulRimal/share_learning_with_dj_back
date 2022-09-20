@@ -101,15 +101,13 @@ class Users with ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<User?> getUserByIdAndSession(Session loggedInUser, String uId) async {
+  Future<User?> getUserById(String uId) async {
     if (users.contains((user) => user.id == uId)) {
-      // return users.firstWhere((user) => user.id == uId);
       setUser(user as User);
       return user;
     }
 
-    // var response = await UserApi.getUserFromToken(loggedInUser.accessToken);
-    var response = await UserApi.getUserFromId(loggedInUser, uId);
+    var response = await UserApi.getUserFromId(uId);
     if (response is Success) {
       // setUser(response.response as User);
       return response.response as User;

@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -61,110 +62,39 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ));
 
-      // FutureBuilder(
-      //   future: InternetConnectionChecker.checkInternetConnection(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return Center(
-      //         child: CircularProgressIndicator(
-      //           color: ColorManager.primary,
-      //         ),
-      //       );
-      //     } else {
-      //       if (snapshot.hasError) {
-      //         return Center(
-      //           child: Text('Error'),
-      //         );
-      //       } else {
-      //         if (snapshot.data as bool) {
-      //           // return LoginScreen();
-      //           _startDelay();
-      //         } else {
-      //           // BotToast.showSimpleNotification(title: "No Internet");
-      //           BotToast.showWidget(
-      //             toastBuilder: (c) => Container(
-      //               width: MediaQuery.of(context).size.width,
-      //               height: MediaQuery.of(context).size.height,
-      //               // color: ColorManager.black,
-      //               color: ColorManager.primaryColorWithOpacity,
-      //               child: Center(
-      //                 child: Container(
-      //                   padding: EdgeInsets.all(10),
-      //                   child: Text(
-      //                     'No Internet',
-      //                     style: TextStyle(
-      //                       color: ColorManager.primary,
-      //                       decoration: TextDecoration.none,
-      //                     ),
-      //                   ),
-      //                   decoration: BoxDecoration(
-      //                     color: ColorManager.white,
-      //                     borderRadius: BorderRadius.circular(10),
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-      //             // child: Center(
-      //             //       child: Text('No Internet'),
-      //             //     ),
-      //           );
-      //         }
-      //         return Center(
-      //           // child: Image.network(
-      //           //     'https://cdn.pixabay.com/photo/2017/02/04/12/25/'),
-      //           // child: Image.asset(ImageAssets.onboardingLogo1),
-      //           child: SvgPicture.asset(ImageAssets.onboardingLogo1),
-      //         );
-      //       }
-      //     }
-      //   },
-      //   // child: Center(
-      //   //   child: Image.network(
-      //   //       'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg'),
-      //   // ),
-      // );
+      
     }
   }
 
   _getPreviousSession() async {
     SharedPreferences prefs = await _prefs;
 
-// 9845534518
-
-    // String accessToken =
-    //     await _sharedPrefrencesHelper.getStringFromPrefrences('accessToken');
-    // SessionProvider sessions =
 
     if (prefs.containsKey('accessToken')) {
       String accessToken = prefs.getString('accessToken') as String;
-      SessionProvider sessions =
-          Provider.of<SessionProvider>(context, listen: false);
-      // Session session = await SessionApi.getPreviousSessions(accessToken);
-      sessions.getPreviousSession(accessToken).then((value) {
-        if (sessions.session != null)
-          Navigator.pushReplacementNamed(context, HomeScreen.routeName,
+      String refreshToken = prefs.getString('refreshToken') as String;
+      SessionProvider sessions = Provider.of<SessionProvider>(context, listen: false);
+
+      sessions.setSession(new Session(accessToken: accessToken, refreshToken: refreshToken));
+
+      Navigator.pushReplacementNamed(context, HomeScreen.routeName,
               arguments: {
                 'authSession': sessions.session,
               });
-        // Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
-        else
-          _startDelay();
-      });
 
-      // if (sessions.session != null)
-      //   Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-      // else
-      //   Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
+      // sessions.getPreviousSession(accessToken).then((value) {
+      //   if (sessions.session != null)
+      //     Navigator.pushReplacementNamed(context, HomeScreen.routeName,
+      //         arguments: {
+      //           'authSession': sessions.session,
+      //         });
+      //   else
+      //     _startDelay();
+      // });
+
+     
     }
-    // print('No access token');
-    // String accessToken = await _prefs.getString('accessToken');
 
-    //     Provider.of<SessionProvider>(context, listen: false);
-    // if (await sessions.getPreviousSession(accessToken)) {
-    //   // return sessions.session as Session;
-    //   Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
-    //     'authSession': sessions.session,
-    //   });
     else
       _startDelay();
   }

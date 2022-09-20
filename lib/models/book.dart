@@ -71,12 +71,11 @@ List<Book> bookFromJson(String str) =>
     List<Book>.from(json.decode(str).map((x) {
       Book book = Book.fromJson(x);
 
-      if (book.pictures != null) {
-        // print("${RemoteManager.POST_POOL}/$bookId/");
-        book.pictures = book.pictures!.map((e) {
-          return "${RemoteManager.POST_POOL}/${book.id}/$e";
-        }).toList();
-      }
+      // if (book.pictures != null) {
+      //   book.pictures = book.pictures!.map((e) {
+      //     return "${RemoteManager.POST_POOL}/${book.id}/$e";
+      //   }).toList();
+      // }
 
       return book;
     }));
@@ -113,9 +112,9 @@ class Book {
   String postType;
   String postRating;
   DateTime postedOn;
-  // List<String>? pictures;
-  // List<XFile>? pictures;
+
   List<dynamic>? pictures;
+  // List<BookImage>? pictures;
 
   factory Book.fromJson(Map<String, dynamic> json) => Book(
         // id: json["id"] == null ? null : json["id"],
@@ -187,6 +186,14 @@ class Book {
         //     : List<dynamic>.from(pictures!.map((x) => x.path)),
         // "postedOn": postedOn == null ? null : postedOn.toIso8601String(),
       };
+}
+
+class BookImage{
+  int id;
+  String imageUrl;
+
+  BookImage({required this.id, required this.imageUrl});
+
 }
 
 class BookError {

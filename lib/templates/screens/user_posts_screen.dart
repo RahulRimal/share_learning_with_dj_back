@@ -42,9 +42,10 @@ class UserPostsScreen extends StatelessWidget {
                     ),
                   )
                 : FutureBuilder(
-                    future: users.getUserByIdAndSession(
+                    // future: users.getUserByIdAndSession(
+                    future: users.getUserById(
                         // loggedInUserSession, loggedInUserSession.userId),
-                        loggedInUserSession, '1'),
+                        '1'),
                     builder: (ctx, snapshot) {
                       // if (snapshot.data != null)
                       // user = snapshot.data as User;

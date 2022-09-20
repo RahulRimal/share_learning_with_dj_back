@@ -65,22 +65,13 @@ class SessionApi {
 
       var response = await http.post(
         url,
-        // headers: postHeaders,
         headers: {
-          // HttpHeaders.authorizationHeader:
-          //     'Mzk0YTM2ZWZhZGQ1ZjY2MDQwZmMxMWZkNGE4MzRjMmM2M2FhMTNhY2M1ZDhlYTEyMzEzNjM0MzIzOTM1MzAzMjM1MzA=',
-          // "Accept": "application/json",
           "Accept": "application/json; charset=utf-8",
-          // "Accept": "application/json; charset=UTF-8",
+          
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
           "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-          // "Content-Type": "application/json; charset=utf-8",
-          // "Content-Type": "application/json; charset=utf-8",
-          // "Content-Type": "application/json",
-          // HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
           HttpHeaders.contentTypeHeader: "application/json",
-          // HttpHeaders.contentTypeHeader: "application/x-www-form-urlencoded",
         },
         body: json.encode(postBody),
         // body: postBody,

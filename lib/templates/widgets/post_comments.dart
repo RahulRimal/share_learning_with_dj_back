@@ -16,10 +16,11 @@ import 'package:share_learning/templates/utils/user_helper.dart';
 class PostComments extends StatelessWidget {
   final Session loggedInUser;
 
-  final Comments comments;
+  // final Comments comments;
   final String bookId;
 
-  PostComments(this.loggedInUser, this.comments, this.bookId);
+  // PostComments(this.loggedInUser, this.comments, this.bookId);
+  PostComments(this.loggedInUser, this.bookId);
 
   bool _shouldFlex(String testString) {
     if (testString.length > 11) return true;
@@ -46,9 +47,10 @@ class PostComments extends StatelessWidget {
   final _commentFocusNode = FocusNode();
 
   Comment _edittedComment = Comment(
-    id: '',
-    userId: '',
-    postId: '',
+    // id: '',
+    id: 2,
+    userId: 2,
+    postId: 2,
     commentBody: '',
     createdDate: NepaliDateTime.now(),
   );
@@ -62,7 +64,7 @@ class PostComments extends StatelessWidget {
     }
     _form.currentState!.save();
 
-    _edittedComment.postId = bookId;
+    _edittedComment.postId = int.parse(bookId);
 
     Provider.of<Comments>(context, listen: false)
         .addComment(loggedInUserSession, _edittedComment);
@@ -92,9 +94,6 @@ class PostComments extends StatelessWidget {
     Provider.of<Comments>(context, listen: false)
         .updateComment(loggedInUserSession, _edittedComment);
 
-    // Provider.of<Books>(context, listen: false)
-    // .updatePost(_edittedBook.id, _edittedBook);
-    //     .updatePost(loggedInUserSession, _edittedBook);
     Navigator.of(context).pop();
 
     BotToast.showSimpleNotification(
@@ -117,7 +116,7 @@ class PostComments extends StatelessWidget {
     }
     _form.currentState!.save();
 
-    _edittedComment.postId = bookId;
+    _edittedComment.postId = int.parse(bookId);
 
     Provider.of<Comments>(context, listen: false)
         .deleteComment(loggedInUserSession, _edittedComment);
@@ -135,23 +134,11 @@ class PostComments extends StatelessWidget {
     return true;
   }
 
-  // void _showUpdateSnackbar(BuildContext context) {
-  //   final snackBar = SnackBar(
-  //     content: Text(
-  //       'Reply Updated Successfully',
-  //       textAlign: TextAlign.center,
-  //       style: TextStyle(
-  //         fontSize: 13,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //   );
-  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  // }
-
   @override
   Widget build(BuildContext context) {
     Users users = context.watch<Users>();
+    
+    Comments comments = context.watch<Comments>();
 
     return SingleChildScrollView(
       child: Column(
@@ -159,7 +146,7 @@ class PostComments extends StatelessWidget {
           Container(
             height: 200,
             child: FutureBuilder(
-              future: comments.getPostComments(bookId),
+              future: comments.getPostComments(bookId, loggedInUser),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -194,9 +181,9 @@ class PostComments extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               FutureBuilder(
-                                future: users.getUserByIdAndSession(
-                                    loggedInUser,
-                                    comments.comments[index].userId),
+                                future: users.getUserById(comments.comments[index].userId.toString()),
+                                // future: users.getUserByToken(
+                                    // comments.comments[index].userId.toString()),
                                 builder: (ctx, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
@@ -212,6 +199,8 @@ class PostComments extends StatelessWidget {
                                       );
                                     } else if (snapshot.hasData) {
                                       _commentUser = snapshot.data as User;
+                                      users.getUserByToken(loggedInUser.accessToken);
+                                      User _currentUser = users.user as User;
                                       return Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
@@ -370,9 +359,9 @@ class PostComments extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                                            _commentUser.id ==
-                                                    // loggedInUser.userId
-                                                    '1'
+                                            // _commentUser.id ==
+                                            //         loggedInUser.userId
+                                            _commentUser.id == _currentUser.id
                                                 ? Row(
                                                     children: [
                                                       IconButton(

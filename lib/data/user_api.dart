@@ -8,6 +8,7 @@ import 'package:share_learning/models/user.dart';
 import 'package:share_learning/templates/managers/api_values_manager.dart';
 import 'package:share_learning/templates/managers/strings_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserApi {
   static Future<Object> getUserFromToken(String accessToken) async {
@@ -54,18 +55,23 @@ class UserApi {
     }
   }
 
-  static Future<Object> getUserFromId(
-      Session loggedInSession, String userId) async {
+  static Future<Object> getUserFromId(String userId) async {
+    Future<SharedPreferences> _prefs =  SharedPreferences.getInstance();
+    SharedPreferences prefs = await _prefs;
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI + '/userP/' + userId);
+
+      String accessToken = prefs.getString('accessToken').toString();
+
+      var url = Uri.parse(RemoteManager.BASE_URI + '/customers/' + userId);
 
       var response = await http.get(url, headers: {
-        HttpHeaders.authorizationHeader: loggedInSession.accessToken,
+        HttpHeaders.authorizationHeader: 'SL '+accessToken,
         "Accept": "application/json",
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         HttpHeaders.contentTypeHeader: "application/json",
       });
+
 
       // print(json.encode(json.decode(response.body)['data']['user'][0]));
 
@@ -75,7 +81,7 @@ class UserApi {
             // response: userFromJson(
             //     json.encode(json.decode(response.body)['data']['users'][0])));
             response: userFromJson(
-                json.encode(json.decode(response.body)['data']['user'][0])));
+                json.encode(json.decode(response.body))));
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,

@@ -10,21 +10,24 @@ import 'package:share_learning/templates/managers/strings_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
 class CommentApi {
-  static Future<Object> getPostComments(String postId) async {
+  static Future<Object> getPostComments(String postId, Session userSession) async {
     try {
-      // var url = Uri.parse('http://localhost/apiforsharelearn/posts/u/1');
-      // var url = Uri.parse('http://10.0.2.2/apiforsharelearn/posts/u/' + uId);
-      var url = Uri.parse(RemoteManager.BASE_URI + '/replies/p/' + postId);
+
+      // var url = Uri.parse(RemoteManager.BASE_URI + '/replies/p/' + postId);
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/'+ postId + '/comments');
 
       var response = await http.get(
         url,
       );
 
+
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
             code: response.statusCode,
+            // response: commentFromJson(
+            //     json.encode(json.decode(response.body)['data']['replies'])));
             response: commentFromJson(
-                json.encode(json.decode(response.body)['data']['replies'])));
+                json.encode(json.decode(response.body))));
       }
 
       return Failure(
@@ -53,9 +56,9 @@ class CommentApi {
   static Future<Object> addComment(
       Session currentSession, Comment newComment) async {
     try {
-      Map<String, String> postBody = {
+      // Map<String, String> postBody = {
+      Map<String, dynamic> postBody = {
         "id": newComment.id,
-        // "userId": currentSession.userId,
         "postId": newComment.postId,
         "body": newComment.commentBody,
         "createdDate": newComment.createdDate.toIso8601String(),
@@ -105,15 +108,15 @@ class CommentApi {
   static Future<Object> updateComment(
       Session currentSession, Comment updatedComment) async {
     try {
-      Map<String, String> postBody = {
+      // Map<String, String> postBody = {
+      Map<String, dynamic> postBody = {
         "id": updatedComment.id,
-        // "userId": currentSession.userId,
         "postId": updatedComment.postId,
         "body": updatedComment.commentBody,
         "createdDate": updatedComment.createdDate.toIso8601String(),
       };
       var url =
-          Uri.parse(RemoteManager.BASE_URI + '/replies/' + updatedComment.id);
+          Uri.parse(RemoteManager.BASE_URI + '/replies/' + updatedComment.id.toString());
 
       var response = await http.patch(
         url,
@@ -165,7 +168,7 @@ class CommentApi {
       //   "body": comment.commentBody,
       //   "createdDate": comment.createdDate.toIso8601String(),
       // };
-      var url = Uri.parse(RemoteManager.BASE_URI + '/replies/' + comment.id);
+      var url = Uri.parse(RemoteManager.BASE_URI + '/replies/' + comment.id.toString());
 
       var response = await http.delete(
         url,

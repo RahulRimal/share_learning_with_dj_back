@@ -91,11 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
           // prefs = await SharedPreferences.getInstance();
 
           prefs.setString('accessToken', userSession.session!.accessToken);
+          prefs.setString('refreshToken', userSession.session!.refreshToken);
 
-          // setState(() {
-          //   _loginErrorText =
-          //       prefs.getString('accessToken') ?? 'no access token';
-          // });
 
           Navigator.of(context)
               .pushReplacementNamed(HomeScreen.routeName, arguments: {

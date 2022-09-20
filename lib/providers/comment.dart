@@ -30,26 +30,27 @@ String commentToJson(List<Comment> data) =>
 class Comment {
   Comment({
     required this.id,
-    // required this.accessToken,
     required this.userId,
     required this.postId,
     required this.commentBody,
     required this.createdDate,
   });
 
-  // String accessToken;
-  String id;
-  String userId;
-  String postId;
+  // String id;
+  // String userId;
+  // String postId;
+  int id;
+  int userId;
+  int postId;
   String commentBody;
   NepaliDateTime createdDate;
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
         id: json["id"] == null ? null : json["id"],
-        userId: json["userId"] == null ? null : json["userId"],
-        postId: json["postId"] == null ? null : json["postId"],
-        commentBody: json["body"] == null ? null : json["body"],
-        createdDate: NepaliDateTime.parse(json["createdDate"].toString()),
+        userId: json["user_id"] == null ? null : json["user_id"],
+        postId: json["post_id"] == null ? null : json["post_id"],
+        commentBody: json["comment_body"] == null ? null : json["comment_body"],
+        createdDate: NepaliDateTime.parse(json["created_date"].toString()),
       );
 
   Map<String, dynamic> toJson() => {
@@ -83,38 +84,40 @@ class CommentError {
 }
 
 class Comments with ChangeNotifier {
-  List<Comment> _comments = [
-    Comment(
-      // accessToken:
-      //     'MzZiMTYwNGQzMGVhZDMzZmRmMzg3NDA5OTUyNzU5MTE0MWRiM2I0NWUzNmI3Y2ZlMzEzNjM1MzAzMzMzMzUzMTMzMzc',
-      id: '1',
-      userId: '0',
-      postId: '1',
-      commentBody:
-          'Test 1 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      createdDate: NepaliDateTime.now(),
-    ),
-    Comment(
-      // accessToken:
-      //     'MzZiMTYwNGQzMGVhZDMzZmRmMzg3NDA5OTUyNzU5MTE0MWRiM2I0NWUzNmI3Y2ZlMzEzNjM1MzAzMzMzMzUzMTMzMzc',
-      id: '2',
-      userId: '0',
-      postId: '1',
-      commentBody:
-          'Test 2 Lorem ipsum dolor sit amejkldjflkdfjldfjjipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      createdDate: NepaliDateTime.now(),
-    ),
-    Comment(
-      // accessToken:
-      //     'MzZiMTYwNGQzMGVhZDMzZmRmMzg3NDA5OTUyNzU5MTE0MWRiM2I0NWUzNmI3Y2ZlMzEzNjM1MzAzMzMzMzUzMTMzMzc',
-      id: '3',
-      userId: '2',
-      postId: '0',
-      commentBody:
-          'Test 3 consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      createdDate: NepaliDateTime.now(),
-    ),
-  ];
+  // List<Comment> _comments = [
+  //   Comment(
+  //     // accessToken:
+  //     //     'MzZiMTYwNGQzMGVhZDMzZmRmMzg3NDA5OTUyNzU5MTE0MWRiM2I0NWUzNmI3Y2ZlMzEzNjM1MzAzMzMzMzUzMTMzMzc',
+  //     id: '1',
+  //     userId: '0',
+  //     postId: '1',
+  //     commentBody:
+  //         'Test 1 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  //     createdDate: NepaliDateTime.now(),
+  //   ),
+  //   Comment(
+  //     // accessToken:
+  //     //     'MzZiMTYwNGQzMGVhZDMzZmRmMzg3NDA5OTUyNzU5MTE0MWRiM2I0NWUzNmI3Y2ZlMzEzNjM1MzAzMzMzMzUzMTMzMzc',
+  //     id: '2',
+  //     userId: '0',
+  //     postId: '1',
+  //     commentBody:
+  //         'Test 2 Lorem ipsum dolor sit amejkldjflkdfjldfjjipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  //     createdDate: NepaliDateTime.now(),
+  //   ),
+  //   Comment(
+  //     // accessToken:
+  //     //     'MzZiMTYwNGQzMGVhZDMzZmRmMzg3NDA5OTUyNzU5MTE0MWRiM2I0NWUzNmI3Y2ZlMzEzNjM1MzAzMzMzMzUzMTMzMzc',
+  //     id: '3',
+  //     userId: '2',
+  //     postId: '0',
+  //     commentBody:
+  //         'Test 3 consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  //     createdDate: NepaliDateTime.now(),
+  //   ),
+  // ];
+
+  List<Comment> _comments = [];
 
   bool _loading = false;
 
@@ -150,12 +153,12 @@ class Comments with ChangeNotifier {
     return comments.where((comment) => comment.postId == postId).toList();
   }
 
-  getPostComments(String postId) async {
+  getPostComments(String postId, Session loggedInUser) async {
     setLoading(true);
 
-    setComments([]);
+    // setComments([]);
 
-    var response = await CommentApi.getPostComments(postId);
+    var response = await CommentApi.getPostComments(postId, loggedInUser);
 
     if (response is Success) {
       setComments(response.response as List<Comment>);

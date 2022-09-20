@@ -54,34 +54,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                           color: Theme.of(context).primaryColor,
                         ),
                       ),
-                      // child: Image.network(
-                      //   selectedPost.pictures![index],
-                      //   fit: BoxFit.cover,
-                      // ),
-                      // child: PhotoView(
-                      //   imageProvider: NetworkImage(selectedPost.pictures![index]),
-                      //   minScale: PhotoViewComputedScale.contained * 0.8,
-                      //   maxScale: PhotoViewComputedScale.covered * 2,
-                      // ),
-
-                      child:
-                          // CustomImage(selectedPost.pictures![index], isNetwork),
-                          // CustomImage(
-                          //     selectedPost.pictures![index].runtimeType ==
-                          //             String
-                          //         ? selectedPost.pictures![index]
-                          //         : selectedPost.pictures![index].name,
-                          //     isNetwork),
-                          // CustomImage(
-                          //     selectedPost.pictures![index].runtimeType ==
-                          //             String
-                          //         ? selectedPost.pictures![index]
-                          //         : selectedPost.pictures![index].name,
-                          //     isNetwork),
-                          CustomImage(
-                        // isNetwork
-                        //     ?selectedPost.pictures![index]
-                        //     : selectedPost.pictures![index].name,
+                      child: CustomImage(
                         imageUrl: widget.isNetwork
                             ? selectedPost.pictures![index]
                             : selectedPost.pictures![index].name,
@@ -103,7 +76,8 @@ class _ImageGalleryState extends State<ImageGallery> {
                     ),
                   ),
                 )
-          : widget.images != null
+          // : widget.images != null
+          : widget.images!.isNotEmpty
               ? ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: widget.images!.length,
@@ -121,20 +95,8 @@ class _ImageGalleryState extends State<ImageGallery> {
                           color: Theme.of(context).primaryColor,
                         ),
                       ),
-                      // child: Image.network(
-                      //   selectedPost.pictures![index],
-                      //   fit: BoxFit.cover,
-                      // ),
-                      // child: PhotoView(
-                      //   imageProvider: NetworkImage(selectedPost.pictures![index]),
-                      //   minScale: PhotoViewComputedScale.contained * 0.8,
-                      //   maxScale: PhotoViewComputedScale.covered * 2,
-                      // ),
-
                       child: CustomImage(
-                        imageUrl: widget.images![index],
-                        // imageUrl: (widget.images![index] as dynamic),
-                        // imageUrl: widget.images![index] is String ? widget.images![index] : widget.images![index].path,
+                        imageUrl: widget.images![index]['image'],
                         isNetwork: widget.isNetwork,
                         isErasable: widget.isErasable,
                         eraseImage: this.widget.eraseImage,

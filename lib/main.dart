@@ -96,11 +96,11 @@ class MyApp extends StatelessWidget {
               title: AppStrings.appTitle,
               theme: getApplicationTheme(),
               // home: HomeScreen(),
-              // home: SplashScreen(),
+              home: SplashScreen(),
               // home: OnBoardingScreen(),
               // home: AddPostScreen(),
               // home: LoginSignupScreen(),
-              home: LoginScreen(),
+              // home: LoginScreen(),
               // home: OrderListScreen(),
               // home: SignUpScreen(),
               routes: {

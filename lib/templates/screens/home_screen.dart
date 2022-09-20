@@ -7,6 +7,7 @@ import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/templates/managers/api_values_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -166,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   //   (UserHelper.userProfileImage(
                                   //       snapshot.data as User)),
                                   // ),
-                                  backgroundImage: NetworkImage(_user.image as String),
+                                  backgroundImage: NetworkImage(_user.image == null ? RemoteManager.IMAGE_PLACEHOLDER : _user.image as String),
                                   
                                 );
                               }

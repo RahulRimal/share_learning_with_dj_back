@@ -139,14 +139,12 @@ class AppDrawer extends StatelessWidget {
   }
 
   Future<User?> _getSessionUser() async {
-    // await users.getUserByToken(accessToken);
     await users.getUserByToken(loggedInSession.accessToken).then((value) {
       return users.user;
     });
     if (users.user != null)
       return users.user;
     else {
-      // await users.getUserByToken(accessToken);
       await users.getUserByToken(loggedInSession.accessToken).then((value) {
         return users.user;
       });
@@ -157,12 +155,13 @@ class AppDrawer extends StatelessWidget {
   _logOut(BuildContext context) async {
     SharedPreferences prefs = await _prefs;
     Provider.of<Books>(context, listen: false).setBooks([]);
-    // users.logoutUser(loggedInSession.id);
-    users.logoutUser('1');
+    // Provider.of<Users>(context, listen: false).setUser(null);
+    // users.logoutUser('1');
 
     Provider.of<Comments>(context, listen: false).setComments([]);
 
     prefs.remove('accessToken');
+    prefs.remove('refreshToken');
 
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);
   }
