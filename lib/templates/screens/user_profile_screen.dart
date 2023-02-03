@@ -37,6 +37,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     Provider.of<Users>(context, listen: false).logoutUser('1');
     Provider.of<Comments>(context, listen: false).setComments([]);
     prefs.remove('accessToken');
+    prefs.remove('refreshToken');
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);
   }
 
@@ -195,9 +196,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                 ),
-                                child: Image.asset(
+                                // child:Image.asset(
+                                //   user.image as String
+                                //   // ImageAssets.noProfile,
+                                // ),
+                                child: user.image == null ?Image.asset(
                                   ImageAssets.noProfile,
-                                ),
+                                ):  CircleAvatar(
+                                      radius: 70,
+                                      backgroundImage: NetworkImage(
+                                        UserHelper.userProfileImage(
+                                            user),
+                                      ),
+                                    ),
                               ),
                             ),
                           ),
@@ -299,7 +310,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
                             child: Text(
                               // profilePageUsersRecord.age.toString(),
-                              "89",
+                              UserHelper.userClass(user),
                               style: getBoldStyle(
                                 color: ColorManager.black,
                               ),
@@ -315,23 +326,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                           child: Text(
                               // profilePageUsersRecord.email,
-                              'mail@mail.com',
+                              user.email as String,
                               style:
                                   getRegularStyle(color: ColorManager.primary)),
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 12, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text('Ailments',
-                              textAlign: TextAlign.start,
-                              style: getBoldStyle(color: ColorManager.primary)),
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsetsDirectional.fromSTEB(0, 12, 20, 0),
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.max,
+                    //     children: [
+                    //       Text('Ailments',
+                    //           textAlign: TextAlign.start,
+                    //           style: getBoldStyle(color: ColorManager.primary)),
+                    //     ],
+                    //   ),
+                    // ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 8, 20, 0),
                       child: Row(
@@ -339,11 +350,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         children: [
                           Expanded(
                             child: Container(),
-                            // child: AutoSizeText(
-                            //   profilePageUsersRecord.ailments,
-                            //   style:
-                            //       FlutterFlowTheme.of(context).title3,
-                            // ),
                           ),
                         ],
                       ),
@@ -357,7 +363,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Next Appointment',
+                              Text('Description',
                                   textAlign: TextAlign.start,
                                   style: getRegularStyle(
                                       color: ColorManager.primary)),
@@ -365,7 +371,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                                 child: Text(
-                                  'Aug 20, 2021',
+                                  user.description as String,
                                   style: getRegularStyle(
                                     color: ColorManager.primary,
                                   ),

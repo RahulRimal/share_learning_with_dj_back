@@ -226,7 +226,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 TextFormField(
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
-                      labelText: 'bookName',
+                      labelText: 'Book Name',
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.redAccent,
@@ -380,6 +380,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               labelText: 'Price',
                               focusColor: Colors.redAccent,
                             ),
+                            keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onFieldSubmitted: (_) {

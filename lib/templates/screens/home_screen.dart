@@ -161,15 +161,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                       'https://ojasfilms.org/assets/img/ojas-logo.png'),
                                 );
                               } else {
+                                if (snapshot.data is UserError)
+                                {
+                                  UserError error = snapshot.data as UserError;
+                                  return Text(error.message as String);
+                                }
+                                else
+                                {
                                 _user = snapshot.data as User;
                                 return CircleAvatar(
                                   // backgroundImage: NetworkImage(
                                   //   (UserHelper.userProfileImage(
                                   //       snapshot.data as User)),
                                   // ),
-                                  backgroundImage: NetworkImage(_user.image == null ? RemoteManager.IMAGE_PLACEHOLDER : _user.image as String),
+                                  backgroundImage: NetworkImage(_user.image == null ? RemoteManager.IMAGE_PLACEHOLDER : UserHelper.userProfileImage(_user)),
                                   
                                 );
+                                }
                               }
                             }
                           },

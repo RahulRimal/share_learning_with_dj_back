@@ -48,9 +48,9 @@ class PostComments extends StatelessWidget {
 
   Comment _edittedComment = Comment(
     // id: '',
-    id: 2,
-    userId: 2,
-    postId: 2,
+    id: 0,
+    userId: 0,
+    postId: 0,
     commentBody: '',
     createdDate: NepaliDateTime.now(),
   );
@@ -65,11 +65,11 @@ class PostComments extends StatelessWidget {
     _form.currentState!.save();
 
     _edittedComment.postId = int.parse(bookId);
-
+    
     Provider.of<Comments>(context, listen: false)
         .addComment(loggedInUserSession, _edittedComment);
 
-    Navigator.of(context).pop();
+    Navigator.of(context, rootNavigator: true).pop();
 
     BotToast.showSimpleNotification(
       title: 'Replied to the post',
@@ -201,6 +201,7 @@ class PostComments extends StatelessWidget {
                                       _commentUser = snapshot.data as User;
                                       users.getUserByToken(loggedInUser.accessToken);
                                       User _currentUser = users.user as User;
+                                      _edittedComment.userId = int.parse(_currentUser.id);
                                       return Container(
                                         decoration: BoxDecoration(
                                           borderRadius:

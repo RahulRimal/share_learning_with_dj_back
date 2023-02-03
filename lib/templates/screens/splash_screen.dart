@@ -9,6 +9,7 @@ import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
+import 'package:share_learning/templates/screens/login_signup_screen.dart';
 import 'package:share_learning/templates/screens/onboarding_screen.dart';
 import 'package:share_learning/templates/utils/internet_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,6 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
     if (await InternetConnectionChecker.checkInternetConnection())
       Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+      // Navigator.pushReplacementNamed(context, LoginSignupScreen.routeName);
     // Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
     else {
       BotToast.showWidget(

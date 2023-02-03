@@ -50,7 +50,7 @@ class SessionApi {
   static Future<Object> postSession(String userName, String password) async {
     try {
       Map<String, String> postBody = {
-        "username": userName,
+        "email": userName,
         "password": password
       };
       // var url = Uri.parse('http://localhost/apiforsharelearn/sessions');
@@ -76,6 +76,8 @@ class SessionApi {
         body: json.encode(postBody),
         // body: postBody,
       );
+
+      print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(

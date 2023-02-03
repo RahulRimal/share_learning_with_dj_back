@@ -24,6 +24,7 @@ class UserApi {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         HttpHeaders.contentTypeHeader: "application/json",
       });
+      
 
       // print(json.encode(json.decode(response.body)['data']['user'][0]));
 

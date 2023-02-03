@@ -57,13 +57,18 @@ class CommentApi {
       Session currentSession, Comment newComment) async {
     try {
       // Map<String, String> postBody = {
-      Map<String, dynamic> postBody = {
-        "id": newComment.id,
-        "postId": newComment.postId,
-        "body": newComment.commentBody,
-        "createdDate": newComment.createdDate.toIso8601String(),
+      // Map<String, dynamic> postBody = {
+      //   "id": newComment.id,
+      //   "postId": newComment.postId,
+      //   "body": newComment.commentBody,
+      //   "createdDate": newComment.createdDate.toIso8601String(),
+      // };
+      Map<String, String> postBody = {
+        "user_id": newComment.userId.toString(),
+        "comment_body": newComment.commentBody,
       };
-      var url = Uri.parse(RemoteManager.BASE_URI + '/replies');
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/'+ newComment.postId.toString() +'/comments/');
+      // var url = Uri.parse(RemoteManager.BASE_URI + '/replies');
 
       var response = await http.post(
         url,
@@ -116,7 +121,7 @@ class CommentApi {
         "createdDate": updatedComment.createdDate.toIso8601String(),
       };
       var url =
-          Uri.parse(RemoteManager.BASE_URI + '/replies/' + updatedComment.id.toString());
+          Uri.parse(RemoteManager.BASE_URI + '/posts/'+ updatedComment.postId.toString() +'/comments/'+ updatedComment.id.toString());
 
       var response = await http.patch(
         url,
@@ -130,6 +135,8 @@ class CommentApi {
         },
         body: json.encode(postBody),
       );
+
+      print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
@@ -168,7 +175,7 @@ class CommentApi {
       //   "body": comment.commentBody,
       //   "createdDate": comment.createdDate.toIso8601String(),
       // };
-      var url = Uri.parse(RemoteManager.BASE_URI + '/replies/' + comment.id.toString());
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + comment.postId.toString() + '/comments/' + comment.id.toString());
 
       var response = await http.delete(
         url,
@@ -182,6 +189,8 @@ class CommentApi {
         },
         // body: json.encode(postBody),
       );
+
+      print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
@@ -96,7 +98,10 @@ class _ImageGalleryState extends State<ImageGallery> {
                         ),
                       ),
                       child: CustomImage(
-                        imageUrl: widget.images![index]['image'],
+                        // imageUrl: widget.images![index]['image'] != null? widget.images![index]['image']: widget.images![index],
+                        imageUrl: widget.images![index] is String ? widget.images![index]: widget.images![index]['image'],
+                        // imageUrl: widget.images![index],
+                        // imageUrl: widget.images![index]['image'],
                         isNetwork: widget.isNetwork,
                         isErasable: widget.isErasable,
                         eraseImage: this.widget.eraseImage,
