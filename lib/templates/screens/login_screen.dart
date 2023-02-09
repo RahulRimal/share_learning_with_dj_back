@@ -94,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
           prefs.setString('accessToken', userSession.session!.accessToken);
           prefs.setString('refreshToken', userSession.session!.refreshToken);
 
-
           Navigator.of(context)
               .pushReplacementNamed(HomeScreen.routeName, arguments: {
             'authSession': userSession.session,

@@ -6,6 +6,7 @@ import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/comment.dart';
 import 'package:share_learning/providers/carts.dart';
+import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/strings_manager.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Books()),
         ChangeNotifierProvider(create: (_) => Comments()),
         ChangeNotifierProvider(create: (_) => Carts()),
+        ChangeNotifierProvider(create: (_) => Orders()),
       ],
       child: Theme.of(context).platform == TargetPlatform.iOS
           ? CupertinoApp(

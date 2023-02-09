@@ -15,6 +15,8 @@ import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/post.dart';
 
+import '../../providers/orders.dart';
+
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
 
@@ -49,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Users _users = context.watch<Users>();
     Books _books = context.watch<Books>();
+
+    Orders _orders = context.watch<Orders>();
 
     return Platform.isIOS
         ? CupertinoPageScaffold(
@@ -129,6 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
         : Scaffold(
             appBar: AppBar(
               actions: [
+                TextButton(
+                  child: Text('Get Order'),
+                  onPressed: () =>
+                      _orders.getOrderFromId(authenticatedSession, 1),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _user.id != "temp"
@@ -144,8 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           //     // authenticatedSession.userId),
                           //     '1'),
 
-                          future: _users.getUserByToken(
-                              authenticatedSession.accessToken),
+                          future: _users
+                              .getUserByToken(authenticatedSession.accessToken),
                           builder: (ctx, snapshot) {
                             // if (snapshot.data != null)
                             //   _user = snapshot.data as User;
@@ -161,22 +170,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                       'https://ojasfilms.org/assets/img/ojas-logo.png'),
                                 );
                               } else {
-                                if (snapshot.data is UserError)
-                                {
+                                if (snapshot.data is UserError) {
                                   UserError error = snapshot.data as UserError;
                                   return Text(error.message as String);
-                                }
-                                else
-                                {
-                                _user = snapshot.data as User;
-                                return CircleAvatar(
-                                  // backgroundImage: NetworkImage(
-                                  //   (UserHelper.userProfileImage(
-                                  //       snapshot.data as User)),
-                                  // ),
-                                  backgroundImage: NetworkImage(_user.image == null ? RemoteManager.IMAGE_PLACEHOLDER : UserHelper.userProfileImage(_user)),
-                                  
-                                );
+                                } else {
+                                  _user = snapshot.data as User;
+                                  return CircleAvatar(
+                                    // backgroundImage: NetworkImage(
+                                    //   (UserHelper.userProfileImage(
+                                    //       snapshot.data as User)),
+                                    // ),
+                                    backgroundImage: NetworkImage(_user.image ==
+                                            null
+                                        ? RemoteManager.IMAGE_PLACEHOLDER
+                                        : UserHelper.userProfileImage(_user)),
+                                  );
                                 }
                               }
                             }
@@ -207,7 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       )
                     : FutureBuilder(
-                        future: _books.getBooksAnnonimusly(authenticatedSession),
+                        future:
+                            _books.getBooksAnnonimusly(authenticatedSession),
                         builder: (ctx, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {

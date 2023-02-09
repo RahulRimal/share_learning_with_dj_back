@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
     if (await InternetConnectionChecker.checkInternetConnection())
       Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-      // Navigator.pushReplacementNamed(context, LoginSignupScreen.routeName);
+    // Navigator.pushReplacementNamed(context, LoginSignupScreen.routeName);
     // Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
     else {
       BotToast.showWidget(
@@ -63,26 +63,25 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
               ));
-
-      
     }
   }
 
   _getPreviousSession() async {
     SharedPreferences prefs = await _prefs;
 
-
     if (prefs.containsKey('accessToken')) {
       String accessToken = prefs.getString('accessToken') as String;
       String refreshToken = prefs.getString('refreshToken') as String;
-      SessionProvider sessions = Provider.of<SessionProvider>(context, listen: false);
+      SessionProvider sessions =
+          Provider.of<SessionProvider>(context, listen: false);
 
-      sessions.setSession(new Session(accessToken: accessToken, refreshToken: refreshToken));
+      sessions.setSession(
+          new Session(accessToken: accessToken, refreshToken: refreshToken));
 
-      Navigator.pushReplacementNamed(context, HomeScreen.routeName,
-              arguments: {
-                'authSession': sessions.session,
-              });
+      if (prefs.containsKey('cartId')) {}
+      Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
+        'authSession': sessions.session,
+      });
 
       // sessions.getPreviousSession(accessToken).then((value) {
       //   if (sessions.session != null)
@@ -94,10 +93,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //     _startDelay();
       // });
 
-     
-    }
-
-    else
+    } else
       _startDelay();
   }
 

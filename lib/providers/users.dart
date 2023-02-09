@@ -147,6 +147,18 @@ class Users with ChangeNotifier {
     );
   }
 
+  Future<User?> getCommentUser(String userId) async {
+    if (users.contains((user) => user.id == userId)) {
+      return user as User;
+    }
+
+    var response = await UserApi.getUserFromId(userId);
+    if (response is Success) {
+      return response.response as User;
+    }
+    return null;
+  }
+
   logoutUser(String sessionId) async {
     await SessionApi.deleteSession(sessionId);
     _session = null;

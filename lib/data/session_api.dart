@@ -15,7 +15,7 @@ class SessionApi {
 
       var response = await http.get(
         url,
-        headers: {HttpHeaders.authorizationHeader: accessToken},
+        headers: {HttpHeaders.authorizationHeader: "SL " + accessToken},
       );
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
@@ -49,10 +49,7 @@ class SessionApi {
 
   static Future<Object> postSession(String userName, String password) async {
     try {
-      Map<String, String> postBody = {
-        "email": userName,
-        "password": password
-      };
+      Map<String, String> postBody = {"email": userName, "password": password};
       // var url = Uri.parse('http://localhost/apiforsharelearn/sessions');
       var url = Uri.parse(RemoteManager.BASE_URI + '/auth/jwt/create');
 
@@ -67,7 +64,7 @@ class SessionApi {
         url,
         headers: {
           "Accept": "application/json; charset=utf-8",
-          
+
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
           "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
@@ -77,14 +74,15 @@ class SessionApi {
         // body: postBody,
       );
 
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
-            code: response.statusCode,
-            // response: sessionFromJson(json
-            //     .encode(json.decode(response.body)['data']['sessions'][0])));
-            response: sessionFromJson(response.body),);
+          code: response.statusCode,
+          // response: sessionFromJson(json
+          //     .encode(json.decode(response.body)['data']['sessions'][0])));
+          response: sessionFromJson(response.body),
+        );
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,

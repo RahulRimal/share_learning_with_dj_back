@@ -117,19 +117,18 @@ class Book {
   // List<BookImage>? pictures;
 
   // List<String> imagesList (List<Map> maps)
-  imagesList (List<Map> maps)
-  {
-    // List<String> images = 
-    Iterable<dynamic> tempp =  maps.map((x) => x['image']);
-        // .filter((x) => x) ;
-        
+  imagesList(List<Map> maps) {
+    // List<String> images =
+    Iterable<dynamic> tempp = maps.map((x) => x['image']);
+    // .filter((x) => x) ;
   }
 
   factory Book.fromJson(Map<String, dynamic> json) => Book(
         // id: json["id"] == null ? null : json["id"],
         id: json["id"].toString(),
         // userId: json["userId"] == null ? null : json["userId"],
-        userId: json["userId"].toString(),
+        userId: json["user"]["id"].toString(),
+        // userId: json["userId"].toString(),
         bookName: json["book_name"] == null ? null : json["book_name"],
         author: json["author"] == null ? 'Unknown' : json["author"],
         description: json["description"] == null ? null : json["description"],
@@ -154,7 +153,7 @@ class Book {
             // : (List<dynamic>.from(json["pictures"])).isEmpty
             //     ? null
             : json["images"],
-            // :json["images"].map((x)=> x['image']),
+        // :json["images"].map((x)=> x['image']),
         // : ("${RemoteManager.POST_POOL}/$id$/${json['pictures'].toString()}"),
         // postedOn:
         //     json["postedOn"] == null ? null : DateTime.parse(json["postedOn"]),
@@ -198,12 +197,11 @@ class Book {
       };
 }
 
-class BookImage{
+class BookImage {
   int id;
   String imageUrl;
 
   BookImage({required this.id, required this.imageUrl});
-
 }
 
 class BookError {

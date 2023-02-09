@@ -18,7 +18,9 @@ class CartApi {
 
       var response = await http.get(
         url,
-        headers: {HttpHeaders.authorizationHeader: loggedInUser.accessToken},
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken
+        },
       );
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
@@ -59,7 +61,7 @@ class CartApi {
       var response = await http.get(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: loggedInUser.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
           "Accept": "application/json",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
@@ -114,7 +116,7 @@ class CartApi {
       var response = await http.post(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: userSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
           "Accept": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
@@ -170,7 +172,7 @@ class CartApi {
       var response = await http.patch(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: userSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
           "Accept": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
@@ -217,7 +219,7 @@ class CartApi {
       var response = await http.delete(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: userSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
           "Accept": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work

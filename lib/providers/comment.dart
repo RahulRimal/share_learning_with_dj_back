@@ -45,7 +45,8 @@ class Comment {
   String commentBody;
   NepaliDateTime createdDate;
 
-  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
+  // factory Comment.fromJson(Map<String, dynamic> json) => Comment(
+  factory Comment.fromJson(dynamic json) => Comment(
         id: json["id"] == null ? null : json["id"],
         userId: json["user_id"] == null ? null : json["user_id"],
         postId: json["post_id"] == null ? null : json["post_id"],

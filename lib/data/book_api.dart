@@ -19,7 +19,9 @@ class BookApi {
 
       var response = await http.get(
         url,
-        headers: {HttpHeaders.authorizationHeader: loggedInUser.accessToken},
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken
+        },
       );
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
@@ -59,16 +61,15 @@ class BookApi {
       var response = await http.get(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: loggedInUser.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
         },
       );
       // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         // print(json.encode(json.decode(response.body)['data']['posts']));
-  
+
         return Success(
-          
           code: response.statusCode,
           response: bookFromJson(
             json.encode(json.decode(response.body)),
@@ -121,7 +122,7 @@ class BookApi {
       var response = await http.patch(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: currentSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
           "Accept": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
@@ -179,7 +180,7 @@ class BookApi {
       var response = await http.post(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: currentSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
           "Accept": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
@@ -231,7 +232,7 @@ class BookApi {
       var response = await http.delete(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: currentSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
           "Accept": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
@@ -295,7 +296,7 @@ class BookApi {
       request.files.addAll(pics.map((e) => e));
 
       request.headers.addAll({
-        HttpHeaders.authorizationHeader: loggedinSession.accessToken,
+        HttpHeaders.authorizationHeader: "SL " + loggedinSession.accessToken,
 
         "Accept": "application/json; charset=utf-8",
         // "Accept": "application/json; charset=UTF-8",
@@ -440,7 +441,7 @@ class BookApi {
       var response = await http.post(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: loggedinSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + loggedinSession.accessToken,
 
           "Accept": "application/json; charset=utf-8",
           // "Accept": "application/json; charset=UTF-8",

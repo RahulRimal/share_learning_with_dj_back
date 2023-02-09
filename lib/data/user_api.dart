@@ -24,7 +24,6 @@ class UserApi {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         HttpHeaders.contentTypeHeader: "application/json",
       });
-      
 
       // print(json.encode(json.decode(response.body)['data']['user'][0]));
 
@@ -33,8 +32,7 @@ class UserApi {
             code: response.statusCode,
             // response: userFromJson(
             //     json.encode(json.decode(response.body)['data']['user'][0])));
-            response: userFromJson(
-                json.encode(json.decode(response.body))));
+            response: userFromJson(json.encode(json.decode(response.body))));
       }
 
       return Failure(
@@ -57,22 +55,20 @@ class UserApi {
   }
 
   static Future<Object> getUserFromId(String userId) async {
-    Future<SharedPreferences> _prefs =  SharedPreferences.getInstance();
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     SharedPreferences prefs = await _prefs;
     try {
-
       String accessToken = prefs.getString('accessToken').toString();
 
       var url = Uri.parse(RemoteManager.BASE_URI + '/customers/' + userId);
 
       var response = await http.get(url, headers: {
-        HttpHeaders.authorizationHeader: 'SL '+accessToken,
+        HttpHeaders.authorizationHeader: 'SL ' + accessToken,
         "Accept": "application/json",
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         HttpHeaders.contentTypeHeader: "application/json",
       });
-
 
       // print(json.encode(json.decode(response.body)['data']['user'][0]));
 
@@ -81,8 +77,7 @@ class UserApi {
             code: response.statusCode,
             // response: userFromJson(
             //     json.encode(json.decode(response.body)['data']['users'][0])));
-            response: userFromJson(
-                json.encode(json.decode(response.body))));
+            response: userFromJson(json.encode(json.decode(response.body))));
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,
@@ -193,7 +188,7 @@ class UserApi {
       //add multipart to request
       request.files.add(pic);
       request.headers.addAll({
-        HttpHeaders.authorizationHeader: loggedinSession.accessToken,
+        HttpHeaders.authorizationHeader: "SL " + loggedinSession.accessToken,
 
         "Accept": "application/json; charset=utf-8",
         // "Accept": "application/json; charset=UTF-8",
