@@ -15,6 +15,7 @@ import 'package:share_learning/templates/screens/add_post_screen.dart';
 import 'package:share_learning/templates/screens/login_signup_screen.dart';
 import 'package:share_learning/templates/screens/onboarding_screen.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
+import 'package:share_learning/templates/screens/order_screen.dart';
 import 'package:share_learning/templates/screens/signup_screen.dart';
 import 'package:share_learning/templates/screens/single_post_screen.dart';
 import 'package:share_learning/templates/screens/splash_screen.dart';
@@ -55,9 +56,10 @@ class MyApp extends StatelessWidget {
           ),
           update: (context, session, previousUser) => Users(session.session),
         ),
+
+        ChangeNotifierProvider(create: (_) => Carts()),
         ChangeNotifierProvider(create: (_) => Books()),
         ChangeNotifierProvider(create: (_) => Comments()),
-        ChangeNotifierProvider(create: (_) => Carts()),
         ChangeNotifierProvider(create: (_) => Orders()),
       ],
       child: Theme.of(context).platform == TargetPlatform.iOS
@@ -120,6 +122,7 @@ class MyApp extends StatelessWidget {
                 UserProfileEditScreen.routeName: (context) =>
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
+                // OrderScreen.routeName: (context) => OrderScreen(),
               },
             ),
     );

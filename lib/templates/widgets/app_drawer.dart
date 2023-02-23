@@ -67,22 +67,19 @@ class AppDrawer extends StatelessWidget {
       title: 'Your Posts',
       route: UserPostsScreen.routeName,
     ),
-
     DrawerItem(
       icon: Icons.person,
       title: 'Your Profile',
       route: UserProfileScreen.routeName,
     ),
-
+    // DrawerItem(
+    //     title: 'Your Orders',
+    //     icon: Icons.shop_rounded,
+    //     route: OrderScreen.routeName),
     DrawerItem(
-        title: 'Your Orders',
+        title: 'Your Cart',
         icon: Icons.shop_rounded,
         route: CartScreen.routeName)
-    // DrawerItem(
-    //   icon: Icons.exit_to_app,
-    //   title: 'Logout',
-    //   route: LoginScreen.routeName,
-    // ),
   ];
 
   Widget getDrawerItem(BuildContext context, DrawerItem item) {

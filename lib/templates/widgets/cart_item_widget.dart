@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
+import 'package:share_learning/models/cart_item.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/carts.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -10,36 +11,36 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
-class CartItem extends StatefulWidget {
-  const CartItem({Key? key, required this.cartItem}) : super(key: key);
+class CartItemWidget extends StatefulWidget {
+  const CartItemWidget({Key? key, required this.cartItem}) : super(key: key);
 
-  final Cart cartItem;
+  final CartItem cartItem;
 
   @override
-  State<CartItem> createState() => _CartItemState();
+  State<CartItemWidget> createState() => _CartItemWidgetState();
 }
 
-class _CartItemState extends State<CartItem> {
+class _CartItemWidgetState extends State<CartItemWidget> {
   // bool _cartItemChanged = false;
   late bool _cartItemChanged;
   late int _quantity;
-  late bool _wishlisted;
-  late Cart _edittedItem;
+  // late bool _wishlisted;
+  late CartItem _edittedItem;
 
   _ifCartItemChanged() {
-    if (_quantity != widget.cartItem.bookCount) {
+    if (_quantity != widget.cartItem.quantity) {
       setState(() {
         _cartItemChanged = true;
       });
 
       return;
     }
-    if (_wishlisted != widget.cartItem.wishlisted) {
-      setState(() {
-        _cartItemChanged = true;
-      });
-      return;
-    }
+    // if (_wishlisted != widget.cartItem.wishlisted) {
+    //   setState(() {
+    //     _cartItemChanged = true;
+    //   });
+    //   return;
+    // }
     setState(() {
       _cartItemChanged = false;
     });
@@ -49,18 +50,17 @@ class _CartItemState extends State<CartItem> {
   void initState() {
     _edittedItem = widget.cartItem;
     _cartItemChanged = false;
-    _quantity = widget.cartItem.bookCount;
-    _wishlisted = widget.cartItem.wishlisted;
+    _quantity = widget.cartItem.quantity;
+    // _wishlisted = widget.cartItem.wishlisted;
     super.initState();
   }
 
-  Future<bool> _updatePost(
-      Session loggedInUserSession, Cart edittedItem) async {
-    _edittedItem.bookCount = _quantity;
-    _edittedItem.wishlisted = _wishlisted;
+  Future<bool> _updateCartItem(Cart cart, CartItem edittedItem) async {
+    _edittedItem.quantity = _quantity;
+    // _edittedItem.wishlisted = _wishlisted;
 
     await Provider.of<Carts>(context, listen: false)
-        .updateCartItem(loggedInUserSession, edittedItem)
+        .updateCartItem(cart.id, edittedItem)
         .then(
       (value) {
         if (value) {
@@ -89,33 +89,55 @@ class _CartItemState extends State<CartItem> {
     return true;
   }
 
-  _deleteCartItem(Session userSession, String cartId) async {
-    print(cartId);
-    await Provider.of<Carts>(context, listen: false)
-        .deleteCartItem(userSession, cartId)
-        .then(
-      (value) {
-        if (value) {
-          BotToast.showSimpleNotification(
-            title: 'Book deleted from the cart',
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
-        } else
-          BotToast.showSimpleNotification(
-            title: 'Something went wrong, Please try again!',
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
-      },
-    );
+  _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
+    bool value = await Provider.of<Carts>(context, listen: false)
+        .deleteCartItem(userSession, cartId, cartItemId);
+    if (value) {
+      BotToast.showSimpleNotification(
+        title: 'Book deleted from the cart',
+        duration: Duration(seconds: 3),
+        backgroundColor: ColorManager.primary,
+        titleStyle: getBoldStyle(color: ColorManager.white),
+        align: Alignment(-1, -1),
+        hideCloseButton: true,
+      );
+    } else
+      BotToast.showSimpleNotification(
+        title: 'Something went wrong, Please try again!',
+        duration: Duration(seconds: 3),
+        backgroundColor: ColorManager.primary,
+        titleStyle: getBoldStyle(color: ColorManager.white),
+        align: Alignment(-1, -1),
+        hideCloseButton: true,
+      );
   }
+
+  // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
+  //   await Provider.of<Carts>(context, listen: false)
+  //       .deleteCartItem(userSession, cartId, cartItemId)
+  //       .then(
+  //     (value) {
+  //       if (value) {
+  //         BotToast.showSimpleNotification(
+  //           title: 'Book deleted from the cart',
+  //           duration: Duration(seconds: 3),
+  //           backgroundColor: ColorManager.primary,
+  //           titleStyle: getBoldStyle(color: ColorManager.white),
+  //           align: Alignment(-1, -1),
+  //           hideCloseButton: true,
+  //         );
+  //       } else
+  //         BotToast.showSimpleNotification(
+  //           title: 'Something went wrong, Please try again!',
+  //           duration: Duration(seconds: 3),
+  //           backgroundColor: ColorManager.primary,
+  //           titleStyle: getBoldStyle(color: ColorManager.white),
+  //           align: Alignment(-1, -1),
+  //           hideCloseButton: true,
+  //         );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +149,7 @@ class _CartItemState extends State<CartItem> {
 
     return FutureBuilder(
         future: _carts.getCartItemBook(
-            authendicatedSession, widget.cartItem.bookId),
+            authendicatedSession, widget.cartItem.product.id.toString()),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -207,29 +229,29 @@ class _CartItemState extends State<CartItem> {
                                           ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: 12.00,
-                                        ),
-                                        child: Container(
-                                          height: 24.00,
-                                          width: 24.00,
-                                          child: IconButton(
-                                            icon: Icon(
-                                              _wishlisted
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color: ColorManager.primary,
-                                            ),
-                                            onPressed: () {
-                                              _wishlisted = !_wishlisted;
-                                              _ifCartItemChanged();
-                                              // _edittedItem.wishlisted =
-                                              //     _wishlisted;
-                                            },
-                                          ),
-                                        ),
-                                      ),
+                                      // Padding(
+                                      //   padding: EdgeInsets.only(
+                                      //     bottom: 12.00,
+                                      //   ),
+                                      //   child: Container(
+                                      //     height: 24.00,
+                                      //     width: 24.00,
+                                      //     child: IconButton(
+                                      //       icon: Icon(
+                                      //         _wishlisted
+                                      //             ? Icons.favorite
+                                      //             : Icons.favorite_border,
+                                      //         color: ColorManager.primary,
+                                      //       ),
+                                      //       onPressed: () {
+                                      //         _wishlisted = !_wishlisted;
+                                      //         _ifCartItemChanged();
+                                      //         // _edittedItem.wishlisted =
+                                      //         //     _wishlisted;
+                                      //       },
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       Padding(
                                         padding: EdgeInsets.only(
                                           bottom: 12.00,
@@ -291,7 +313,12 @@ class _CartItemState extends State<CartItem> {
                                                 if (userConfirmed) {
                                                   _deleteCartItem(
                                                     authendicatedSession,
-                                                    widget.cartItem.id,
+                                                    Provider.of<Carts>(context,
+                                                            listen: false)
+                                                        .cart!
+                                                        .id,
+                                                    widget.cartItem.id
+                                                        .toString(),
                                                   );
                                                 }
                                               });
@@ -320,7 +347,8 @@ class _CartItemState extends State<CartItem> {
                                           bottom: 1.00,
                                         ),
                                         child: Text(
-                                          "Rs. ${widget.cartItem.pricePerPiece * widget.cartItem.bookCount}",
+                                          // "Rs. ${widget.cartItem.pricePerPiece * widget.cartItem.bookCount}",
+                                          "Rs. ${widget.cartItem.totalPrice}",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
@@ -411,8 +439,11 @@ class _CartItemState extends State<CartItem> {
                       ),
                       _cartItemChanged
                           ? ElevatedButton(
-                              onPressed: () => _updatePost(
-                                  authendicatedSession, _edittedItem),
+                              onPressed: () => _updateCartItem(
+                                  // context.watch<Carts>().cart as Cart,
+                                  Provider.of<Carts>(context, listen: false)
+                                      .cart as Cart,
+                                  _edittedItem),
                               child: Text('Update Cart'))
                           : Container(),
                     ],

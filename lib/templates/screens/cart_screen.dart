@@ -9,11 +9,12 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/widgets/cart_item.dart';
+import 'package:share_learning/templates/widgets/cart_item_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
-  static final routeName = '/order-list';
+  static final routeName = '/cart-list';
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -129,57 +130,67 @@ class CartList extends StatelessWidget {
   final Carts carts;
   final Session authendicatedSession;
 
+  // _getCartId() async {
+  //   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  //   SharedPreferences prefs = await _prefs;
+  //   String cartId = prefs.getString('cartId') as String;
+  //   return cartId;
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return carts.cartItems.length > 0
-        ? ListView.builder(
-            itemCount: carts.cartItems.length,
-            itemBuilder: (context, index) {
-              return CartItem(
-                cartItem: carts.cartItems[index],
-              );
-            },
-          )
-        : FutureBuilder(
-            future: carts.getUserCart(authendicatedSession),
-            // builder: carts.getUserCart(authendicatedSession),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error',
-                    ),
-                  );
-                } else {
-                  return Consumer<Carts>(
-                    builder: (ctx, cartItems, child) {
-                      return carts.cartItems.length <= 0
-                          ? Center(
-                              child: Text(
-                                'No Item in the cart',
-                                style: getBoldStyle(
-                                    fontSize: FontSize.s20,
-                                    color: ColorManager.primary),
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: carts.cartItems.length,
-                              itemBuilder: (ctx, index) {
-                                return CartItem(
-                                  cartItem: carts.cartItems[index],
-                                );
-                              },
-                            );
-                    },
-                  );
-                }
-              }
-            },
-          );
+    // return carts.cartItems.length > 0
+    // ? ListView.builder(
+    return ListView.builder(
+      // itemCount: carts.cartItems.length,
+      itemCount: context.watch<Carts>().cartItems.length,
+      itemBuilder: (context, index) {
+        return CartItemWidget(
+          cartItem: carts.cartItems[index],
+        );
+      },
+    );
+    // )
+    // : FutureBuilder(
+    //     future: carts.getCartItems(authendicatedSession),
+    //     // builder: carts.getUserCart(authendicatedSession),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return Center(
+    //           child: CircularProgressIndicator(),
+    //         );
+    //       } else {
+    //         if (snapshot.hasError) {
+    //           return Center(
+    //             child: Text(
+    //               'Error',
+    //             ),
+    //           );
+    //         } else {
+    //           return Consumer<Carts>(
+    //             builder: (ctx, cartItems, child) {
+    //               return carts.cartItems.length <= 0
+    //                   ? Center(
+    //                       child: Text(
+    //                         'No Item in the cart',
+    //                         style: getBoldStyle(
+    //                             fontSize: FontSize.s20,
+    //                             color: ColorManager.primary),
+    //                       ),
+    //                     )
+    //                   : ListView.builder(
+    //                       itemCount: carts.cartItems.length,
+    //                       itemBuilder: (ctx, index) {
+    //                         return CartItemWidget(
+    //                           cartItem: carts.cartItems[index],
+    //                         );
+    //                       },
+    //                     );
+    //             },
+    //           );
+    //         }
+    //       }
+    //     },
+    //   );
   }
 }

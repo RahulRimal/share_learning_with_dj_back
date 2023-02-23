@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:share_learning/providers/carts.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -74,11 +75,26 @@ class _SplashScreenState extends State<SplashScreen> {
       String refreshToken = prefs.getString('refreshToken') as String;
       SessionProvider sessions =
           Provider.of<SessionProvider>(context, listen: false);
+      Carts carts = Provider.of<Carts>(context, listen: false);
 
       sessions.setSession(
           new Session(accessToken: accessToken, refreshToken: refreshToken));
 
-      if (prefs.containsKey('cartId')) {}
+      if (prefs.containsKey('cartId')) {
+        // print(prefs.getString('cartId'));
+        await carts.getCartInfo(prefs.getString('cartId') as String);
+        // await Provider.of<Carts>(context)
+        //     .getCartInfo(prefs.getString('cartId') as String);
+
+      } else {
+        if (await Provider.of<Carts>(context, listen: false)
+            .createCart(sessions.session as Session)) {
+          prefs.setString('cartId', carts.cart!.id.toString());
+          // print(Provider.of<Carts>(context, listen: false).cart!.id.toString());
+        } else {
+          print('here');
+        }
+      }
       Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
         'authSession': sessions.session,
       });

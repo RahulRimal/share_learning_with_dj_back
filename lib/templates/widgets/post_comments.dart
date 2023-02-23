@@ -146,6 +146,7 @@ class PostComments extends StatelessWidget {
       child: Column(
         children: [
           Container(
+            // constraints: BoxConstraints(maxHeight: double.infinity),
             height: 200,
             child: FutureBuilder(
               future: comments.getPostComments(bookId, loggedInSession),

@@ -133,11 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
         : Scaffold(
             appBar: AppBar(
               actions: [
-                TextButton(
-                  child: Text('Get Order'),
-                  onPressed: () =>
-                      _orders.getOrderFromId(authenticatedSession, 1),
-                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _user.id != "temp"

@@ -71,7 +71,7 @@ class BookApi {
 
         return Success(
           code: response.statusCode,
-          response: bookFromJson(
+          response: booksFromJson(
             json.encode(json.decode(response.body)),
           ),
         );

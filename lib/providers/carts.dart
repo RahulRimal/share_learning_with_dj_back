@@ -3,161 +3,63 @@ import 'package:share_learning/data/cart_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
+import 'package:share_learning/models/cart_item.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/templates/widgets/cart_item.dart';
+import 'package:share_learning/templates/widgets/cart_item_widget.dart';
 
 class Carts with ChangeNotifier {
-  List<Cart> _myCartItems = [];
-
-  // List<Cart> _myCartItems = [
-  //   Cart(
-  //     id: '1',
-  //     bookId: '1',
-  //     sellingUserId: '1',
-  //     buyingUserId: '2',
-  //     bookCount: 2,
-  //     pricePerPiece: 500,
-  //     wishlisted: true,
-  //     postType: "B",
-  //   ),
-  //   Cart(
-  //     id: '3',
-  //     bookId: '1',
-  //     sellingUserId: '2',
-  //     buyingUserId: '5',
-  //     bookCount: 1,
-  //     pricePerPiece: 300,
-  //     wishlisted: true,
-  //     postType: "S",
-  //   ),
-  //   // Cart(
-  //   //   id: '6',
-  //   //   bookId: '3',
-  //   //   sellingUserId: '1',
-  //   //   buyingUserId: '5',
-  //   //   bookCount: 1,
-  //   //   pricePerPiece: 300,
-  //   //   wishlisted: true,
-  //   //   postType: "B",
-  //   // ),
-  // ];
+  Cart? _cart;
+  List<CartItem> _cartItems = [];
 
   bool _loading = false;
-
-  // CaartError? _CaartError;
-
   CartError? _cartError;
+  CartItemError? _cartItemError;
 
-  // final Session authenticatedSession;
+  Cart? get cart => _cart;
 
-  // Carts(this.authenticatedSession);
-
-  // Carts() {
-  //   getCarts();
+  List<CartItem> get cartItems => [..._cartItems];
+  // List<CartItem> get cartItems {
+  //   return [..._myCartItems];
   // }
 
   bool get loading => _loading;
+  CartError? get cartError => _cartError;
+  CartItemError? get cartItemError => _cartItemError;
 
-  List<Cart> get cartItems {
-    return [..._myCartItems];
+  setCart(Cart cart) {
+    _cart = cart;
+    // notifyListeners();
   }
 
-  CartError? get cartError => _cartError;
-
-  // factory Carts.fromJson(Map<String, dynamic> parsedJson) {
-  //   return Cart(
-  //     id: parsedJson['id'].toString(),postm
-  //     userId: parsedJson['userId'].toString(),
-  //     CartName: parsedJson['CartName'].toString(),
-  //     description: parsedJson['description'].toString(),
-  //     author: parsedJson['author'].toString(),
-  //     boughtTime: NepaliDateTime.parse(parsedJson['boughtTime'].toString()),
-  //     price: parsedJson['price'],
-  //     CartCount: parsedJson['CartCount'],
-  //     isWishlisted: parsedJson['isWishlisted'],
-  //     selling: parsedJson['selling'],
-  //   );
-  // }
+  setCartItems(List<CartItem> cartItems) {
+    _cartItems = cartItems;
+    // notifyListeners();
+  }
 
   setLoading(bool loading) async {
     _loading = loading;
     // notifyListeners();
   }
 
-  setCartItems(List<Cart> cartItems) {
-    _myCartItems = cartItems;
-  }
-
-  // setCaartError(CartError cartError) {
-  //   _cartError = cartError;
-  // }
   setCartError(CartError cartError) {
     _cartError = cartError;
+    // notifyListeners();
   }
 
-  // getCarts(Session loggedInSession) async {
-  //   setLoading(true);
-
-  //   // var response = await CartApi.getCarts(uId);
-  //   var response = await CartApi.getCarts(loggedInSession);
-
-  //   if (response is Success) {
-  //     setCarts(response.response as List<Cart>);
-  //   }
-  //   if (response is Failure) {
-  //     CaartError CaartError = CaartError(
-  //       code: response.code,
-  //       message: response.errorResponse,
-  //     );
-  //     setCaartError(CaartError);
-  //   }
-  //   setLoading(false);
-  // }
-
-  // getCartsAnnonimusly(Session loggedInSession) async {
-  //   setLoading(true);
-
-  //   var response = await CartApi.getAnnonimusPosts(loggedInSession);
-
-  //   if (response is Success) {
-  //     setCarts(response.response as List<Cart>);
-  //   }
-  //   if (response is Failure) {
-  //     CaartError CaartError = CaartError(
-  //       code: response.code,
-  //       message: response.errorResponse,
-  //     );
-  //     setCaartError(CaartError);
-  //   }
-  //   setLoading(false);
-  // }
-
-  Cart getCartItemById(String cartId) {
-    return cartItems.firstWhere((cart) => cart.id == cartId);
+  setCartItemError(CartItemError cartItemError) {
+    _cartItemError = cartItemError;
+    // notifyListeners();
   }
 
-  // Future<Book> getBokById(String bookId) {}
-
-  // List<Cart> CartsByUser(String userId) {
-  //   return Carts.where((Cart) => Cart.buyingUserId == userId).toList();
-  // }
-
-  // bool hasPostByUser(String userId) {
-  //   final userCart = Carts.firstWhereOrNull((post) => post.userId == userId);
-
-  //   if (userCart != null)
-  //     return true;
-  //   else
-  //     return false;
-  // }
+  CartItem getCartItemById(String cartItemId) {
+    return _cartItems.firstWhere((cartItem) => cartItem.id == cartItemId);
+  }
 
   Future<Object> getCartItemBook(Session loggedInSession, String bookId) async {
     var response = await CartApi.getCartItemBook(loggedInSession, bookId);
     if (response is Success) {
-      // return response.response as Book;
-      List<Book> responseList = response.response as List<Book>;
-      return responseList[0];
-      // return response.response;
+      // List<Book> responseList = response.response as List<Book>;
+      return response.response as Book;
     }
     if (response is Failure) {
       CartError cartError = CartError(
@@ -177,106 +79,70 @@ class Carts with ChangeNotifier {
     return _cartError as CartError;
   }
 
-  getUserCart(Session loggedInSession) async {
-    var response = await CartApi.getUserCart(loggedInSession);
-    if (response is Success) {
-      setCartItems(response.response as List<Cart>);
-      // setCarts(response.response);
-    }
+  Future<bool> createCart(Session currentSession) async {
+    var response = await CartApi.createCart(currentSession);
 
+    if (response is Success) {
+      setCart(response.response as Cart);
+      notifyListeners();
+      return true;
+    }
     if (response is Failure) {
       CartError cartError = CartError(
         code: response.code,
         message: response.errorResponse,
       );
-
       setCartError(cartError);
+      notifyListeners();
     }
+    return false;
   }
 
-  void addCartItem(Cart receivedInfo) {
-    // Cart newCart = Cart(
-    //   id: receivedInfo.id,
-    //   userId: receivedInfo.userId,
-    //   CartName: receivedInfo.CartName,
-    //   author: receivedInfo.author,
-    //   boughtDate: receivedInfo.boughtDate,
-    //   description: receivedInfo.description,
-    //   wishlisted: receivedInfo.wishlisted,
-    //   price: receivedInfo.price,
-    //   CartCount: receivedInfo.CartCount,
-    //   postType: receivedInfo.postType,
-    //   postedOn: receivedInfo.postedOn,
-    //   postRating: receivedInfo.postRating,
-    // );
+  Future<bool> getCartInfo(String cartId) async {
+    var response = await CartApi.getCartInfo(cartId);
+    if (response is Success) {
+      setCart(response.response as Cart);
+      setCartItems((response.response as Cart).items as List<CartItem>);
+      notifyListeners();
+      return true;
+    }
+    if (response is Failure) {
+      CartError cartError = CartError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+    }
+    return false;
+  }
 
-    _myCartItems.add(receivedInfo);
+  Future<bool> getCartItems(String cartId) async {
+    var response = await CartApi.getCartItems(cartId);
+    if (response is Success) {
+      setCartItems(response.response as List<CartItem>);
+      notifyListeners();
+      return true;
+    }
+    if (response is Failure) {
+      CartItemError cartItemError = CartItemError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setCartItemError(cartItemError);
+      notifyListeners();
+    }
+    return false;
+  }
+
+  Future<bool> addItemToCart(Cart cart, CartItem receivedInfo) async {
+    setLoading(true);
     notifyListeners();
-  }
-
-  void addCartItems(List<Cart> receivedInfo) {
-    _myCartItems.addAll(receivedInfo);
-    notifyListeners();
-  }
-
-  Future<bool> postCartItem(Session userSession, Cart cartItem) async {
-    var response = await CartApi.postCartItem(userSession, cartItem);
+    var response = await CartApi.addItemToCart(cart, receivedInfo);
+    // print(response);
 
     if (response is Success) {
-      List<Cart> carts = response.response as List<Cart>;
-      cartItem = carts[0];
-
-      _myCartItems.add(cartItem);
-
-      notifyListeners();
-      return true;
-    }
-
-    if (response is Failure) {
-      CartError cartError = CartError(
-        code: response.code,
-        message: response.errorResponse,
-      );
-      setCartError(cartError);
-      notifyListeners();
-      return false;
-    }
-
-    return false;
-  }
-
-  Future<bool> updateCartItem(Session userSession, Cart edittedItem) async {
-    var response = await CartApi.updateCartItem(userSession, edittedItem);
-
-    if (response is Success) {
-      final postIndex =
-          _myCartItems.indexWhere((element) => element.id == edittedItem.id);
-
-      List<Cart> carts = response.response as List<Cart>;
-      _myCartItems[postIndex] = carts[0];
-      notifyListeners();
-      return true;
-    }
-
-    if (response is Failure) {
-      CartError cartError = CartError(
-        code: response.code,
-        message: response.errorResponse,
-      );
-      setCartError(cartError);
-      notifyListeners();
-      return false;
-    }
-
-    return false;
-  }
-
-  Future<bool> deleteCartItem(Session userSession, String cartId) async {
-    var response = await CartApi.deleteCartItem(userSession, cartId);
-    if (response is Success) {
-      final postIndex =
-          _myCartItems.indexWhere((element) => element.id == cartId);
-      _myCartItems.removeAt(postIndex);
+      setCart(response.response as Cart);
+      setCartItems((response.response as Cart).items as List<CartItem>);
+      setLoading(false);
       notifyListeners();
       return true;
     }
@@ -286,27 +152,85 @@ class Carts with ChangeNotifier {
         message: response.errorResponse,
       );
       setCartError(cartError);
+      setLoading(false);
       notifyListeners();
-      return false;
     }
     return false;
   }
 
-  // void createCart(Session currentSession, Cart receivedInfo) async {
-  //   var response = await CartApi.createPost(currentSession, receivedInfo);
+  // Future<bool> postCartItem(Session userSession, CartItem cartItem) async {
+  //   var response = await CartApi.postCartItem(userSession, cartItem);
 
   //   if (response is Success) {
-  //     addPost(response.response as Cart);
+  //     List<Cart> carts = response.response as List<Cart>;
+  //     cartItem = carts[0];
+
+  //     _cartItems.add(cartItem);
+
+  //     notifyListeners();
+  //     return true;
   //   }
+
   //   if (response is Failure) {
-  //     CaartError CaartError = CaartError(
+  //     CartError cartError = CartError(
   //       code: response.code,
   //       message: response.errorResponse,
   //     );
-  //     setCaartError(CaartError);
+  //     setCartError(cartError);
+  //     notifyListeners();
+  //     return false;
   //   }
-  //   notifyListeners();
+
+  //   return false;
   // }
+
+  Future<bool> updateCartItem(String cartId, CartItem edittedItem) async {
+    var response = await CartApi.updateCartItem(cartId, edittedItem);
+
+    if (response is Success) {
+      final postIndex =
+          _cartItems.indexWhere((element) => element.id == edittedItem.id);
+
+      CartItem cartItem = response.response as CartItem;
+      _cartItems[postIndex] = cartItem;
+      notifyListeners();
+      return true;
+    }
+
+    if (response is Failure) {
+      CartItemError cartItemError = CartItemError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setCartItemError(cartItemError);
+      notifyListeners();
+      return false;
+    }
+
+    return false;
+  }
+
+  Future<bool> deleteCartItem(
+      Session userSession, String cartId, String cartItemId) async {
+    var response =
+        await CartApi.deleteCartItem(userSession, cartId, cartItemId);
+    if (response is Success) {
+      final postIndex = _cartItems
+          .indexWhere((element) => element.id == int.parse(cartItemId));
+      _cartItems.removeAt(postIndex);
+      notifyListeners();
+      return true;
+    }
+    if (response is Failure) {
+      CartError cartError = CartError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setCartError(cartError);
+      notifyListeners();
+    }
+    return false;
+  }
 
   // void updateCart(Session currentSession, Cart edittedCart) async {
   //   var response = await CartApi.updatePost(currentSession, edittedPost);
@@ -350,4 +274,8 @@ class Carts with ChangeNotifier {
   //   return false;
   // }
 
+  bool cartItemsContains(int bookId) {
+    return _cartItems.any((element) => element.product.id == bookId);
+  }
 }
+// 622153a0-33b2-4d6c-aaeb-25c2046e56ed

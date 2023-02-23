@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -9,6 +11,8 @@ import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/signup_screen.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../providers/carts.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.title}) : super(key: key);
@@ -93,6 +97,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
           prefs.setString('accessToken', userSession.session!.accessToken);
           prefs.setString('refreshToken', userSession.session!.refreshToken);
+
+          if (!prefs.containsKey('cartId')) {
+            if (await Provider.of<Carts>(context, listen: false)
+                .createCart(userSession.session as Session)) {
+              prefs.setString(
+                  'cartId',
+                  Provider.of<Carts>(context, listen: false)
+                      .cart!
+                      .id
+                      .toString());
+              // print(Provider.of<Carts>(context, listen: false)
+              //     .cart!
+              //     .id
+              //     .toString());
+            } else {
+              print('here');
+            }
+          } else {
+            print('here');
+          }
 
           Navigator.of(context)
               .pushReplacementNamed(HomeScreen.routeName, arguments: {

@@ -67,7 +67,9 @@ import 'package:share_learning/templates/managers/api_values_manager.dart';
 // List<Book> bookFromJson(String str) =>
 //     List<Book>.from(json.decode(str).map((x) => Book.fromJson(x)));
 
-List<Book> bookFromJson(String str) =>
+Book bookFromJson(String str) => Book.fromJson(json.decode(str));
+
+List<Book> booksFromJson(String str) =>
     List<Book>.from(json.decode(str).map((x) {
       Book book = Book.fromJson(x);
 
