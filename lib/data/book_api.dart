@@ -100,6 +100,52 @@ class BookApi {
     }
   }
 
+  static Future<Object> getBookById(Session loggedInUser, String id) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + id + '/');
+
+      var response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        },
+      );
+      print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        // print(json.encode(json.decode(response.body)['data']['posts']));
+
+        return Success(
+          code: response.statusCode,
+          response: bookFromJson(
+            json.encode(json.decode(response.body)),
+          ),
+        );
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //   code: ApiStatusCode.unknownError,
+      //   errorResponse: ApiStrings.unknownErrorString,
+      // );
+    }
+  }
+
   static Future<Object> updatePost(
       Session currentSession, Book updatedPost) async {
     try {
@@ -118,7 +164,6 @@ class BookApi {
       };
       var url =
           Uri.parse(RemoteManager.BASE_URI + '/posts/p/' + updatedPost.id);
-
       var response = await http.patch(
         url,
         headers: {
@@ -131,11 +176,8 @@ class BookApi {
         },
         body: json.encode(postBody),
       );
-
       // print(response.body);
-
       // print(json.encode(json.decode(response.body)['data']['posts'][0]));
-
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(code: response.statusCode, response: bookFromJson(
             // json.encode(json.decode(response.body)['data']['posts'][0])));

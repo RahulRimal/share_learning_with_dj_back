@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
       lastName: 'lastName',
       username: 'username',
       email: 'email',
+      phone: 'phone',
       image: null,
       description: 'description',
       userClass: 'userClass',

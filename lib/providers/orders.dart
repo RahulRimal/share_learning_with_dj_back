@@ -8,9 +8,10 @@ import '../models/order_item.dart';
 import '../models/user.dart';
 
 class Orders with ChangeNotifier {
-  Order? _order;
+  // Order? _order;
+  List<Order> _orders = [];
 
-  List<OrderItem> _orderItems = [];
+  // List<OrderItem> _orderItems = [];
 
   bool _loading = false;
 
@@ -18,19 +19,24 @@ class Orders with ChangeNotifier {
 
   OrderItemError? _orderItemError;
 
-  Order? get order => _order;
-  List<OrderItem> get orderItems => [..._orderItems];
+  // Order? get order => _order;
+  List<Order> get orders => [..._orders];
+  // List<OrderItem> get orderItems => [..._orderItems];
   bool get loading => _loading;
   OrderError? get orderError => _orderError;
   OrderItemError? get orderItemError => _orderItemError;
 
-  setOrder(Order order) {
-    _order = order;
+  // setOrder(Order order) {
+  //   _order = order;
+  // }
+
+  setOrders(List<Order> orders) {
+    _orders = orders;
   }
 
-  setOrderItems(List<OrderItem> orderItems) {
-    _orderItems = orderItems;
-  }
+  // setOrderItems(List<OrderItem> orderItems) {
+  //   _orderItems = orderItems;
+  // }
 
   setLoading(bool loading) {
     _loading = loading;
@@ -44,9 +50,30 @@ class Orders with ChangeNotifier {
     _orderItemError = orderItemError;
   }
 
+  Future<bool> placeOrder(
+      Session loggedInSession, Map<String, dynamic> billingInfo) async {
+    setLoading(true);
+    var response = await OrderApi.placeOrder(loggedInSession, billingInfo);
+    // print(response);
+    if (response is Success) {
+      _orders.add(response.response as Order);
+      setLoading(false);
+      notifyListeners();
+      return true;
+    } else if (response is Failure) {
+      OrderItemError orderItemError =
+          OrderItemError(code: response.code, message: response.errorResponse);
+      setOrderItemError(orderItemError);
+      setLoading(false);
+      notifyListeners();
+    }
+    return false;
+  }
+
   Future<Object> getOrderFromId(Session loggedInSession, int orderId) async {
     var response =
         await OrderApi.getOrderById(loggedInSession, orderId.toString());
+    print(response);
 
     if (response is Success) {
       print('here');
@@ -70,15 +97,16 @@ class Orders with ChangeNotifier {
     return _orderError as OrderError;
   }
 
-  OrderItem getOrderItemById(int id) {
-    return _orderItems.firstWhere((element) => element.id == id);
-  }
+  // OrderItem getOrderItemById(int id) {
+  //   return _orderItems.firstWhere((element) => element.id == id);
+  // }
 
-  Future<bool> getUserOrder(Session loggedInSession, User loggedInUser) async {
+  Future<bool> getUserOrders(Session loggedInSession, User loggedInUser) async {
     setLoading(true);
-    var response = await OrderApi.getUserOrder(loggedInSession, loggedInUser);
+    var response = await OrderApi.getUserOrders(loggedInSession, loggedInUser);
+    print(response);
     if (response is Success) {
-      setOrder(response.response as Order);
+      // setOrder(response.response as Order);
       setLoading(false);
       notifyListeners();
       return true;
@@ -100,7 +128,7 @@ class Orders with ChangeNotifier {
     var response = await OrderApi.addOrderItem(order, item);
     // print(response);
     if (response is Success) {
-      _orderItems.add(response.response as OrderItem);
+      // _orderItems.add(response.response as OrderItem);
       setLoading(false);
       notifyListeners();
       return true;
@@ -114,7 +142,7 @@ class Orders with ChangeNotifier {
     return false;
   }
 
-  bool orderItemsContains(int bookId) {
-    return _orderItems.any((element) => element.productId == bookId);
-  }
+  // bool orderItemsContains(int bookId) {
+  //   return _orderItems.any((element) => element.productId == bookId);
+  // }
 }

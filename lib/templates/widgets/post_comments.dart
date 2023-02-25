@@ -35,6 +35,7 @@ class PostComments extends StatelessWidget {
     firstName: 'temp',
     lastName: 'Name',
     email: '',
+    phone: null,
     image: null,
     username: 'temp',
     description: '',
@@ -421,7 +422,11 @@ class PostComments extends StatelessWidget {
                                           ],
                                         ),
                                       );
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return Container();
                                     } else {
+                                      // print(snapshot);
                                       return Container(
                                         child: Text('No data'),
                                       );

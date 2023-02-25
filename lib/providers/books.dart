@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:share_learning/data/book_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
@@ -169,6 +170,12 @@ class Books with ChangeNotifier {
 
   Book getBookById(String bookId) {
     return books.firstWhere((book) => book.id == bookId);
+  }
+
+  Future<void> getBookByIdFromServer(
+      Session loggedInSession, String bookId) async {
+    var response = await BookApi.getBookById(loggedInSession, bookId);
+    print(response);
   }
 
   List<Book> postsByUser(String userId) {

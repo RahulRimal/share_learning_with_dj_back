@@ -8,6 +8,9 @@ import 'package:share_learning/models/order_item.dart';
 
 Order orderFromJson(String str) => Order.fromJson(json.decode(str));
 
+List<Order> ordersFromJson(String str) =>
+    List<Order>.from(json.decode(str).map((x) => Order.fromJson(x)));
+
 String orderToJson(Order data) => json.encode(data.toJson());
 
 class Order {
@@ -29,6 +32,7 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         id: json["id"],
+        // customerId: json["customer"],
         customerId: json["customer"]["id"],
         items: List<OrderItem>.from(
             json["items"].map((x) => OrderItem.fromJson(x))),

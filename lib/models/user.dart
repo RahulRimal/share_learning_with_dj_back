@@ -41,6 +41,7 @@ class User {
       required this.lastName,
       required this.username,
       required this.email,
+      required this.phone,
       required this.description,
       required this.userClass,
       required this.followers,
@@ -54,6 +55,7 @@ class User {
   String? username;
   // String email;
   String? email;
+  String? phone;
   // String description;
   String? description;
 
@@ -73,6 +75,7 @@ class User {
         lastName: json["last_name"] == null ? null : json["last_name"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
+        phone: json["phone"] == null ? null : json["phone"],
         // image: json["image"] == null ? null : RemoteManager.BASE_URI + json["image"],
         image: json["image"] == null ? null : json["image"],
         description: json["description"] == null ? null : json["description"],
@@ -87,6 +90,7 @@ class User {
         "name": firstName + lastName,
         "username": username == null ? null : username,
         "email": email == null ? null : email,
+        "phone": phone == null ? null : phone,
         "description": description == null ? null : description,
         "class": userClass == null ? null : userClass,
         "followers": followers == null ? null : followers,

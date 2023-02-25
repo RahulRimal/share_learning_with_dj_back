@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
+import 'package:path/path.dart';
 import 'package:share_learning/data/comment_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
@@ -21,8 +22,10 @@ import 'package:share_learning/models/session.dart';
 //   });
 // }
 
-List<Comment> commentFromJson(String str) =>
+List<Comment> commentsFromJson(String str) =>
     List<Comment>.from(json.decode(str).map((x) => Comment.fromJson(x)));
+
+Comment commentFromJson(String str) => Comment.fromJson(json.decode(str));
 
 String commentToJson(List<Comment> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -184,7 +187,7 @@ class Comments with ChangeNotifier {
 
       // _comments[postIndex] = edittedComment;
 
-      _comments.add(response as Comment);
+      _comments.add(response.response as Comment);
 
       notifyListeners();
 

@@ -21,12 +21,15 @@ class CommentApi {
         url,
       );
 
+      // print(response);
+
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
             code: response.statusCode,
             // response: commentFromJson(
             //     json.encode(json.decode(response.body)['data']['replies'])));
-            response: commentFromJson(json.encode(json.decode(response.body))));
+            response:
+                commentsFromJson(json.encode(json.decode(response.body))));
       }
 
       return Failure(

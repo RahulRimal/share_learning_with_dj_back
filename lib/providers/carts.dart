@@ -26,7 +26,7 @@ class Carts with ChangeNotifier {
   CartError? get cartError => _cartError;
   CartItemError? get cartItemError => _cartItemError;
 
-  setCart(Cart cart) {
+  setCart(Cart? cart) {
     _cart = cart;
     // notifyListeners();
   }

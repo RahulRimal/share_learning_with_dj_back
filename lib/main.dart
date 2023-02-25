@@ -91,6 +91,7 @@ class MyApp extends StatelessWidget {
                 UserProfileEditScreen.routeName: (context) =>
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
+                OrderScreen.routeName: (context) => OrderScreen(),
               },
             )
           : MaterialApp(
@@ -122,7 +123,7 @@ class MyApp extends StatelessWidget {
                 UserProfileEditScreen.routeName: (context) =>
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
-                // OrderScreen.routeName: (context) => OrderScreen(),
+                OrderScreen.routeName: (context) => OrderScreen(),
               },
             ),
     );

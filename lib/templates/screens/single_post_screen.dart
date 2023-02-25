@@ -65,6 +65,7 @@ class SinglePostScreen extends StatelessWidget {
     firstName: 'temp',
     lastName: 'Name',
     email: '',
+    phone: null,
     image: null,
     username: 'temp',
     description: '',
@@ -1007,7 +1008,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),
-                            ))
+                            ),
+                          )
                         : ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               // primary: Colors.black,

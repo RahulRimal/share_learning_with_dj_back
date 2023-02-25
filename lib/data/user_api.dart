@@ -61,6 +61,7 @@ class UserApi {
       String accessToken = prefs.getString('accessToken').toString();
 
       var url = Uri.parse(RemoteManager.BASE_URI + '/customers/' + userId);
+      // var url = Uri.parse(RemoteManager.BASE_URI + '/users/' + userId);
 
       var response = await http.get(url, headers: {
         HttpHeaders.authorizationHeader: 'SL ' + accessToken,
@@ -69,6 +70,8 @@ class UserApi {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         HttpHeaders.contentTypeHeader: "application/json",
       });
+
+      // print(response);
 
       // print(json.encode(json.decode(response.body)['data']['user'][0]));
 
