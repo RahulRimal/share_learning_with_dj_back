@@ -194,12 +194,12 @@ class SinglePostScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.all(0),
-            child: loggedInUser.id == selectedPost.userId
+            // child: loggedInUser.id == selectedPost.userId
+            child: context.watch<Users>().user!.id == selectedPost.userId
                 // child: '1' == selectedPost.userId
                 ? IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () async {
-                      print('he');
                       // Navigator.of(context)
                       //     .pushNamed(EditPostScreen.routeName, arguments: {
                       //   'bookId': bookId,
@@ -236,7 +236,7 @@ class SinglePostScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(0),
             // child: loggedInUserSession.userId == selectedPost.userId
-            child: '1' == selectedPost.userId
+            child: context.watch<Users>().user!.id == selectedPost.userId
                 ? IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
@@ -247,16 +247,7 @@ class SinglePostScreen extends StatelessWidget {
                           });
                     },
                   )
-                : IconButton(
-                    icon: Icon(Icons.shop),
-                    onPressed: () {
-                      // Navigator.of(context).pushNamed(EditPostScreen.routeName,
-                      //     arguments: {
-                      //       'bookId': bookId,
-                      //       'loggedInUserSession': loggedInUserSession
-                      //     });
-                    },
-                  ),
+                : null,
           ),
         ],
       ),

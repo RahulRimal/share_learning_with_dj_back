@@ -88,7 +88,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
   _retrieveImage(Book post) {
     if (post.pictures != null) {
       for (int i = 0; i < post.pictures!.length; i++) {
-        actualImages.add(post.pictures![i]);
+        actualImages.add(post.pictures![i]['image']);
       }
     }
 

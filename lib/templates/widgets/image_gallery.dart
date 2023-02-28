@@ -34,8 +34,8 @@ class _ImageGalleryState extends State<ImageGallery> {
 
     return // Image Gallery Starts Here
         Container(
-      // height: 150,
-      // height: 300,
+      // height: widget.bookId is String ? 150 : 1,
+      height: 280,
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: 5,
@@ -47,6 +47,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                   children: [
                     Container(
                       height: 150,
+                      // height: 320,
                       child: ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
@@ -82,7 +83,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                     (selectedPost.userId ==
                             Provider.of<Users>(context, listen: false).user!.id)
                         ? Container(
-                            // height: 150,
+                            height: 50,
                             child: Column(
                               children: [
                                 // Text(
@@ -133,6 +134,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                 )
           : widget.images!.isNotEmpty
               ? ListView.builder(
+                  shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemCount: widget.images!.length,
                   itemBuilder: (context, index) =>
