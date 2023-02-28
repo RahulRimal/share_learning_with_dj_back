@@ -6,6 +6,8 @@ import 'package:share_learning/models/book.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/templates/widgets/custom_image.dart';
 
+import '../../providers/users.dart';
+
 // ignore: must_be_immutable
 class ImageGallery extends StatefulWidget {
   var bookId;
@@ -28,10 +30,12 @@ class _ImageGalleryState extends State<ImageGallery> {
     Book? selectedPost = widget.bookId != null
         ? Provider.of<Books>(context).getBookById(widget.bookId!)
         : null;
+    // : Provider.of<Books>(context).getBookByIdFromServer(loggedInSession, bookId)
 
     return // Image Gallery Starts Here
         Container(
-      height: 150,
+      // height: 150,
+      // height: 300,
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: 5,
@@ -39,34 +43,83 @@ class _ImageGalleryState extends State<ImageGallery> {
       ),
       child: selectedPost != null
           ? selectedPost.pictures != null
-              ? ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: selectedPost.pictures!.length,
-                  itemBuilder: (context, index) =>
-                      // Post Image Starts Here
-                      Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Container(
-                      width: 150,
+              ? Column(
+                  children: [
+                    Container(
                       height: 150,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: selectedPost.pictures!.length,
+                        itemBuilder: (context, index) =>
+                            // Post Image Starts Here
+                            Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container(
+                            width: 150,
+                            height: 75,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                            child: CustomImage(
+                              imageUrl: widget.isNetwork
+                                  ? selectedPost.pictures![index]['image']
+                                  : selectedPost.pictures![index].name,
+                              isNetwork: widget.isNetwork,
+                              isErasable: widget.isErasable,
+                              eraseImage: this.widget.eraseImage,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: CustomImage(
-                        imageUrl: widget.isNetwork
-                            ? selectedPost.pictures![index]
-                            : selectedPost.pictures![index].name,
-                        isNetwork: widget.isNetwork,
-                        isErasable: widget.isErasable,
-                        eraseImage: this.widget.eraseImage,
+                        // Post Image ends Here,
                       ),
                     ),
-                  ),
-                  // Post Image ends Here,
+                    // Edit images starts here
+                    (selectedPost.userId ==
+                            Provider.of<Users>(context, listen: false).user!.id)
+                        ? Container(
+                            // height: 150,
+                            child: Column(
+                              children: [
+                                // Text(
+                                //   'Edit',
+                                //   style: TextStyle(
+                                //     fontWeight: FontWeight.bold,
+                                //   ),
+                                // ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton(
+                                      child: Text('Add or remove images'),
+                                      style: ButtonStyle(),
+                                      onPressed: () {
+                                        // _getPicture();
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    // ElevatedButton(
+                                    //   child: Text('From Camera'),
+                                    //   style: ButtonStyle(),
+                                    //   onPressed: () {
+                                    //     _takePicture();
+                                    //   },
+                                    // ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
+
+                    // Edit images ends here
+                  ],
                 )
               : Center(
                   child: Text(
@@ -78,7 +131,6 @@ class _ImageGalleryState extends State<ImageGallery> {
                     ),
                   ),
                 )
-          // : widget.images != null
           : widget.images!.isNotEmpty
               ? ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -98,10 +150,9 @@ class _ImageGalleryState extends State<ImageGallery> {
                         ),
                       ),
                       child: CustomImage(
-                        // imageUrl: widget.images![index]['image'] != null? widget.images![index]['image']: widget.images![index],
-                        imageUrl: widget.images![index] is String ? widget.images![index]: widget.images![index]['image'],
-                        // imageUrl: widget.images![index],
-                        // imageUrl: widget.images![index]['image'],
+                        imageUrl: widget.images![index] is String
+                            ? widget.images![index]
+                            : widget.images![index]['image'],
                         isNetwork: widget.isNetwork,
                         isErasable: widget.isErasable,
                         eraseImage: this.widget.eraseImage,
