@@ -142,10 +142,6 @@ class OrderList extends StatelessWidget {
         ? ListView.builder(
             itemCount: orders.orders.length,
             itemBuilder: (context, index) {
-              // return CartItem(
-              //   cartItem: orders.orderItems[index],
-              // );
-              // return OrderItemWidget(orderItem: orders.orders[index].items[index]);
               return ListView.builder(
                   itemCount: orders.orders[index].items.length,
                   itemBuilder: (context, idx) {
@@ -188,13 +184,14 @@ class OrderList extends StatelessWidget {
                               itemCount: orders.orders.length,
                               itemBuilder: (context, index) {
                                 return ListView.builder(
-                                    itemCount:
-                                        orders.orders[index].items.length,
-                                    itemBuilder: (context, idx) {
-                                      return OrderItemWidget(
-                                          orderItem:
-                                              orders.orders[index].items[idx]);
-                                    });
+                                  shrinkWrap: true,
+                                  itemCount: orders.orders[index].items.length,
+                                  itemBuilder: (context, idx) {
+                                    return OrderItemWidget(
+                                        orderItem:
+                                            orders.orders[index].items[idx]);
+                                  },
+                                );
                               },
                             );
                     },

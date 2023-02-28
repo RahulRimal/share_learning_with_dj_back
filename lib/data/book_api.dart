@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/session.dart';
@@ -110,7 +111,7 @@ class BookApi {
           HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
         },
       );
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         // print(json.encode(json.decode(response.body)['data']['posts']));
@@ -205,19 +206,20 @@ class BookApi {
   static Future<Object> createPost(Session currentSession, Book newPost) async {
     try {
       Map<String, String> postBody = {
-        "userId": newPost.userId,
-        "bookName": newPost.bookName,
+        "user_id": newPost.userId,
+        "book_name": newPost.bookName,
         "author": newPost.author,
         "description": newPost.description,
-        "boughtDate": newPost.boughtDate.toIso8601String(),
-        "price": newPost.price.toString(),
-        "bookCount": newPost.bookCount.toString(),
+        // "bought_date": newPost.boughtDate.toIso8601String(),
+        "bought_date": DateFormat('yyyy-MM-dd').format(newPost.boughtDate),
+        "unit_price": newPost.price.toString(),
+        "book_count": newPost.bookCount.toString(),
         "wishlisted": newPost.wishlisted ? '2' : '1',
-        "postType": newPost.postType,
-        "postRating": newPost.postRating,
-        "postedOn": newPost.postedOn.toIso8601String()
+        "post_type": newPost.postType,
+        "post_rating": newPost.postRating,
+        // "postedOn": newPost.postedOn.toIso8601String()
       };
-      var url = Uri.parse(RemoteManager.BASE_URI + '/posts');
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/');
 
       var response = await http.post(
         url,
@@ -232,7 +234,7 @@ class BookApi {
         body: json.encode(postBody),
       );
 
-      // print(response.body);
+      print(response.body);
 
       // print(json.encode(json.decode(response.body)['data']['posts'][0]));
       if (response.statusCode == ApiStatusCode.responseCreated) {

@@ -25,7 +25,7 @@ class OrderItemWidget extends StatefulWidget {
 class _OrderItemWidgetState extends State<OrderItemWidget> {
   late bool _orderItemChanged;
   late int _quantity;
-  late bool _wishlisted;
+  // late bool _wishlisted;
   late OrderItem _edittedItem;
 
   _ifOrderItemChanged() {
@@ -341,7 +341,6 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
     //                                               : () {
     //                                                   _quantity--;
     //                                                   _ifOrderItemChanged();
-
     //                                                   // _edittedItem.bookCount =
     //                                                   //     _quantity;
     //                                                 },
@@ -378,11 +377,9 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
     //                                           onPressed: () {
     //                                             _quantity++;
     //                                             _ifOrderItemChanged();
-
     //                                             // _edittedItem.bookCount =
     //                                             //     _quantity;
     //                                           },
-
     //                                           icon: Container(
     //                                             width: AppSize.s40,
     //                                             alignment: Alignment.center,
@@ -429,9 +426,11 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
     //     });
 
     return ListView.builder(
+      shrinkWrap: true,
       itemCount: _orders.orders.length,
       itemBuilder: (context, index) {
         return ListView.builder(
+          shrinkWrap: true,
           itemCount: _orders.orders[index].items.length,
           itemBuilder: (context, idx) {
             final OrderItem orderedItem = _orders.orders[index].items[idx];
@@ -476,6 +475,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                                     bottom: 16.00,
                                   ),
                                   child: Image.network(
+                                    // orderedBook.pictures![0],
                                     'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg',
                                     width: 100.0,
                                     height: 100.0,
@@ -518,108 +518,44 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                                                 ),
                                               ),
                                             ),
+                                            // Padding(
+                                            //   padding: EdgeInsets.only(
+                                            //     bottom: 12.00,
+                                            //   ),
+                                            //   child: Container(
+                                            //     height: 24.00,
+                                            //     width: 24.00,
+                                            //     child: IconButton(
+                                            //       icon: Icon(
+                                            //         _wishlisted
+                                            //             ? Icons.favorite
+                                            //             : Icons.favorite_border,
+                                            //         color: ColorManager.primary,
+                                            //       ),
+                                            //       onPressed: () {
+                                            //         _wishlisted = !_wishlisted;
+                                            //         _ifOrderItemChanged();
+                                            //         // _edittedItem.wishlisted =
+                                            //         //     _wishlisted;
+                                            //       },
+                                            //     ),
+                                            //   ),
+                                            // ),
                                             Padding(
                                               padding: EdgeInsets.only(
                                                 bottom: 12.00,
                                               ),
                                               child: Container(
-                                                height: 24.00,
-                                                width: 24.00,
-                                                child: IconButton(
-                                                  icon: Icon(
-                                                    _wishlisted
-                                                        ? Icons.favorite
-                                                        : Icons.favorite_border,
-                                                    color: ColorManager.primary,
+                                                child: Expanded(
+                                                  // child: Text(
+                                                  //   "Total: " +
+                                                  //       orderedBook.price
+                                                  //           .toString(),
+                                                  // ),
+                                                  child: Text(
+                                                    orderedBook.price
+                                                        .toString(),
                                                   ),
-                                                  onPressed: () {
-                                                    _wishlisted = !_wishlisted;
-                                                    _ifOrderItemChanged();
-                                                    // _edittedItem.wishlisted =
-                                                    //     _wishlisted;
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                bottom: 12.00,
-                                              ),
-                                              child: Container(
-                                                height: 24.00,
-                                                width: 24.00,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.delete),
-                                                  onPressed: () {
-                                                    bool userConfirmed = false;
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          AlertDialog(
-                                                        title: Text(
-                                                            'Are you sure?'),
-                                                        content: Text(
-                                                          'This will remove the item from  your cart',
-                                                          style:
-                                                              getRegularStyle(
-                                                            fontSize:
-                                                                FontSize.s16,
-                                                            color: ColorManager
-                                                                .black,
-                                                          ),
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: Text(
-                                                              'Yes',
-                                                              style:
-                                                                  getBoldStyle(
-                                                                fontSize:
-                                                                    FontSize
-                                                                        .s16,
-                                                                color:
-                                                                    ColorManager
-                                                                        .primary,
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              userConfirmed =
-                                                                  true;
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                          TextButton(
-                                                            child: Text(
-                                                              'No',
-                                                              style:
-                                                                  getBoldStyle(
-                                                                fontSize:
-                                                                    FontSize
-                                                                        .s16,
-                                                                // color: ColorManager.primary,
-                                                                color: Colors
-                                                                    .green,
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ).then((_) {
-                                                      if (userConfirmed) {
-                                                        // _deleteCartItem(
-                                                        //   authendicatedSession,
-                                                        //   widget.cartItem.id,
-                                                        // );
-                                                      }
-                                                    });
-                                                  },
                                                 ),
                                               ),
                                             ),
@@ -645,7 +581,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                                               ),
                                               child: Text(
                                                 // "Rs. ${widget.orderItem. * widget.cartItem.bookCount}",
-                                                "test rupees",
+                                                "Rs. ${_edittedItem.quantity * orderedBook.price}",
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
                                                 style: TextStyle(
@@ -658,82 +594,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                                               ),
                                             ),
                                             Container(
-                                              child: ButtonBar(
-                                                children: [
-                                                  IconButton(
-                                                    color: Colors.black,
-                                                    onPressed: _quantity < 2
-                                                        ? null
-                                                        : () {
-                                                            _quantity--;
-                                                            _ifOrderItemChanged();
-
-                                                            // _edittedItem.bookCount =
-                                                            //     _quantity;
-                                                          },
-                                                    icon: Container(
-                                                      width: AppSize.s40,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            ColorManager.black,
-                                                      ),
-                                                      child: Text(
-                                                        '-',
-                                                        style: getBoldStyle(
-                                                            color: ColorManager
-                                                                .white,
-                                                            fontSize:
-                                                                FontSize.s20),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    // '1',
-                                                    _quantity.toString(),
-                                                    style: getBoldStyle(
-                                                      color:
-                                                          ColorManager.primary,
-                                                      fontSize: FontSize.s20,
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    // color: ColorManager.primary,
-                                                    color: Colors.black,
-                                                    // onPressed: () {},
-                                                    // icon: Icon(
-                                                    //   Icons.miscellaneous_services,
-                                                    // ),
-                                                    // onPressed: _incrementQuantity(),
-                                                    onPressed: () {
-                                                      _quantity++;
-                                                      _ifOrderItemChanged();
-
-                                                      // _edittedItem.bookCount =
-                                                      //     _quantity;
-                                                    },
-
-                                                    icon: Container(
-                                                      width: AppSize.s40,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            ColorManager.black,
-                                                      ),
-                                                      child: Text(
-                                                        '+',
-                                                        style: getBoldStyle(
-                                                            color: ColorManager
-                                                                .white,
-                                                            fontSize:
-                                                                FontSize.s17),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                              child: Text(
+                                                  "Quantity: ${_edittedItem.quantity}"),
                                             ),
                                           ],
                                         ),
@@ -752,11 +614,19 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                           ],
                         ),
                       );
-                    } else if (snapshot.data is OrderError) {
+                      // } else if (snapshot.data is OrderError) {
+                      //   Center(
+                      //       child: Container(
+                      //     child: Text(
+                      //         (snapshot.data as OrderError).message.toString()),
+                      //   ));
+                      // }
+                    } else if (snapshot.data is OrderItemError) {
                       Center(
                           child: Container(
-                        child: Text(
-                            (snapshot.data as OrderError).message.toString()),
+                        child: Text((snapshot.data as OrderItemError)
+                            .message
+                            .toString()),
                       ));
                     }
                     return Container();

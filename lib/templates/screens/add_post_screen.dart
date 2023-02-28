@@ -136,6 +136,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     _form.currentState!.save();
     _edittedBook.postType = ispostType ? 'S' : 'B';
     _edittedBook.pictures = _storedImages;
+    _edittedBook.postRating = 0.toString();
     Books books = Provider.of<Books>(context, listen: false);
 
     if (await books.createPost(loggedInUser, _edittedBook)) {

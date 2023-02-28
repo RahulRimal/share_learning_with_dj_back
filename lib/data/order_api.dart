@@ -122,7 +122,7 @@ class OrderApi {
       var response = await http.get(url, headers: {
         HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
       });
-      print(response);
+      // print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(

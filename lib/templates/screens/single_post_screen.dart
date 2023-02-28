@@ -452,6 +452,47 @@ class SinglePostScreen extends StatelessWidget {
                     ),
 
               // Image Gallery Ends Here
+              // Add or edit images starts here
+
+              (selectedPost.pictures!.length <= 0) &&
+                      (selectedPost.duserId == loggedInUser.id)
+                  ? Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Add Images',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                child: Text('From Gallery'),
+                                style: ButtonStyle(),
+                                onPressed: () {
+                                  // _getPicture();
+                                },
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              // ElevatedButton(
+                              //   child: Text('From Camera'),
+                              //   style: ButtonStyle(),
+                              //   onPressed: () {
+                              //     _takePicture();
+                              //   },
+                              // ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
+
+              // Add or edit images ends here
 
               // Comments Starts here
               Container(

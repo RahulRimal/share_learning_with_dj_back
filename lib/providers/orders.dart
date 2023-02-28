@@ -104,8 +104,9 @@ class Orders with ChangeNotifier {
   Future<bool> getUserOrders(Session loggedInSession, User loggedInUser) async {
     setLoading(true);
     var response = await OrderApi.getUserOrders(loggedInSession, loggedInUser);
-    print(response);
+    // print(response);
     if (response is Success) {
+      setOrders(response.response as List<Order>);
       // setOrder(response.response as Order);
       setLoading(false);
       notifyListeners();
