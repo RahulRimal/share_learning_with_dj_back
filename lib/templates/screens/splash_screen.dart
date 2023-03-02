@@ -15,6 +15,8 @@ import 'package:share_learning/templates/screens/onboarding_screen.dart';
 import 'package:share_learning/templates/utils/internet_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../providers/users.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -76,9 +78,13 @@ class _SplashScreenState extends State<SplashScreen> {
       SessionProvider sessions =
           Provider.of<SessionProvider>(context, listen: false);
       Carts carts = Provider.of<Carts>(context, listen: false);
+      Users users = Provider.of<Users>(context, listen: false);
 
       sessions.setSession(
           new Session(accessToken: accessToken, refreshToken: refreshToken));
+
+      await users.getUserByToken(accessToken);
+      // print(users);
 
       if (prefs.containsKey('cartId')) {
         // print(prefs.getString('cartId'));

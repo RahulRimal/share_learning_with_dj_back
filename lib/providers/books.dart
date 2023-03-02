@@ -254,7 +254,7 @@ class Books with ChangeNotifier {
     var response = await BookApi.createPost(currentSession, receivedInfo);
 
     if (response is Success) {
-      addPost((response.response as List<Book>)[0]);
+      addPost(response.response as Book);
       // addPost(response.response as Book);
       // notifyListeners();
       return true;
@@ -277,15 +277,21 @@ class Books with ChangeNotifier {
     List<String> images = [];
 
     for (var i = 0; i < book.pictures!.length; i++) {
-      // images.add(book.pictures![i].toString());
       images.add(book.pictures![i].path);
     }
 
     book.pictures = images;
 
     var response = await BookApi.postPictures(userSession, book);
+    // print(response);
     if (response is Success) {
-      // setBooks(response.response as Book);
+      if (_myBooks.contains(response.response)) {
+        // _myBooks.remove(response.response);
+        setLoading(false);
+        notifyListeners();
+        return true;
+      }
+      _myBooks.add(response.response as Book);
       setLoading(false);
       notifyListeners();
       return true;

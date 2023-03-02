@@ -13,7 +13,10 @@ import 'package:share_learning/providers/books.dart';
 // import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
+import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
+
+import '../../providers/users.dart';
 
 class AddPostScreen extends StatefulWidget {
   static const routeName = '/add-post';
@@ -137,16 +140,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
     _edittedBook.postType = ispostType ? 'S' : 'B';
     _edittedBook.pictures = _storedImages;
     _edittedBook.postRating = 0.toString();
+    _edittedBook.userId = Provider.of<Users>(context, listen: false).user!.id;
     Books books = Provider.of<Books>(context, listen: false);
 
     if (await books.createPost(loggedInUser, _edittedBook)) {
       if (_storedImages != null) {
         _edittedBook = books.books.last;
         _edittedBook.pictures = _storedImages;
-        await books.updatePictures(loggedInUser, _edittedBook).then((value) {
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-        });
+
+        return await books.updatePictures(loggedInUser, _edittedBook);
+        // await books.updatePictures(loggedInUser, _edittedBook).then((value) {
+        // Navigator.of(context).pop();
+        // Navigator.of(context).pop();
+        // });
 
         // Center(
         //   child: CircularProgressIndicator(),
@@ -206,6 +212,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   align: Alignment(1, 1),
                   hideCloseButton: true,
                 );
+                Navigator.pushReplacementNamed(context, HomeScreen.routeName,
+                    arguments: {'authSession': loggedInUserSession});
               }
             },
           ),
@@ -631,6 +639,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           titleStyle: getBoldStyle(color: ColorManager.white),
                           align: Alignment(1, 1),
                         );
+                        Navigator.pushReplacementNamed(
+                            context, HomeScreen.routeName,
+                            arguments: {'authSession': loggedInUserSession});
                       } else {
                         BotToast.showSimpleNotification(
                           title: 'Couldn\'t post your book, please try again!!',
@@ -640,6 +651,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           align: Alignment(1, 1),
                           hideCloseButton: true,
                         );
+                        Navigator.pushReplacementNamed(
+                            context, HomeScreen.routeName,
+                            arguments: {'authSession': loggedInUserSession});
                       }
                     },
                     child: Text(

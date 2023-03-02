@@ -49,8 +49,8 @@ class User {
       required this.image});
 
   String id;
-  String firstName;
-  String lastName;
+  String? firstName;
+  String? lastName;
   // String username;
   String? username;
   // String email;
@@ -66,7 +66,7 @@ class User {
   // String followers;
   String? followers;
 
-  DateTime createdDate;
+  DateTime? createdDate;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         // id: json["id"] == null ? null : json["id"],
@@ -81,20 +81,24 @@ class User {
         description: json["description"] == null ? null : json["description"],
         userClass: json["user_class"] == null ? null : json["user_class"],
         followers: json["followers"] == null ? null : json["followers"],
-        // createdDate: json["createdDate"] == null ? null : DateTime.parse(json["createdDate"]),
-        createdDate: DateTime.parse(json["created_at"]),
+        createdDate: json["createdDate"] == null
+            ? null
+            : DateTime.parse(json["createdDate"]),
+        // createdDate: DateTime.parse(json["created_at"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "name": firstName + lastName,
+        "name": firstName.toString() + lastName.toString(),
         "username": username == null ? null : username,
         "email": email == null ? null : email,
         "phone": phone == null ? null : phone,
         "description": description == null ? null : description,
         "class": userClass == null ? null : userClass,
         "followers": followers == null ? null : followers,
-        "createdDate": createdDate.toIso8601String(),
+        "createdDate":
+            createdDate == null ? null : createdDate!.toIso8601String(),
+        // "createdDate": createdDate!.toIso8601String(),
 
         // "id": id == null ? null : id,
         // "name": (firstName == null && lastName == null)

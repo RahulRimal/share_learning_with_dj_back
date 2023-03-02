@@ -226,7 +226,7 @@ class AppDrawer extends StatelessWidget {
                                     ),
                                     SizedBox(height: 10),
                                     Text(
-                                      users.user!.firstName,
+                                      users.user!.firstName.toString(),
                                       style: getBoldStyle(
                                           color: ColorManager.black,
                                           fontSize: FontSize.s18),
@@ -526,7 +526,7 @@ class AppDrawer extends StatelessWidget {
                             SizedBox(height: 10),
                             Text(
                               // users.user!.firstName,
-                              loggedInUser!.firstName,
+                              loggedInUser!.firstName.toString(),
                               style: getBoldStyle(
                                   color: ColorManager.black,
                                   fontSize: FontSize.s18),

@@ -13,6 +13,7 @@ import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../providers/carts.dart';
+import '../../providers/users.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.title}) : super(key: key);
@@ -94,9 +95,12 @@ class _LoginScreenState extends State<LoginScreen> {
           // SharedPreferences _prefs = await SharedPreferences.getInstance();
           SharedPreferences prefs = await _prefs;
           // prefs = await SharedPreferences.getInstance();
+          Users users = Provider.of<Users>(context, listen: false);
 
           prefs.setString('accessToken', userSession.session!.accessToken);
           prefs.setString('refreshToken', userSession.session!.refreshToken);
+
+          await users.getUserByToken(userSession.session!.accessToken);
 
           if (!prefs.containsKey('cartId')) {
             if (await Provider.of<Carts>(context, listen: false)

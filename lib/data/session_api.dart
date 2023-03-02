@@ -47,9 +47,9 @@ class SessionApi {
     }
   }
 
-  static Future<Object> postSession(String userName, String password) async {
+  static Future<Object> postSession(String email, String password) async {
     try {
-      Map<String, String> postBody = {"email": userName, "password": password};
+      Map<String, String> postBody = {"email": email, "password": password};
       // var url = Uri.parse('http://localhost/apiforsharelearn/sessions');
       var url = Uri.parse(RemoteManager.BASE_URI + '/auth/jwt/create');
 

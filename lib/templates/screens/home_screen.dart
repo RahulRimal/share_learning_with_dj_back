@@ -45,15 +45,35 @@ class _HomeScreenState extends State<HomeScreen> {
     _user = user;
   }
 
+  // Future<User?> _getSessionUser(Users users, loggedInSession) async {
+  //   await users.getUserByToken(loggedInSession.accessToken).then((value) {
+  //     _user = users.user as User;
+  //     return users.user;
+  //   });
+  //   if (users.user != null) {
+  //     _user = users.user as User;
+  //     return users.user;
+  //   } else {
+  //     await users.getUserByToken(loggedInSession.accessToken).then((value) {
+  //       _user = users.user as User;
+  //       return users.user;
+  //     });
+  //     _user = users.user as User;
+  //     return users.user;
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     final Session authenticatedSession = args['authSession'] as Session;
 
     Users _users = context.watch<Users>();
+    _user = _users.user as User;
     Books _books = context.watch<Books>();
 
     Orders _orders = context.watch<Orders>();
+    // _getSessionUser(_users, authenticatedSession);
 
     return Platform.isIOS
         ? CupertinoPageScaffold(

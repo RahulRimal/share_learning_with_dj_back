@@ -172,6 +172,7 @@ class Users with ChangeNotifier {
   Future<bool> createNewUser(User user, String password) async {
     setLoading(true);
     var response = await UserApi.createUser(user, password);
+    // print(response);
     if (response is Success) {
       setUser(response.response as User);
       setLoading(false);

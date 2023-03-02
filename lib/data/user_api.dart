@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
@@ -26,6 +27,7 @@ class UserApi {
       });
 
       // print(json.encode(json.decode(response.body)['data']['user'][0]));
+      // print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
@@ -103,52 +105,33 @@ class UserApi {
 
   static Future<Object> createUser(User user, String password) async {
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI + '/users');
-
-      // print(user.username.toString());
+      var url = Uri.parse(RemoteManager.BASE_URI + '/auth/users/');
 
       Map<String, dynamic> postBody = {
         "username": user.username.toString(),
         "email": user.email.toString(),
         "password": password,
-        "firstName": user.firstName.toString(),
-        "lastName": user.lastName.toString(),
-        "description": user.description.toString(),
+        // "firstName": user.firstName.toString(),
+        // "lastName": user.lastName.toString(),
+        // "description": user.description.toString(),
         // "avatar": user.image as File,
         // "avatar": user.image == null ? null : user.image as File,
         // "picture": user.image == null ? null : user.image.toString(),
-        "picture": user.image == null ? null : user.image.toString(),
-        "class": user.userClass.toString(),
+        // "picture": user.image == null ? null : user.image.toString(),
+        // "class": user.userClass.toString(),
       };
-
-      // Map<String, String> postHeaders = {
-      // "Content-Type": "application/json; charset=utf-8",
-      // "Content-Type": "application/json",
-      // HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
-      // HttpHeaders.contentTypeHeader: "application/json",
-      // };
 
       var response = await http.post(
         url,
-        // headers: postHeaders,
         headers: {
-          HttpHeaders.authorizationHeader:
-              'ZjNlNTU5OGYyNTk4ZjMwMTQ1MTNkZDFlYzI5MGY3MzNiOTRjNzc1YmRkNTM2N2YxMzEzNjM1MzAzODM0MzczMTM5MzA=',
-          // "Accept": "application/json",
           "Accept": "application/json; charset=utf-8",
-          // "Accept": "application/json; charset=UTF-8",
+
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work
           "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-          // "Content-Type": "application/json; charset=utf-8",
-          // "Content-Type": "application/json; charset=utf-8",
-          // "Content-Type": "application/json",
-          // HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
           HttpHeaders.contentTypeHeader: "application/json",
-          // HttpHeaders.contentTypeHeader: "application/x-www-form-urlencoded",
         },
         body: json.encode(postBody),
-        // body: postBody,
       );
 
       // print(json.encode(json.decode(response.body)['data']['sessions']));
@@ -156,10 +139,16 @@ class UserApi {
       // print(json.encode(json.decode(response.body)['data']['sessions'][0]));
       // print(response.body);
       if (response.statusCode == ApiStatusCode.responseCreated) {
+        var getTokenToCreateCustomer =
+            await SessionApi.postSession(user.email.toString(), password);
+
+        var userData = await getUserFromToken(
+            ((getTokenToCreateCustomer as Success).response as Session)
+                .accessToken);
+
         return Success(
             code: response.statusCode,
-            response: userFromJson(
-                json.encode(json.decode(response.body)['data']['users'][0])));
+            response: userFromJson(json.encode(json.decode(response.body))));
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,

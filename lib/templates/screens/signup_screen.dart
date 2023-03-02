@@ -6,6 +6,10 @@ import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 
+import '../managers/color_manager.dart';
+import '../managers/font_manager.dart';
+import '../managers/style_manager.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key, this.title}) : super(key: key);
 
@@ -71,13 +75,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
           if (mounted) {
             showSpinner = false;
           }
+          bool userConfirmed = false;
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Welcome!'),
+              content: Text(
+                'You have been registered, please log in to continue',
+                style: getRegularStyle(
+                  fontSize: FontSize.s16,
+                  color: ColorManager.black,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text(
+                    'Go to login',
+                    style: getBoldStyle(
+                      fontSize: FontSize.s16,
+                      // color: ColorManager.primary,
+                      color: Colors.green,
+                    ),
+                  ),
+                  onPressed: () {
+                    // Navigator.of(context).pop();
+                    Navigator.of(context)
+                        .pushReplacementNamed(LoginScreen.routeName);
+                  },
+                ),
+              ],
+            ),
+          );
         });
 
         // Navigator.of(context)
         //     .pushReplacementNamed(HomeScreen.routeName, arguments: {
         //   'authSession': userSession.session,
         // });
-        Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+        // Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
       } else {
         setState(() {
           showSpinner = true;
@@ -159,7 +194,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             textInputAction:
                 isPassword ? TextInputAction.done : TextInputAction.next,
             keyboardType:
-                isPassword ? TextInputType.number : TextInputType.text,
+                // isPassword ? TextInputType.number : TextInputType.text,
+                TextInputType.text,
             decoration: new InputDecoration(
               suffix: isPassword
                   ? IconButton(
