@@ -155,6 +155,7 @@ class Books with ChangeNotifier {
 
     // var response = await BookApi.getBooks(uId);
     var response = await BookApi.getAnnonimusPosts(loggedInSession);
+    // print(response);
 
     if (response is Success) {
       setBooks(response.response as List<Book>);
@@ -276,11 +277,12 @@ class Books with ChangeNotifier {
 
     List<String> images = [];
 
-    for (var i = 0; i < book.pictures!.length; i++) {
-      images.add(book.pictures![i].path);
+    for (var i = 0; i < book.images!.length; i++) {
+      // images.add(book.pictures![i].path);
+      images.add(book.images![i].path);
     }
 
-    book.pictures = images;
+    // book.pictures = images;
 
     var response = await BookApi.postPictures(userSession, book);
     // print(response);
@@ -309,47 +311,63 @@ class Books with ChangeNotifier {
     return false;
   }
 
-  Future<bool> deletePictures(Session userSession, Book book) async {
+  Future<bool> deletePictures(Session userSession, String postId,
+      List<BookImage> imagesToDelete) async {
     setLoading(true);
 
-    List<String> images = [];
+    var response;
 
-    for (var i = 0; i < book.pictures!.length; i++) {
-      images.add(book.pictures![i].toString());
-      // images.add(book.pictures![i].path);
+    for (var i = 0; i < imagesToDelete.length; i++) {
+      response =
+          await BookApi.deletePicture(userSession, postId, imagesToDelete[i]);
+      // print(response);
+      if (response is Failure) {
+        BookError bookError = BookError(
+          code: response.code,
+          message: response.errorResponse,
+        );
+        setBookError(bookError);
+        setLoading(false);
+        notifyListeners();
+        return false;
+      }
     }
+    Future.delayed(Duration.zero).then((_) {
+  // Do something after the loop has finished
+  if (response is Success) {
+    // print('here');
+      int bookIndex = _myBooks.indexWhere((element) => element.id == postId);
+      Book bookToUpdate = _myBooks[bookIndex];
+      _myBooks.remove(bookToUpdate);
 
-    book.pictures = images;
+      imagesToDelete.forEach((element) {
+        bookToUpdate.images!.remove(element);
+      },);
 
-    var response = await BookApi.deletePictures(userSession, book);
-    if (response is Success) {
+      _myBooks.add(bookToUpdate);
+
       setLoading(false);
       notifyListeners();
       return true;
     }
-    if (response is Failure) {
-      BookError bookError = BookError(
-        code: response.code,
-        message: response.errorResponse,
-      );
-      setBookError(bookError);
-      setLoading(false);
-      notifyListeners();
-      return false;
-    }
+});
+
+    
+
     return false;
   }
 
   Future<bool> updatePost(Session currentSession, Book edittedPost) async {
     var response = await BookApi.updatePost(currentSession, edittedPost);
-
+    // print(response);
     if (response is Success) {
       final postIndex =
           _myBooks.indexWhere((element) => element.id == edittedPost.id);
 
-      List<Book> books = response.response as List<Book>;
-      _myBooks[postIndex] = books[0];
-      // _myBooks[postIndex] = response as Book;
+      if (postIndex != -1) {
+        _myBooks[postIndex] = response.response as Book;
+      }
+
       notifyListeners();
       return true;
     }
@@ -369,6 +387,7 @@ class Books with ChangeNotifier {
 
   Future<bool> deletePost(Session currentSession, String postId) async {
     var response = await BookApi.deletePost(currentSession, postId);
+    // print(response);
 
     if (response is Success) {
       final postIndex = _myBooks.indexWhere((element) => element.id == postId);

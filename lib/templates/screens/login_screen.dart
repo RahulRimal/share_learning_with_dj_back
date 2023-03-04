@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -77,8 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
       //     createdDate: NepaliDateTime.now());
       // Users loggedInUser = Users();
       SessionProvider userSession = new SessionProvider();
-      if (await userSession.createSession(usernameOrEmail, userpassword) ==
-          true) {
+      if (await userSession.createSession(usernameOrEmail, userpassword)) {
         if (mounted) {
           setState(() {
             showSpinner = false;
@@ -128,12 +128,68 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         }
       } else {
-        if (mounted) {
-          setState(() {
-            // showSpinner = true;
+        
+        setState(() {
+          
             showSpinner = false;
-            _loginErrorText = 'Something went wrong';
+        });
+        if (userSession.sessionError != null) {
+          List<String> data = [];
+          if(userSession.sessionError!.message is String){
+            data.add(userSession.sessionError!.message.toString());
+          }
+          else
+          {
+          (userSession.sessionError!.message as Map).forEach((key, value) {
+            if (value is List) {
+              value.forEach((item) => {data.add(item.toString())});
+            } else {
+              data.add(value.toString());
+            }
           });
+          }
+
+          // print(data);
+
+          // Show notifications one by one with a delay
+          int delay = 0;
+          for (String element in data) {
+            Future.delayed(Duration(milliseconds: delay), () {
+              BotToast.showSimpleNotification(
+                title: element,
+                duration: Duration(seconds: 3),
+                backgroundColor: ColorManager.primary,
+                titleStyle: getBoldStyle(color: ColorManager.white),
+                align: Alignment(1, 1),
+              );
+              BotToast.showCustomNotification(
+                duration: Duration(seconds: 3),
+                toastBuilder: (cancelFunc) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Text(
+                      element,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                },
+              );
+            });
+            delay += 1500; // increase delay for next notification
+          }
+        }
+        else{
+          BotToast.showSimpleNotification(
+      title: "Something went wrong, please try again",
+      duration: Duration(seconds: 3),
+      backgroundColor: ColorManager.primary,
+      titleStyle: getBoldStyle(color: ColorManager.white),
+      align: Alignment(1, 1),
+    );
         }
       }
     }
@@ -268,6 +324,35 @@ class _LoginScreenState extends State<LoginScreen> {
               : TextFormField(
                   obscureText: isPassword ? !visible : false,
                   focusNode: isPassword ? _passwordFocusNode : null,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+              
+              if (isPassword) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'This field is required';
+                }
+                if (value.trim().length < 8) {
+                  return 'Password must be at least 8 characters in length';
+                }
+                // Return null if the entered password is valid
+                return null;
+              }
+              else
+              {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter your email address';
+                }
+                // Check if the entered email has the right format
+                if (!RegExp(
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                    .hasMatch(value)) {
+                  return 'Please enter a valid email address';
+                }
+                // Return null if the entered email is valid
+                return null;
+              
+              }
+            },
                   textInputAction:
                       isPassword ? TextInputAction.done : TextInputAction.next,
                   // keyboardType:

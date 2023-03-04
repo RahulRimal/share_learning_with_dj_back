@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/providers/books.dart';
+import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/widgets/custom_image.dart';
 
 import '../../providers/users.dart';
+import '../screens/edit_post_screen.dart';
 
 // ignore: must_be_immutable
 class ImageGallery extends StatefulWidget {
@@ -42,7 +44,7 @@ class _ImageGalleryState extends State<ImageGallery> {
         vertical: 10,
       ),
       child: selectedPost != null
-          ? selectedPost.pictures != null
+          ? selectedPost.images != null
               ? Column(
                   children: [
                     Container(
@@ -51,7 +53,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                       child: ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: selectedPost.pictures!.length,
+                        itemCount: selectedPost.images!.length,
                         itemBuilder: (context, index) =>
                             // Post Image Starts Here
                             Padding(
@@ -67,9 +69,9 @@ class _ImageGalleryState extends State<ImageGallery> {
                               ),
                             ),
                             child: CustomImage(
-                              imageUrl: widget.isNetwork
-                                  ? selectedPost.pictures![index]['image']
-                                  : selectedPost.pictures![index].name,
+                              image: widget.isNetwork
+                                  ? selectedPost.images![index]
+                                  : selectedPost.images![index].name,
                               isNetwork: widget.isNetwork,
                               isErasable: widget.isErasable,
                               eraseImage: this.widget.eraseImage,
@@ -99,8 +101,12 @@ class _ImageGalleryState extends State<ImageGallery> {
                                       child: Text('Add or remove images'),
                                       style: ButtonStyle(),
                                       onPressed: () {
-                                        // _getPicture();
-                                      },
+                      Navigator.of(context).pushNamed(EditPostScreen.routeName,
+                          arguments: {
+                            'bookId': widget.bookId,
+                            'loggedInUserSession': Provider.of<SessionProvider>(context, listen: false).session,
+                          });
+                    },
                                     ),
                                     SizedBox(
                                       width: 10,
@@ -152,9 +158,11 @@ class _ImageGalleryState extends State<ImageGallery> {
                         ),
                       ),
                       child: CustomImage(
-                        imageUrl: widget.images![index] is String
-                            ? widget.images![index]
-                            : widget.images![index]['image'],
+                        
+                        // image: widget.images![index] is BookImage
+                        //     ? widget.images![index]
+                            // : widget.images![index],
+                        image: widget.images![index],
                         isNetwork: widget.isNetwork,
                         isErasable: widget.isErasable,
                         eraseImage: this.widget.eraseImage,

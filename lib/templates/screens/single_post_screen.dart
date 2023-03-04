@@ -179,6 +179,11 @@ class SinglePostScreen extends StatelessWidget {
     if (users.user != null) {
       loggedInUser = users.user as User;
     }
+    else{
+      users.getUserByToken(loggedInUserSession.accessToken);
+
+    }
+    
 
     return Scaffold(
       drawer: users.user == null
@@ -194,9 +199,7 @@ class SinglePostScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.all(0),
-            // child: loggedInUser.id == selectedPost.userId
             child: context.watch<Users>().user!.id == selectedPost.userId
-                // child: '1' == selectedPost.userId
                 ? IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () async {
@@ -423,10 +426,10 @@ class SinglePostScreen extends StatelessWidget {
 
               // ImageGallery(true, this.bookId),
               // selectedPost.pictures != null
-              selectedPost.pictures != null
+              selectedPost.images != null
                   ? ImageGallery(
                       true,
-                      images: selectedPost.pictures,
+                      images: selectedPost.images,
                       isErasable: false,
                       bookId: selectedPost.id,
                     )
@@ -905,9 +908,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     wishlisted: false,
     price: 0,
     bookCount: 1,
-    pictures: [],
+    images: [],
     postedOn: DateTime.now().toNepaliDateTime(),
-    postRating: '',
+    postRating: 0.0,
   );
 
   _checkBookInCart(Carts carts, Book selectedPost) {

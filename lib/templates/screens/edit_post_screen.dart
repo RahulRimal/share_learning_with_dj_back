@@ -11,6 +11,8 @@ import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
+import 'package:share_learning/templates/screens/home_screen.dart';
+import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 class EditPostScreen extends StatefulWidget {
@@ -35,9 +37,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
   List<bool> postTypeSelling = [true, false];
 
   List<XFile>? _storedImages;
-  List<String> actualImages = [];
+  List<BookImage> actualImages = [];
 
-  List<String> _imagesToDelete = [];
+  List<BookImage> _imagesToDelete = [];
 
   ImagePicker imagePicker = ImagePicker();
 
@@ -54,7 +56,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     price: 0,
     bookCount: 1,
     postedOn: DateTime.now().toNepaliDateTime(),
-    postRating: '',
+    postRating: 0.0,
   );
 
   bool ispostType = true;
@@ -86,10 +88,12 @@ class _EditPostScreenState extends State<EditPostScreen> {
   }
 
   _retrieveImage(Book post) {
-    if (post.pictures != null) {
-      for (int i = 0; i < post.pictures!.length; i++) {
-        actualImages.add(post.pictures![i]['image']);
+    if (post.images != null) {
+      for (int i = 0; i < post.images!.length; i++) {
+        // actualImages.add(post.images![i]['image']);
+        actualImages.add(post.images![i]);
       }
+      // print(actualImages);
     }
 
     // actualImages.addAll(post.pictures);
@@ -113,7 +117,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
     setState(() {
       for (int i = 0; i < _storedImages!.length; i++) {
-        actualImages.add(_storedImages![i].path);
+        // actualImages.add(_storedImages![i].path);
+        actualImages.add(BookImage(id: null, image: _storedImages![i].path));
       }
     });
 
@@ -121,30 +126,46 @@ class _EditPostScreenState extends State<EditPostScreen> {
   }
 
   eraseImage(dynamic image) {
-    if (image is XFile) {
+    // Null Id means it is a XFile
+    // if (image is XFile) {
+    if (image.id == null) {
       setState(() {
         _storedImages?.remove(image);
-        actualImages.remove(image.path);
+        actualImages.remove(image);
       });
     } else {
+      // print('here');
       setState(() {
-        if (_storedImages != null) {
-          XFile? imageToRemove;
+        // if (_storedImages != null) {
+        if (actualImages != null) {
+          // print('here');
+          // XFile? imageToRemove;
+
+          // try {
+
+          //   imageToRemove = _storedImages!.firstWhere(
+          //     (element) => element.path == image,
+          //   );
+          // } on StateError {
+          //   imageToRemove = null;
+          // }
+          // if (imageToRemove != null) _storedImages?.remove(imageToRemove);
+          // List<BookImage>? imagesToRemove = [];
 
           try {
-            // XFile? imageToRemove = _storedImages!.firstWhere(
-            //   (element) => element.path == image,
-            imageToRemove = _storedImages!.firstWhere(
-              (element) => element.path == image,
-            );
+            _imagesToDelete.add(
+                actualImages.firstWhere((element) => element.id == image.id));
+            actualImages.remove(image);
           } on StateError {
-            imageToRemove = null;
+            // imagesToRemove = null;
+            print('here');
           }
-          if (imageToRemove != null) _storedImages?.remove(imageToRemove);
+
+          // print(_imagesToDelete);
         }
 
-        actualImages.remove(image);
-        if (_edittedBook.pictures!.contains(image)) _imagesToDelete.add(image);
+        // actualImages.remove(image);
+        // if (_edittedBook.pictures!.contains(image)) _imagesToDelete.add(image);
       });
     }
   }
@@ -159,6 +180,21 @@ class _EditPostScreenState extends State<EditPostScreen> {
     _datePickercontroller.text =
         DateFormat('yyyy-MM-dd').format(_boughtDate as DateTime).toString();
   }
+  // Map<String, dynamic> _getBookWithEdittedFields (Book book1, Book book2) {
+  //   final map1 = SystemHelper.convertKeysToSnakeCase(book1.toMap());
+  //   map1['bought_date'] = DateFormat('yyyy-MM-dd').format(book1.boughtDate);
+  //   final map2 = SystemHelper.convertKeysToSnakeCase(book2.toMap());
+  //   map2['bought_date'] = DateFormat('yyyy-MM-dd').format(book1.boughtDate);
+  //   final differentFields = Map<String, dynamic>.from({});
+  //    map1.forEach((key, value) {
+  //   if (map2[key] != value) {
+  //     differentFields[key] = value;
+  //   }
+  // });
+  // differentFields.remove("pictures");
+  // return differentFields;
+  // // return Book.fromMap(differentFields);
+  // }
 
   Future<bool> _updatePost(
       Session loggedInUserSession, Book edittedBook) async {
@@ -169,27 +205,52 @@ class _EditPostScreenState extends State<EditPostScreen> {
     }
     _form.currentState!.save();
     _edittedBook.postType = ispostType ? 'S' : 'B';
-    _edittedBook.pictures = _storedImages;
+    // _edittedBook.pictures = _storedImages;
 
-    await Provider.of<Books>(context, listen: false)
-        .updatePost(loggedInUserSession, _edittedBook);
-
-    if (_imagesToDelete.isNotEmpty) {
-      _edittedBook.pictures = _imagesToDelete;
-      if (await Provider.of<Books>(context, listen: false)
-          .deletePictures(loggedInUserSession, _edittedBook)) {}
-    }
-
-    if (_storedImages != null) {
-      if (_storedImages!.isNotEmpty) {
-        _edittedBook.pictures = _storedImages;
-        if (await Provider.of<Books>(context, listen: false)
-            .updatePictures(loggedInUserSession, _edittedBook)) {}
+    if (await Provider.of<Books>(context, listen: false)
+        .updatePost(loggedInUserSession, _edittedBook)) {
+      if (_imagesToDelete.isNotEmpty) {
+        if (await Provider.of<Books>(context, listen: false).deletePictures(
+            loggedInUserSession, _edittedBook.id, _imagesToDelete)) {
+          if (_storedImages != null) {
+            if (_storedImages!.isNotEmpty) {
+              _edittedBook.images = _storedImages;
+              if (await Provider.of<Books>(context, listen: false)
+                  .updatePictures(loggedInUserSession, _edittedBook)) {
+                    BotToast.showSimpleNotification(
+      title: 'Post has been successfully updated',
+      duration: Duration(seconds: 3),
+      backgroundColor: ColorManager.primary,
+      titleStyle: getBoldStyle(color: ColorManager.white),
+      align: Alignment(1, 1),
+    );
+                  }
+            }
+          }
+        }
       }
     }
+    if(Provider.of<Books>(context,listen: false).bookError != null)
+    {
+      BotToast.showSimpleNotification(
+      title: Provider.of<Books>(context, listen: false).bookError!.message.toString(),
+      duration: Duration(seconds: 3),
+      backgroundColor: ColorManager.primary,
+      titleStyle: getBoldStyle(color: ColorManager.white),
+      align: Alignment(1, 1),
+    );
+    }
 
-    Navigator.of(context).pop();
-    Navigator.of(context).pop();
+    BotToast.showSimpleNotification(
+      title: 'Something went wrong, please try again',
+      duration: Duration(seconds: 3),
+      backgroundColor: ColorManager.primary,
+      titleStyle: getBoldStyle(color: ColorManager.white),
+      align: Alignment(1, 1),
+    );
+
+    // Navigator.of(context).pop();
+    // Navigator.of(context).pop();
     // showUpdateSnackbar(context);
 
     return true;
@@ -212,25 +273,19 @@ class _EditPostScreenState extends State<EditPostScreen> {
                   onPressed: () async {
                     if (await _updatePost(loggedInUserSession, _edittedBook))
                       // _showUpdateSnackbar(context);
-                      BotToast.showSimpleNotification(
-                        title: 'Posted Updated Successfully',
-                        duration: Duration(seconds: 3),
-                        backgroundColor: ColorManager.primary,
-                        titleStyle: getBoldStyle(color: ColorManager.white),
-                        align: Alignment(0, 1),
-                        hideCloseButton: true,
-                      );
+                      // BotToast.showSimpleNotification(
+                      //   title: 'Posted Updated Successfully',
+                      //   duration: Duration(seconds: 3),
+                      //   backgroundColor: ColorManager.primary,
+                      //   titleStyle: getBoldStyle(color: ColorManager.white),
+                      //   align: Alignment(0, 1),
+                      //   hideCloseButton: true,
+                      // );
 
-                    // BotToast.showCustomNotification(
-                    //   toastBuilder: (c) => Center(
-                    //     child: Text(
-                    //       'Posted Updated Successfully',
-                    //       style: getBoldStyle(color: ColorManager.white),
-                    //     ),
-                    //   ),
-                    //   duration: Duration(seconds: 5),
-                    //   align: Alignment(1, 1),
-                    // );
+                      Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
+                        'authSession': loggedInUserSession
+                      });
+                    
                   },
                   // onPressed: _updatePost,
                 )

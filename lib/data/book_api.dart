@@ -148,23 +148,26 @@ class BookApi {
   }
 
   static Future<Object> updatePost(
+      // Session currentSession, String bookId, Map<String, dynamic> updatedPost) async {
       Session currentSession, Book updatedPost) async {
     try {
-      Map<String, String> postBody = {
-        "userId": updatedPost.userId,
-        "bookName": updatedPost.bookName,
+      Map<String, dynamic> postBody = {
+        "user_id": updatedPost.userId,
+        "book_name": updatedPost.bookName,
         "author": updatedPost.author,
         "description": updatedPost.description,
-        "boughtDate": updatedPost.boughtDate.toIso8601String(),
-        "price": updatedPost.price.toString(),
-        "bookCount": updatedPost.bookCount.toString(),
+        "bought_date": DateFormat('yyyy-MM-dd').format(  updatedPost.boughtDate),  
+        "unit_price": updatedPost.price.toString(),
+        "book_count": updatedPost.bookCount.toString(),
         "wishlisted": updatedPost.wishlisted.toString(),
-        "postType": updatedPost.postType,
-        "postRating": updatedPost.postRating,
+        "post_type": updatedPost.postType,
+        "post_rating": updatedPost.postRating,
         // "postedOn": updatedPost.postedOn.toIso8601String()
       };
+
       var url =
-          Uri.parse(RemoteManager.BASE_URI + '/posts/p/' + updatedPost.id);
+          // Uri.parse(RemoteManager.BASE_URI + '/posts/' + bookId+ '/');
+          Uri.parse(RemoteManager.BASE_URI + '/posts/' + updatedPost.id+ '/');
       var response = await http.patch(
         url,
         headers: {
@@ -176,13 +179,12 @@ class BookApi {
           HttpHeaders.contentTypeHeader: "application/json",
         },
         body: json.encode(postBody),
+        // body: json.encode(updatedPost),
       );
       // print(response.body);
-      // print(json.encode(json.decode(response.body)['data']['posts'][0]));
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(code: response.statusCode, response: bookFromJson(
-            // json.encode(json.decode(response.body)['data']['posts'][0])));
-            json.encode(json.decode(response.body)['data']['posts'])));
+            json.encode(json.decode(response.body))));
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,
@@ -217,7 +219,7 @@ class BookApi {
         // "wishlisted": newPost.wishlisted ? '2' : '1',
         "wishlisted": newPost.wishlisted,
         "post_type": newPost.postType,
-        "post_rating": double.parse(newPost.postRating),
+        "post_rating": newPost.postRating,
         // "postedOn": newPost.postedOn.toIso8601String()
       };
       var url = Uri.parse(RemoteManager.BASE_URI + '/posts/');
@@ -272,7 +274,7 @@ class BookApi {
   static Future<Object> deletePost(
       Session currentSession, String postId) async {
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/p/' + postId);
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + postId+ '/');
 
       var response = await http.delete(
         url,
@@ -285,10 +287,8 @@ class BookApi {
           HttpHeaders.contentTypeHeader: "application/json",
         },
       );
-
-      // print(json.encode(json.decode(response.body)['data']['posts'][0]));
       // print(response.body);
-      if (response.statusCode == ApiStatusCode.responseSuccess) {
+      if (response.statusCode == ApiStatusCode.noContent) {
         return Success(
             code: response.statusCode,
             // response: sessionFromJson(
@@ -352,11 +352,11 @@ class BookApi {
       // });
       // var response = await request.send();
 
-      for (var i = 0; i < book.pictures!.length; i++) {
+      for (var i = 0; i < book.images!.length; i++) {
         var pic = await http.MultipartFile.fromPath(
           'images',
           // 'image ${i + 1}',
-          book.pictures![i],
+          book.images![i].path,
         );
         request.files.add(pic);
       }
@@ -487,23 +487,12 @@ class BookApi {
   //   }
   // }
 
-  static Future<Object> deletePictures(
-      Session loggedinSession, Book book) async {
+  static Future<Object> deletePicture(
+      Session loggedinSession, String postId, BookImage imageToDelete) async {
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/delPics/' + book.id);
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + postId + '/images/' + imageToDelete.id.toString()+'/');
 
-      Map<String, List<String>> pics = {};
-
-      List<String> pictures = [];
-
-      for (var i = 0; i < book.pictures!.length; i++) {
-        // pics["pics ${i + 1}"] = (book.pictures![i]).split('/').last;
-        pictures.add((book.pictures![i]).split('/').last);
-      }
-
-      pics["pics"] = pictures;
-
-      var response = await http.post(
+      var response = await http.delete(
         url,
         headers: {
           HttpHeaders.authorizationHeader: "SL " + loggedinSession.accessToken,
@@ -514,23 +503,15 @@ class BookApi {
               "*", // Required for CORS support to work
           "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         },
-        body: json.encode(pics),
+        // body: json.encode(),
       );
 
       // print(response.body);
 
-      if (response.statusCode == ApiStatusCode.responseCreated) {
-        // if (json.decode(responseBody)['statusCode'] ==
-        // ApiStatusCode.responseSuccess) {
+      if (response.statusCode == ApiStatusCode.noContent) {
         return Success(
           code: response.statusCode,
-          response: bookFromJson(
-            json.encode(
-              json.decode(response.body)['data']['posts'],
-              // json.encode(
-              //   json.decode(responseBody)['data']['posts'][0],
-            ),
-          ),
+          response: "Picture deleted successfully"
         );
       }
       return Failure(

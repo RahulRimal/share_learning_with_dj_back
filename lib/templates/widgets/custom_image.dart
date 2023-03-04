@@ -6,15 +6,14 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 
 class CustomImage extends StatelessWidget {
-  final String imageUrl;
-  // final DynamicLibrary imageUrl;
-  // final bool isNetwork;
+  // final String image;
+  final dynamic image;
   bool isNetwork;
   final bool isErasable;
   final Function? eraseImage;
 
   CustomImage({
-    required this.imageUrl,
+    required this.image,
     required this.isNetwork,
     required this.isErasable,
     required this.eraseImage,
@@ -33,13 +32,13 @@ class CustomImage extends StatelessWidget {
                       builder: (context) => PhotoViewRouteWrapper(
                         imageProvider: isNetwork
                             ? NetworkImage(
-                                this.imageUrl,
+                                this.image.image,
                               )
-                            : FileImage(File(this.imageUrl)) as ImageProvider,
+                            : FileImage(File(this.image)) as ImageProvider,
 
-                        // imageProvider: (imageUrl is String)
-                        //     ? NetworkImage(this.imageUrl as String)
-                        //     : FileImage(File(this.imageUrl.toString()))
+                        // imageProvider: (image is String)
+                        //     ? NetworkImage(this.image as String)
+                        //     : FileImage(File(this.image.toString()))
                         //         as ImageProvider,
                       ),
                     ),
@@ -47,12 +46,13 @@ class CustomImage extends StatelessWidget {
                 },
                 child: PhotoView(
                   // imageProvider: isNetwork
-                  //     ? NetworkImage(this.imageUrl) as ImageProvider
-                  //     : FileImage(File(this.imageUrl)),
+                  //     ? NetworkImage(this.image) as ImageProvider
+                  //     : FileImage(File(this.image)),
 
-                  imageProvider: !imageUrl.contains('/data/user')
-                      ? NetworkImage(this.imageUrl) as ImageProvider
-                      : FileImage(File(this.imageUrl)),
+                  // imageProvider: !image.contains('/data/user')
+                imageProvider: image.id != null
+                      ? NetworkImage(this.image.image) as ImageProvider
+                      : FileImage(File(this.image.image)),
 
                   minScale: PhotoViewComputedScale.contained * 0.8,
                   maxScale: PhotoViewComputedScale.covered * 2,
@@ -67,7 +67,7 @@ class CustomImage extends StatelessWidget {
                       color: ColorManager.primary,
                     ),
                     onPressed: () {
-                      eraseImage!(imageUrl);
+                      eraseImage!(image);
                     },
                   )
                   // child: isErasable
@@ -92,13 +92,13 @@ class CustomImage extends StatelessWidget {
                   builder: (context) => PhotoViewRouteWrapper(
                     imageProvider: isNetwork
                         ? NetworkImage(
-                            this.imageUrl,
+                            this.image,
                           )
-                        : FileImage(File(this.imageUrl)) as ImageProvider,
+                        : FileImage(File(this.image)) as ImageProvider,
 
-                    // imageProvider: (imageUrl is String)
-                    //     ? NetworkImage(this.imageUrl as String)
-                    //     : FileImage(File(this.imageUrl.toString()))
+                    // imageProvider: (image is String)
+                    //     ? NetworkImage(this.image as String)
+                    //     : FileImage(File(this.image.toString()))
                     //         as ImageProvider,
                   ),
                 ),
@@ -106,11 +106,12 @@ class CustomImage extends StatelessWidget {
             },
             child: PhotoView(
               // imageProvider: isNetwork
-              //     ? NetworkImage(this.imageUrl) as ImageProvider
-              //     : FileImage(File(this.imageUrl)),
-              imageProvider: !imageUrl.contains('/data/user')
-                  ? NetworkImage(this.imageUrl) as ImageProvider
-                  : FileImage(File(this.imageUrl)),
+              //     ? NetworkImage(this.image) as ImageProvider
+              //     : FileImage(File(this.image)),
+              // imageProvider: !image.contains('/data/user')
+              imageProvider: image.id != null
+                  ? NetworkImage(this.image.image) as ImageProvider
+                  : FileImage(File(this.image.image)),
 
               minScale: PhotoViewComputedScale.contained * 0.8,
               maxScale: PhotoViewComputedScale.covered * 2,

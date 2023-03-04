@@ -8,13 +8,13 @@ class SessionProvider with ChangeNotifier {
   bool _loading = false;
   // late Session _session;
   Session? _session;
-  CustomSessionError? _sessionError;
+  SessionError? _sessionError;
 
   bool get loading => _loading;
 
   Session? get session => _session;
 
-  CustomSessionError? get sessionError => _sessionError;
+  SessionError? get sessionError => _sessionError;
 
   setLoading(bool loading) async {
     _loading = loading;
@@ -26,7 +26,7 @@ class SessionProvider with ChangeNotifier {
     // notifyListeners();
   }
 
-  setSessionError(CustomSessionError sessionError) {
+  setSessionError(SessionError sessionError) {
     _sessionError = sessionError;
   }
 
@@ -40,12 +40,12 @@ class SessionProvider with ChangeNotifier {
       return true;
     }
     if (response is Failure) {
-      CustomSessionError sessionError = CustomSessionError(
+      SessionError sessionError = SessionError(
         code: response.code,
         message: response.errorResponse,
       );
       setSessionError(sessionError);
-      // setSessionError(sessionError as CustomSessionError);
+      // setSessionError(sessionError as SessionError);
       // sessionError.showErrorMessage();
       setLoading(false);
       return false;
@@ -62,12 +62,12 @@ class SessionProvider with ChangeNotifier {
       return true;
     }
     if (response is Failure) {
-      CustomSessionError sessionError = CustomSessionError(
+      SessionError sessionError = SessionError(
         code: response.code,
         message: response.errorResponse,
       );
       setSessionError(sessionError);
-      // setSessionError(sessionError as CustomSessionError);
+      // setSessionError(sessionError as SessionError);
       // sessionError.showErrorMessage();
       setLoading(false);
       return false;

@@ -53,13 +53,6 @@ class SessionApi {
       // var url = Uri.parse('http://localhost/apiforsharelearn/sessions');
       var url = Uri.parse(RemoteManager.BASE_URI + '/auth/jwt/create');
 
-      // Map<String, String> postHeaders = {
-      // "Content-Type": "application/json; charset=utf-8",
-      // "Content-Type": "application/json",
-      // HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
-      // HttpHeaders.contentTypeHeader: "application/json",
-      // };
-
       var response = await http.post(
         url,
         headers: {
@@ -86,8 +79,8 @@ class SessionApi {
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,
-          // errorResponse: ApiStrings.invalidResponseString
-          errorResponse: response.body);
+          // errorResponse: response.body);
+          errorResponse: json.decode(response.body));
     } on HttpException {
       return Failure(
           code: ApiStatusCode.httpError,

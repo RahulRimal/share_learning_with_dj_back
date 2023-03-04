@@ -14,7 +14,7 @@
 //   final int bookCount;
 //   final bool isWishlisted;
 //   final bool selling;
-//   List<String>? pictures;
+//   List<String>? images;
 
 //   Book({
 //     required this.id,
@@ -27,7 +27,7 @@
 //     required this.bookCount,
 //     required this.isWishlisted,
 //     required this.selling,
-//     this.pictures,
+//     this.images,
 //   });
 
 //   factory Book.fromJson(Map<String, dynamic> parsedJson) {
@@ -73,8 +73,8 @@ List<Book> booksFromJson(String str) =>
     List<Book>.from(json.decode(str).map((x) {
       Book book = Book.fromJson(x);
 
-      // if (book.pictures != null) {
-      //   book.pictures = book.pictures!.map((e) {
+      // if (book.images != null) {
+      //   book.images = book.images!.map((e) {
       //     return "${RemoteManager.POST_POOL}/${book.id}/$e";
       //   }).toList();
       // }
@@ -99,7 +99,7 @@ class Book {
     required this.postType,
     required this.postRating,
     required this.postedOn,
-    this.pictures,
+    this.images,
   });
 
   String id;
@@ -112,18 +112,15 @@ class Book {
   int bookCount;
   bool wishlisted;
   String postType;
-  String postRating;
+  double postRating;
   DateTime postedOn;
 
-  List<dynamic>? pictures;
-  // List<BookImage>? pictures;
+  List<dynamic>? images;
+  // List<BookImage>? images;
 
-  // List<String> imagesList (List<Map> maps)
-  imagesList(List<Map> maps) {
-    // List<String> images =
-    Iterable<dynamic> tempp = maps.map((x) => x['image']);
-    // .filter((x) => x) ;
-  }
+  // imagesList(List<Map> maps) {
+  //   Iterable<dynamic> tempp = maps.map((x) => x['image']);
+  // }
 
   factory Book.fromJson(Map<String, dynamic> json) => Book(
         // id: json["id"] == null ? null : json["id"],
@@ -148,17 +145,13 @@ class Book {
         postType: json["post_type"] == null ? null : json["post_type"],
         // postRating: json["postRating"] == null ? '' : json["postRating"],
         postRating:
-            json["post_rating"] == null ? '' : json["postRating"].toString(),
-        pictures: json["images"] == null
-            ? null
-            // : List<XFile>.from(json["pictures"]),
-            // : (List<dynamic>.from(json["pictures"])).isEmpty
-            //     ? null
-            : json["images"],
-        // :json["images"].map((x)=> x['image']),
-        // : ("${RemoteManager.POST_POOL}/$id$/${json['pictures'].toString()}"),
-        // postedOn:
-        //     json["postedOn"] == null ? null : DateTime.parse(json["postedOn"]),
+            json["post_rating"] == null ? 0.0 : json["post_rating"],
+        // images: json["images"] == null
+        //     ? null
+        //     : json["images"],
+        images: json["images"] == null
+            ? null: List<BookImage>.from(json["images"].map((x)=> BookImage.fromJson(x))),
+        
         postedOn: NepaliDateTime.parse(json["posted_on"].toString()),
       );
 
@@ -175,35 +168,70 @@ class Book {
         "wishlisted": wishlisted,
         "postType": postType,
         "postRating": postRating,
-        "pictures": pictures == null
+        "images": images == null
             ? null
-            : List<dynamic>.from(pictures!.map((x) => x.path)),
+            : List<dynamic>.from(images!.map((x) => x.image)),
         "postedOn": postedOn.toIso8601String(),
-        // "id": id == null ? null : id,
-        // "userId": userId == null ? null : userId,
-        // "bookName": bookName == null ? null : bookName,
-        // "author": author == null ? null : author,
-        // "description": description == null ? null : description,
-        // "boughtDate": boughtDate == null
-        //     ? null
-        //     : "${boughtDate.year.toString().padLeft(4, '0')}-${boughtDate.month.toString().padLeft(2, '0')}-${boughtDate.day.toString().padLeft(2, '0')}",
-        // "price": price == null ? null : price,
-        // "bookCount": bookCount == null ? null : bookCount,
-        // "wishlisted": wishlisted == null ? null : wishlisted,
-        // "postType": postType == null ? null : postType,
-        // "postRating": postRating == null ? null : postRating,
-        // "pictures": pictures == null
-        //     ? null
-        //     : List<dynamic>.from(pictures!.map((x) => x.path)),
-        // "postedOn": postedOn == null ? null : postedOn.toIso8601String(),
+        
       };
+
+
+      Map<String, dynamic> toMap()  {
+        return {
+          'id': id,
+          'userId': userId,
+          'bookName': bookName,
+          'author': author,
+          'description': description,
+          'boughtDate':boughtDate,
+          'price': price,
+          'bookCount': bookCount,
+          'wishlisted': wishlisted,
+          'postType': postType,
+          'postRating': postRating,
+          'images': images,
+          'postedOn': postedOn
+        };
+      }
+
+      factory Book.fromMap(Map<String, dynamic> map){
+        return Book(
+          id: map['id'],
+          userId: map['userId'],
+          bookName: map['bookName'],
+          author: map['author'],
+          description: map['description'],
+          boughtDate: map['boughtDate'],
+          price: map['price'],
+          bookCount: map['bookCount'],
+          wishlisted: map['wishlisted'],
+          postType: map['postType'],
+          postRating: map['postRating'],
+          images: map['images'],
+          postedOn: map['postedOn']
+          );
+      }
 }
 
 class BookImage {
-  int id;
-  String imageUrl;
+  int? id;
+  String image;
 
-  BookImage({required this.id, required this.imageUrl});
+  BookImage({required this.id, required this.image});
+
+  factory BookImage.fromJson(Map<String, dynamic> json) => BookImage(
+        id: json["id"],
+        image: json["image"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "image": image,
+    };
+
+
+
+
 }
 
 class BookError {

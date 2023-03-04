@@ -69,7 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final Session authenticatedSession = args['authSession'] as Session;
 
     Users _users = context.watch<Users>();
+    if(_users.user == null)
+    {
+      _users.getUserByToken(authenticatedSession.accessToken);
+    }
+    else{
+
     _user = _users.user as User;
+    }
     Books _books = context.watch<Books>();
 
     Orders _orders = context.watch<Orders>();
@@ -215,18 +222,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? ListView.builder(
                         itemCount: _books.books.length,
                         itemBuilder: (ctx, index) {
-                          return Post(
-                            loggedInUserSession: authenticatedSession,
-                            id: _books.books[index].id,
-                            title: _books.books[index].bookName,
-                            description: _books.books[index].description,
-                            author: _books.books[index].author,
-                            boughtTime: _books.books[index].boughtDate,
-                            price: _books.books[index].price,
-                            selling: _books.books[index].postType == 'S'
-                                ? true
-                                : false,
-                            bookCount: _books.books[index].bookCount,
+                          return KeepAlive(
+                            keepAlive: true,
+                            child: Post(
+                              loggedInUserSession: authenticatedSession,
+                              id: _books.books[index].id,
+                              title: _books.books[index].bookName,
+                              description: _books.books[index].description,
+                              author: _books.books[index].author,
+                              boughtTime: _books.books[index].boughtDate,
+                              price: _books.books[index].price,
+                              selling: _books.books[index].postType == 'S'
+                                  ? true
+                                  : false,
+                              bookCount: _books.books[index].bookCount,
+                            ),
                           );
                         },
                       )

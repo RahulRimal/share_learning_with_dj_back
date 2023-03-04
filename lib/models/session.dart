@@ -51,13 +51,16 @@ class Session {
       };
 }
 
-class CustomSessionError {
+// class CustomSessionError {
+//   int code;
+//   Object message;
+
+//   CustomSessionError({required this.code, required this.message});
+// }
+
+class SessionError {
   int code;
   Object message;
 
-  CustomSessionError({required this.code, required this.message});
-
-  // showErrorMessage() {
-  //   print(message);
-  // }
+  SessionError({required this.code, required this.message});
 }

@@ -133,11 +133,6 @@ class UserApi {
         },
         body: json.encode(postBody),
       );
-
-      // print(json.encode(json.decode(response.body)['data']['sessions']));
-      // print(response.body);
-      // print(json.encode(json.decode(response.body)['data']['sessions'][0]));
-      // print(response.body);
       if (response.statusCode == ApiStatusCode.responseCreated) {
         var getTokenToCreateCustomer =
             await SessionApi.postSession(user.email.toString(), password);
@@ -150,10 +145,13 @@ class UserApi {
             code: response.statusCode,
             response: userFromJson(json.encode(json.decode(response.body))));
       }
+        // dynamic errorData = json.decode(response.body);
+        // print(errorData);
       return Failure(
           code: ApiStatusCode.invalidResponse,
           // errorResponse: ApiStrings.invalidResponseString
-          errorResponse: response.body);
+          // errorResponse: response.body);
+          errorResponse: json.decode(response.body));
     } on HttpException {
       return Failure(
           code: ApiStatusCode.httpError,

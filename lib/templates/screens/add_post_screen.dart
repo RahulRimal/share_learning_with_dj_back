@@ -27,18 +27,17 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   List<XFile>? _storedImages;
-  List<String> actualImages = [];
+  List<BookImage> actualImages = [];
   ImagePicker imagePicker = ImagePicker();
 
   final _form = GlobalKey<FormState>();
+  bool showSpinner = false;
 
   final _authorFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
   final _booksCountFocusNode = FocusNode();
   final _descFocusNode = FocusNode();
-
-  bool isUploading = false;
 
   List<bool> postTypeSelling = [true, false];
 
@@ -76,11 +75,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
     // final appDir = await syspaths.getApplicationDocumentsDirectory();
 
-    List<String> imagesName = [];
-
     setState(() {
       for (int i = 0; i < _storedImages!.length; i++) {
-        actualImages.add(_storedImages![i].path);
+        actualImages.add(BookImage(id: null, image: _storedImages![i].path));
       }
     });
   }
@@ -96,9 +93,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
     wishlisted: false,
     price: 0,
     bookCount: 1,
-    pictures: [],
+    images: [],
     postedOn: DateTime.now().toNepaliDateTime(),
-    postRating: '',
+    postRating: 0.0,
   );
 
   final _datePickercontroller = TextEditingController(
@@ -128,7 +125,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
       return false;
     }
 
-    isUploading = true;
+    setState(() {
+      showSpinner = true;
+    });
     // if (isUploading) {
     //   BotToast.showLoading(
     //     crossPage: false,
@@ -138,37 +137,28 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
     _form.currentState!.save();
     _edittedBook.postType = ispostType ? 'S' : 'B';
-    _edittedBook.pictures = _storedImages;
-    _edittedBook.postRating = 0.toString();
+    // _edittedBook.pictures = _storedImages;
+    _edittedBook.postRating = 0.0;
     _edittedBook.userId = Provider.of<Users>(context, listen: false).user!.id;
     Books books = Provider.of<Books>(context, listen: false);
 
     if (await books.createPost(loggedInUser, _edittedBook)) {
       if (_storedImages != null) {
         _edittedBook = books.books.last;
-        _edittedBook.pictures = _storedImages;
+        _edittedBook.images = _storedImages;
 
-        return await books.updatePictures(loggedInUser, _edittedBook);
-        // await books.updatePictures(loggedInUser, _edittedBook).then((value) {
-        // Navigator.of(context).pop();
-        // Navigator.of(context).pop();
-        // });
+        if(await books.updatePictures(loggedInUser, _edittedBook)){
+          showSpinner = false;
+          return true;
+        }
+        else{
+          showSpinner = false;
+          return false;
+        }
 
-        // Center(
-        //   child: CircularProgressIndicator(),
-        // );
       }
-
-      // Provider.of<Books>(context, listen: false)
-      //     .updatePictures(loggedInUser, _edittedBook)
-      //     .then((value) {
-      //       Navigator.of(context).pop();
-      // Navigator.of(context).pop();
-      //     });
-
-      return true;
     }
-
+    showSpinner = false;
     return false;
   }
 
@@ -589,6 +579,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          showSpinner ? Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: CircularProgressIndicator(),
+                          ) :
                           ElevatedButton(
                             child: Text('From Gallery'),
                             style: ButtonStyle(),

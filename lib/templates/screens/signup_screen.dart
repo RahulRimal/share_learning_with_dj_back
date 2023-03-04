@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:share_learning/models/user.dart';
@@ -48,10 +49,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final isValid = _form.currentState!.validate();
 
     if (isValid) {
+      setState(() {
+        showSpinner = true;
+      });
       _form.currentState!.save();
-      print(_newUser.email);
-      print(_newUser.username);
-      print(userpassword);
+      // print(_newUser.email);
+      // print(_newUser.username);
+      // print(userpassword);
       // User logginedUser = new User(
       //     id: 'tempUser',
       //     firstName: 'temp',
@@ -70,7 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       //     .createNewUser(_newUser, userpassword);
       // users.
 
-      if (await users.createNewUser(_newUser, userpassword) == true) {
+      if (await users.createNewUser(_newUser, userpassword)) {
         setState(() {
           if (mounted) {
             showSpinner = false;
@@ -107,16 +111,62 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           );
         });
-
-        // Navigator.of(context)
-        //     .pushReplacementNamed(HomeScreen.routeName, arguments: {
-        //   'authSession': userSession.session,
-        // });
-        // Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
       } else {
         setState(() {
-          showSpinner = true;
+          
+            showSpinner = false;
         });
+        if (users.userError != null) {
+          List<String> data = [];
+          (users.userError!.message as Map).forEach((key, value) {
+            if (value is List) {
+              value.forEach((item) => {data.add(item.toString())});
+            } else {
+              data.add(value.toString());
+            }
+          });
+
+          // Show notifications one by one with a delay
+          int delay = 0;
+          for (String element in data) {
+            Future.delayed(Duration(milliseconds: delay), () {
+              BotToast.showSimpleNotification(
+                title: element,
+                duration: Duration(seconds: 3),
+                backgroundColor: ColorManager.primary,
+                titleStyle: getBoldStyle(color: ColorManager.white),
+                align: Alignment(1, 1),
+              );
+              BotToast.showCustomNotification(
+                duration: Duration(seconds: 3),
+                toastBuilder: (cancelFunc) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Text(
+                      element,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                },
+              );
+            });
+            delay += 1500; // increase delay for next notification
+          }
+        }
+
+        else{
+          BotToast.showSimpleNotification(
+      title: "Something went wrong, please try again",
+      duration: Duration(seconds: 3),
+      backgroundColor: ColorManager.primary,
+      titleStyle: getBoldStyle(color: ColorManager.white),
+      align: Alignment(1, 1),
+    );
+        }
       }
     }
   }
@@ -186,6 +236,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
             height: 10,
           ),
           TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              if (isEmail) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter your email address';
+                }
+                // Check if the entered email has the right format
+                if (!RegExp(
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                    .hasMatch(value)) {
+                  return 'Please enter a valid email address';
+                }
+                // Return null if the entered email is valid
+                return null;
+              }
+              if (!isEmail && !isPassword) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'This field is required';
+                }
+                if (value.trim().length < 4) {
+                  return 'Username must be at least 4 characters in length';
+                }
+                // Return null if the entered username is valid
+                return null;
+              }
+              if (isPassword) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'This field is required';
+                }
+                if (value.trim().length < 8) {
+                  return 'Password must be at least 8 characters in length';
+                }
+                // Return null if the entered password is valid
+                return null;
+              }
+            },
             // obscureText: isPassword,
             obscureText: isPassword ? !visible : false,
             focusNode: isPassword
