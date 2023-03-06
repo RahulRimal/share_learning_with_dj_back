@@ -222,21 +222,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? ListView.builder(
                         itemCount: _books.books.length,
                         itemBuilder: (ctx, index) {
-                          return KeepAlive(
-                            keepAlive: true,
-                            child: Post(
-                              loggedInUserSession: authenticatedSession,
-                              id: _books.books[index].id,
-                              title: _books.books[index].bookName,
-                              description: _books.books[index].description,
-                              author: _books.books[index].author,
-                              boughtTime: _books.books[index].boughtDate,
-                              price: _books.books[index].price,
-                              selling: _books.books[index].postType == 'S'
-                                  ? true
-                                  : false,
-                              bookCount: _books.books[index].bookCount,
-                            ),
+                          return Post(
+                            loggedInUserSession: authenticatedSession,
+                            id: _books.books[index].id,
+                            title: _books.books[index].bookName,
+                            description: _books.books[index].description,
+                            author: _books.books[index].author,
+                            boughtTime: _books.books[index].boughtDate,
+                            price: _books.books[index].price,
+                            selling: _books.books[index].postType == 'S'
+                                ? true
+                                : false,
+                            bookCount: _books.books[index].bookCount,
                           );
                         },
                       )
