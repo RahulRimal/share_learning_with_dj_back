@@ -67,6 +67,7 @@ class PostComments extends StatelessWidget {
     _form.currentState!.save();
 
     _edittedComment.postId = int.parse(bookId);
+    _edittedComment.userId = int.parse(_commentUser.id);
 
     Provider.of<Comments>(context, listen: false)
         .addComment(loggedInUserSession, _edittedComment);
@@ -142,6 +143,10 @@ class PostComments extends StatelessWidget {
     // Users users = Provider.of<Users>(context, listen: false);
 
     Comments comments = context.watch<Comments>();
+
+    if (users.user != null) {
+      _commentUser = users.user!;
+    }
 
     return SingleChildScrollView(
       child: Column(

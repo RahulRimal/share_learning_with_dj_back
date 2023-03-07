@@ -211,4 +211,24 @@ class Users with ChangeNotifier {
     }
     return false;
   }
+
+  Future<Object> googleSignIn() async {
+    var response = await UserApi.googleSignIn();
+    // print(response);
+    if (response is Success) {
+      setUser((response.response as Map)['user']);
+      notifyListeners();
+      return response;
+    }
+    if (response is Failure) {
+      UserError userError = UserError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setUserError(userError);
+      notifyListeners();
+      return userError;
+    }
+    return response;
+  }
 }

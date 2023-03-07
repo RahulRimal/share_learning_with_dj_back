@@ -9,7 +9,7 @@ import 'dart:convert';
 
 Session sessionFromJson(String str) => Session.fromJson(json.decode(str));
 
-String sessionToJson(List<Session> data) =>
+String sessionsToJson(List<Session> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Session {
@@ -34,7 +34,6 @@ class Session {
   }
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
-        
         // id: json["id"].toString(),
         // userId: json["userId"].toString(),
         accessToken: json["access"] == null ? null : json["access"],
@@ -49,14 +48,11 @@ class Session {
         "refreshToken": refreshToken,
         // "refreshTokenExpiry": refreshTokenExpiry.toIso8601String(),
       };
+
+  factory Session.fromMap(Map<String, dynamic> map) {
+    return Session(accessToken: map['access'], refreshToken: map['refresh']);
+  }
 }
-
-// class CustomSessionError {
-//   int code;
-//   Object message;
-
-//   CustomSessionError({required this.code, required this.message});
-// }
 
 class SessionError {
   int code;

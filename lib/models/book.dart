@@ -82,7 +82,7 @@ List<Book> booksFromJson(String str) =>
       return book;
     }));
 
-String bookToJson(List<Book> data) =>
+String booksToJson(List<Book> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Book {
@@ -144,14 +144,15 @@ class Book {
         // wishlisted: json["wishlisted"] == '1' ? true : false,
         postType: json["post_type"] == null ? null : json["post_type"],
         // postRating: json["postRating"] == null ? '' : json["postRating"],
-        postRating:
-            json["post_rating"] == null ? 0.0 : json["post_rating"],
+        postRating: json["post_rating"] == null ? 0.0 : json["post_rating"],
         // images: json["images"] == null
         //     ? null
         //     : json["images"],
         images: json["images"] == null
-            ? null: List<BookImage>.from(json["images"].map((x)=> BookImage.fromJson(x))),
-        
+            ? null
+            : List<BookImage>.from(
+                json["images"].map((x) => BookImage.fromJson(x))),
+
         postedOn: NepaliDateTime.parse(json["posted_on"].toString()),
       );
 
@@ -172,45 +173,42 @@ class Book {
             ? null
             : List<dynamic>.from(images!.map((x) => x.image)),
         "postedOn": postedOn.toIso8601String(),
-        
       };
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'userId': userId,
+      'bookName': bookName,
+      'author': author,
+      'description': description,
+      'boughtDate': boughtDate,
+      'price': price,
+      'bookCount': bookCount,
+      'wishlisted': wishlisted,
+      'postType': postType,
+      'postRating': postRating,
+      'images': images,
+      'postedOn': postedOn
+    };
+  }
 
-      Map<String, dynamic> toMap()  {
-        return {
-          'id': id,
-          'userId': userId,
-          'bookName': bookName,
-          'author': author,
-          'description': description,
-          'boughtDate':boughtDate,
-          'price': price,
-          'bookCount': bookCount,
-          'wishlisted': wishlisted,
-          'postType': postType,
-          'postRating': postRating,
-          'images': images,
-          'postedOn': postedOn
-        };
-      }
-
-      factory Book.fromMap(Map<String, dynamic> map){
-        return Book(
-          id: map['id'],
-          userId: map['userId'],
-          bookName: map['bookName'],
-          author: map['author'],
-          description: map['description'],
-          boughtDate: map['boughtDate'],
-          price: map['price'],
-          bookCount: map['bookCount'],
-          wishlisted: map['wishlisted'],
-          postType: map['postType'],
-          postRating: map['postRating'],
-          images: map['images'],
-          postedOn: map['postedOn']
-          );
-      }
+  factory Book.fromMap(Map<String, dynamic> map) {
+    return Book(
+        id: map['id'],
+        userId: map['userId'],
+        bookName: map['bookName'],
+        author: map['author'],
+        description: map['description'],
+        boughtDate: map['boughtDate'],
+        price: map['price'],
+        bookCount: map['bookCount'],
+        wishlisted: map['wishlisted'],
+        postType: map['postType'],
+        postRating: map['postRating'],
+        images: map['images'],
+        postedOn: map['postedOn']);
+  }
 }
 
 class BookImage {
@@ -222,16 +220,12 @@ class BookImage {
   factory BookImage.fromJson(Map<String, dynamic> json) => BookImage(
         id: json["id"],
         image: json["image"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "image": image,
-    };
-
-
-
-
+      };
 }
 
 class BookError {

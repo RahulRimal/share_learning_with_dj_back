@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
               // home: HomeScreen(),
               home: SplashScreen(),
               // home: OnBoardingScreen(),
-              // home: AddPostScreen(), 
+              // home: AddPostScreen(),
               // home: LoginSignupScreen(),
               // home: LoginScreen(),
               // home: CartScreen(),

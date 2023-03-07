@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -15,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../providers/carts.dart';
 import '../../providers/users.dart';
+import '../managers/assets_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.title}) : super(key: key);
@@ -56,6 +59,40 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  _googleSignIn() async {
+    final users = Provider.of<Users>(context, listen: false);
+    final sessions = Provider.of<SessionProvider>(context, listen: false);
+    var response = await users.googleSignIn();
+    if (response is Success) {
+      sessions.setSession((response.response as Map)['session']);
+
+      SharedPreferences prefs = await _prefs;
+
+      Users users = Provider.of<Users>(context, listen: false);
+
+      prefs.setString('accessToken', sessions.session!.accessToken);
+      prefs.setString('refreshToken', sessions.session!.refreshToken);
+
+      if (!prefs.containsKey('cartId')) {
+        if (await Provider.of<Carts>(context, listen: false)
+            .createCart(sessions.session as Session)) {
+          prefs.setString('cartId',
+              Provider.of<Carts>(context, listen: false).cart!.id.toString());
+        } else {
+          print('here');
+        }
+      } else {
+        print('here');
+      }
+
+      Navigator.of(context)
+          .pushReplacementNamed(HomeScreen.routeName, arguments: {
+        'authSession': sessions.session,
+      });
+    }
+    // print(response);
+  }
+
   void _saveForm() async {
     final isValid = _form.currentState!.validate();
 
@@ -66,35 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // showSpinner = true;
       _form.currentState!.save();
-      // User logginedUser = new User(
-      //     id: 'tempUser',
-      //     firstName: 'temp',
-      //     lastName: 'Name',
-      //     username: 'tempN',
-      //     email: 'temp@mail.com',
-      //     description: 'This is a temp user',
-      //     userClass: 'tempClass',
-      //     followers: '',
-      //     createdDate: NepaliDateTime.now());
-      // Users loggedInUser = Users();
       SessionProvider userSession = new SessionProvider();
       if (await userSession.createSession(usernameOrEmail, userpassword)) {
         if (mounted) {
           setState(() {
             showSpinner = false;
           });
-          // setState(() {
-          //   if (mounted) {
-          //     showSpinner = false;
-          //   }
-          // });
-
-          // _sharedPrefrencesHelper.setStringInPrefrences(
-          //     'accessToken', userSession.session!.accessToken);
-
-          // SharedPreferences _prefs = await SharedPreferences.getInstance();
           SharedPreferences prefs = await _prefs;
-          // prefs = await SharedPreferences.getInstance();
+
           Users users = Provider.of<Users>(context, listen: false);
 
           prefs.setString('accessToken', userSession.session!.accessToken);
@@ -111,10 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       .cart!
                       .id
                       .toString());
-              // print(Provider.of<Carts>(context, listen: false)
-              //     .cart!
-              //     .id
-              //     .toString());
             } else {
               print('here');
             }
@@ -128,25 +140,21 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         }
       } else {
-        
         setState(() {
-          
-            showSpinner = false;
+          showSpinner = false;
         });
         if (userSession.sessionError != null) {
           List<String> data = [];
-          if(userSession.sessionError!.message is String){
+          if (userSession.sessionError!.message is String) {
             data.add(userSession.sessionError!.message.toString());
-          }
-          else
-          {
-          (userSession.sessionError!.message as Map).forEach((key, value) {
-            if (value is List) {
-              value.forEach((item) => {data.add(item.toString())});
-            } else {
-              data.add(value.toString());
-            }
-          });
+          } else {
+            (userSession.sessionError!.message as Map).forEach((key, value) {
+              if (value is List) {
+                value.forEach((item) => {data.add(item.toString())});
+              } else {
+                data.add(value.toString());
+              }
+            });
           }
 
           // print(data);
@@ -181,15 +189,14 @@ class _LoginScreenState extends State<LoginScreen> {
             });
             delay += 1500; // increase delay for next notification
           }
-        }
-        else{
+        } else {
           BotToast.showSimpleNotification(
-      title: "Something went wrong, please try again",
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+            title: "Something went wrong, please try again",
+            duration: Duration(seconds: 3),
+            backgroundColor: ColorManager.primary,
+            titleStyle: getBoldStyle(color: ColorManager.white),
+            align: Alignment(1, 1),
+          );
         }
       }
     }
@@ -326,33 +333,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   focusNode: isPassword ? _passwordFocusNode : null,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
-              
-              if (isPassword) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'This field is required';
-                }
-                if (value.trim().length < 8) {
-                  return 'Password must be at least 8 characters in length';
-                }
-                // Return null if the entered password is valid
-                return null;
-              }
-              else
-              {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter your email address';
-                }
-                // Check if the entered email has the right format
-                if (!RegExp(
-                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                    .hasMatch(value)) {
-                  return 'Please enter a valid email address';
-                }
-                // Return null if the entered email is valid
-                return null;
-              
-              }
-            },
+                    if (isPassword) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'This field is required';
+                      }
+                      if (value.trim().length < 8) {
+                        return 'Password must be at least 8 characters in length';
+                      }
+                      // Return null if the entered password is valid
+                      return null;
+                    } else {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your email address';
+                      }
+                      // Check if the entered email has the right format
+                      if (!RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(value)) {
+                        return 'Please enter a valid email address';
+                      }
+                      // Return null if the entered email is valid
+                      return null;
+                    }
+                  },
                   textInputAction:
                       isPassword ? TextInputAction.done : TextInputAction.next,
                   // keyboardType:
@@ -470,51 +473,116 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _facebookButton() {
-    return Container(
-      height: 50,
-      margin: EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+    return GestureDetector(
+      onTap: _googleSignIn,
+      child: Container(
+        height: 50,
+        margin: EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xff1959a9),
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(5),
+                      topLeft: Radius.circular(5)),
+                ),
+                alignment: Alignment.center,
+                child: Text('f',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w400)),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xff2872ba),
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(5),
+                      topRight: Radius.circular(5)),
+                ),
+                alignment: Alignment.center,
+                child: Text('Log in with Facebook',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _googleButton() {
+    return ElevatedButton(
+      onPressed: _googleSignIn,
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: Colors.grey),
+          ),
+        ),
       ),
       child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xff1959a9),
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(5),
-                    topLeft: Radius.circular(5)),
-              ),
-              alignment: Alignment.center,
-              child: Text('f',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w400)),
-            ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: SvgPicture.asset(ImageAssets.googleLogo),
           ),
+          SizedBox(width: 10),
           Expanded(
-            flex: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xff2872ba),
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(5),
-                    topRight: Radius.circular(5)),
+            child: Text(
+              "Sign up with Google",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
               ),
-              alignment: Alignment.center,
-              child: Text('Log in with Facebook',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400)),
             ),
           ),
         ],
       ),
     );
+
+    // return ElevatedButton(
+    //   onPressed: _googleSignIn,
+    //   style: ButtonStyle(
+    //     backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+    //       RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.circular(10),
+    //         side: BorderSide(color: Colors.grey),
+    //       ),
+    //     ),
+    //   ),
+    //   child: Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       SvgPicture.asset(ImageAssets.googleLogo),
+    //       SizedBox(width: 10),
+    //       Text(
+    //         "Sign in with Google",
+    //         style: TextStyle(
+    //           color: Colors.black87,
+    //           fontSize: 16,
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   Widget _createAccountLabel() {
@@ -673,7 +741,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           _divider(),
-                          _facebookButton(),
+                          // _facebookButton(),
+                          _googleButton(),
                           SizedBox(height: height * .055),
                           _createAccountLabel(),
                         ],
@@ -731,7 +800,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           _divider(),
-                          _facebookButton(),
+                          // _facebookButton(),
+                          _googleButton(),
                           SizedBox(height: height * .055),
                           _createAccountLabel(),
                         ],

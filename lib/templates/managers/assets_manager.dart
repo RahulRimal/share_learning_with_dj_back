@@ -11,4 +11,5 @@ class ImageAssets {
   static const String rightarrowIc = "$IMAGE_PATH/right_arrow_ic.svg";
   static const String solidCircleIc = "$IMAGE_PATH/solid_circle_ic.svg";
   static const String noProfile = "$IMAGE_PATH/no-profile-img.png";
+  static const String googleLogo = "$IMAGE_PATH/google_logo.svg";
 }
