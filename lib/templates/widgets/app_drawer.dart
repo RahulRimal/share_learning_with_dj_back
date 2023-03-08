@@ -125,7 +125,7 @@ class AppDrawer extends StatelessWidget {
                 arguments: {
                   'loggedInUserSession': loggedInSession,
                   // 'user': users.user,
-                  'user': loggedInUser,
+                  // 'user': loggedInUser,
                 },
               );
             }

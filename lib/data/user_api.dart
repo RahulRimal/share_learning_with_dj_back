@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/api_status.dart';
@@ -16,8 +17,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserApi {
   static Future<Object> getUserFromToken(String accessToken) async {
     try {
-      // var url = Uri.parse('http://localhost/apiforsharelearn/users/me');
-      // var url = Uri.parse('http://10.0.2.2/apiforsharelearn/users');
       var url = Uri.parse(RemoteManager.BASE_URI + '/customers/me');
 
       var response = await http.get(url, headers: {
@@ -28,14 +27,9 @@ class UserApi {
         HttpHeaders.contentTypeHeader: "application/json",
       });
 
-      // print(json.encode(json.decode(response.body)['data']['user'][0]));
-      // print(response);
-
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
             code: response.statusCode,
-            // response: userFromJson(
-            //     json.encode(json.decode(response.body)['data']['user'][0])));
             response: userFromJson(json.encode(json.decode(response.body))));
       }
 
@@ -227,6 +221,104 @@ class UserApi {
     }
   }
 
+  static Future<Object> updateUserInfo(
+      Session currentSession, Map<String, dynamic> edittedInfo) async {
+    try {
+      var url = Uri.parse(
+          RemoteManager.BASE_URI + '/customers/' + edittedInfo['id'] + '/');
+      edittedInfo.remove('id');
+      var response = await http.patch(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
+          "Accept": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+        body: json.encode(edittedInfo),
+        // body: json.encode(updatedPost),
+      );
+      // print(response.body);
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+            code: response.statusCode,
+            response: userFromJson(json.encode(json.decode(response.body))));
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
+  static Future<Object> postUserPicture(
+      Session loggedinSession, String userId, XFile image) async {
+    try {
+      var url =
+          Uri.parse(RemoteManager.BASE_URI + '/customers/' + userId + '/');
+
+      // var request = http.MultipartRequest("POST", url);
+      var request = http.MultipartRequest("PATCH", url);
+
+      var pic = await http.MultipartFile.fromPath("image", image.path);
+
+      request.files.add(pic);
+
+      request.headers.addAll({
+        HttpHeaders.authorizationHeader: "SL " + loggedinSession.accessToken,
+        "Accept": "application/json; charset=utf-8",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+      });
+
+      var response = await request.send();
+
+      //Get the response from the server
+      var responseData = await response.stream.toBytes();
+      var responseBody = String.fromCharCodes(responseData);
+
+      // print(responseBody);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+          code: response.statusCode,
+          response: userFromJson(
+            json.encode(
+              json.decode(responseBody),
+            ),
+          ),
+        );
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: response.stream.toString());
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      return Failure(code: 103, errorResponse: e.toString());
+    }
+  }
+
   static Future<Object> googleSignIn() async {
     // final _googleSignIn = GoogleSignIn(
     //   scopes: [
@@ -237,8 +329,11 @@ class UserApi {
     //   ],
     // );
     final _googleSignIn = GoogleSignIn(
+        // clientId:
+        //     '117721238163-makqi8gtb0gvt4v374dsd1hl732lu6ud.apps.googleusercontent.com');
         clientId:
             '117721238163-makqi8gtb0gvt4v374dsd1hl732lu6ud.apps.googleusercontent.com');
+
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =

@@ -333,26 +333,26 @@ class Books with ChangeNotifier {
       }
     }
     Future.delayed(Duration.zero).then((_) {
-  // Do something after the loop has finished
-  if (response is Success) {
-    // print('here');
-      int bookIndex = _myBooks.indexWhere((element) => element.id == postId);
-      Book bookToUpdate = _myBooks[bookIndex];
-      _myBooks.remove(bookToUpdate);
+      // Do something after the loop has finished
+      if (response is Success) {
+        // print('here');
+        int bookIndex = _myBooks.indexWhere((element) => element.id == postId);
+        Book bookToUpdate = _myBooks[bookIndex];
+        _myBooks.remove(bookToUpdate);
 
-      imagesToDelete.forEach((element) {
-        bookToUpdate.images!.remove(element);
-      },);
+        imagesToDelete.forEach(
+          (element) {
+            bookToUpdate.images!.remove(element);
+          },
+        );
 
-      _myBooks.add(bookToUpdate);
+        _myBooks.add(bookToUpdate);
 
-      setLoading(false);
-      notifyListeners();
-      return true;
-    }
-});
-
-    
+        setLoading(false);
+        notifyListeners();
+        return true;
+      }
+    });
 
     return false;
   }

@@ -18,6 +18,7 @@ class UserHelper {
   }
 
   static String userClass(User user) {
+    if (user.userClass == null) return "Undefined Class";
     String? grade = user.userClass;
 
     for (int i = 1; i < 13; i++) {
@@ -26,5 +27,11 @@ class UserHelper {
       }
     }
     return user.userClass as String;
+  }
+
+  static String userDescription(User user) {
+    if (user.description == null) return "No description";
+
+    return user.description as String;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/data/user_api.dart';
 import 'package:share_learning/models/api_status.dart';
@@ -199,6 +200,54 @@ class Users with ChangeNotifier {
       notifyListeners();
       return true;
     }
+    if (response is Failure) {
+      UserError userError = UserError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setUserError(userError);
+      setLoading(false);
+      notifyListeners();
+      return false;
+    }
+    return false;
+  }
+
+  Future<bool> updateUserInfo(
+      Session currentSession, Map<String, dynamic> edittedInfo) async {
+    var response = await UserApi.updateUserInfo(currentSession, edittedInfo);
+    // print(response);
+    if (response is Success) {
+      setUser(response.response as User);
+      notifyListeners();
+      return true;
+    }
+    if (response is Failure) {
+      UserError userError = UserError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setUserError(userError);
+      notifyListeners();
+      return false;
+    }
+    return false;
+  }
+
+  Future<bool> updateProfilePicture(
+      Session userSession, String userId, XFile image) async {
+    setLoading(true);
+    var response = await UserApi.postUserPicture(userSession, userId, image);
+
+    // print(response);
+
+    if (response is Success) {
+      setUser(response.response as User);
+      setLoading(false);
+      notifyListeners();
+      return true;
+    }
+
     if (response is Failure) {
       UserError userError = UserError(
         code: response.code,

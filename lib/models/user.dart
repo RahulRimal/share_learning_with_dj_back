@@ -81,37 +81,66 @@ class User {
         description: json["description"] == null ? null : json["description"],
         userClass: json["user_class"] == null ? null : json["user_class"],
         followers: json["followers"] == null ? null : json["followers"],
-        createdDate: json["createdDate"] == null
+        createdDate: json["created_at"] == null
             ? null
-            : DateTime.parse(json["createdDate"]),
+            : DateTime.parse(json["created_at"]),
         // createdDate: DateTime.parse(json["created_at"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "name": firstName.toString() + lastName.toString(),
+        "first_name": firstName.toString(),
+        "last_name": lastName.toString(),
         "username": username == null ? null : username,
         "email": email == null ? null : email,
         "phone": phone == null ? null : phone,
         "description": description == null ? null : description,
-        "class": userClass == null ? null : userClass,
-        "followers": followers == null ? null : followers,
-        "createdDate":
-            createdDate == null ? null : createdDate!.toIso8601String(),
-        // "createdDate": createdDate!.toIso8601String(),
-
-        // "id": id == null ? null : id,
-        // "name": (firstName == null && lastName == null)
-        //     ? null
-        //     : firstName + lastName,
-        // "username": username == null ? null : username,
-        // "email": email == null ? null : email,
-        // "description": description == null ? null : description,
-        // "class": userClass == null ? null : userClass,
+        "user_class": userClass == null ? null : userClass,
         // "followers": followers == null ? null : followers,
-        // "createdDate":
-        //     createdDate == null ? null : createdDate.toIso8601String(),
+        "created_at":
+            createdDate == null ? null : createdDate!.toIso8601String(),
       };
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "first_name": firstName.toString(),
+        "last_name": lastName.toString(),
+        "username": username == null ? null : username,
+        "email": email == null ? null : email,
+        "phone": phone == null ? null : phone,
+        "description": description == null ? null : description,
+        "user_class": userClass == null ? null : userClass,
+        "followers": followers == null ? null : followers,
+        "created_at":
+            createdDate == null ? null : createdDate!.toIso8601String(),
+      };
+
+  factory User.withProperty(User user, Map<String, dynamic> property) {
+    return User(
+      id: user.id,
+      firstName: property["firstName"] == null
+          ? user.firstName
+          : property["firstName"],
+      lastName:
+          property["lastName"] == null ? user.lastName : property["lastName"],
+      username:
+          property["username"] == null ? user.username : property["username"],
+      email: property["email"] == null ? user.email : property["email"],
+      phone: property["phone"] == null ? user.phone : property["phone"],
+      image: property["image"] == null ? user.image : property["image"],
+      description: property["description"] == null
+          ? user.description
+          : property["description"],
+      userClass: property["userClass"] == null
+          ? user.userClass
+          : property["userClass"],
+      followers: property["followers"] == null
+          ? user.followers
+          : property["followers"],
+      createdDate: property["createdDate"] == null
+          ? user.createdDate
+          : DateTime.parse(property["createdDate"]),
+    );
+  }
 }
 
 class UserError {

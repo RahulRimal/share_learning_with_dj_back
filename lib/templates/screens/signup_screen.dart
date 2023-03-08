@@ -1,15 +1,23 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/api_status.dart';
+import '../../models/session.dart';
+import '../../providers/carts.dart';
+import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
+import 'home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key, this.title}) : super(key: key);
@@ -23,6 +31,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final _form = GlobalKey<FormState>();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _emailFocusNode = FocusNode();
@@ -44,6 +53,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
     followers: '',
     createdDate: NepaliDateTime.now(),
   );
+
+  _googleSignIn() async {
+    final users = Provider.of<Users>(context, listen: false);
+    final sessions = Provider.of<SessionProvider>(context, listen: false);
+    var response = await users.googleSignIn();
+    if (response is Success) {
+      sessions.setSession((response.response as Map)['session']);
+
+      SharedPreferences prefs = await _prefs;
+
+      Users users = Provider.of<Users>(context, listen: false);
+
+      prefs.setString('accessToken', sessions.session!.accessToken);
+      prefs.setString('refreshToken', sessions.session!.refreshToken);
+
+      if (!prefs.containsKey('cartId')) {
+        if (await Provider.of<Carts>(context, listen: false)
+            .createCart(sessions.session as Session)) {
+          prefs.setString('cartId',
+              Provider.of<Carts>(context, listen: false).cart!.id.toString());
+        } else {
+          print('here');
+        }
+      } else {
+        print('here');
+      }
+
+      Navigator.of(context)
+          .pushReplacementNamed(HomeScreen.routeName, arguments: {
+        'authSession': sessions.session,
+      });
+    }
+    // print(response);
+  }
 
   void _saveForm() async {
     final isValid = _form.currentState!.validate();
@@ -113,8 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
       } else {
         setState(() {
-          
-            showSpinner = false;
+          showSpinner = false;
         });
         if (users.userError != null) {
           List<String> data = [];
@@ -156,16 +198,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             });
             delay += 1500; // increase delay for next notification
           }
-        }
-
-        else{
+        } else {
           BotToast.showSimpleNotification(
-      title: "Something went wrong, please try again",
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+            title: "Something went wrong, please try again",
+            duration: Duration(seconds: 3),
+            backgroundColor: ColorManager.primary,
+            titleStyle: getBoldStyle(color: ColorManager.white),
+            align: Alignment(1, 1),
+          );
         }
       }
     }
@@ -349,6 +389,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  Widget _googleButton() {
+    return ElevatedButton(
+      onPressed: _googleSignIn,
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: Colors.grey),
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: SvgPicture.asset(
+              ImageAssets.googleLogo,
+              height: 35,
+              width: 35,
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              "Sign up with Google",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _submitButton() {
     return GestureDetector(
       onTap: _saveForm,
@@ -438,6 +517,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
               fontSize: 30),
         ),
       ]),
+    );
+  }
+
+  Widget _divider() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Divider(
+                thickness: 1,
+              ),
+            ),
+          ),
+          Text(
+            'OR',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Divider(
+                thickness: 1,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+        ],
+      ),
     );
   }
 
@@ -645,7 +763,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           )
                         : Container(),
                     _submitButton(),
-                    SizedBox(height: height * .14),
+                    _divider(),
+                    // _facebookButton(),
+                    showSpinner ? CircularProgressIndicator() : Container(),
+                    _googleButton(),
+                    SizedBox(height: height * .055),
+                    // SizedBox(height: height * .14),
                     _loginAccountLabel(),
                   ],
                 ),

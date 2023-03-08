@@ -205,7 +205,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
     }
     _form.currentState!.save();
     _edittedBook.postType = ispostType ? 'S' : 'B';
-    // _edittedBook.pictures = _storedImages;
 
     if (await Provider.of<Books>(context, listen: false)
         .updatePost(loggedInUserSession, _edittedBook)) {
@@ -217,28 +216,30 @@ class _EditPostScreenState extends State<EditPostScreen> {
               _edittedBook.images = _storedImages;
               if (await Provider.of<Books>(context, listen: false)
                   .updatePictures(loggedInUserSession, _edittedBook)) {
-                    BotToast.showSimpleNotification(
-      title: 'Post has been successfully updated',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
-                  }
+                BotToast.showSimpleNotification(
+                  title: 'Post has been successfully updated',
+                  duration: Duration(seconds: 3),
+                  backgroundColor: ColorManager.primary,
+                  titleStyle: getBoldStyle(color: ColorManager.white),
+                  align: Alignment(1, 1),
+                );
+              }
             }
           }
         }
       }
     }
-    if(Provider.of<Books>(context,listen: false).bookError != null)
-    {
+    if (Provider.of<Books>(context, listen: false).bookError != null) {
       BotToast.showSimpleNotification(
-      title: Provider.of<Books>(context, listen: false).bookError!.message.toString(),
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+        title: Provider.of<Books>(context, listen: false)
+            .bookError!
+            .message
+            .toString(),
+        duration: Duration(seconds: 3),
+        backgroundColor: ColorManager.primary,
+        titleStyle: getBoldStyle(color: ColorManager.white),
+        align: Alignment(1, 1),
+      );
     }
 
     BotToast.showSimpleNotification(
@@ -272,20 +273,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                   icon: Icon(Icons.save),
                   onPressed: () async {
                     if (await _updatePost(loggedInUserSession, _edittedBook))
-                      // _showUpdateSnackbar(context);
-                      // BotToast.showSimpleNotification(
-                      //   title: 'Posted Updated Successfully',
-                      //   duration: Duration(seconds: 3),
-                      //   backgroundColor: ColorManager.primary,
-                      //   titleStyle: getBoldStyle(color: ColorManager.white),
-                      //   align: Alignment(0, 1),
-                      //   hideCloseButton: true,
-                      // );
-
-                      Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
-                        'authSession': loggedInUserSession
-                      });
-                    
+                      Navigator.pushReplacementNamed(
+                          context, HomeScreen.routeName,
+                          arguments: {'authSession': loggedInUserSession});
                   },
                   // onPressed: _updatePost,
                 )

@@ -60,6 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _googleSignIn() async {
+    setState(() {
+      showSpinner = true;
+    });
     final users = Provider.of<Users>(context, listen: false);
     final sessions = Provider.of<SessionProvider>(context, listen: false);
     var response = await users.googleSignIn();
@@ -84,6 +87,10 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         print('here');
       }
+
+      setState(() {
+        showSpinner = false;
+      });
 
       Navigator.of(context)
           .pushReplacementNamed(HomeScreen.routeName, arguments: {
@@ -540,12 +547,16 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: SvgPicture.asset(ImageAssets.googleLogo),
+            child: SvgPicture.asset(
+              ImageAssets.googleLogo,
+              height: 35,
+              width: 35,
+            ),
           ),
           SizedBox(width: 10),
           Expanded(
             child: Text(
-              "Sign up with Google",
+              "Sign in with Google",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black87,
@@ -801,6 +812,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           _divider(),
                           // _facebookButton(),
+                          // showSpinner
+                          //     ? CircularProgressIndicator()
+                          //     : _googleButton(),
                           _googleButton(),
                           SizedBox(height: height * .055),
                           _createAccountLabel(),

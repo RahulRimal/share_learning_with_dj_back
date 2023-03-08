@@ -200,15 +200,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 //   user.image as String
                                 //   // ImageAssets.noProfile,
                                 // ),
-                                child: user.image == null ?Image.asset(
-                                  ImageAssets.noProfile,
-                                ):  CircleAvatar(
-                                      radius: 70,
-                                      backgroundImage: NetworkImage(
-                                        UserHelper.userProfileImage(
-                                            user),
+                                child: user.image == null
+                                    ? Image.asset(
+                                        ImageAssets.noProfile,
+                                      )
+                                    : CircleAvatar(
+                                        radius: 70,
+                                        backgroundImage: NetworkImage(
+                                          UserHelper.userProfileImage(user),
+                                        ),
                                       ),
-                                    ),
                               ),
                             ),
                           ),
@@ -371,7 +372,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                                 child: Text(
-                                  user.description as String,
+                                  UserHelper.userDescription(user),
                                   style: getRegularStyle(
                                     color: ColorManager.primary,
                                   ),
@@ -414,7 +415,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
     Session loggedInUserSession = args['loggedInUserSession'] as Session;
 
-    User user = args['user'] as User;
+    // User user = args['user'] as User;
+    User user = Provider.of<Users>(context, listen: false).user as User;
+    // print(user);
 
     // Session userSession = args['session'] as Session;
 
