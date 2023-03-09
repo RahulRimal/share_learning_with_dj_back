@@ -265,6 +265,102 @@ class UserApi {
     }
   }
 
+  static Future<Object> updateUserData(
+      String userId, String key, List<String> value) async {
+    try {
+      var url = Uri.parse(
+        RemoteManager.BASE_URI +
+            '/user_data/?user_id=' +
+            userId +
+            '&name=' +
+            key,
+      );
+      var response = await http.get(url);
+      // print(response.body);
+      // print(response.body.length);
+
+      if (response.body.length <= 2) {
+        url = Uri.parse(RemoteManager.BASE_URI + '/user_data/');
+
+        var postBody = {
+          "user": userId,
+          "name": key,
+          "item_list": value,
+        };
+
+        response = await http.post(
+          url,
+          headers: {
+            "Accept": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin":
+                "*", // Required for CORS support to work
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            HttpHeaders.contentTypeHeader: "application/json",
+          },
+          body: json.encode(postBody),
+        );
+        // print(response.body);
+        if (response.statusCode == ApiStatusCode.responseCreated) {
+          return Success(
+              code: response.statusCode,
+              // response: userFromJson(json.encode(json.decode(response.body))));
+              response: "Thank you for the selection");
+        }
+        return Failure(
+            code: ApiStatusCode.invalidResponse,
+            errorResponse: ApiStrings.invalidResponseString);
+      } else {
+        var id = json.decode(response.body)[0]['id'];
+
+        url = Uri.parse(
+            RemoteManager.BASE_URI + '/user_data/' + id.toString() + '/');
+
+        var postBody = {
+          "user": userId,
+          "name": key,
+          "item_list": value,
+        };
+
+        response = await http.patch(
+          url,
+          headers: {
+            "Accept": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin":
+                "*", // Required for CORS support to work
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            HttpHeaders.contentTypeHeader: "application/json",
+          },
+          body: json.encode(postBody),
+        );
+        // print(response.body);
+        if (response.statusCode == ApiStatusCode.responseSuccess) {
+          // return Success(
+          //     code: response.statusCode,
+          //     response: userFromJson(json.encode(json.decode(response.body))));
+          return Success(
+              code: response.statusCode,
+              response: "Thank you for the selection");
+        }
+        return Failure(
+            code: ApiStatusCode.invalidResponse,
+            errorResponse: ApiStrings.invalidResponseString);
+      }
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
   static Future<Object> postUserPicture(
       Session loggedinSession, String userId, XFile image) async {
     try {

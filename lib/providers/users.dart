@@ -234,6 +234,32 @@ class Users with ChangeNotifier {
     return false;
   }
 
+  // Future<bool> updateUserData(String userId, String key, )
+  Future<Object> updateUserData(
+      String userId, String key, List<String> value) async {
+    var response = await UserApi.updateUserData(userId, key, value);
+    // print(response);
+    // if (response is Success) {
+    // setUser(response.response as User);
+    // notifyListeners();
+
+    // return true;
+    // return {'message': response.response};
+    // }
+    // if (response is Failure) {
+    // UserError userError = UserError(
+    //   code: response.code,
+    //   message: response.errorResponse,
+    // );
+    // setUserError(userError);
+    // notifyListeners();
+    // return true;
+    // return {'message': response.errorResponse};
+    // }
+    // return false;
+    return response;
+  }
+
   Future<bool> updateProfilePicture(
       Session userSession, String userId, XFile image) async {
     setLoading(true);

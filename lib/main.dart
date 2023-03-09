@@ -20,6 +20,7 @@ import 'package:share_learning/templates/screens/signup_screen.dart';
 import 'package:share_learning/templates/screens/single_post_screen.dart';
 import 'package:share_learning/templates/screens/splash_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
+import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
@@ -92,6 +93,8 @@ class MyApp extends StatelessWidget {
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
                 OrderScreen.routeName: (context) => OrderScreen(),
+                UserInterestsScreen.routeName: (context) =>
+                    UserInterestsScreen(),
               },
             )
           : MaterialApp(
@@ -124,6 +127,8 @@ class MyApp extends StatelessWidget {
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
                 OrderScreen.routeName: (context) => OrderScreen(),
+                UserInterestsScreen.routeName: (context) =>
+                    UserInterestsScreen(),
               },
             ),
     );

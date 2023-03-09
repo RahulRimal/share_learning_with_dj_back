@@ -69,13 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final Session authenticatedSession = args['authSession'] as Session;
 
     Users _users = context.watch<Users>();
-    if(_users.user == null)
-    {
+    if (_users.user == null) {
       _users.getUserByToken(authenticatedSession.accessToken);
-    }
-    else{
-
-    _user = _users.user as User;
+    } else {
+      _user = _users.user as User;
     }
     Books _books = context.watch<Books>();
 

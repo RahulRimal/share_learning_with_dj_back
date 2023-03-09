@@ -38,6 +38,7 @@ dependencies:
   khalti: ^1.0.2
   shared_preferences: ^2.0.13
   google_sign_in: ^5.1.1
+  google_fonts: ^3.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -73,6 +74,17 @@ flutter:
     - assets/images/solid_circle_ic.svg
     - assets/images/no-profile-img.png
     - assets/images/google_logo.svg
+
+    - assets/page-1/images/group-32.png
+    - assets/page-1/images/group-33.png
+    - assets/page-1/images/group-25.png
+    - assets/page-1/images/group-34.png
+    - assets/page-1/images/group-21.png
+    - assets/page-1/images/group-2.png
+    - assets/page-1/images/ellipse-5-bg.png
+    - assets/page-1/images/group-23.png
+    - assets/page-1/images/group-33-6Xa.png
+    - assets/page-1/images/group-32-9Zr.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
