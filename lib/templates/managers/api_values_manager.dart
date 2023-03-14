@@ -1,6 +1,7 @@
 class RemoteManager {
   // static const String BASE_URI = 'http://127.0.0.1:8000';
-  static const String BASE_URI = 'http://192.168.1.72:8000';
+  // static const String BASE_URI = 'http://192.168.1.72:8000';
+  static const String BASE_URI = 'http://192.168.1.69:8000';
   // static const String BASE_URI = 'http://localhost:8000';
   // static const String BASE_URI = 'http://192.168.1.174:8000';
   // static const String BASE_URI = 'https://sharelearn.pythonanywhere.com/';

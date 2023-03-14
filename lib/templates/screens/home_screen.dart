@@ -16,6 +16,7 @@ import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/post.dart';
 
 import '../../providers/orders.dart';
+import '../../providers/sessions.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -66,7 +67,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
-    final Session authenticatedSession = args['authSession'] as Session;
+    Session authenticatedSession;
+    if(args['authSession'] != null)
+    {
+
+    authenticatedSession = args['authSession'] as Session;
+    }
+    else{
+      authenticatedSession = Provider.of<SessionProvider>(context).session as Session;
+    }
 
     Users _users = context.watch<Users>();
     if (_users.user == null) {
@@ -185,6 +194,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             } else {
                               if (snapshot.hasError) {
+                                // AppBar().preferredSize.height;
+                                // MediaQuery.of(context).viewPadding.top;
                                 return CircleAvatar(
                                   backgroundImage: NetworkImage(
                                       'https://ojasfilms.org/assets/img/ojas-logo.png'),

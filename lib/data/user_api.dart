@@ -361,6 +361,41 @@ class UserApi {
     }
   }
 
+  static Future<Object> haveProvidedData(String userId) async {
+    try {
+      var url = Uri.parse(
+        RemoteManager.BASE_URI + '/user_data/?user_id=' + userId,
+      );
+      var response = await http.get(url);
+      // print(response.body);
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        if (json.decode(response.body).length > 2) {
+          return Success(
+              code: response.statusCode, response: json.decode(response.body));
+        }
+      }
+      //   return Success(
+      //       code: response.statusCode, response: json.decode(response.body));
+      // }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
   static Future<Object> postUserPicture(
       Session loggedinSession, String userId, XFile image) async {
     try {

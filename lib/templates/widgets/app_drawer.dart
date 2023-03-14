@@ -187,6 +187,8 @@ class AppDrawer extends StatelessWidget {
 
     prefs.remove('accessToken');
     prefs.remove('refreshToken');
+    prefs.remove('isFirstTime');
+    // print('here');
 
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);
   }
@@ -378,11 +380,13 @@ class AppDrawer extends StatelessWidget {
                                 title: Text(
                                   'Log out',
                                   style: getBoldStyle(
-                                    color: ColorManager.primary,
+                                    // color: ColorManager.primary,
+                                    color: ColorManager.white,
                                     fontSize: FontSize.s18,
                                   ),
                                 ),
                                 onTap: () async {
+                                  // print('her');
                                   await _logOut(context);
                                   // SharedPreferences prefs = await _prefs;
                                   // Provider.of<Books>(context, listen: false)
@@ -589,32 +593,35 @@ class AppDrawer extends StatelessWidget {
                       // Spacer(),
 
                       ListTile(
-                        tileColor: ColorManager.white,
+                        // tileColor: ColorManager.white,
                         leading: Icon(
                           Icons.logout,
-                          color: ColorManager.primary,
+                          color: ColorManager.white,
                         ),
                         title: Text(
                           'Log out',
                           style: getBoldStyle(
-                            color: ColorManager.primary,
+                            color: ColorManager.white,
                             fontSize: FontSize.s18,
                           ),
                         ),
+                        // onTap: () async {
+                        //   SharedPreferences prefs = await _prefs;
+                        //   Provider.of<Books>(context, listen: false)
+                        //       .setBooks([]);
+                        //   // users.logoutUser(loggedInSession.id);
+                        //   users.logoutUser('1');
+
+                        //   Provider.of<Comments>(context, listen: false)
+                        //       .setComments([]);
+
+                        //   prefs.remove('accessToken');
+
+                        //   Navigator.pushReplacementNamed(
+                        //       context, LoginScreen.routeName);
+                        // },
                         onTap: () async {
-                          SharedPreferences prefs = await _prefs;
-                          Provider.of<Books>(context, listen: false)
-                              .setBooks([]);
-                          // users.logoutUser(loggedInSession.id);
-                          users.logoutUser('1');
-
-                          Provider.of<Comments>(context, listen: false)
-                              .setComments([]);
-
-                          prefs.remove('accessToken');
-
-                          Navigator.pushReplacementNamed(
-                              context, LoginScreen.routeName);
+                          _logOut(context);
                         },
                       )
                     ],

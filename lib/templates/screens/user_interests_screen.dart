@@ -138,6 +138,7 @@ import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
 import '../../providers/users.dart';
@@ -151,6 +152,8 @@ class UserInterestsScreen extends StatefulWidget {
 }
 
 class _UserInterestsScreenState extends State<UserInterestsScreen> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   List<String> interests = [
     'Cooking',
     'Sports',
@@ -201,17 +204,16 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
   }
 
   // Future<bool> _handleNextButtonPress() {
-  _handleNextButtonPress() {
+  _handleNextButtonPress() async {
     Users users = Provider.of<Users>(context, listen: false);
+    SharedPreferences prefs = await _prefs;
+
     Map<String, List<String>> userData = {
       'interests': selectedInterests,
       'hobbies': selectedHobbies,
     };
 
     userData.forEach((key, value) async {
-      // print(users.user!.id);
-      // print('$key: $value');
-
       var response = await users.updateUserData(users.user!.id, key, value);
       // print(response);
       if (response is Success) {
@@ -224,11 +226,14 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
           align: Alignment(1, 1),
         );
         // return Future.value(true);
+        prefs.setBool('isFirstTime', false);
+
         Navigator.of(context)
             .pushReplacementNamed(HomeScreen.routeName, arguments: {
           'authSession':
               Provider.of<SessionProvider>(context, listen: false).session,
         });
+        // print('helo');
         // return true;
       }
       if (response is Failure) {
@@ -252,6 +257,8 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // final Session authenticatedSession = args['authSession'];
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Your Interests'),

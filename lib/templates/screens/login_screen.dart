@@ -12,6 +12,7 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/signup_screen.dart';
+import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
       SharedPreferences prefs = await _prefs;
 
       Users users = Provider.of<Users>(context, listen: false);
+      users.getUserByToken(sessions.session!.accessToken);
 
       prefs.setString('accessToken', sessions.session!.accessToken);
       prefs.setString('refreshToken', sessions.session!.refreshToken);
@@ -91,13 +93,21 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         showSpinner = false;
       });
-
-      Navigator.of(context)
-          .pushReplacementNamed(HomeScreen.routeName, arguments: {
-        'authSession': sessions.session,
-      });
+      if (prefs.containsKey('isFirstTime') &&
+          prefs.getBool('isFirstTime') == false) {
+        Navigator.of(context)
+            .pushReplacementNamed(HomeScreen.routeName, arguments: {
+          'authSession': sessions.session,
+        });
+      } else {
+        Navigator.of(context)
+            .pushReplacementNamed(UserInterestsScreen.routeName);
+      }
+      // Navigator.of(context)
+      //     .pushReplacementNamed(HomeScreen.routeName, arguments: {
+      //   'authSession': sessions.session,
+      // });
     }
-    // print(response);
   }
 
   void _saveForm() async {
@@ -140,11 +150,35 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             print('here');
           }
+          // print('here');
+          if (prefs.containsKey('isFirstTime') &&
+              prefs.getBool('isFirstTime') == false) {
+            // print('here');
+            Navigator.of(context)
+                .pushReplacementNamed(HomeScreen.routeName, arguments: {
+              'authSession': userSession.session,
+            });
+          } else {
+            if (await users.haveProvidedData(users.user!.id)) {
+              // print('here');
+              prefs.setBool('isFirstTime', false);
+              Navigator.of(context)
+                  .pushReplacementNamed(HomeScreen.routeName, arguments: {
+                'authSession': userSession.session,
+              });
+            } else {
+              // print('hee');
+              Navigator.of(context)
+                  .pushReplacementNamed(UserInterestsScreen.routeName, arguments: {
+                'authSession': userSession.session,
+              });
+            }
+          }
 
-          Navigator.of(context)
-              .pushReplacementNamed(HomeScreen.routeName, arguments: {
-            'authSession': userSession.session,
-          });
+          // Navigator.of(context)
+          //     .pushReplacementNamed(HomeScreen.routeName, arguments: {
+          //   'authSession': userSession.session,
+          // });
         }
       } else {
         setState(() {

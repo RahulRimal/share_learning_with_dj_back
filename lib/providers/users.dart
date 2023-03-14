@@ -242,7 +242,6 @@ class Users with ChangeNotifier {
     // if (response is Success) {
     // setUser(response.response as User);
     // notifyListeners();
-
     // return true;
     // return {'message': response.response};
     // }
@@ -258,6 +257,20 @@ class Users with ChangeNotifier {
     // }
     // return false;
     return response;
+  }
+
+  Future<bool> haveProvidedData(String userId) async {
+    var response = await UserApi.haveProvidedData(userId);
+    // print(response);
+    if (response is Success) {
+      // return response.response;
+      return true;
+    }
+    // if(response is Failure)
+    // {
+    //   return false;
+    // }
+    return false;
   }
 
   Future<bool> updateProfilePicture(
