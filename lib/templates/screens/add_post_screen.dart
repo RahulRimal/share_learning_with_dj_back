@@ -88,6 +88,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     bookName: '',
     userId: '1',
     postType: 'B',
+    category: null,
     boughtDate: DateTime.now().toNepaliDateTime(),
     description: '',
     wishlisted: false,
@@ -243,20 +244,21 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      _edittedBook = Book(
-                        id: _edittedBook.id,
-                        author: _edittedBook.author,
-                        bookName: value as String,
-                        userId: _edittedBook.userId,
-                        postType: _edittedBook.postType,
-                        boughtDate: _edittedBook.boughtDate,
-                        description: _edittedBook.description,
-                        wishlisted: _edittedBook.wishlisted,
-                        price: _edittedBook.price,
-                        bookCount: _edittedBook.bookCount,
-                        postedOn: _edittedBook.postedOn,
-                        postRating: _edittedBook.postRating,
-                      );
+                      // _edittedBook = Book(
+                      //   id: _edittedBook.id,
+                      //   author: _edittedBook.author,
+                      //   bookName: value as String,
+                      //   userId: _edittedBook.userId,
+                      //   postType: _edittedBook.postType,
+                      //   boughtDate: _edittedBook.boughtDate,
+                      //   description: _edittedBook.description,
+                      //   wishlisted: _edittedBook.wishlisted,
+                      //   price: _edittedBook.price,
+                      //   bookCount: _edittedBook.bookCount,
+                      //   postedOn: _edittedBook.postedOn,
+                      //   postRating: _edittedBook.postRating,
+                      // );
+                      _edittedBook = Book.withPoperty(_edittedBook, {'bookName': value as String});
                     }),
                 Row(
                   children: [
@@ -277,20 +279,21 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                   .requestFocus(_dateFocusNode);
                             },
                             onSaved: (value) {
-                              _edittedBook = Book(
-                                id: _edittedBook.id,
-                                author: value!.isEmpty ? 'Unknown' : value,
-                                bookName: _edittedBook.bookName,
-                                userId: _edittedBook.userId,
-                                postType: _edittedBook.postType,
-                                boughtDate: _edittedBook.boughtDate,
-                                description: _edittedBook.description,
-                                wishlisted: _edittedBook.wishlisted,
-                                price: _edittedBook.price,
-                                bookCount: _edittedBook.bookCount,
-                                postedOn: _edittedBook.postedOn,
-                                postRating: _edittedBook.postRating,
-                              );
+                              // _edittedBook = Book(
+                              //   id: _edittedBook.id,
+                              //   author: value!.isEmpty ? 'Unknown' : value,
+                              //   bookName: _edittedBook.bookName,
+                              //   userId: _edittedBook.userId,
+                              //   postType: _edittedBook.postType,
+                              //   boughtDate: _edittedBook.boughtDate,
+                              //   description: _edittedBook.description,
+                              //   wishlisted: _edittedBook.wishlisted,
+                              //   price: _edittedBook.price,
+                              //   bookCount: _edittedBook.bookCount,
+                              //   postedOn: _edittedBook.postedOn,
+                              //   postRating: _edittedBook.postRating,
+                              // );
+                              _edittedBook = Book.withPoperty(_edittedBook, {'author': value!.isEmpty ? 'Unknown' : value});
                             }),
                       ),
                     ),
@@ -342,25 +345,26 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             },
                             onSaved: (value) {
                               // print(DateFormat.yMd());
-                              _edittedBook = Book(
-                                id: _edittedBook.id,
-                                author: _edittedBook.author,
-                                bookName: _edittedBook.bookName,
-                                userId: _edittedBook.userId,
-                                postType: _edittedBook.postType,
-                                // boughtDate: (DateFormat("yyyy/MM/dd")
-                                //         .parse(value as String))
-                                //     .toNepaliDateTime(),
-                                boughtDate:
-                                    NepaliDateTime.parse(value as String),
+                              // _edittedBook = Book(
+                              //   id: _edittedBook.id,
+                              //   author: _edittedBook.author,
+                              //   bookName: _edittedBook.bookName,
+                              //   userId: _edittedBook.userId,
+                              //   postType: _edittedBook.postType,
+                              //   // boughtDate: (DateFormat("yyyy/MM/dd")
+                              //   //         .parse(value as String))
+                              //   //     .toNepaliDateTime(),
+                              //   boughtDate:
+                              //       NepaliDateTime.parse(value as String),
 
-                                description: _edittedBook.description,
-                                wishlisted: _edittedBook.wishlisted,
-                                price: _edittedBook.price,
-                                bookCount: _edittedBook.bookCount,
-                                postedOn: _edittedBook.postedOn,
-                                postRating: _edittedBook.postRating,
-                              );
+                              //   description: _edittedBook.description,
+                              //   wishlisted: _edittedBook.wishlisted,
+                              //   price: _edittedBook.price,
+                              //   bookCount: _edittedBook.bookCount,
+                              //   postedOn: _edittedBook.postedOn,
+                              //   postRating: _edittedBook.postRating,
+                              // );
+                              _edittedBook = Book.withPoperty(_edittedBook, {'boughtDate': picker.NepaliDateTime.parse( value as String)});
                             }),
                       ),
                     ),
@@ -396,20 +400,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              _edittedBook = Book(
-                                id: _edittedBook.id,
-                                author: _edittedBook.author,
-                                bookName: _edittedBook.bookName,
-                                userId: _edittedBook.userId,
-                                postType: _edittedBook.postType,
-                                boughtDate: _edittedBook.boughtDate,
-                                description: _edittedBook.description,
-                                wishlisted: _edittedBook.wishlisted,
-                                price: double.parse(value as String),
-                                bookCount: _edittedBook.bookCount,
-                                postedOn: _edittedBook.postedOn,
-                                postRating: _edittedBook.postRating,
-                              );
+                              // _edittedBook = Book(
+                              //   id: _edittedBook.id,
+                              //   author: _edittedBook.author,
+                              //   bookName: _edittedBook.bookName,
+                              //   userId: _edittedBook.userId,
+                              //   postType: _edittedBook.postType,
+                              //   boughtDate: _edittedBook.boughtDate,
+                              //   description: _edittedBook.description,
+                              //   wishlisted: _edittedBook.wishlisted,
+                              //   price: double.parse(value as String),
+                              //   bookCount: _edittedBook.bookCount,
+                              //   postedOn: _edittedBook.postedOn,
+                              //   postRating: _edittedBook.postRating,
+                              // );
+
+                              _edittedBook = Book.withPoperty(_edittedBook, {'price': double.parse( value as String)});
                             }),
                       ),
                     ),
@@ -440,20 +446,21 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            _edittedBook = Book(
-                              id: _edittedBook.id,
-                              author: _edittedBook.author,
-                              bookName: _edittedBook.bookName,
-                              userId: _edittedBook.userId,
-                              postType: _edittedBook.postType,
-                              boughtDate: _edittedBook.boughtDate,
-                              description: _edittedBook.description,
-                              wishlisted: _edittedBook.wishlisted,
-                              price: _edittedBook.price,
-                              bookCount: int.parse(value as String),
-                              postedOn: _edittedBook.postedOn,
-                              postRating: _edittedBook.postRating,
-                            );
+                            // _edittedBook = Book(
+                            //   id: _edittedBook.id,
+                            //   author: _edittedBook.author,
+                            //   bookName: _edittedBook.bookName,
+                            //   userId: _edittedBook.userId,
+                            //   postType: _edittedBook.postType,
+                            //   boughtDate: _edittedBook.boughtDate,
+                            //   description: _edittedBook.description,
+                            //   wishlisted: _edittedBook.wishlisted,
+                            //   price: _edittedBook.price,
+                            //   bookCount: int.parse(value as String),
+                            //   postedOn: _edittedBook.postedOn,
+                            //   postRating: _edittedBook.postRating,
+                            // );
+                            _edittedBook = Book.withPoperty(_edittedBook, {'bookCount': int.parse (value as String)});
                           },
                         ),
                       ),
@@ -483,21 +490,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      _edittedBook = Book(
-                        id: _edittedBook.id,
-                        author: _edittedBook.author,
-                        bookName: _edittedBook.bookName,
-                        userId: _edittedBook.userId,
-                        postType: _edittedBook.postType,
-                        boughtDate: _edittedBook.boughtDate,
-                        description: value as String,
-                        wishlisted: _edittedBook.wishlisted,
-                        price: _edittedBook.price,
-                        bookCount: _edittedBook.bookCount,
-                        // pictures: actualImages,
-                        postedOn: _edittedBook.postedOn,
-                        postRating: _edittedBook.postRating,
-                      );
+                      // _edittedBook = Book(
+                      //   id: _edittedBook.id,
+                      //   author: _edittedBook.author,
+                      //   bookName: _edittedBook.bookName,
+                      //   userId: _edittedBook.userId,
+                      //   postType: _edittedBook.postType,
+                      //   boughtDate: _edittedBook.boughtDate,
+                      //   description: value as String,
+                      //   wishlisted: _edittedBook.wishlisted,
+                      //   price: _edittedBook.price,
+                      //   bookCount: _edittedBook.bookCount,
+                      //   // pictures: actualImages,
+                      //   postedOn: _edittedBook.postedOn,
+                      //   postRating: _edittedBook.postRating,
+                      // );
+                      _edittedBook = Book.withPoperty(_edittedBook, {'description': value as String});
                     },
                   ),
                 ),

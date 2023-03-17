@@ -92,6 +92,7 @@ class Book {
     required this.bookName,
     required this.author,
     required this.description,
+    required this.category,
     required this.boughtDate,
     required this.price,
     required this.bookCount,
@@ -107,6 +108,7 @@ class Book {
   String bookName;
   String author;
   String description;
+  BookCategory? category;
   NepaliDateTime boughtDate;
   double price;
   int bookCount;
@@ -130,6 +132,8 @@ class Book {
         // userId: json["userId"].toString(),
         bookName: json["book_name"] == null ? null : json["book_name"],
         author: json["author"] == null ? 'Unknown' : json["author"],
+        category: json["category"] == null? null : BookCategory.fromJson(json["category"]),
+        
         description: json["description"] == null ? null : json["description"],
         // boughtDate: json["boughtDate"] == null
         //     ? null
@@ -161,6 +165,7 @@ class Book {
         "userId": userId,
         "bookName": bookName,
         "author": author,
+        "category": category,
         "description": description,
         "boughtDate":
             "${boughtDate.year.toString().padLeft(4, '0')}-${boughtDate.month.toString().padLeft(2, '0')}-${boughtDate.day.toString().padLeft(2, '0')}",
@@ -199,6 +204,7 @@ class Book {
         userId: map['userId'],
         bookName: map['bookName'],
         author: map['author'],
+        category: map['category'],
         description: map['description'],
         boughtDate: map['boughtDate'],
         price: map['price'],
@@ -209,6 +215,27 @@ class Book {
         images: map['images'],
         postedOn: map['postedOn']);
   }
+
+  
+  factory Book.withPoperty(Book book, Map<String, dynamic> property) {
+    return Book(
+        id: book.id,
+        userId: property['userId'] == null ? book.userId : property['userId'],
+        bookName: property['bookName'] == null ? book.bookName : property['bookName'],
+        author: property['author'] == null? book.author : property['author'],
+        category: property['category'] == null? book.category : property['category'],
+        description: property['description'] == null? book.description : property['description'],
+        boughtDate: property['boughtDate'] == null? book.boughtDate : property['boughtDate'],
+        price: property['price'] == null? book.price : property['price'],
+        bookCount: property['bookCount'] == null? book.bookCount : property['bookCount'],
+        wishlisted: property['wishlisted'] == null? book.wishlisted : property['wishlisted'],
+        postType: property['postType'] == null? book.postType : property['postType'],
+        postRating: property['postRating'] == null? book.postRating : property['postRating'],
+        images: property['images'] == null? book.images : property['images'],
+        postedOn: property['postedOn'] == null? book.postedOn : property['postedOn'],);
+    
+  }
+
 }
 
 class BookImage {
@@ -226,6 +253,22 @@ class BookImage {
         "id": id,
         "image": image,
       };
+}
+
+class BookCategory{
+  int id;
+  String name;
+
+  BookCategory({required this.id, required this.name});
+
+  factory BookCategory.fromJson(Map<String, dynamic>json ) =>
+  BookCategory(id: json['id'], name: json['name'],);
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+  };
+
 }
 
 class BookError {

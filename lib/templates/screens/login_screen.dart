@@ -145,29 +145,30 @@ class _LoginScreenState extends State<LoginScreen> {
                       .id
                       .toString());
             } else {
-              print('here');
+              // print('here');
+              Provider.of<Carts>(context, listen: false).getCartInfo(prefs.getString('cartId') as String);
             }
           } else {
             print('here');
           }
-          // print('here');
+          
           if (prefs.containsKey('isFirstTime') &&
               prefs.getBool('isFirstTime') == false) {
-            // print('here');
+            
             Navigator.of(context)
                 .pushReplacementNamed(HomeScreen.routeName, arguments: {
               'authSession': userSession.session,
             });
           } else {
             if (await users.haveProvidedData(users.user!.id)) {
-              // print('here');
+              
               prefs.setBool('isFirstTime', false);
               Navigator.of(context)
                   .pushReplacementNamed(HomeScreen.routeName, arguments: {
                 'authSession': userSession.session,
               });
             } else {
-              // print('hee');
+              
               Navigator.of(context)
                   .pushReplacementNamed(UserInterestsScreen.routeName, arguments: {
                 'authSession': userSession.session,

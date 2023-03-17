@@ -156,13 +156,13 @@ class BookApi {
         "book_name": updatedPost.bookName,
         "author": updatedPost.author,
         "description": updatedPost.description,
+        // 'category': updatedPost.category,
         "bought_date": DateFormat('yyyy-MM-dd').format(  updatedPost.boughtDate),  
         "unit_price": updatedPost.price.toString(),
         "book_count": updatedPost.bookCount.toString(),
         "wishlisted": updatedPost.wishlisted.toString(),
         "post_type": updatedPost.postType,
         "post_rating": updatedPost.postRating,
-        // "postedOn": updatedPost.postedOn.toIso8601String()
       };
 
       var url =

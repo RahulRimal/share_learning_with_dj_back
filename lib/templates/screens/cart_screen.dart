@@ -11,6 +11,7 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/widgets/cart_item_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -162,6 +163,8 @@ class _CartScreenState extends State<CartScreen> {
                     SharedPreferences prefs = await _prefs;
                     prefs.remove('cartId');
                     _showToastNotification("Order placed successfully");
+                    Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {'authSession': authendicatedSession}
+                    );
                   } else {
                     _showToastNotification("Something went wrong");
                   }

@@ -22,6 +22,7 @@ import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 import 'package:share_learning/templates/widgets/post_comments.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/cart_item.dart';
 import '../../models/order.dart';
@@ -32,6 +33,8 @@ import 'user_posts_screen.dart';
 // ignore: must_be_immutable
 class SinglePostScreen extends StatelessWidget {
   static const routeName = '/post-details';
+
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   // final _form = GlobalKey<FormState>();
 
@@ -103,8 +106,20 @@ class SinglePostScreen extends StatelessWidget {
     }
   }
 
+  // _getCartInfo(Carts carts) async {
+  //   if (carts.cart == null)
+  //   {
+  //     SharedPreferences prefs = await _prefs;
+  //     await carts.getCartInfo(prefs.getString('cartId') as String);
+  //   }
+  //   else{
+  //   await carts.getCartInfo(carts.cart!.id);
+  //   }
+  // }
   _getCartInfo(Carts carts) async {
+    
     await carts.getCartInfo(carts.cart!.id);
+    
   }
 
   // _checkBookInCart(Carts carts, Book selectedPost) {
@@ -903,6 +918,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     bookName: '',
     userId: '1',
     postType: 'B',
+    category: null,
     boughtDate: DateTime.now().toNepaliDateTime(),
     description: '',
     wishlisted: false,
@@ -1286,7 +1302,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         .addItemToCart(
                                                             carts.cart as Cart,
                                                             edittedItem)) {
-                                                      Navigator.pop(context);
+                                                      // Navigator.pop(context);
                                                       _showToastNotification(
                                                           'Book added to cart successfully');
                                                     }

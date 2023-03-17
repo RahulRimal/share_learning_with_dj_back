@@ -112,10 +112,11 @@ class _OrderScreenState extends State<OrderScreen> {
                   ],
                 ),
               ),
-              Expanded(
-                child: OrderList(
-                    orders: orders, authendicatedSession: authendicatedSession),
-              ),
+              // Expanded(
+              //   child: OrderList(
+                OrderList(
+                    orders: orders, authendicatedSession: authendicatedSession,),
+              // ),
             ],
           ),
         ),
@@ -138,8 +139,11 @@ class OrderList extends StatelessWidget {
   Widget build(BuildContext context) {
     Users users = Provider.of<Users>(context, listen: false);
     // return orders.orderItems.length > 0
+    
     return orders.orders.length > 0
+    // child: orders.orders.length > 0
         ? ListView.builder(
+          shrinkWrap: true,
             itemCount: orders.orders.length,
             itemBuilder: (context, index) {
               return ListView.builder(
@@ -181,6 +185,7 @@ class OrderList extends StatelessWidget {
                               ),
                             )
                           : ListView.builder(
+                            shrinkWrap: true,
                               itemCount: orders.orders.length,
                               itemBuilder: (context, index) {
                                 return ListView.builder(
@@ -199,6 +204,7 @@ class OrderList extends StatelessWidget {
                 }
               }
             },
+        
           );
   }
 }

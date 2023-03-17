@@ -369,7 +369,9 @@ class UserApi {
       var response = await http.get(url);
       // print(response.body);
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        if (json.decode(response.body).length > 2) {
+        // print(response.body.length);
+        // if (json.decode(response.body).length > 2) {
+        if (response.body.length > 2) {
           return Success(
               code: response.statusCode, response: json.decode(response.body));
         }
