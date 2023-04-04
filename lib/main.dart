@@ -12,6 +12,7 @@ import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/strings_manager.dart';
 import 'package:share_learning/templates/managers/theme_manager.dart';
 import 'package:share_learning/templates/screens/add_post_screen.dart';
+import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/screens/login_signup_screen.dart';
 import 'package:share_learning/templates/screens/onboarding_screen.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
@@ -26,6 +27,7 @@ import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
+import 'templates/screens/temp_home_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -104,7 +106,9 @@ class MyApp extends StatelessWidget {
               title: AppStrings.appTitle,
               theme: getApplicationTheme(),
               // home: HomeScreen(),
-              home: SplashScreen(),
+              // home: SplashScreen(),
+              // home: HomescreenWidget(),
+              home: HomeScreenNew(),
               // home: OnBoardingScreen(),
               // home: AddPostScreen(),
               // home: LoginSignupScreen(),
