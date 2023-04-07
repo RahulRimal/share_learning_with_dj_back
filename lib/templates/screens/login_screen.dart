@@ -11,6 +11,7 @@ import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
+import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/screens/signup_screen.dart';
 import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
@@ -96,7 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (prefs.containsKey('isFirstTime') &&
           prefs.getBool('isFirstTime') == false) {
         Navigator.of(context)
-            .pushReplacementNamed(HomeScreen.routeName, arguments: {
+            // .pushReplacementNamed(HomeScreen.routeName, arguments: {
+            .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
           'authSession': sessions.session,
         });
       } else {
@@ -146,33 +148,34 @@ class _LoginScreenState extends State<LoginScreen> {
                       .toString());
             } else {
               // print('here');
-              Provider.of<Carts>(context, listen: false).getCartInfo(prefs.getString('cartId') as String);
+              Provider.of<Carts>(context, listen: false)
+                  .getCartInfo(prefs.getString('cartId') as String);
             }
           } else {
             print('here');
           }
-          
+
           if (prefs.containsKey('isFirstTime') &&
               prefs.getBool('isFirstTime') == false) {
-            
             Navigator.of(context)
-                .pushReplacementNamed(HomeScreen.routeName, arguments: {
+                // .pushReplacementNamed(HomeScreen.routeName, arguments: {
+                .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
               'authSession': userSession.session,
             });
           } else {
             if (await users.haveProvidedData(users.user!.id)) {
-              
               prefs.setBool('isFirstTime', false);
               Navigator.of(context)
-                  .pushReplacementNamed(HomeScreen.routeName, arguments: {
+                  // .pushReplacementNamed(HomeScreen.routeName, arguments: {
+                  .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
                 'authSession': userSession.session,
               });
             } else {
-              
-              Navigator.of(context)
-                  .pushReplacementNamed(UserInterestsScreen.routeName, arguments: {
-                'authSession': userSession.session,
-              });
+              Navigator.of(context).pushReplacementNamed(
+                  UserInterestsScreen.routeName,
+                  arguments: {
+                    'authSession': userSession.session,
+                  });
             }
           }
 

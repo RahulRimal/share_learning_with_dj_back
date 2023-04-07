@@ -9,6 +9,7 @@ import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
+import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/login_signup_screen.dart';
 import 'package:share_learning/templates/screens/onboarding_screen.dart';
@@ -101,9 +102,11 @@ class _SplashScreenState extends State<SplashScreen> {
           print('here');
         }
       }
-      Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
-        'authSession': sessions.session,
-      });
+      // Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
+      Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
+          arguments: {
+            'authSession': sessions.session,
+          });
 
       // sessions.getPreviousSession(accessToken).then((value) {
       //   if (sessions.session != null)
