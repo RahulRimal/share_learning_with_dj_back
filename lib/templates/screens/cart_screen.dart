@@ -151,8 +151,10 @@ class _CartScreenState extends State<CartScreen> {
                     // 'convenient_location': 'temp location',
                     // 'side_note': 'Temp temp'
                     // 'last_name': 'Temp',
-                    'first_name': user.firstName,
-                    'last_name': user.lastName,
+                    'first_name':
+                        user.firstName!.isEmpty ? "Temp" : user.firstName,
+                    'last_name':
+                        user.lastName!.isEmpty ? "Temp" : user.lastName,
                     'phone': user.phone == null ? 'nullPhone' : user.phone,
                     'email': user.email,
                     'convenient_location': 'temp location',
@@ -163,8 +165,9 @@ class _CartScreenState extends State<CartScreen> {
                     SharedPreferences prefs = await _prefs;
                     prefs.remove('cartId');
                     _showToastNotification("Order placed successfully");
-                    Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {'authSession': authendicatedSession}
-                    );
+                    Navigator.pushReplacementNamed(
+                        context, HomeScreen.routeName,
+                        arguments: {'authSession': authendicatedSession});
                   } else {
                     _showToastNotification("Something went wrong");
                   }

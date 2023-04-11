@@ -111,7 +111,7 @@ class BookApi {
           HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
         },
       );
-      // print(response.body);
+      print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         // print(json.encode(json.decode(response.body)['data']['posts']));
@@ -149,7 +149,8 @@ class BookApi {
 
   static Future<Object> updatePost(
       // Session currentSession, String bookId, Map<String, dynamic> updatedPost) async {
-      Session currentSession, Book updatedPost) async {
+      Session currentSession,
+      Book updatedPost) async {
     try {
       Map<String, dynamic> postBody = {
         "user_id": updatedPost.userId,
@@ -157,7 +158,7 @@ class BookApi {
         "author": updatedPost.author,
         "description": updatedPost.description,
         // 'category': updatedPost.category,
-        "bought_date": DateFormat('yyyy-MM-dd').format(  updatedPost.boughtDate),  
+        "bought_date": DateFormat('yyyy-MM-dd').format(updatedPost.boughtDate),
         "unit_price": updatedPost.price.toString(),
         "book_count": updatedPost.bookCount.toString(),
         "wishlisted": updatedPost.wishlisted.toString(),
@@ -167,7 +168,7 @@ class BookApi {
 
       var url =
           // Uri.parse(RemoteManager.BASE_URI + '/posts/' + bookId+ '/');
-          Uri.parse(RemoteManager.BASE_URI + '/posts/' + updatedPost.id+ '/');
+          Uri.parse(RemoteManager.BASE_URI + '/posts/' + updatedPost.id + '/');
       var response = await http.patch(
         url,
         headers: {
@@ -183,8 +184,9 @@ class BookApi {
       );
       // print(response.body);
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        return Success(code: response.statusCode, response: bookFromJson(
-            json.encode(json.decode(response.body))));
+        return Success(
+            code: response.statusCode,
+            response: bookFromJson(json.encode(json.decode(response.body))));
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,
@@ -274,7 +276,7 @@ class BookApi {
   static Future<Object> deletePost(
       Session currentSession, String postId) async {
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + postId+ '/');
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + postId + '/');
 
       var response = await http.delete(
         url,
@@ -490,7 +492,12 @@ class BookApi {
   static Future<Object> deletePicture(
       Session loggedinSession, String postId, BookImage imageToDelete) async {
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + postId + '/images/' + imageToDelete.id.toString()+'/');
+      var url = Uri.parse(RemoteManager.BASE_URI +
+          '/posts/' +
+          postId +
+          '/images/' +
+          imageToDelete.id.toString() +
+          '/');
 
       var response = await http.delete(
         url,
@@ -510,9 +517,8 @@ class BookApi {
 
       if (response.statusCode == ApiStatusCode.noContent) {
         return Success(
-          code: response.statusCode,
-          response: "Picture deleted successfully"
-        );
+            code: response.statusCode,
+            response: "Picture deleted successfully");
       }
       return Failure(
         code: ApiStatusCode.invalidResponse,

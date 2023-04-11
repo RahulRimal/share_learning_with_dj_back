@@ -13,7 +13,7 @@ import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
-class PostComments extends StatelessWidget {
+class PostComments extends StatefulWidget {
   final Session loggedInSession;
   final User loggedInUser;
 
@@ -23,6 +23,11 @@ class PostComments extends StatelessWidget {
   // PostComments(this.loggedInUser, this.comments, this.bookId);
   PostComments(this.loggedInSession, this.loggedInUser, this.bookId);
 
+  @override
+  State<PostComments> createState() => _PostCommentsState();
+}
+
+class _PostCommentsState extends State<PostComments> {
   bool _shouldFlex(String testString) {
     if (testString.length > 11) return true;
     return false;
@@ -45,7 +50,9 @@ class PostComments extends StatelessWidget {
   );
 
   final _form = GlobalKey<FormState>();
+
   TextEditingController commentController = new TextEditingController();
+
   final _commentFocusNode = FocusNode();
 
   Comment _edittedComment = Comment(
@@ -66,13 +73,14 @@ class PostComments extends StatelessWidget {
     }
     _form.currentState!.save();
 
-    _edittedComment.postId = int.parse(bookId);
+    _edittedComment.postId = int.parse(widget.bookId);
     _edittedComment.userId = int.parse(_commentUser.id);
 
     Provider.of<Comments>(context, listen: false)
         .addComment(loggedInUserSession, _edittedComment);
 
-    Navigator.of(context, rootNavigator: true).pop();
+    // Navigator.of(context, rootNavigator: true).pop();
+    _commentFocusNode.unfocus();
 
     BotToast.showSimpleNotification(
       title: 'Replied to the post',
@@ -97,7 +105,8 @@ class PostComments extends StatelessWidget {
     Provider.of<Comments>(context, listen: false)
         .updateComment(loggedInUserSession, _edittedComment);
 
-    Navigator.of(context, rootNavigator: true).pop();
+    // Navigator.of(context, rootNavigator: true).pop();
+    _commentFocusNode.unfocus();
 
     BotToast.showSimpleNotification(
       title: 'Reply updated successfully',
@@ -119,12 +128,13 @@ class PostComments extends StatelessWidget {
     }
     _form.currentState!.save();
 
-    _edittedComment.postId = int.parse(bookId);
+    _edittedComment.postId = int.parse(widget.bookId);
 
     Provider.of<Comments>(context, listen: false)
         .deleteComment(loggedInUserSession, _edittedComment);
 
-    Navigator.of(context, rootNavigator: true).pop();
+    // Navigator.of(context, rootNavigator: true).pop();
+    setState(() {});
 
     BotToast.showSimpleNotification(
       title: 'Your reply has been deleted',
@@ -152,10 +162,13 @@ class PostComments extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            // constraints: BoxConstraints(maxHeight: double.infinity),
-            height: 200,
+            constraints: BoxConstraints(
+              maxHeight: 200,
+            ),
+            // height: 200,
             child: FutureBuilder(
-              future: comments.getPostComments(bookId, loggedInSession),
+              future: comments.getPostComments(
+                  widget.bookId, widget.loggedInSession),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -190,12 +203,8 @@ class PostComments extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               FutureBuilder(
-                                // future: users.getUserById(
-                                //     comments.comments[index].userId.toString()),
                                 future: users.getCommentUser(
                                     comments.comments[index].userId.toString()),
-                                // future: users.getUserByToken(
-                                // comments.comments[index].userId.toString()),
                                 builder: (ctx, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
@@ -211,15 +220,12 @@ class PostComments extends StatelessWidget {
                                       );
                                     } else if (snapshot.hasData) {
                                       _commentUser = snapshot.data as User;
-                                      // users.getUserByToken(
-                                      //     loggedInUser.accessToken);
 
-                                      // User _currentUser = users.user as User;
                                       User _currentUser;
                                       if (users.user != null) {
                                         _currentUser = users.user as User;
                                       } else {
-                                        _currentUser = loggedInUser;
+                                        _currentUser = widget.loggedInUser;
                                       }
                                       _edittedComment.userId =
                                           int.parse(_currentUser.id);
@@ -254,7 +260,8 @@ class PostComments extends StatelessWidget {
                                                             'uId':
                                                                 _commentUser.id,
                                                             'loggedInUserSession':
-                                                                loggedInSession,
+                                                                widget
+                                                                    .loggedInSession,
                                                           },
                                                         );
                                                       } else {
@@ -415,7 +422,8 @@ class PostComments extends StatelessWidget {
                                                                   index];
                                                           _deleteComment(
                                                               context,
-                                                              loggedInSession,
+                                                              widget
+                                                                  .loggedInSession,
                                                               _edittedComment);
                                                         },
                                                         icon:
@@ -484,9 +492,13 @@ class PostComments extends StatelessWidget {
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   _commentEditted == true
-                                      ? _updateComment(context, loggedInSession,
+                                      ? _updateComment(
+                                          context,
+                                          widget.loggedInSession,
                                           _edittedComment)
-                                      : _addComment(context, loggedInSession,
+                                      : _addComment(
+                                          context,
+                                          widget.loggedInSession,
                                           _edittedComment);
                                 },
                                 icon: Icon(

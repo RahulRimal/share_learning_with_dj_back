@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -50,7 +49,7 @@ class CustomImage extends StatelessWidget {
                   //     : FileImage(File(this.image)),
 
                   // imageProvider: !image.contains('/data/user')
-                imageProvider: image.id != null
+                  imageProvider: image.id != null
                       ? NetworkImage(this.image.image) as ImageProvider
                       : FileImage(File(this.image.image)),
 
@@ -92,7 +91,7 @@ class CustomImage extends StatelessWidget {
                   builder: (context) => PhotoViewRouteWrapper(
                     imageProvider: isNetwork
                         ? NetworkImage(
-                            this.image,
+                            this.image.image,
                           )
                         : FileImage(File(this.image)) as ImageProvider,
 

@@ -101,16 +101,15 @@ class Orders with ChangeNotifier {
   //   return _orderItems.firstWhere((element) => element.id == id);
   // }
 
-  Future<bool> getUserOrders(Session loggedInSession, User loggedInUser) async {
+  // Future<bool> getUserOrders(Session loggedInSession, User loggedInUser) async {
+  getUserOrders(Session loggedInSession) async {
     setLoading(true);
-    var response = await OrderApi.getUserOrders(loggedInSession, loggedInUser);
+    var response = await OrderApi.getUserOrders(loggedInSession);
     // print(response);
     if (response is Success) {
       setOrders(response.response as List<Order>);
       // setOrder(response.response as Order);
-      setLoading(false);
-      notifyListeners();
-      return true;
+
     }
     if (response is Failure) {
       OrderError orderError = OrderError(
@@ -118,10 +117,9 @@ class Orders with ChangeNotifier {
         message: response.errorResponse,
       );
       setOrderError(orderError);
-      setLoading(false);
-      notifyListeners();
     }
-    return false;
+    setLoading(false);
+    // notifyListeners();
   }
 
   Future<bool> addOrderItem(OrderItem item, Order order) async {

@@ -117,9 +117,7 @@ class SinglePostScreen extends StatelessWidget {
   //   }
   // }
   _getCartInfo(Carts carts) async {
-    
     await carts.getCartInfo(carts.cart!.id);
-    
   }
 
   // _checkBookInCart(Carts carts, Book selectedPost) {
@@ -193,12 +191,9 @@ class SinglePostScreen extends StatelessWidget {
 
     if (users.user != null) {
       loggedInUser = users.user as User;
-    }
-    else{
+    } else {
       users.getUserByToken(loggedInUserSession.accessToken);
-
     }
-    
 
     return Scaffold(
       drawer: users.user == null
@@ -1302,9 +1297,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         .addItemToCart(
                                                             carts.cart as Cart,
                                                             edittedItem)) {
-                                                      // Navigator.pop(context);
                                                       _showToastNotification(
                                                           'Book added to cart successfully');
+                                                      Navigator.pop(context);
                                                     }
                                                   } else {
                                                     _showToastNotification(

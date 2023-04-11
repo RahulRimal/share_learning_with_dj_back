@@ -6,11 +6,14 @@ import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
+import 'package:share_learning/models/category.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
+import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
+import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
@@ -35,6 +38,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
   final _descFocusNode = FocusNode();
   final _cateFocusNode = FocusNode();
 
+  late Category _selectedCategory;
+
   List<bool> postTypeSelling = [true, false];
 
   List<XFile>? _storedImages;
@@ -49,7 +54,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     author: '',
     bookName: '',
     userId: '',
-    category:  null,
+    category: null,
     // postType: false,
     postType: 'B',
     boughtDate: DateTime.now().toNepaliDateTime(),
@@ -213,23 +218,22 @@ class _EditPostScreenState extends State<EditPostScreen> {
       if (_imagesToDelete.isNotEmpty) {
         await Provider.of<Books>(context, listen: false).deletePictures(
             loggedInUserSession, _edittedBook.id, _imagesToDelete);
-         
       }
       if (_storedImages != null) {
-            if (_storedImages!.isNotEmpty) {
-              _edittedBook.images = _storedImages;
-              if (await Provider.of<Books>(context, listen: false)
-                  .updatePictures(loggedInUserSession, _edittedBook)) {
-                BotToast.showSimpleNotification(
-                  title: 'Post has been successfully updated',
-                  duration: Duration(seconds: 3),
-                  backgroundColor: ColorManager.primary,
-                  titleStyle: getBoldStyle(color: ColorManager.white),
-                  align: Alignment(1, 1),
-                );
-              }
-            }
+        if (_storedImages!.isNotEmpty) {
+          _edittedBook.images = _storedImages;
+          if (await Provider.of<Books>(context, listen: false)
+              .updatePictures(loggedInUserSession, _edittedBook)) {
+            BotToast.showSimpleNotification(
+              title: 'Post has been successfully updated',
+              duration: Duration(seconds: 3),
+              backgroundColor: ColorManager.primary,
+              titleStyle: getBoldStyle(color: ColorManager.white),
+              align: Alignment(1, 1),
+            );
           }
+        }
+      }
     }
     if (Provider.of<Books>(context, listen: false).bookError != null) {
       BotToast.showSimpleNotification(
@@ -264,6 +268,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     // String bookId = args['id'];
     final Session loggedInUserSession = args['loggedInUserSession'] as Session;
+
+    // Categories categoriesProvier =  Provider.of<Categories>(context, listen: false);
+    Categories categoriesProvier = Provider.of<Categories>(context);
+
+    List<Category> _categories = categoriesProvier.categories;
+
+    // dynamic _selectedCategory = _getBookCategory(
+    //     context, loggedInUserSession, _edittedBook.category!.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -319,21 +331,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      // _edittedBook = Book(
-                      //   id: _edittedBook.id,
-                      //   author: _edittedBook.author,
-                      //   bookName: value as String,
-                      //   userId: _edittedBook.userId,
-                      //   postType: _edittedBook.postType,
-                      //   boughtDate: _edittedBook.boughtDate,
-                      //   description: _edittedBook.description,
-                      //   wishlisted: _edittedBook.wishlisted,
-                      //   price: _edittedBook.price,
-                      //   bookCount: _edittedBook.bookCount,
-                      //   postedOn: _edittedBook.postedOn,
-                      //   postRating: _edittedBook.postRating,
-                      // );
-                      _edittedBook = Book.withPoperty(_edittedBook, {'bookName': value as String});
+                      _edittedBook = Book.withPoperty(
+                          _edittedBook, {'bookName': value as String});
                     }),
                 Row(
                   children: [
@@ -355,21 +354,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                   .requestFocus(_dateFocusNode);
                             },
                             onSaved: (value) {
-                              // _edittedBook = Book(
-                              //   id: _edittedBook.id,
-                              //   author: value!.isEmpty ? 'Unknown' : value,
-                              //   bookName: _edittedBook.bookName,
-                              //   userId: _edittedBook.userId,
-                              //   postType: _edittedBook.postType,
-                              //   boughtDate: _edittedBook.boughtDate,
-                              //   description: _edittedBook.description,
-                              //   wishlisted: _edittedBook.wishlisted,
-                              //   price: _edittedBook.price,
-                              //   bookCount: _edittedBook.bookCount,
-                              //   postedOn: _edittedBook.postedOn,
-                              //   postRating: _edittedBook.postRating,
-                              // );
-                              _edittedBook = Book.withPoperty(_edittedBook, {'author': value!.isEmpty ? 'Unknown' : value });
+                              _edittedBook = Book.withPoperty(_edittedBook, {
+                                'author': value!.isEmpty ? 'Unknown' : value
+                              });
                             }),
                       ),
                     ),
@@ -377,27 +364,12 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          // initialValue: _edittedBook.boughtDate.toIso8601String(),
                           controller: _datePickercontroller,
                           focusNode: _dateFocusNode,
-                          // initialValue:
-                          //     DateFormat('yyyy/MM/dd').format(DateTime.now()),
                           keyboardType: TextInputType.datetime,
                           cursorColor: Theme.of(context).primaryColor,
                           decoration: InputDecoration(
                             labelText: 'Bought Date',
-                            // suffix: IconButton(
-                            //   // onPressed: _showPicker,
-                            //   tooltip: 'Tap to open datePicker',
-                            //   onPressed: () {
-                            //     DatePickerDialog(
-                            //       initialDate: DateTime.now(),
-                            //       firstDate: DateTime(2000),
-                            //       lastDate: DateTime(2025),
-                            //     );
-                            //   },
-                            //   icon: Icon(Icons.calendar_view_day_rounded),
-                            // ),
                             suffix: IconButton(
                               icon: Icon(Icons.calendar_today),
                               tooltip: 'Tap to open date picker',
@@ -421,26 +393,10 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            // print(DateFormat.yMd());
-                            // _edittedBook = Book(
-                            //   id: _edittedBook.id,
-                            //   author: _edittedBook.author,
-                            //   bookName: _edittedBook.bookName,
-                            //   userId: _edittedBook.userId,
-                            //   postType: _edittedBook.postType,
-                            //   // boughtDate: (DateFormat("yyyy/MM/dd")
-                            //   //         .parse(value as String))
-                            //   //     .toNepaliDateTime(),
-                            //   boughtDate: NepaliDateTime.parse(value as String),
-
-                            //   description: _edittedBook.description,
-                            //   wishlisted: _edittedBook.wishlisted,
-                            //   price: _edittedBook.price,
-                            //   bookCount: _edittedBook.bookCount,
-                            //   postedOn: _edittedBook.postedOn,
-                            //   postRating: _edittedBook.postRating,
-                            // );
-                            _edittedBook = Book.withPoperty(_edittedBook, {'boughtDate': picker.NepaliDateTime.parse(value as String)});
+                            _edittedBook = Book.withPoperty(_edittedBook, {
+                              'boughtDate':
+                                  picker.NepaliDateTime.parse(value as String)
+                            });
                           },
                         ),
                       ),
@@ -477,7 +433,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              _edittedBook = Book.withPoperty(_edittedBook, {'price': double.parse(value as String)});
+                              _edittedBook = Book.withPoperty(_edittedBook,
+                                  {'price': double.parse(value as String)});
                             }),
                       ),
                     ),
@@ -508,7 +465,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            _edittedBook = Book.withPoperty(_edittedBook, {'bookCount': int.parse(value as String)});
+                            _edittedBook = Book.withPoperty(_edittedBook,
+                                {'bookCount': int.parse(value as String)});
                           },
                         ),
                       ),
@@ -539,35 +497,80 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        _edittedBook = Book.withPoperty(_edittedBook, {'description': value as String});
+                        _edittedBook = Book.withPoperty(
+                            _edittedBook, {'description': value as String});
                       }),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                      initialValue: _edittedBook.category!.name,
-                      focusNode: _cateFocusNode,
-                      keyboardType: TextInputType.multiline,
-                      cursorColor: Theme.of(context).primaryColor,
-                      decoration: InputDecoration(
-                        labelText: 'Book Category',
-                      ),
-                      textInputAction: TextInputAction.newline,
-                      autovalidateMode: AutovalidateMode.always,
-                      minLines: 3,
-                      maxLines: 7,
-                      // onFieldSubmitted: (_) {
-                      //   FocusScope.of(context).requestFocus(_descFocusNode);
-                      // },
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please provide a cateogry';
+
+                  child: FutureBuilder(
+                      future: categoriesProvier.getCategoryById(
+                          loggedInUserSession, _edittedBook.category!.id),
+                      builder: (ctx, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: ColorManager.secondary,
+                            ),
+                          );
+                        } else {
+                          if (snapshot.hasError) {
+                            return Text(
+                                'Error fetching data, please try again');
+                          } else {
+                            if (snapshot.data is CategoryError) {
+                              CategoryError error =
+                                  snapshot.data as CategoryError;
+                              return Text(error.message as String);
+                            } else {
+                              _selectedCategory = snapshot.data as Category;
+
+                              return Container(
+                                padding: EdgeInsets.only(
+                                  left: AppPadding.p8,
+                                ),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                  style: BorderStyle.solid,
+                                )),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton(
+                                    isExpanded: true,
+                                    value: _selectedCategory,
+                                    items: _categories
+                                        .map((option) => DropdownMenuItem(
+                                              value: option,
+                                              child: ListTile(
+                                                selected:
+                                                    option == _selectedCategory,
+                                                selectedColor:
+                                                    ColorManager.black,
+                                                selectedTileColor:
+                                                    ColorManager.primary,
+                                                // tileColor: ColorManager.grey1,
+                                                title: Text(option.name),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedCategory = value as Category;
+                                      });
+                                      // print(_selectedCategory);
+                                    },
+                                  ),
+                                ),
+                              );
+                            }
+                          }
                         }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _edittedBook = Book.withPoperty(_edittedBook, {'category': BookCategory(id: 0, name: value as String)});
                       }),
+
+                  //
                 ),
                 Container(
                   child: ToggleButtons(

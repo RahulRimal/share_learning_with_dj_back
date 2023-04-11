@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
+import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/providers/comment.dart';
 import 'package:share_learning/providers/carts.dart';
 import 'package:share_learning/providers/orders.dart';
@@ -28,6 +29,7 @@ import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
+import 'templates/screens/order_screen_new.dart';
 import 'templates/screens/temp_home_screen.dart';
 
 void main() => runApp(MyApp());
@@ -65,6 +67,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Books()),
         ChangeNotifierProvider(create: (_) => Comments()),
         ChangeNotifierProvider(create: (_) => Orders()),
+        ChangeNotifierProvider(create: (_) => Categories()),
       ],
       child: Theme.of(context).platform == TargetPlatform.iOS
           ? CupertinoApp(
@@ -97,6 +100,7 @@ class MyApp extends StatelessWidget {
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
                 OrderScreen.routeName: (context) => OrderScreen(),
+                OrderScreenNew.routeName: (context) => OrderScreenNew(),
                 UserInterestsScreen.routeName: (context) =>
                     UserInterestsScreen(),
               },
@@ -108,8 +112,9 @@ class MyApp extends StatelessWidget {
               title: AppStrings.appTitle,
               theme: getApplicationTheme(),
               // home: HomeScreen(),
-              // home: SplashScreen(),
-              home: SinglePostScreenNew(),
+              home: SplashScreen(),
+              // home: OrderScreenNew(),
+              // home: SinglePostScreenNew(),
               // home: HomeScreenNew(),
               // home: OnBoardingScreen(),
               // home: AddPostScreen(),
@@ -119,6 +124,8 @@ class MyApp extends StatelessWidget {
               // home: SignUpScreen(),
               routes: {
                 SinglePostScreen.routeName: (context) => SinglePostScreen(),
+                SinglePostScreenNew.routeName: (context) =>
+                    SinglePostScreenNew(),
                 UserPostsScreen.routeName: (context) => UserPostsScreen(),
                 AddPostScreen.routeName: (context) => AddPostScreen(),
                 EditPostScreen.routeName: (context) => EditPostScreen(),
@@ -134,10 +141,15 @@ class MyApp extends StatelessWidget {
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
                 OrderScreen.routeName: (context) => OrderScreen(),
+                OrderScreenNew.routeName: (context) => OrderScreenNew(),
                 UserInterestsScreen.routeName: (context) =>
                     UserInterestsScreen(),
               },
             ),
+      // child: MaterialApp(
+      //   debugShowCheckedModeBanner: false,
+      //   home: OrderScreenNew(),
+      // ),
     );
   }
 }

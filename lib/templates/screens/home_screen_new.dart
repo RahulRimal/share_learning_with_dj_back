@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:share_learning/models/category.dart';
+import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -9,13 +11,17 @@ import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:provider/provider.dart';
+import 'package:share_learning/templates/widgets/post_new.dart';
 
+import '../../models/book.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../providers/books.dart';
 import '../../providers/orders.dart';
 import '../../providers/sessions.dart';
 import '../../providers/users.dart';
+import '../managers/api_values_manager.dart';
+import '../utils/user_helper.dart';
 
 class HomeScreenNew extends StatefulWidget {
   const HomeScreenNew({Key? key}) : super(key: key);
@@ -31,17 +37,13 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   final _filterForm = GlobalKey<FormState>();
   int _selectedIndex = 0;
 
-  List<String> categories = [
-    "Adventure",
-    "Drama",
-    "Comic",
-    "Biography",
-    "Scientific",
-    "Food",
-    "Clothing",
-    "Electronics",
-    "Grocery",
-    "Health",
+  List<Category> _categories = [
+    new Category(id: 1, name: "Adventure", postsCount: 0, featuredPost: null),
+    new Category(id: 2, name: "Drama", postsCount: 0, featuredPost: null),
+    new Category(id: 3, name: "Comic", postsCount: 0, featuredPost: null),
+    new Category(id: 4, name: "Biography", postsCount: 0, featuredPost: null),
+    new Category(id: 5, name: "Scientific", postsCount: 0, featuredPost: null),
+    new Category(id: 6, name: "Food", postsCount: 0, featuredPost: null),
   ];
 
   List<String> images = [
@@ -132,7 +134,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       _user = _users.user as User;
     }
     Books _books = context.watch<Books>();
-
     Orders _orders = context.watch<Orders>();
 
     return SafeArea(
@@ -305,12 +306,64 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 top: AppPadding.p4,
                 bottom: AppPadding.p4,
               ),
-              child: CircleAvatar(
-                radius: 20,
-                child: Image.asset(
-                  ImageAssets.noProfile,
-                ),
-              ),
+              // child: CircleAvatar(
+              //   radius: 20,
+              //   child: Image.asset(
+              //     ImageAssets.noProfile,
+              //   ),
+              // ),
+              child: _user.id != "temp"
+                  ? CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        // (UserHelper.userProfileImage(users.user as User)),
+                        (UserHelper.userProfileImage(_user)),
+                      ),
+                    )
+                  : FutureBuilder(
+                      // future: _users.getUserByIdAndSession(
+                      //     authenticatedSession,
+                      //     // authenticatedSession.userId),
+                      //     '1'),
+
+                      future: _users
+                          .getUserByToken(authenticatedSession.accessToken),
+                      builder: (ctx, snapshot) {
+                        // if (snapshot.data != null)
+                        //   _user = snapshot.data as User;
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator(
+                            color: ColorManager.secondary,
+                          );
+                        } else {
+                          if (snapshot.hasError) {
+                            // AppBar().preferredSize.height;
+                            // MediaQuery.of(context).viewPadding.top;
+                            return CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  'https://ojasfilms.org/assets/img/ojas-logo.png'),
+                            );
+                          } else {
+                            if (snapshot.data is UserError) {
+                              UserError error = snapshot.data as UserError;
+                              return Text(error.message as String);
+                            } else {
+                              _user = snapshot.data as User;
+                              return CircleAvatar(
+                                // backgroundImage: NetworkImage(
+                                //   (UserHelper.userProfileImage(
+                                //       snapshot.data as User)),
+                                // ),
+                                backgroundImage: NetworkImage(
+                                    _user.image == null
+                                        ? RemoteManager.IMAGE_PLACEHOLDER
+                                        : UserHelper.userProfileImage(_user)),
+                              );
+                            }
+                          }
+                        }
+                      },
+                    ),
             ),
           ],
         ),
@@ -630,118 +683,135 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     ),
                   ],
                 ),
+                // SizedBox(
+                //   height: 100,
+                //   child: ListView.builder(
+                //     scrollDirection: Axis.horizontal,
+                //     itemCount: categories.length,
+                //     itemBuilder: (context, index) {
+                //       return Padding(
+                //         padding: const EdgeInsets.symmetric(horizontal: 6),
+                //         child: FilterChip(
+                //           label: Text(categories[index]),
+                //           selectedColor: ColorManager.primary,
+                //           showCheckmark: false,
+                //           selected: _selectedIndex == index,
+                //           onSelected: (bool isSelected) {
+                //             setState(() {
+                //               _selectedIndex = index;
+                //             });
+                //           },
+                //         ),
+                //       );
+                //     },
+                //   ),
+                // ),
                 SizedBox(
                   height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: FilterChip(
-                          label: Text(categories[index]),
-                          selectedColor: ColorManager.primary,
-                          showCheckmark: false,
-                          selected: _selectedIndex == index,
-                          onSelected: (bool isSelected) {
-                            setState(() {
-                              _selectedIndex = index;
-                            });
-                          },
-                        ),
-                      );
+                  child: FutureBuilder(
+                    future: Provider.of<Categories>(context, listen: false)
+                        .getCategories(authenticatedSession),
+                    builder: (ctx, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(
+                          color: ColorManager.secondary,
+                        );
+                      } else {
+                        if (snapshot.hasError) {
+                          return CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                'https://ojasfilms.org/assets/img/ojas-logo.png'),
+                          );
+                        } else {
+                          if (snapshot.data is UserError) {
+                            UserError error = snapshot.data as UserError;
+                            return Text(error.message as String);
+                          } else {
+                            _categories =
+                                Provider.of<Categories>(context, listen: false)
+                                    .categories;
+                            return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _categories.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6),
+                                    child: FilterChip(
+                                      label: Text(_categories[index].name),
+                                      selectedColor: ColorManager.primary,
+                                      showCheckmark: false,
+                                      selected: _selectedIndex == index,
+                                      onSelected: (bool isSelected) {
+                                        setState(() {
+                                          _selectedIndex = index;
+                                        });
+                                      },
+                                    ),
+                                  );
+                                });
+                          }
+                        }
+                      }
                     },
                   ),
                 ),
-                MasonryGridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  itemCount: images.length,
-                  itemBuilder: (ctx, idx) => Column(
-                    children: [
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),
-                            ),
-                            child: Image.network(
-                              images[idx],
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                                right: 8,
-                              ),
-                              child: CircleAvatar(
-                                backgroundColor: ColorManager.black,
-                                radius: 14,
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      // Position the IconButton in the center of the CircleAvatar
-                                      top: -9,
-                                      left: -10,
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(
-                                          Icons.favorite_border,
-                                          size: 24,
-                                        ),
-                                        color: ColorManager.white,
-                                      ),
+                FutureBuilder(
+                  future: _books.getBooksAnnonimusly(authenticatedSession),
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: ColorManager.primary,
+                        ),
+                      );
+                    } else {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Error'),
+                        );
+                      } else {
+                        return Consumer<Books>(
+                          builder: (ctx, books, child) {
+                            return books.books.length <= 0
+                                ? Center(
+                                    child: Text(
+                                      'No books found',
+                                      style: getBoldStyle(
+                                          fontSize: FontSize.s20,
+                                          color: ColorManager.primary),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: ColorManager.white,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10),
-                          ),
-                        ),
-                        padding: EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'C Programming Fundamentals II',
-                              style: getBoldStyle(
-                                color: ColorManager.black,
-                                fontSize: FontSize.s16,
-                              ),
-                            ),
-                            SizedBox(
-                              height: AppHeight.h2,
-                            ),
-                            Text(
-                              'Rs. 999',
-                              style: getBoldStyle(
-                                color: ColorManager.grey,
-                                fontSize: FontSize.s14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                                  )
+                                : MasonryGridView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    crossAxisSpacing: 12,
+                                    mainAxisSpacing: 12,
+                                    gridDelegate:
+                                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2),
+                                    itemCount: books.books.length,
+                                    itemBuilder: (ctx, idx) => PostNew(
+                                      book: _books.books[idx],
+                                      authSession: authenticatedSession,
+                                    ),
+                                  );
+                          },
+                        );
+                      }
+                    }
+                  },
                 ),
+                // MasonryGridView.builder(
+                //   physics: NeverScrollableScrollPhysics(),
+                //   shrinkWrap: true,
+                //   crossAxisSpacing: 12,
+                //   mainAxisSpacing: 12,
+                //   gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                //       crossAxisCount: 2),
+                //   itemCount: images.length,
+                //   itemBuilder: (ctx, idx) => PostNew(book: _books.books[idx]),
+                // ),
               ],
             ),
           ),

@@ -113,12 +113,9 @@ class OrderApi {
   //   }
   // }
 
-  static Future<Object> getUserOrders(
-      Session userSession, User loggedInUser) async {
+  static Future<Object> getUserOrders(Session userSession) async {
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI +
-          "/orders/?customer_id=" +
-          loggedInUser.id.toString());
+      var url = Uri.parse(RemoteManager.BASE_URI + "/orders/");
       var response = await http.get(url, headers: {
         HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
       });

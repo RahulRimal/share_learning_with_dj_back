@@ -97,8 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (prefs.containsKey('isFirstTime') &&
           prefs.getBool('isFirstTime') == false) {
         Navigator.of(context)
-            // .pushReplacementNamed(HomeScreen.routeName, arguments: {
-            .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
+            .pushReplacementNamed(HomeScreen.routeName, arguments: {
+          // .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
           'authSession': sessions.session,
         });
       } else {
@@ -158,16 +158,16 @@ class _LoginScreenState extends State<LoginScreen> {
           if (prefs.containsKey('isFirstTime') &&
               prefs.getBool('isFirstTime') == false) {
             Navigator.of(context)
-                // .pushReplacementNamed(HomeScreen.routeName, arguments: {
-                .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
+                .pushReplacementNamed(HomeScreen.routeName, arguments: {
+              // .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
               'authSession': userSession.session,
             });
           } else {
             if (await users.haveProvidedData(users.user!.id)) {
               prefs.setBool('isFirstTime', false);
               Navigator.of(context)
-                  // .pushReplacementNamed(HomeScreen.routeName, arguments: {
-                  .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
+                  .pushReplacementNamed(HomeScreen.routeName, arguments: {
+                // .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
                 'authSession': userSession.session,
               });
             } else {

@@ -19,11 +19,13 @@ class ColorManager {
   static Color grey2 = HexColor.fromHex("#797979");
   static Color white = HexColor.fromHex("#FFFFFF");
   static Color black = HexColor.fromHex("#000000");
+  static Color green = HexColor.fromHex("#FF008E0E");
   static Color error = HexColor.fromHex("#e61f34"); // red color
 
   // static Color primaryColorWithOpacity = Color.fromRGBO(255, 82, 82, 0.7);
 
   static Color primaryColorWithOpacity = Color.fromARGB(89, 229, 99, 999);
+
   static Color blackWithOpacity = Color.fromARGB(89, 0, 0, 0);
   static Color blackWithLowOpacity = Color.fromARGB(100, 0, 0, 0);
   static Color whiteWithOpacity = Color.fromARGB(89, 255, 255, 255);

@@ -102,11 +102,11 @@ class _SplashScreenState extends State<SplashScreen> {
           print('here');
         }
       }
-      // Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
-      Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
-          arguments: {
-            'authSession': sessions.session,
-          });
+      Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
+        // Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
+        // arguments: {
+        'authSession': sessions.session,
+      });
 
       // sessions.getPreviousSession(accessToken).then((value) {
       //   if (sessions.session != null)

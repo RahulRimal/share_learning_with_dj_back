@@ -12,6 +12,7 @@ import 'package:share_learning/templates/screens/add_post_screen.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
+import 'package:share_learning/templates/screens/order_screen_new.dart';
 import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
@@ -87,7 +88,7 @@ class AppDrawer extends StatelessWidget {
     DrawerItem(
         title: 'Your Orders',
         icon: Icons.carpenter,
-        route: OrderScreen.routeName),
+        route: OrderScreenNew.routeName),
 
     DrawerItem(
         title: 'Your Interests',
@@ -144,14 +145,11 @@ class AppDrawer extends StatelessWidget {
                   'loggedInUserSession': loggedInSession
                 },
               );
-            if (item.route == OrderScreen.routeName)
+            if (item.route == OrderScreenNew.routeName)
               Navigator.pushNamed(
                 context,
                 item.route,
-                arguments: {
-                  // 'uId': loggedInSession.userId,
-                  'loggedInUserSession': loggedInSession
-                },
+                arguments: {'loggedInUserSession': loggedInSession},
               );
             if (item.route == UserInterestsScreen.routeName) {
               Navigator.pushNamed(

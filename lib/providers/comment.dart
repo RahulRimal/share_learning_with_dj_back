@@ -190,10 +190,8 @@ class Comments with ChangeNotifier {
       _comments.add(response.response as Comment);
 
       notifyListeners();
-
       return true;
     }
-
     return false;
   }
 
@@ -207,7 +205,6 @@ class Comments with ChangeNotifier {
           _comments.indexWhere((element) => element.id == edittedComment.id);
 
       _comments[postIndex] = edittedComment;
-
       notifyListeners();
 
       return true;
@@ -226,7 +223,6 @@ class Comments with ChangeNotifier {
           _comments.indexWhere((element) => element.id == edittedComment.id);
 
       _comments.removeAt(postIndex);
-
       notifyListeners();
       return true;
     }
