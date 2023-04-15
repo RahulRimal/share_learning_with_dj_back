@@ -7,6 +7,7 @@ import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/providers/comment.dart';
 import 'package:share_learning/providers/carts.dart';
+import 'package:share_learning/providers/filters.dart';
 import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
@@ -30,7 +31,6 @@ import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
 import 'templates/screens/order_screen_new.dart';
-import 'templates/screens/temp_home_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Comments()),
         ChangeNotifierProvider(create: (_) => Orders()),
         ChangeNotifierProvider(create: (_) => Categories()),
+        ChangeNotifierProvider(create: (_) => BookFilters()),
       ],
       child: Theme.of(context).platform == TargetPlatform.iOS
           ? CupertinoApp(
@@ -148,7 +149,7 @@ class MyApp extends StatelessWidget {
             ),
       // child: MaterialApp(
       //   debugShowCheckedModeBanner: false,
-      //   home: OrderScreenNew(),
+      //   home: FiltersScreen(),
       // ),
     );
   }

@@ -27,6 +27,7 @@ class ColorManager {
   static Color primaryColorWithOpacity = Color.fromARGB(89, 229, 99, 999);
 
   static Color blackWithOpacity = Color.fromARGB(89, 0, 0, 0);
+  static Color transparent = Color.fromARGB(0, 0, 0, 0);
   static Color blackWithLowOpacity = Color.fromARGB(100, 0, 0, 0);
   static Color whiteWithOpacity = Color.fromARGB(89, 255, 255, 255);
   static Color greyWithOpacity = Color.fromARGB(89, 70, 70, 70);
