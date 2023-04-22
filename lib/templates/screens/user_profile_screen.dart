@@ -14,6 +14,7 @@ import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
+import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -411,15 +412,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    Session loggedInUserSession = args['loggedInUserSession'] as Session;
+    // Session loggedInUserSession = args['loggedInUserSession'] as Session;
 
-    // User user = args['user'] as User;
+    Session loggedInUserSession =
+        Provider.of<SessionProvider>(context).session as Session;
+
     User user = Provider.of<Users>(context, listen: false).user as User;
-    // print(user);
-
-    // Session userSession = args['session'] as Session;
 
     SessionProvider userSession = (context).watch<SessionProvider>();
     userSession.setSession(loggedInUserSession);
@@ -443,6 +443,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       ),
       body: SafeArea(
         child: _profilePageUI(userSession, user),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        index: 2,
       ),
     );
   }

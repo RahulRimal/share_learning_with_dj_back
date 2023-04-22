@@ -36,6 +36,7 @@ dependencies:
   data_connection_checker: ^0.3.4
   bot_toast: ^4.0.1
   khalti: ^1.0.2
+  # khalti_flutter: ^2.2.1
   shared_preferences: ^2.0.13
   google_sign_in: ^5.1.1
   google_fonts: ^3.0.1

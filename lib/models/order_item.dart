@@ -13,14 +13,15 @@ class OrderItem {
     required this.id,
     required this.productId,
     // required this.productName,
-    // required this.productPrice,
+    required this.unitPrice,
     required this.quantity,
   });
 
   int id;
   int productId;
   // String productName;
-  // double productPrice;
+  double unitPrice;
+
   int quantity;
 
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
@@ -29,7 +30,7 @@ class OrderItem {
             ? json['product_id']
             : json["product"]["id"],
         // productName: json["product"]["book_name"],
-        // productPrice: double.parse(json["product"]["unit_price"]),
+        unitPrice: double.parse(json["product"]["unit_price"]),
         quantity: json["quantity"],
       );
 
@@ -38,6 +39,7 @@ class OrderItem {
         "product_id": productId,
         // "product_name": productName,
         // "product_price": productPrice,
+        "unit_price": unitPrice,
         "quantity": quantity,
       };
 }

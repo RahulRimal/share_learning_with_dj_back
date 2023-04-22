@@ -6,6 +6,7 @@ import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/cart_item.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/carts.dart';
+import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -141,9 +142,12 @@ class _CartItemWidgetState extends State<CartItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    final Session authendicatedSession = args['loggedInUserSession'] as Session;
+    // final Session authendicatedSession = args['loggedInUserSession'] as Session;
+
+    Session authendicatedSession =
+        Provider.of<SessionProvider>(context).session as Session;
 
     Carts _carts = context.watch<Carts>();
 

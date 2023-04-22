@@ -1,33 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
+import 'package:share_learning/templates/screens/user_profile_screen.dart';
+
+import '../screens/cart_screen.dart';
+import '../screens/home_screen_new.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
-  const CustomBottomNavigationBar({Key? key}) : super(key: key);
+  CustomBottomNavigationBar({Key? key, required this.index}) : super(key: key);
 
   @override
   _CustomBottomNavigationBarState createState() =>
       _CustomBottomNavigationBarState();
+
+  int index;
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  int _currentIndex = 0;
-
   List<Map<String, dynamic>> navItems = [
     {
       'icon': Icons.home,
       'label': 'Home',
+      'route': HomeScreenNew.routeName,
     },
     {
       'icon': Icons.favorite,
       'label': 'Wishlist',
+      'route': HomeScreenNew.routeName,
     },
     {
       'icon': Icons.person,
       'label': 'Profile',
+      'route': UserProfileScreen.routeName,
     },
     {
       'icon': Icons.shopping_cart,
       'label': 'Cart',
+      'route': CartScreen.routeName,
     }
   ];
 
@@ -49,19 +57,20 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(
               navItems.length,
-              (index) => _buildBottomNavigationBarItem(
-                  navItems[index]['icon'], navItems[index]['label'], index))),
+              (index) => _buildBottomNavigationBarItem(navItems[index]['icon'],
+                  navItems[index]['label'], navItems[index]['route'], index))),
     );
   }
 
   Widget _buildBottomNavigationBarItem(
-      IconData iconData, String label, int index) {
-    final isSelected = index == _currentIndex;
+      IconData iconData, String label, String route, int index) {
+    final isSelected = index == widget.index;
 
     return GestureDetector(
       onTap: () {
+        Navigator.pushNamed(context, route);
         setState(() {
-          _currentIndex = index;
+          widget.index = index;
         });
       },
       child: Padding(

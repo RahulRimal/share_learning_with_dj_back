@@ -370,10 +370,10 @@ class AppDrawer extends StatelessWidget {
                               // Spacer(),
 
                               ListTile(
-                                tileColor: ColorManager.white,
+                                // tileColor: ColorManager.white,
                                 leading: Icon(
                                   Icons.logout,
-                                  color: ColorManager.primary,
+                                  color: ColorManager.white,
                                 ),
                                 title: Text(
                                   'Log out',

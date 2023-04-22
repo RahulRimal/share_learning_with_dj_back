@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/providers/books.dart';
@@ -173,26 +174,37 @@ class OrderScreenNew extends StatelessWidget {
                                   //     shrinkWrap: true,
                                   //     itemCount: orders.orders.length,
                                   //     itemBuilder: (ctx, index) {
-                                  //       return OrderItemWidget(
-                                  //           order: orders.orders[index]);
+                                  //       return ListView.builder(
+                                  //           shrinkWrap: true,
+                                  //           itemCount: orders
+                                  //               .orders[index].items.length,
+                                  //           itemBuilder: (ctx, idx) {
+                                  //             return OrderItemWidget(
+                                  //               orderItem: orders
+                                  //                   .orders[index].items[idx],
+                                  //             );
+                                  //           });
                                   //     },
                                   //   );
-                                  : ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: orders.orders.length,
-                                      itemBuilder: (ctx, index) {
-                                        return ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: orders
-                                                .orders[index].items.length,
-                                            itemBuilder: (ctx, idx) {
-                                              return OrderItemWidget(
-                                                orderItem: orders
-                                                    .orders[index].items[idx],
-                                              );
-                                            });
-                                      },
-                                    );
+                                  // : ListView.builder(
+                                  //     shrinkWrap: true,
+                                  //     itemCount: orders.orders.length,
+                                  //     itemBuilder: (ctx, index) {
+                                  //       return OrderWidget(
+                                  //           order: orders.orders[index]);
+                                  //       // return ListView.builder(
+                                  //       //     shrinkWrap: true,
+                                  //       //     itemCount: orders
+                                  //       //         .orders[index].items.length,
+                                  //       //     itemBuilder: (ctx, idx) {
+                                  //       //       return OrderItemWidget(
+                                  //       //         orderItem: orders
+                                  //       //             .orders[index].items[idx],
+                                  //       //       );
+                                  //       //     });
+                                  //     },
+                                  //   );
+                                  : OrdersWidget(orders: orders.orders);
                             },
                           );
                         }
@@ -200,7 +212,6 @@ class OrderScreenNew extends StatelessWidget {
                     },
                   ),
                 ),
-                // ...List.generate(5, (index) => OrderItemWidget()),
               ],
             ),
           ),
@@ -269,8 +280,20 @@ class OrderItemWidget extends StatelessWidget {
                 SizedBox(
                   height: AppHeight.h4,
                 ),
+                // Row(
+                //   children: [
+
+                //   ],
+                // ),
                 Text(
-                  'Rs. ${product.price.toString()}',
+                  'Unit price: Rs. ${product.price.toString()}',
+                  style: getMediumStyle(
+                    color: ColorManager.grey,
+                    fontSize: FontSize.s14,
+                  ),
+                ),
+                Text(
+                  'Quantity: ${orderItem.quantity.toString()}',
                   style: getMediumStyle(
                     color: ColorManager.grey,
                     fontSize: FontSize.s14,
@@ -279,26 +302,143 @@ class OrderItemWidget extends StatelessWidget {
                 SizedBox(
                   height: AppHeight.h4,
                 ),
-                Row(
-                  children: [
-                    Text(
-                      'Delivered on wednesday',
-                      style: getBoldStyle(
-                          color: ColorManager.green, fontSize: FontSize.s12),
-                    ),
-                    SizedBox(
-                      width: AppSize.s4,
-                    ),
-                    Icon(
-                      Icons.check_circle,
-                      color: ColorManager.green,
-                    ),
-                  ],
-                )
+                Text(
+                  'Total: Rs. ${(product.price * orderItem.quantity).toString()}',
+                  style: getMediumStyle(
+                    color: ColorManager.grey,
+                    fontSize: FontSize.s14,
+                  ),
+                ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class OrdersWidget extends StatefulWidget {
+  OrdersWidget({Key? key, required this.orders}) : super(key: key);
+
+  @override
+  State<OrdersWidget> createState() => _OrdersWidgetState();
+
+  List<Order> orders;
+}
+
+class _OrdersWidgetState extends State<OrdersWidget> {
+  late List<Map<String, dynamic>> _orderInfo;
+
+  @override
+  void initState() {
+    // List<Map<String, dynamic>> _orderInfo =
+    _orderInfo = List.generate(widget.orders.length, (index) {
+      return {
+        'order': widget.orders[index],
+        'isExpanded': false,
+      };
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: ExpansionPanelList(
+        expansionCallback: ((index, isExpanded) {
+          setState(() {
+            _orderInfo[index]['isExpanded'] = !isExpanded;
+          });
+        }),
+        children: _orderInfo.map<ExpansionPanel>((Map<String, dynamic> item) {
+          return ExpansionPanel(
+            headerBuilder: (context, isExpanded) {
+              double totalPrice = 0;
+
+              item['order'].items.forEach((OrderItem item) {
+                totalPrice += item.quantity * item.unitPrice;
+              });
+
+              return ListTile(
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: AppPadding.p8,
+                  horizontal: AppPadding.p8,
+                ),
+                title: Text(
+                  'Order placed on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+                  style: getBoldStyle(
+                    color: ColorManager.black,
+                    fontSize: FontSize.s16,
+                  ),
+                ),
+                subtitle: (item['order'].deliveryInfo != null &&
+                        item['order'].deliveryInfo['status'] == 'T')
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Delivering on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+                                style: getBoldStyle(
+                                    color: Colors.orange,
+                                    fontSize: FontSize.s14),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            'Total: Rs.${totalPrice.toString()}',
+                            style: getMediumStyle(
+                              color: ColorManager.black,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Delivered on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+                                style: getBoldStyle(
+                                    color: ColorManager.green,
+                                    fontSize: FontSize.s14),
+                              ),
+                              SizedBox(
+                                width: AppSize.s4,
+                              ),
+                              Icon(
+                                Icons.check_circle,
+                                color: ColorManager.green,
+                              ),
+                            ],
+                          ),
+                          Text(
+                            'Total: Rs.${totalPrice.toString()}',
+                            style: getMediumStyle(
+                              color: ColorManager.black,
+                            ),
+                          ),
+                        ],
+                      ),
+              );
+            },
+            body: ListView.builder(
+              shrinkWrap: true,
+              itemCount: item['order'].items.length,
+              itemBuilder: (ctx, idx) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OrderItemWidget(
+                    orderItem: item['order'].items[idx],
+                  ),
+                );
+              },
+            ),
+            isExpanded: item['isExpanded'],
+          );
+        }).toList(),
       ),
     );
   }

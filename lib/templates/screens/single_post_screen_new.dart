@@ -22,6 +22,7 @@ import '../managers/style_manager.dart';
 
 class SinglePostScreenNew extends StatefulWidget {
   static const routeName = '/post-details-new';
+
   const SinglePostScreenNew({Key? key}) : super(key: key);
 
   @override
@@ -29,6 +30,8 @@ class SinglePostScreenNew extends StatefulWidget {
 }
 
 class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
+// class SinglePostScreenNew extends StatelessWidget {
+
   int _itemCount = 1;
   int _selectedImage = 0;
 
@@ -521,26 +524,16 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
           //     minScale: PhotoViewComputedScale.contained * 0.8,
           //     maxScale: PhotoViewComputedScale.covered * 2,
           //   ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Image.network(
-              // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-              post.images![_selectedImage].image,
-              fit: BoxFit.cover,
-              height: MediaQuery.of(context).size.height * 0.35,
-              // height: double.infinity,
-              // width: double.infinity,
-            ),
-          ),
+
+          DetailsPageImageGallery(selectedPost: post),
+
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.67,
+                maxHeight: MediaQuery.of(context).size.height * 0.6,
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -560,46 +553,46 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
-                          height: 50,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: post.images!.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: (() {
-                                  setState(() {
-                                    _selectedImage = index;
-                                  });
-                                }),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 2),
-                                  child: Container(
-                                    padding: EdgeInsets.all(0),
-                                    decoration: _selectedImage == index
-                                        ? BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.red,
-                                              width: 2,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                                AppRadius.r12),
-                                          )
-                                        : null,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.network(
-                                        // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                                        post.images![index].image,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        // SizedBox(
+                        //   height: 50,
+                        //   child: ListView.builder(
+                        //     scrollDirection: Axis.horizontal,
+                        //     itemCount: post.images!.length,
+                        //     itemBuilder: (context, index) {
+                        //       return GestureDetector(
+                        //         onTap: (() {
+                        //           setState(() {
+                        //             _selectedImage = index;
+                        //           });
+                        //         }),
+                        //         child: Padding(
+                        //           padding: EdgeInsets.symmetric(horizontal: 2),
+                        //           child: Container(
+                        //             padding: EdgeInsets.all(0),
+                        //             decoration: _selectedImage == index
+                        //                 ? BoxDecoration(
+                        //                     border: Border.all(
+                        //                       color: Colors.red,
+                        //                       width: 2,
+                        //                     ),
+                        //                     borderRadius: BorderRadius.circular(
+                        //                         AppRadius.r12),
+                        //                   )
+                        //                 : null,
+                        //             child: ClipRRect(
+                        //               borderRadius: BorderRadius.circular(10),
+                        //               child: Image.network(
+                        //                 // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+                        //                 post.images![index].image,
+                        //                 fit: BoxFit.cover,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
                         Padding(
                           padding: const EdgeInsets.only(
                             top: AppPadding.p12,
@@ -648,57 +641,58 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
                               ),
 
                               // Itemcount counter
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: ButtonBar(
-                                  buttonPadding: EdgeInsets.zero,
-                                  children: [
-                                    SizedBox(
-                                      width: 40,
-                                      child: IconButton(
-                                        color: Colors.black,
-                                        padding: EdgeInsets.zero,
-                                        disabledColor: Colors.grey,
-                                        onPressed: _itemCount > 1
-                                            ? () {
-                                                setState(() {
-                                                  _itemCount--;
-                                                });
-                                              }
-                                            : null,
-                                        icon: Icon(Icons.remove),
-                                      ),
-                                    ),
-                                    Text(
-                                      // '1',
-                                      _itemCount.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: getBoldStyle(
-                                        color: ColorManager.black,
-                                        fontSize: FontSize.s17,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: AppSize.s40,
-                                      // height: AppSize.s20,
-                                      child: IconButton(
-                                        color: Colors.black,
-                                        // padding: EdgeInsets.all(2.0),
-                                        padding: EdgeInsets.zero,
-                                        onPressed: () {
-                                          setState(() {
-                                            _itemCount++;
-                                          });
-                                        },
-                                        icon: Icon(Icons.add),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // Container(
+                              //   decoration: BoxDecoration(
+                              //     color: Colors.grey[200],
+                              //     borderRadius: BorderRadius.circular(20),
+                              //   ),
+                              //   child: ButtonBar(
+                              //     buttonPadding: EdgeInsets.zero,
+                              //     children: [
+                              //       SizedBox(
+                              //         width: 40,
+                              //         child: IconButton(
+                              //           color: Colors.black,
+                              //           padding: EdgeInsets.zero,
+                              //           disabledColor: Colors.grey,
+                              //           onPressed: _itemCount > 1
+                              //               ? () {
+                              //                   setState(() {
+                              //                     _itemCount--;
+                              //                   });
+                              //                 }
+                              //               : null,
+                              //           icon: Icon(Icons.remove),
+                              //         ),
+                              //       ),
+                              //       Text(
+                              //         // '1',
+                              //         _itemCount.toString(),
+                              //         textAlign: TextAlign.center,
+                              //         style: getBoldStyle(
+                              //           color: ColorManager.black,
+                              //           fontSize: FontSize.s17,
+                              //         ),
+                              //       ),
+                              //       SizedBox(
+                              //         width: AppSize.s40,
+                              //         // height: AppSize.s20,
+                              //         child: IconButton(
+                              //           color: Colors.black,
+                              //           // padding: EdgeInsets.all(2.0),
+                              //           padding: EdgeInsets.zero,
+                              //           onPressed: () {
+                              //             setState(() {
+                              //               _itemCount++;
+                              //             });
+                              //           },
+                              //           icon: Icon(Icons.add),
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              ItemCounter(itemCount: _itemCount),
                             ],
                           ),
                         ),
@@ -993,11 +987,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             ColorManager.blackWithLowOpacity,
                                         isScrollControlled: true,
                                         shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    AppRadius.r20),
-                                                topRight: Radius.circular(
-                                                    AppRadius.r20))),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft:
+                                                Radius.circular(AppRadius.r20),
+                                            topRight: Radius.circular(
+                                              AppRadius.r20,
+                                            ),
+                                          ),
+                                        ),
                                         context: context,
                                         builder: (context) {
                                           return Padding(
@@ -1198,6 +1195,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                         .bookCount =
                                                                     int.parse(value
                                                                         .toString());
+                                                                print(
+                                                                    _buyerExpectedBook);
                                                               },
                                                             ),
                                                           ),
@@ -1263,6 +1262,16 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                           // }
                                                           // ----------------------Order without cart ends here ----------------------
 
+                                                          if (carts.cart ==
+                                                              null) {
+                                                            await carts.createCart(
+                                                                Provider.of<SessionProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .session as Session);
+                                                            // print(carts.cart);
+                                                          }
                                                           if (carts.cart !=
                                                               null) {
                                                             final isValid = _form
@@ -1303,7 +1312,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                     carts.cart
                                                                         as Cart,
                                                                     edittedItem)) {
-                                                              // Navigator.pop(context);
+                                                              // await carts.createCart(Provider.of<SessionProvider>(context, listen: false).session as Session);
+                                                              Navigator.pop(
+                                                                  context);
                                                               _showToastNotification(
                                                                   'Book added to cart successfully');
                                                             }
@@ -1364,5 +1375,156 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
               },
             ),
           );
+  }
+}
+
+class DetailsPageImageGallery extends StatefulWidget {
+  DetailsPageImageGallery({Key? key, required this.selectedPost})
+      : super(key: key);
+
+  @override
+  State<DetailsPageImageGallery> createState() =>
+      _DetailsPageImageGalleryState();
+
+  Book selectedPost;
+}
+
+class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
+  int _selectedImage = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    Book post = widget.selectedPost;
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Column(
+        children: [
+          Image.network(
+            // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+            post.images![_selectedImage].image,
+            fit: BoxFit.cover,
+            height: MediaQuery.of(context).size.height * 0.33,
+          ),
+          Container(
+            padding: const EdgeInsets.only(
+              top: AppPadding.p8,
+              bottom: AppPadding.p16,
+              left: AppPadding.p4,
+              right: AppPadding.p4,
+            ),
+            color: ColorManager.blackWithLowOpacity,
+            child: SizedBox(
+              height: 50,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: post.images!.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: (() {
+                      setState(() {
+                        _selectedImage = index;
+                      });
+                    }),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: Container(
+                        padding: EdgeInsets.all(0),
+                        decoration: _selectedImage == index
+                            ? BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.red,
+                                  width: 2,
+                                ),
+                                borderRadius:
+                                    BorderRadius.circular(AppRadius.r12),
+                              )
+                            : null,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+                            post.images![index].image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ItemCounter extends StatefulWidget {
+  ItemCounter({Key? key, required this.itemCount}) : super(key: key);
+
+  @override
+  State<ItemCounter> createState() => _ItemCounterState();
+
+  int itemCount;
+}
+
+class _ItemCounterState extends State<ItemCounter> {
+  @override
+  Widget build(BuildContext context) {
+    int _itemCount = widget.itemCount;
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: ButtonBar(
+        buttonPadding: EdgeInsets.zero,
+        children: [
+          SizedBox(
+            width: 40,
+            child: IconButton(
+              color: Colors.black,
+              padding: EdgeInsets.zero,
+              disabledColor: Colors.grey,
+              onPressed: _itemCount > 1
+                  ? () {
+                      setState(() {
+                        _itemCount--;
+                      });
+                    }
+                  : null,
+              icon: Icon(Icons.remove),
+            ),
+          ),
+          Text(
+            // '1',
+            _itemCount.toString(),
+            textAlign: TextAlign.center,
+            style: getBoldStyle(
+              color: ColorManager.black,
+              fontSize: FontSize.s17,
+            ),
+          ),
+          SizedBox(
+            width: AppSize.s40,
+            // height: AppSize.s20,
+            child: IconButton(
+              color: Colors.black,
+              // padding: EdgeInsets.all(2.0),
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                setState(() {
+                  _itemCount++;
+                });
+              },
+              icon: Icon(Icons.add),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

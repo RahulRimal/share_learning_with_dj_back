@@ -300,6 +300,8 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                 ),
               ),
 
+              // ----------------------    Sort by categories section ends here -----------------------------------
+
               // ----------------------    Sort by locations section ends here -----------------------------------
               Container(
                 padding: EdgeInsets.symmetric(
@@ -354,7 +356,6 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                 ),
               ),
               // ----------------------    Sort by location section ends here -----------------------------------
-              // ----------------------    Sort by categories section ends here -----------------------------------
 
               // ----------------------    Sort by reviews section starts here -----------------------------------
               Container(

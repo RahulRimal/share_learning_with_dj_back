@@ -38,11 +38,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _goNext() async {
-    // Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
+    // ! Just for development purpose when internet is absent fix it
     if (await InternetConnectionChecker.checkInternetConnection())
+    // if (true)
       Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-    // Navigator.pushReplacementNamed(context, LoginSignupScreen.routeName);
-    // Navigator.pushReplacementNamed(context, OnBoardingScreen.routeName);
     else {
       BotToast.showWidget(
           toastBuilder: (c) => Container(

@@ -118,15 +118,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   @override
   Widget build(BuildContext context) {
     // final args = ModalRoute.of(context)!.settings.arguments as Map;
-    // Session authenticatedSession = args['authSession'] as Session;
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    Session authenticatedSession;
-    if (args['authSession'] != null) {
-      authenticatedSession = args['authSession'] as Session;
-    } else {
-      authenticatedSession =
-          Provider.of<SessionProvider>(context).session as Session;
-    }
+    // Session authenticatedSession;
+    // if (args['authSession'] != null) {
+    //   authenticatedSession = args['authSession'] as Session;
+    // } else {
+    //   authenticatedSession =
+    //       Provider.of<SessionProvider>(context).session as Session;
+    // }
+    Session authenticatedSession =
+        Provider.of<SessionProvider>(context).session as Session;
 
     Users _users = context.watch<Users>();
     if (_users.user == null) {
@@ -823,7 +823,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         ),
 
         drawer: AppDrawer(authenticatedSession, null),
-        bottomNavigationBar: CustomBottomNavigationBar(),
+        bottomNavigationBar: CustomBottomNavigationBar(
+          index: 0,
+        ),
       ),
     );
 
