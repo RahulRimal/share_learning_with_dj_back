@@ -81,38 +81,34 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       followers: 'followers',
       createdDate: DateTime.now());
 
-  _setUserValue(User user) {
-    _user = user;
-  }
+  // ScrollController _scrollController = ScrollController();
 
-  ScrollController _scrollController = ScrollController();
+  // double _appBarHeight = 75.0;
 
-  double _appBarHeight = 75.0;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _scrollController.addListener(_scrollListener);
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_scrollListener);
-  }
+  // @override
+  // void dispose() {
+  //   _scrollController.removeListener(_scrollListener);
+  //   _scrollController.dispose();
+  //   super.dispose();
+  // }
 
-  @override
-  void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollListener() {
-    setState(() {
-      if (_scrollController.offset > 0 && _scrollController.offset < 30) {
-        _appBarHeight = 75.0 - _scrollController.offset;
-      } else if (_scrollController.offset >= 30) {
-        _appBarHeight = 50.0;
-      } else {
-        _appBarHeight = 75.0;
-      }
-    });
-  }
+  // void _scrollListener() {
+  //   setState(() {
+  //     if (_scrollController.offset > 0 && _scrollController.offset < 30) {
+  //       _appBarHeight = 75.0 - _scrollController.offset;
+  //     } else if (_scrollController.offset >= 30) {
+  //       _appBarHeight = 50.0;
+  //     } else {
+  //       _appBarHeight = 75.0;
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -130,152 +126,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
     return SafeArea(
       child: Scaffold(
-        // body: CustomScrollView(
-        //   slivers: [
-        //     SliverAppBar(
-        //       pinned: true,
-        //       expandedHeight: 300,
-        //       leading: Padding(
-        //         padding: const EdgeInsets.only(left: AppPadding.p20),
-        //         child: CircleAvatar(
-        //           backgroundColor: ColorManager.black,
-        //           radius: 30,
-        //           child: Builder(
-        //             builder: (context) {
-        //               return IconButton(
-        //                 icon: Icon(
-        //                   Icons.menu,
-        //                   size: AppSize.s22,
-        //                 ),
-        //                 onPressed: () => Scaffold.of(context).openDrawer(),
-        //                 color: ColorManager.white,
-        //               );
-        //             },
-        //           ),
-        //         ),
-        //       ),
-        //       actions: [
-        //         Padding(
-        //           padding: const EdgeInsets.only(right: AppPadding.p20),
-        //           child: CircleAvatar(
-        //             radius: 25,
-        //             child: Image.asset(
-        //               ImageAssets.noProfile,
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //       flexibleSpace: FlexibleSpaceBar(
-        //         // title: Text('Hello'),
-        //         title: Row(
-        //           children: [
-        //             Form(
-        //               key: _form,
-        //               child: Expanded(
-        //                 child: Padding(
-        //                   padding: const EdgeInsets.only(right: 12),
-        //                   child: TextFormField(
-        //                     cursorColor: ColorManager.white,
-        //                     decoration: InputDecoration(
-        //                       prefixIcon: Icon(Icons.search),
-        //                       prefixIconColor: ColorManager.primary,
-        //                       fillColor: ColorManager.white,
-        //                       filled: true,
-        //                       focusColor: ColorManager.white,
-        //                       labelText: 'Book Name',
-        //                       enabledBorder: OutlineInputBorder(
-        //                         borderSide: BorderSide(
-        //                           color: ColorManager.white,
-        //                         ),
-        //                         borderRadius: BorderRadius.circular(20),
-        //                       ),
-        //                       focusedBorder: OutlineInputBorder(
-        //                         borderSide: BorderSide(
-        //                           color: ColorManager.white,
-        //                         ),
-        //                         borderRadius: BorderRadius.circular(20),
-        //                       ),
-        //                     ),
-        //                     textInputAction: TextInputAction.next,
-        //                     validator: (value) {
-        //                       if (value!.isEmpty) {
-        //                         return 'Please provide the bookName';
-        //                       }
-        //                       return null;
-        //                     },
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //             CircleAvatar(
-        //               backgroundColor: ColorManager.black,
-        //               radius: 25,
-        //               child: IconButton(
-        //                 onPressed: () {},
-        //                 icon: Icon(Icons.settings),
-        //                 color: ColorManager.white,
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //         background: Container(
-        //           // height: MediaQuery.of(context).size.height,
-        //           color: ColorManager.grey,
-        //           child: Column(
-        //             children: [
-        //               Stack(
-        //                 clipBehavior: Clip.none,
-        //                 children: [
-        //                   Stack(
-        //                     children: [
-        //                       Container(
-        //                         height: 300,
-        //                         // height:
-        //                         //     MediaQuery.of(context).size.height * 0.17,
-        //                         decoration: BoxDecoration(
-        //                           borderRadius: BorderRadius.only(
-        //                             bottomLeft: Radius.circular(25),
-        //                             bottomRight: Radius.circular(25),
-        //                           ),
-        //                           color: ColorManager.primary,
-        //                         ),
-        //                       ),
-        //                     ],
-        //                   ),
-        //                   Positioned(
-        //                     bottom: -10,
-        //                     left: 0,
-        //                     right: 0,
-        //                     child: Padding(
-        //                       padding:
-        //                           const EdgeInsets.symmetric(horizontal: 12),
-        //                       child: Container(),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //     SliverList(
-        //       delegate: SliverChildBuilderDelegate(
-        //         (context, index) => ListTile(
-        //           title: Text("Item $index"),
-        //         ),
-        //         childCount: 20,
-        //       ),
-        //     ),
-        //   ],
-        // ),
         appBar: AppBar(
-          toolbarHeight: _appBarHeight,
+          // toolbarHeight: _appBarHeight,
           elevation: 0.0,
-          flexibleSpace: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            height: _appBarHeight,
-          ),
+
           leading: Padding(
             padding: const EdgeInsets.only(left: AppPadding.p20),
             child: CircleAvatar(
@@ -302,16 +156,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 top: AppPadding.p4,
                 bottom: AppPadding.p4,
               ),
-              // child: CircleAvatar(
-              //   radius: 20,
-              //   child: Image.asset(
-              //     ImageAssets.noProfile,
-              //   ),
-              // ),
               child: _user.id != "temp"
                   ? CircleAvatar(
                       backgroundImage: NetworkImage(
-                        // (UserHelper.userProfileImage(users.user as User)),
                         (UserHelper.userProfileImage(_user)),
                       ),
                     )
@@ -351,10 +198,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
           ],
         ),
         body: SingleChildScrollView(
-          controller: _scrollController,
+          // controller: _scrollController,
           child: Container(
-            // height: MediaQuery.of(context).size.height,
-            color: ColorManager.grey,
+            color: ColorManager.lighterGrey,
             child: Column(
               children: [
                 Stack(
@@ -752,6 +598,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                     shrinkWrap: true,
                                     crossAxisSpacing: 12,
                                     mainAxisSpacing: 12,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: AppPadding.p8,
+                                    ),
                                     gridDelegate:
                                         SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2),
@@ -781,7 +630,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             ),
           ),
         ),
-
         drawer: AppDrawer(authenticatedSession, null),
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 0,
