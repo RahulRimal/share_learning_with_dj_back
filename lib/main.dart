@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
@@ -107,45 +108,57 @@ class MyApp extends StatelessWidget {
                     UserInterestsScreen(),
               },
             )
-          : MaterialApp(
-              builder: BotToastInit(),
-              navigatorObservers: [BotToastNavigatorObserver()],
-              debugShowCheckedModeBanner: false,
-              title: AppStrings.appTitle,
-              theme: getApplicationTheme(),
-              // home: HomeScreen(),
-              home: SplashScreen(),
-              // home: OrderScreenNew(),
-              // home: SinglePostScreenNew(),
-              // home: HomeScreenNew(),
-              // home: OnBoardingScreen(),
-              // home: AddPostScreen(),
-              // home: LoginSignupScreen(),
-              // home: LoginScreen(),
-              // home: OrderListScreen(),
-              // home: SignUpScreen(),
-              routes: {
-                SinglePostScreen.routeName: (context) => SinglePostScreen(),
-                SinglePostScreenNew.routeName: (context) =>
-                    SinglePostScreenNew(),
-                UserPostsScreen.routeName: (context) => UserPostsScreen(),
-                AddPostScreen.routeName: (context) => AddPostScreen(),
-                EditPostScreen.routeName: (context) => EditPostScreen(),
-                HomeScreen.routeName: (context) => HomeScreen(),
-                HomeScreenNew.routeName: (context) => HomeScreenNew(),
-                SplashScreen.routeName: (context) => SplashScreen(),
-                OnBoardingScreen.routeName: (context) => OnBoardingScreen(),
-                LoginScreen.routeName: (context) => LoginScreen(),
-                SignUpScreen.routeName: (context) => SignUpScreen(),
-                LoginSignupScreen.routeName: (context) => LoginSignupScreen(),
-                UserProfileScreen.routeName: (context) => UserProfileScreen(),
-                UserProfileEditScreen.routeName: (context) =>
-                    UserProfileEditScreen(),
-                CartScreen.routeName: (context) => CartScreen(),
-                OrderScreen.routeName: (context) => OrderScreen(),
-                OrderScreenNew.routeName: (context) => OrderScreenNew(),
-                UserInterestsScreen.routeName: (context) =>
-                    UserInterestsScreen(),
+          : KhaltiScope(
+              publicKey: 'test_public_key_78965ea539884431b8e9172178d08e91',
+              enabledDebugging: true,
+              builder: (context, navKey) {
+                return MaterialApp(
+                  navigatorKey: navKey,
+                  localizationsDelegates: const [
+                    KhaltiLocalizations.delegate,
+                  ],
+                  builder: BotToastInit(),
+                  navigatorObservers: [BotToastNavigatorObserver()],
+                  debugShowCheckedModeBanner: false,
+                  title: AppStrings.appTitle,
+                  theme: getApplicationTheme(),
+
+                  home: SplashScreen(),
+                  // home: OrderScreenNew(),
+                  // home: SinglePostScreenNew(),
+                  // home: HomeScreenNew(),
+                  // home: OnBoardingScreen(),
+                  // home: AddPostScreen(),
+                  // home: LoginSignupScreen(),
+                  // home: LoginScreen(),
+                  // home: OrderListScreen(),
+                  // home: SignUpScreen(),
+                  routes: {
+                    SinglePostScreen.routeName: (context) => SinglePostScreen(),
+                    SinglePostScreenNew.routeName: (context) =>
+                        SinglePostScreenNew(),
+                    UserPostsScreen.routeName: (context) => UserPostsScreen(),
+                    AddPostScreen.routeName: (context) => AddPostScreen(),
+                    EditPostScreen.routeName: (context) => EditPostScreen(),
+                    HomeScreen.routeName: (context) => HomeScreen(),
+                    HomeScreenNew.routeName: (context) => HomeScreenNew(),
+                    SplashScreen.routeName: (context) => SplashScreen(),
+                    OnBoardingScreen.routeName: (context) => OnBoardingScreen(),
+                    LoginScreen.routeName: (context) => LoginScreen(),
+                    SignUpScreen.routeName: (context) => SignUpScreen(),
+                    LoginSignupScreen.routeName: (context) =>
+                        LoginSignupScreen(),
+                    UserProfileScreen.routeName: (context) =>
+                        UserProfileScreen(),
+                    UserProfileEditScreen.routeName: (context) =>
+                        UserProfileEditScreen(),
+                    CartScreen.routeName: (context) => CartScreen(),
+                    OrderScreen.routeName: (context) => OrderScreen(),
+                    OrderScreenNew.routeName: (context) => OrderScreenNew(),
+                    UserInterestsScreen.routeName: (context) =>
+                        UserInterestsScreen(),
+                  },
+                );
               },
             ),
       // child: MaterialApp(

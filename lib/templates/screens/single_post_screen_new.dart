@@ -31,8 +31,6 @@ class SinglePostScreenNew extends StatefulWidget {
 
 class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
 // class SinglePostScreenNew extends StatelessWidget {
-
-  int _itemCount = 1;
   int _selectedImage = 0;
 
   NepaliDateTime? _buyerExpectedDeadline;
@@ -81,6 +79,20 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
       loggedInUser = users.user!;
     }
   }
+
+  // int _itemCount = 1;
+
+  // _decreaseItemCount() {
+  //   setState(() {
+  //     _itemCount--;
+  //   });
+  // }
+
+  // _increaseItemCount() {
+  //   setState(() {
+  //     this._itemCount++;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -607,8 +619,10 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
                                   Flexible(
                                     flex: 3,
                                     child: Container(
+                                      // width: MediaQuery.of(context).size.width *
+                                      //     0.7,
                                       width: MediaQuery.of(context).size.width *
-                                          0.7,
+                                          0.9,
                                       child: Text(
                                         post.bookName,
                                         softWrap: true,
@@ -692,27 +706,31 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
                               //     ],
                               //   ),
                               // ),
-                              ItemCounter(itemCount: _itemCount),
+                              // ItemCounter(
+                              //     // itemCount: _itemCount,
+                              //     // increaseItemCount: _increaseItemCount,
+                              //     // decreaseItemCount: _decreaseItemCount,
+                              //     ),
                             ],
                           ),
                         ),
 
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          alignment: Alignment.centerRight,
-                          margin: EdgeInsets.only(
-                            top: AppMargin.m4,
-                          ),
-                          child: Text(
-                            'Available in stock',
-                            softWrap: true,
-                            style: getBoldStyle(
-                              color: ColorManager.black,
-                              fontSize: FontSize.s12,
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
+                        // Container(
+                        //   width: MediaQuery.of(context).size.width,
+                        //   alignment: Alignment.centerRight,
+                        //   margin: EdgeInsets.only(
+                        //     top: AppMargin.m4,
+                        //   ),
+                        //   child: Text(
+                        //     'Available in stock',
+                        //     softWrap: true,
+                        //     style: getBoldStyle(
+                        //       color: ColorManager.black,
+                        //       fontSize: FontSize.s12,
+                        //     ),
+                        //     textAlign: TextAlign.start,
+                        //   ),
+                        // ),
                         Container(
                           padding: EdgeInsets.only(top: AppPadding.p14),
                           child: Text(
@@ -739,11 +757,7 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
                           ),
                         ),
 
-                        // SizedBox(
-                        //   height: 100,
-                        // ),
-
-                        // Comments Starts here
+                        // ! Comments Starts here
                         Padding(
                           padding: const EdgeInsets.only(
                             top: AppPadding.p20,
@@ -775,6 +789,11 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
                           loggedInUser,
                           post.id,
                         ),
+                        // SinglePostCommenstSection(
+                        //   authenticatedSession: authenticatedSession,
+                        //   loggedInUser: loggedInUser,
+                        //   postId: post.id,
+                        // ),
                       ],
                     ),
                   ),
@@ -787,8 +806,62 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
       bottomSheet: CartBottomSheet(
         selectedPost: post,
         loggedInUser: loggedInUser,
-        bookCount: _itemCount,
       ),
+    );
+  }
+}
+
+class SinglePostCommenstSection extends StatefulWidget {
+  SinglePostCommenstSection(
+      {Key? key,
+      required this.authenticatedSession,
+      required this.loggedInUser,
+      required this.postId})
+      : super(key: key);
+
+  @override
+  State<SinglePostCommenstSection> createState() =>
+      _SinglePostCommenstSectionState();
+  Session authenticatedSession;
+  User loggedInUser;
+  String postId;
+}
+
+class _SinglePostCommenstSectionState extends State<SinglePostCommenstSection> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Comments Starts here
+        Padding(
+          padding: const EdgeInsets.only(
+            top: AppPadding.p20,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Comments',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  thickness: 1,
+                  height: 5,
+                  indent: 15,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // PostComments(loggedInUserSession, comments, this.bookId),
+        PostCommentsNew(
+            widget.authenticatedSession, widget.loggedInUser, widget.postId),
+      ],
     );
   }
 }
@@ -798,14 +871,12 @@ class CartBottomSheet extends StatefulWidget {
     Key? key,
     required this.selectedPost,
     required this.loggedInUser,
-    required this.bookCount,
 
     // required this.buyerExpectedBook,
   }) : super(key: key);
 
   final Book selectedPost;
   final User loggedInUser;
-  final int bookCount;
 
   @override
   State<CartBottomSheet> createState() => _CartBottomSheetState();
@@ -817,6 +888,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   final _buyerDateFocusNode = FocusNode();
   final _buyerPriceFocusNode = FocusNode();
   final _buyerBooksCountFocusNode = FocusNode();
+
+  int _itemCount = 1;
 
   final _datePickercontroller = TextEditingController(
     text: DateFormat('yyyy-MM-dd').format(NepaliDateTime(
@@ -886,7 +959,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   Widget build(BuildContext context) {
     final _form = GlobalKey<FormState>();
     Book selectedPost = widget.selectedPost;
-    _buyerExpectedBook.bookCount = widget.bookCount;
     Users users = context.watch<Users>();
 
     Carts carts = Provider.of<Carts>(context);
@@ -896,8 +968,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     } else {
       _loggedInUser = widget.loggedInUser;
     }
-
-    // return users.user!.id != selectedPost.userId
     return _loggedInUser.id != selectedPost.userId
         ? (context.watch<Carts>().cartItems.length > 0 &&
                 _checkBookInCart(carts, selectedPost)
@@ -1088,82 +1158,23 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             ),
                                                             child:
                                                                 TextFormField(
-                                                                    initialValue:
-                                                                        _buyerExpectedBook
-                                                                            .price
-                                                                            .toString(),
-                                                                    cursorColor: Theme.of(
-                                                                            context)
-                                                                        .primaryColor,
-                                                                    focusNode:
-                                                                        _buyerPriceFocusNode,
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      prefix: Text(
-                                                                          'Rs. '),
-                                                                      labelText:
-                                                                          'Expected price per piece',
-                                                                      focusColor:
-                                                                          Colors
-                                                                              .redAccent,
-                                                                    ),
-                                                                    textInputAction:
-                                                                        TextInputAction
-                                                                            .next,
-                                                                    autovalidateMode:
-                                                                        AutovalidateMode
-                                                                            .always,
-                                                                    onFieldSubmitted:
-                                                                        (_) {
-                                                                      FocusScope.of(
-                                                                              context)
-                                                                          .requestFocus(
-                                                                              _buyerBooksCountFocusNode);
-                                                                    },
-                                                                    validator:
-                                                                        (value) {
-                                                                      if (value!
-                                                                          .isEmpty) {
-                                                                        return 'Price can\'t be empty';
-                                                                      }
-                                                                      if (double.tryParse(
-                                                                              value) ==
-                                                                          null) {
-                                                                        return 'Invalid number';
-                                                                      }
-                                                                      return null;
-                                                                    },
-                                                                    onSaved:
-                                                                        (value) {}),
-                                                          ),
-                                                        ),
-                                                        Flexible(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal:
-                                                                  AppPadding
-                                                                      .p12,
-                                                            ),
-                                                            child:
-                                                                TextFormField(
                                                               initialValue:
                                                                   _buyerExpectedBook
-                                                                      .bookCount
+                                                                      .price
                                                                       .toString(),
-                                                              focusNode:
-                                                                  _buyerBooksCountFocusNode,
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
                                                               cursorColor: Theme
                                                                       .of(context)
                                                                   .primaryColor,
+                                                              focusNode:
+                                                                  _buyerPriceFocusNode,
                                                               decoration:
                                                                   InputDecoration(
+                                                                prefix: Text(
+                                                                    'Rs. '),
                                                                 labelText:
-                                                                    'Number of Books you want',
+                                                                    'Expected price per piece',
+                                                                focusColor: Colors
+                                                                    .redAccent,
                                                               ),
                                                               textInputAction:
                                                                   TextInputAction
@@ -1171,36 +1182,247 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                               autovalidateMode:
                                                                   AutovalidateMode
                                                                       .always,
-                                                              // onFieldSubmitted: (_) {
-                                                              //   FocusScope.of(context).requestFocus(_descFocusNode);
-                                                              // },
+                                                              onFieldSubmitted:
+                                                                  (_) {
+                                                                FocusScope.of(
+                                                                        context)
+                                                                    .requestFocus(
+                                                                        _buyerBooksCountFocusNode);
+                                                              },
                                                               validator:
                                                                   (value) {
-                                                                if (double.tryParse(
-                                                                        value
-                                                                            as String) ==
-                                                                    null) {
-                                                                  return 'Invalid Number';
+                                                                if (value!
+                                                                    .isEmpty) {
+                                                                  return 'Price can\'t be empty';
                                                                 }
-
-                                                                if (double.parse(
-                                                                        value) <
-                                                                    1) {
-                                                                  return 'Book count must be at least 1';
+                                                                if (double.tryParse(
+                                                                        value) ==
+                                                                    null) {
+                                                                  return 'Invalid number';
                                                                 }
                                                                 return null;
                                                               },
-                                                              onSaved: (value) {
-                                                                _buyerExpectedBook
-                                                                        .bookCount =
-                                                                    int.parse(value
-                                                                        .toString());
-                                                                print(
-                                                                    _buyerExpectedBook);
-                                                              },
+                                                              onSaved:
+                                                                  (value) {},
                                                             ),
                                                           ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                            horizontal:
+                                                                AppPadding.p12,
+                                                          ),
+                                                          // child:
+                                                          //     TextFormField(
+                                                          //   initialValue:
+                                                          //       _buyerExpectedBook
+                                                          //           .bookCount
+                                                          //           .toString(),
+                                                          //   focusNode:
+                                                          //       _buyerBooksCountFocusNode,
+                                                          //   keyboardType:
+                                                          //       TextInputType
+                                                          //           .number,
+                                                          //   cursorColor: Theme
+                                                          //           .of(context)
+                                                          //       .primaryColor,
+                                                          //   decoration:
+                                                          //       InputDecoration(
+                                                          //     labelText:
+                                                          //         'Number of Books you want',
+                                                          //   ),
+                                                          //   textInputAction:
+                                                          //       TextInputAction
+                                                          //           .next,
+                                                          //   autovalidateMode:
+                                                          //       AutovalidateMode
+                                                          //           .always,
+                                                          //   // onFieldSubmitted: (_) {
+                                                          //   //   FocusScope.of(context).requestFocus(_descFocusNode);
+                                                          //   // },
+                                                          //   validator:
+                                                          //       (value) {
+                                                          //     if (double.tryParse(
+                                                          //             value
+                                                          //                 as String) ==
+                                                          //         null) {
+                                                          //       return 'Invalid Number';
+                                                          //     }
+
+                                                          //     if (double.parse(
+                                                          //             value) <
+                                                          //         1) {
+                                                          //       return 'Book count must be at least 1';
+                                                          //     }
+                                                          //     return null;
+                                                          //   },
+                                                          //   onSaved: (value) {
+                                                          //     _buyerExpectedBook
+                                                          //             .bookCount =
+                                                          //         int.parse(value
+                                                          //             .toString());
+                                                          //     print(
+                                                          //         _buyerExpectedBook);
+                                                          //   },
                                                           // ),
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors
+                                                                  .grey[200],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                            ),
+                                                            // child: ButtonBar(
+                                                            //   buttonPadding:
+                                                            //       EdgeInsets
+                                                            //           .zero,
+                                                            //   children: [
+                                                            //     IconButton(
+                                                            //       color: Colors
+                                                            //           .black,
+                                                            //       padding:
+                                                            //           EdgeInsets
+                                                            //               .zero,
+                                                            //       disabledColor:
+                                                            //           Colors
+                                                            //               .grey,
+                                                            //       splashRadius:
+                                                            //           AppRadius
+                                                            //               .r12,
+                                                            //       onPressed:
+                                                            //           _itemCount >
+                                                            //                   1
+                                                            //               ? () {
+                                                            //                   setState(() {
+                                                            //                     _itemCount--;
+                                                            //                   });
+                                                            //                 }
+                                                            //               : null,
+                                                            //       icon: Icon(Icons
+                                                            //           .remove),
+                                                            //     ),
+                                                            //     Text(
+                                                            //       _itemCount
+                                                            //           .toString(),
+                                                            //       textAlign:
+                                                            //           TextAlign
+                                                            //               .center,
+                                                            //       style:
+                                                            //           getBoldStyle(
+                                                            //         color: ColorManager
+                                                            //             .black,
+                                                            //         fontSize:
+                                                            //             FontSize
+                                                            //                 .s17,
+                                                            //       ),
+                                                            //     ),
+                                                            //     IconButton(
+                                                            //       color: Colors
+                                                            //           .black,
+                                                            //       padding:
+                                                            //           EdgeInsets
+                                                            //               .zero,
+                                                            //       disabledColor:
+                                                            //           Colors
+                                                            //               .grey,
+                                                            //       splashRadius:
+                                                            //           AppRadius
+                                                            //               .r12,
+                                                            //       onPressed:
+                                                            //           () {
+                                                            //         setState(
+                                                            //             () {
+                                                            //           _itemCount++;
+                                                            //         });
+                                                            //       },
+                                                            //       icon: Icon(
+                                                            //           Icons
+                                                            //               .add),
+                                                            //     ),
+                                                            //   ],
+                                                            // ),
+                                                            child: StatefulBuilder(
+                                                                builder: (BuildContext
+                                                                        context,
+                                                                    StateSetter
+                                                                        setState) {
+                                                              return Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceEvenly,
+                                                                children: [
+                                                                  IconButton(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    disabledColor:
+                                                                        Colors
+                                                                            .grey,
+                                                                    splashRadius:
+                                                                        AppRadius
+                                                                            .r12,
+                                                                    onPressed:
+                                                                        _itemCount >
+                                                                                1
+                                                                            ? () {
+                                                                                setState(() {
+                                                                                  _itemCount--;
+                                                                                });
+                                                                              }
+                                                                            : null,
+                                                                    icon: Icon(Icons
+                                                                        .remove),
+                                                                  ),
+                                                                  Text(
+                                                                    _itemCount
+                                                                        .toString(),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    style:
+                                                                        getBoldStyle(
+                                                                      color: ColorManager
+                                                                          .black,
+                                                                      fontSize:
+                                                                          FontSize
+                                                                              .s17,
+                                                                    ),
+                                                                  ),
+                                                                  IconButton(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    disabledColor:
+                                                                        Colors
+                                                                            .grey,
+                                                                    splashRadius:
+                                                                        AppRadius
+                                                                            .r12,
+                                                                    onPressed: selectedPost.bookCount >
+                                                                            _itemCount
+                                                                        ? () {
+                                                                            setState(() {
+                                                                              _itemCount++;
+                                                                            });
+                                                                          }
+                                                                        : null,
+                                                                    icon: Icon(
+                                                                        Icons
+                                                                            .add),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            }),
+                                                          ),
                                                         ),
                                                       ],
                                                     ),
@@ -1301,9 +1523,11 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                         .price
                                                                         .toString(),
                                                               ),
+                                                              // quantity:
+                                                              //     _buyerExpectedBook
+                                                              //         .bookCount,
                                                               quantity:
-                                                                  _buyerExpectedBook
-                                                                      .bookCount,
+                                                                  _itemCount,
                                                               totalPrice: 0,
                                                             );
 
@@ -1463,18 +1687,22 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
 }
 
 class ItemCounter extends StatefulWidget {
-  ItemCounter({Key? key, required this.itemCount}) : super(key: key);
+  ItemCounter({
+    Key? key,
+    // required this.itemCount,
+  }) : super(key: key);
 
   @override
   State<ItemCounter> createState() => _ItemCounterState();
 
-  int itemCount;
+  // int itemCount;
 }
 
 class _ItemCounterState extends State<ItemCounter> {
   @override
   Widget build(BuildContext context) {
-    int _itemCount = widget.itemCount;
+    // int _itemCount = widget.itemCount;
+    int itemCount = 1;
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -1489,10 +1717,10 @@ class _ItemCounterState extends State<ItemCounter> {
               color: Colors.black,
               padding: EdgeInsets.zero,
               disabledColor: Colors.grey,
-              onPressed: _itemCount > 1
+              onPressed: itemCount > 1
                   ? () {
                       setState(() {
-                        _itemCount--;
+                        itemCount--;
                       });
                     }
                   : null,
@@ -1501,7 +1729,7 @@ class _ItemCounterState extends State<ItemCounter> {
           ),
           Text(
             // '1',
-            _itemCount.toString(),
+            itemCount.toString(),
             textAlign: TextAlign.center,
             style: getBoldStyle(
               color: ColorManager.black,
@@ -1517,7 +1745,7 @@ class _ItemCounterState extends State<ItemCounter> {
               padding: EdgeInsets.zero,
               onPressed: () {
                 setState(() {
-                  _itemCount++;
+                  itemCount++;
                 });
               },
               icon: Icon(Icons.add),

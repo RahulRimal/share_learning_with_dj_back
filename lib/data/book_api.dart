@@ -68,8 +68,6 @@ class BookApi {
       // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        // print(json.encode(json.decode(response.body)['data']['posts']));
-
         return Success(
           code: response.statusCode,
           response: booksFromJson(
@@ -185,8 +183,13 @@ class BookApi {
       // print(response.body);
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
-            code: response.statusCode,
-            response: bookFromJson(json.encode(json.decode(response.body))));
+          code: response.statusCode,
+          response: bookFromJson(
+            json.encode(
+              json.decode(response.body),
+            ),
+          ),
+        );
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,

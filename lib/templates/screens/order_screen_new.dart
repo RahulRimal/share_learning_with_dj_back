@@ -204,7 +204,9 @@ class OrderScreenNew extends StatelessWidget {
                                   //       //     });
                                   //     },
                                   //   );
-                                  : OrdersWidget(orders: orders.orders);
+                                  : OrdersWidget(
+                                      orders: orders.orders.reversed.toList(),
+                                    );
                             },
                           );
                         }
@@ -413,6 +415,21 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                                 color: ColorManager.green,
                               ),
                             ],
+                          ),
+                          Text(
+                            (item['order'] as Order).paymentStatus ==
+                                    PaymentStatus.PENDING
+                                ? 'Payment: Cash on delivery'
+                                : 'Payment: Completed',
+                            style: getBoldStyle(
+                                color: (item['order'] as Order).paymentStatus ==
+                                        PaymentStatus.PENDING
+                                    ? ColorManager.yellow
+                                    : ColorManager.green,
+                                fontSize: FontSize.s14),
+                          ),
+                          SizedBox(
+                            height: AppHeight.h2,
                           ),
                           Text(
                             'Total: Rs.${totalPrice.toString()}',

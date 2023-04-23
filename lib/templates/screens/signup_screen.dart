@@ -55,37 +55,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
   );
 
   _googleSignIn() async {
-    final users = Provider.of<Users>(context, listen: false);
-    final sessions = Provider.of<SessionProvider>(context, listen: false);
-    var response = await users.googleSignIn();
-    if (response is Success) {
-      sessions.setSession((response.response as Map)['session']);
+    // final users = Provider.of<Users>(context, listen: false);
+    // final sessions = Provider.of<SessionProvider>(context, listen: false);
+    // var response = await users.googleSignIn();
+    // if (response is Success) {
+    //   sessions.setSession((response.response as Map)['session']);
 
-      SharedPreferences prefs = await _prefs;
+    //   SharedPreferences prefs = await _prefs;
 
-      Users users = Provider.of<Users>(context, listen: false);
+    //   Users users = Provider.of<Users>(context, listen: false);
 
-      prefs.setString('accessToken', sessions.session!.accessToken);
-      prefs.setString('refreshToken', sessions.session!.refreshToken);
+    //   prefs.setString('accessToken', sessions.session!.accessToken);
+    //   prefs.setString('refreshToken', sessions.session!.refreshToken);
 
-      if (!prefs.containsKey('cartId')) {
-        if (await Provider.of<Carts>(context, listen: false)
-            .createCart(sessions.session as Session)) {
-          prefs.setString('cartId',
-              Provider.of<Carts>(context, listen: false).cart!.id.toString());
-        } else {
-          print('here');
-        }
-      } else {
-        print('here');
-      }
+    //   if (!prefs.containsKey('cartId')) {
+    //     if (await Provider.of<Carts>(context, listen: false)
+    //         .createCart(sessions.session as Session)) {
+    //       prefs.setString('cartId',
+    //           Provider.of<Carts>(context, listen: false).cart!.id.toString());
+    //     } else {
+    //       print('here');
+    //     }
+    //   } else {
+    //     print('here');
+    //   }
 
-      Navigator.of(context)
-          .pushReplacementNamed(HomeScreen.routeName, arguments: {
-        'authSession': sessions.session,
-      });
-    }
-    // print(response);
+    //   Navigator.of(context)
+    //       .pushReplacementNamed(HomeScreen.routeName, arguments: {
+    //     'authSession': sessions.session,
+    //   });
+    // }
   }
 
   void _saveForm() async {

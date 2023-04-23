@@ -17,14 +17,21 @@ import '../models/user.dart';
 class OrderApi {
   static Future<Object> getOrderById(Session loggedInUser, String id) async {
     try {
-      // var url = Uri.parse(RemoteManager.BASE_URI + "/orders/1/");
       var url = Uri.parse(RemoteManager.BASE_URI + "/orders/" + id + '/');
 
       var response = await http.get(
         url,
-        headers: {HttpHeaders.authorizationHeader: loggedInUser.accessToken},
+        // headers: {HttpHeaders.authorizationHeader: loggedInUser.accessToken},
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+          "Accept": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
       );
-      print(response);
+      // print(response);
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
             code: response.statusCode,
@@ -238,14 +245,15 @@ class OrderApi {
     }
   }
 
-  static Future<Object> placeOrder(
-      Session currentSession, Map<String, dynamic> billingInfo) async {
+  static Future<Object> placeOrder(Session currentSession,
+      Map<String, dynamic> billingInfo, String paymentMethod) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _cartId = prefs.getString('cartId') as String;
     try {
       var url = Uri.parse(RemoteManager.BASE_URI + '/orders/');
       Map<String, dynamic> postBody = {
         "cart_id": _cartId,
+        "payment_method": paymentMethod,
         "billing_info": billingInfo,
       };
       var response = await http.post(url,
@@ -265,6 +273,58 @@ class OrderApi {
         return Success(
             code: response.statusCode,
             response: orderFromJson(json.encode(json.decode(response.body))));
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
+  static Future<Object> updateOrder(
+      Session currentSession, String orderId, String status) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI + '/orders/' + orderId + '/');
+      Map<String, dynamic> postBody = {
+        "payment_status": status,
+      };
+      var response = await http.patch(url,
+          headers: {
+            HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
+            "Accept": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin":
+                "*", // Required for CORS support to work
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            HttpHeaders.contentTypeHeader: "application/json",
+          },
+          body: json.encode(postBody));
+
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        var order = await getOrderById(currentSession, orderId);
+
+        return Success(
+          code: response.statusCode,
+          response: (order as Success).response,
+          // response: orderFromJson(
+          //   json.encode(
+          //     json.decode(response.body),
+          //   ),
+          // ),
+        );
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,

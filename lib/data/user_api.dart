@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
@@ -452,78 +451,69 @@ class UserApi {
     }
   }
 
-  static Future<Object> googleSignIn() async {
-    // final _googleSignIn = GoogleSignIn(
-    //   scopes: [
-    //     'email',
-    //     'username',
-    //     'first_name',
-    //     'last_name',
-    //   ],
-    // );
-    final _googleSignIn = GoogleSignIn(
-        // clientId:
-        //     '117721238163-makqi8gtb0gvt4v374dsd1hl732lu6ud.apps.googleusercontent.com');
-        clientId:
-            '117721238163-makqi8gtb0gvt4v374dsd1hl732lu6ud.apps.googleusercontent.com');
+  // static Future<Object> googleSignIn() async {
 
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-      final String accessToken = googleAuth.accessToken!;
-      final String idToken = googleAuth.idToken!;
-      // send the ID token to your Django backend
+  //   final _googleSignIn = GoogleSignIn(
+  //       clientId:
+  //           '117721238163-makqi8gtb0gvt4v374dsd1hl732lu6ud.apps.googleusercontent.com');
 
-      var url = Uri.parse(RemoteManager.BASE_URI + '/social-auth/google/');
-      var response = await http.post(
-        url,
-        headers: {
-          "Accept": "application/json; charset=utf-8",
-          "Access-Control-Allow-Origin":
-              "*", // Required for CORS support to work
-          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-          HttpHeaders.contentTypeHeader: "application/json",
-        },
-        body: json.encode({
-          "auth_token": idToken,
-        }),
-      );
-      // print(response);
-      // var respBody = json.decode(response.body);
-      // print(respBody['tokens']['access']);
-      if (response.statusCode == ApiStatusCode.responseSuccess) {
-        var respBody = json.decode(response.body);
-        // var getTokenToCreateCustomer =
-        //     await SessionApi.postSession(googleUser.email.toString(), respBody['tokens']['access']);
-        Session userSession =
-            // sessionFromJson(json.decode(json.encode(respBody['tokens'])));
-            Session.fromMap(respBody['tokens']);
-        // print(userSession);
-        var userData = await getUserFromToken(respBody['tokens']['access']);
-        // print(userData);?
-        Map<String, dynamic> data = {
-          "session": userSession,
-          "user": (userData as Success).response,
-        };
-        return Success(
-            code: response.statusCode,
-            // response: userFromJson(json.encode(json.decode(response.body))));
-            response: data);
-      }
-      return Failure(
-          code: ApiStatusCode.invalidResponse,
-          errorResponse: json.decode(response.body));
-    } on HttpException {
-      return Failure(
-          code: ApiStatusCode.httpError,
-          errorResponse: ApiStrings.noInternetString);
-    } on FormatException {
-      return Failure(
-          code: ApiStatusCode.invalidResponse,
-          errorResponse: ApiStrings.invalidFormatString);
-    } catch (e) {
-      return Failure(code: 103, errorResponse: e.toString());
-    }
-  }
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser!.authentication;
+  //     final String accessToken = googleAuth.accessToken!;
+  //     final String idToken = googleAuth.idToken!;
+  //     // send the ID token to your Django backend
+
+  //     var url = Uri.parse(RemoteManager.BASE_URI + '/social-auth/google/');
+  //     var response = await http.post(
+  //       url,
+  //       headers: {
+  //         "Accept": "application/json; charset=utf-8",
+  //         "Access-Control-Allow-Origin":
+  //             "*", // Required for CORS support to work
+  //         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+  //         HttpHeaders.contentTypeHeader: "application/json",
+  //       },
+  //       body: json.encode({
+  //         "auth_token": idToken,
+  //       }),
+  //     );
+  //     // print(response);
+  //     // var respBody = json.decode(response.body);
+  //     // print(respBody['tokens']['access']);
+  //     if (response.statusCode == ApiStatusCode.responseSuccess) {
+  //       var respBody = json.decode(response.body);
+  //       // var getTokenToCreateCustomer =
+  //       //     await SessionApi.postSession(googleUser.email.toString(), respBody['tokens']['access']);
+  //       Session userSession =
+  //           // sessionFromJson(json.decode(json.encode(respBody['tokens'])));
+  //           Session.fromMap(respBody['tokens']);
+  //       // print(userSession);
+  //       var userData = await getUserFromToken(respBody['tokens']['access']);
+  //       // print(userData);?
+  //       Map<String, dynamic> data = {
+  //         "session": userSession,
+  //         "user": (userData as Success).response,
+  //       };
+  //       return Success(
+  //           code: response.statusCode,
+  //           // response: userFromJson(json.encode(json.decode(response.body))));
+  //           response: data);
+  //     }
+  //     return Failure(
+  //         code: ApiStatusCode.invalidResponse,
+  //         errorResponse: json.decode(response.body));
+  //   } on HttpException {
+  //     return Failure(
+  //         code: ApiStatusCode.httpError,
+  //         errorResponse: ApiStrings.noInternetString);
+  //   } on FormatException {
+  //     return Failure(
+  //         code: ApiStatusCode.invalidResponse,
+  //         errorResponse: ApiStrings.invalidFormatString);
+  //   } catch (e) {
+  //     return Failure(code: 103, errorResponse: e.toString());
+  //   }
+  // }
 }

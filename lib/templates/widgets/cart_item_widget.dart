@@ -302,7 +302,6 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                                         style: getBoldStyle(
                                                           fontSize:
                                                               FontSize.s16,
-                                                          // color: ColorManager.primary,
                                                           color: Colors.green,
                                                         ),
                                                       ),
@@ -351,7 +350,6 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                           bottom: 1.00,
                                         ),
                                         child: Text(
-                                          // "Rs. ${widget.cartItem.pricePerPiece * widget.cartItem.bookCount}",
                                           "Rs. ${widget.cartItem.totalPrice}",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
@@ -374,9 +372,6 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                                   : () {
                                                       _quantity--;
                                                       _ifCartItemChanged();
-
-                                                      // _edittedItem.bookCount =
-                                                      //     _quantity;
                                                     },
                                               icon: Container(
                                                 width: AppSize.s40,
@@ -384,16 +379,13 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                                 decoration: BoxDecoration(
                                                   color: ColorManager.black,
                                                 ),
-                                                child: Text(
-                                                  '-',
-                                                  style: getBoldStyle(
-                                                      color: ColorManager.white,
-                                                      fontSize: FontSize.s20),
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: ColorManager.white,
                                                 ),
                                               ),
                                             ),
                                             Text(
-                                              // '1',
                                               _quantity.toString(),
                                               style: getBoldStyle(
                                                 color: ColorManager.primary,
@@ -401,33 +393,18 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                               ),
                                             ),
                                             IconButton(
-                                              // color: ColorManager.primary,
-                                              color: Colors.black,
-                                              // onPressed: () {},
-                                              // icon: Icon(
-                                              //   Icons.miscellaneous_services,
-                                              // ),
-                                              // onPressed: _incrementQuantity(),
+                                              color: ColorManager.white,
                                               onPressed: () {
                                                 _quantity++;
                                                 _ifCartItemChanged();
-
-                                                // _edittedItem.bookCount =
-                                                //     _quantity;
                                               },
-
                                               icon: Container(
                                                 width: AppSize.s40,
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
                                                   color: ColorManager.black,
                                                 ),
-                                                child: Text(
-                                                  '+',
-                                                  style: getBoldStyle(
-                                                      color: ColorManager.white,
-                                                      fontSize: FontSize.s17),
-                                                ),
+                                                child: Icon(Icons.add),
                                               ),
                                             ),
                                           ],

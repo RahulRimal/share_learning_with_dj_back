@@ -47,26 +47,26 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     new Category(id: 6, name: "Food", postsCount: 0, featuredPost: null),
   ];
 
-  List<String> images = [
-    'https://images.unsplash.com/photo-1679428997403-c75e1c148b28?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-    'https://images.unsplash.com/photo-1679760452619-cf2dcb88b659?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
-    'https://images.unsplash.com/photo-1679946026929-454c89c3af10?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1440&q=80',
-    'https://images.unsplash.com/photo-1679766826593-738e9b6338c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80',
-    'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
-  ];
+  // List<String> images = [
+  //   'https://images.unsplash.com/photo-1679428997403-c75e1c148b28?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+  //   'https://images.unsplash.com/photo-1679760452619-cf2dcb88b659?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
+  //   'https://images.unsplash.com/photo-1679946026929-454c89c3af10?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1440&q=80',
+  //   'https://images.unsplash.com/photo-1679766826593-738e9b6338c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80',
+  //   'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
+  // ];
 
-  List<String> locationOptions = [
-    'Kathmandu',
-    'Bhaktapur',
-    'Lalitpur',
-    'Nepalgunj',
-  ];
+  // List<String> locationOptions = [
+  //   'Kathmandu',
+  //   'Bhaktapur',
+  //   'Lalitpur',
+  //   'Nepalgunj',
+  // ];
 
-  Map<String, dynamic> filterOptions = {
-    'selected_loaction': '',
-    'min_price': 0,
-    'max_price': 0,
-  };
+  // Map<String, dynamic> filterOptions = {
+  //   'selected_loaction': '',
+  //   'min_price': 0,
+  //   'max_price': 0,
+  // };
 
   User _user = new User(
       id: "temp",
@@ -82,12 +82,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       createdDate: DateTime.now());
 
   _setUserValue(User user) {
-    // this.user = user;
     _user = user;
   }
 
   ScrollController _scrollController = ScrollController();
-  // double _appBarHeight = 100.0;
+
   double _appBarHeight = 75.0;
 
   @override
@@ -117,14 +116,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-    // Session authenticatedSession;
-    // if (args['authSession'] != null) {
-    //   authenticatedSession = args['authSession'] as Session;
-    // } else {
-    //   authenticatedSession =
-    //       Provider.of<SessionProvider>(context).session as Session;
-    // }
     Session authenticatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
@@ -281,6 +272,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         appBar: AppBar(
           toolbarHeight: _appBarHeight,
           elevation: 0.0,
+          flexibleSpace: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            height: _appBarHeight,
+          ),
           leading: Padding(
             padding: const EdgeInsets.only(left: AppPadding.p20),
             child: CircleAvatar(
@@ -321,16 +316,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       ),
                     )
                   : FutureBuilder(
-                      // future: _users.getUserByIdAndSession(
-                      //     authenticatedSession,
-                      //     // authenticatedSession.userId),
-                      //     '1'),
-
                       future: _users
                           .getUserByToken(authenticatedSession.accessToken),
                       builder: (ctx, snapshot) {
-                        // if (snapshot.data != null)
-                        //   _user = snapshot.data as User;
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return CircularProgressIndicator(
@@ -338,8 +326,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           );
                         } else {
                           if (snapshot.hasError) {
-                            // AppBar().preferredSize.height;
-                            // MediaQuery.of(context).viewPadding.top;
                             return CircleAvatar(
                               backgroundImage: NetworkImage(
                                   'https://ojasfilms.org/assets/img/ojas-logo.png'),
@@ -351,10 +337,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             } else {
                               _user = snapshot.data as User;
                               return CircleAvatar(
-                                // backgroundImage: NetworkImage(
-                                //   (UserHelper.userProfileImage(
-                                //       snapshot.data as User)),
-                                // ),
                                 backgroundImage: NetworkImage(
                                     _user.image == null
                                         ? RemoteManager.IMAGE_PLACEHOLDER
@@ -688,29 +670,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     ),
                   ],
                 ),
-                // SizedBox(
-                //   height: 100,
-                //   child: ListView.builder(
-                //     scrollDirection: Axis.horizontal,
-                //     itemCount: categories.length,
-                //     itemBuilder: (context, index) {
-                //       return Padding(
-                //         padding: const EdgeInsets.symmetric(horizontal: 6),
-                //         child: FilterChip(
-                //           label: Text(categories[index]),
-                //           selectedColor: ColorManager.primary,
-                //           showCheckmark: false,
-                //           selected: _selectedIndex == index,
-                //           onSelected: (bool isSelected) {
-                //             setState(() {
-                //               _selectedIndex = index;
-                //             });
-                //           },
-                //         ),
-                //       );
-                //     },
-                //   ),
-                // ),
+
                 SizedBox(
                   height: 100,
                   child: FutureBuilder(

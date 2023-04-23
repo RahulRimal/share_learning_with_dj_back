@@ -1,7 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:esewa_client/esewa_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:khalti/khalti.dart';
+import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/carts.dart';
@@ -18,6 +19,7 @@ import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/cart_item_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/order.dart';
 import '../../models/user.dart';
 
 import '../../providers/users.dart';
@@ -346,6 +348,85 @@ class _BillingInfoState extends State<BillingInfo> {
       titleStyle: getBoldStyle(color: ColorManager.white),
       align: Alignment(1, 1),
     );
+  }
+
+  _payWithKhalti() async {
+    bool paymentSuccess = false;
+    await KhaltiScope.of(context).pay(
+        config: PaymentConfig(
+          amount: 1000,
+          productIdentity: 'cart/product id',
+          productName: 'productName',
+        ),
+        preferences: [
+          PaymentPreference.khalti,
+          PaymentPreference.connectIPS,
+          PaymentPreference.eBanking,
+          PaymentPreference.mobileBanking,
+          PaymentPreference.sct,
+        ],
+        onSuccess: (PaymentSuccessModel success) {
+          paymentSuccess = true;
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Payment Successful'),
+                // actions: [
+                //   SimpleDialogOption(
+                //     child: Text('OK'),
+                //     onPressed: () {
+                //       Navigator.pop(context);
+                //     },
+                //   ),
+                // ],
+              );
+            },
+          );
+        },
+        onFailure: (PaymentFailureModel failure) {
+          print(failure.toString());
+          paymentSuccess = false;
+        },
+        onCancel: () {
+          print('Khalti Canceled');
+          paymentSuccess = false;
+        });
+
+    return paymentSuccess;
+  }
+
+  _payWithEsewa() {
+    EsewaClient _esewaClient = EsewaClient.configure(
+      clientId: "JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R",
+      secretKey: "BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==",
+      environment: EsewaEnvironment.TEST,
+    );
+
+    /*
+    * Enter your own callback url to receive response callback from esewa to your client server
+    * */
+    EsewaPayment payment = EsewaPayment(
+        productId: "test_id",
+        amount: "10",
+        name: "Test Product",
+        callbackUrl: "http://example.com/");
+
+    // start your payment procedure
+    _esewaClient.startPayment(
+        esewaPayment: payment,
+        onSuccess: (data) {
+          print("success");
+          return false;
+        },
+        onFailure: (data) {
+          print("failure");
+          return false;
+        },
+        onCancelled: (data) {
+          print("cancelled");
+          return false;
+        });
   }
 
   @override
@@ -690,7 +771,7 @@ class _BillingInfoState extends State<BillingInfo> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: _paymentMethod == PaymentMethod.Esewa
-                      ? ColorManager.primary
+                      ? ColorManager.green
                       : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
                     MediaQuery.of(context).size.width,
@@ -700,22 +781,6 @@ class _BillingInfoState extends State<BillingInfo> {
                   setState(() {
                     _paymentMethod = PaymentMethod.Esewa;
                   });
-                  // Initiate PayPal payment
-                  // PayPalResult result = await PayPal.initializePayment(
-                  //   "your-client-id",
-                  //   "your-secret-key",
-                  //   100.0, // payment amount
-                  //   "USD", // currency code
-                  // );
-
-                  // // Handle payment response
-                  // if (result.success) {
-                  //   setState(() {
-                  //     paymentGateway = "PayPal";
-                  //   });
-                  // } else {
-                  //   // Handle payment error
-                  // }
                 },
                 child: Text("Pay with e-Sewa"),
               ),
@@ -723,55 +788,17 @@ class _BillingInfoState extends State<BillingInfo> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: _paymentMethod == PaymentMethod.Khalti
-                      ? ColorManager.primary
+                      ? ColorManager.purple
                       : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
                     MediaQuery.of(context).size.width,
                   ),
                 ),
                 onPressed: () async {
+                  // _payWithKhalti();
                   setState(() {
                     _paymentMethod = PaymentMethod.Khalti;
                   });
-
-                  // await Khalti.init(
-                  //   publicKey:
-                  //       'test_public_key_78965ea539884431b8e9172178d08e91',
-                  //   enabledDebugging: false,
-                  // );
-                  // final service = KhaltiService(client: KhaltiHttpClient());
-
-                  // final initiationModel = await service.initiatePayment(
-                  //   request: PaymentInitiationRequestModel(
-                  //     amount: 1000, // in paisa
-                  //     mobile: '9868957429',
-                  //     productIdentity: 'mac-mini',
-                  //     productName: 'Apple Mac Mini',
-                  //     transactionPin: '1027',
-                  //     productUrl:
-                  //         'https://khalti.com/bazaar/mac-mini-16-512-m1',
-                  //     additionalData: {
-                  //       'vendor': 'Oliz Store',
-                  //       'manufacturer': 'Apple Inc.',
-                  //     },
-                  //   ),
-                  // );
-
-                  // Initiate Ewsea payment
-                  // EwseaResult result = await Ewsea.initializePayment(
-                  //   "your-ewsea-key",
-                  //   100.0, // payment amount
-                  //   "USD", // currency code
-                  // );
-
-                  // // Handle payment response
-                  // if (result.success) {
-                  //   setState(() {
-                  //     paymentGateway = "Ewsea";
-                  //   });
-                  // } else {
-                  //   // Handle payment error
-                  // }
                 },
                 child: Text("Pay with Khalti"),
               ),
@@ -840,22 +867,55 @@ class _BillingInfoState extends State<BillingInfo> {
                   ),
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (_paymentMethod == PaymentMethod.Esewa) {}
-
                       final _isValid = _form.currentState!.validate();
                       if (!_isValid) {
                         return;
                       }
                       _form.currentState!.save();
 
+                      String paymentStatus = 'P';
+
+                      if (_paymentMethod == PaymentMethod.Esewa) {
+                        if (_payWithEsewa() == false) {
+                          _showToastNotification(
+                              "Something went wrong during payment. Please try again");
+                          return;
+                        } else
+                          paymentStatus = "C";
+                      }
+                      if (_paymentMethod == PaymentMethod.Khalti) {
+                        if (await _payWithKhalti() == false) {
+                          _showToastNotification(
+                              "Something went wrong during the payment, please try again");
+                          return;
+                        } else
+                          paymentStatus = "C";
+                      }
+
                       if (await orders.placeOrder(
                         authSession,
                         _billingInfo,
+                        _paymentMethod == PaymentMethod.Cash
+                            ? "C"
+                            : _paymentMethod == PaymentMethod.Esewa
+                                ? "E"
+                                : "K",
                       )) {
-                        carts.setCart(null);
+                        if (_paymentMethod != PaymentMethod.Cash) {
+                          Order order = orders.orders.last;
+                          await orders.updatePaymentStatus(
+                              authSession, order.id.toString(), paymentStatus);
+                        }
+                        // carts.setCart(null);
+                        // carts.setCartItems([]);
+                        // SharedPreferences prefs = await _prefs;
+                        // prefs.remove('cartId');
+
+                        await carts.createCart(authSession);
                         carts.setCartItems([]);
                         SharedPreferences prefs = await _prefs;
                         prefs.remove('cartId');
+                        prefs.setString('cartId', carts.cart!.id);
                         _showToastNotification("Order placed successfully");
                         Navigator.pushReplacementNamed(
                             context, HomeScreenNew.routeName,

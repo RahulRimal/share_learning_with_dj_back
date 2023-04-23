@@ -50,10 +50,11 @@ class Orders with ChangeNotifier {
     _orderItemError = orderItemError;
   }
 
-  Future<bool> placeOrder(
-      Session loggedInSession, Map<String, dynamic> billingInfo) async {
+  Future<bool> placeOrder(Session loggedInSession,
+      Map<String, dynamic> billingInfo, String paymentMethod) async {
     setLoading(true);
-    var response = await OrderApi.placeOrder(loggedInSession, billingInfo);
+    var response =
+        await OrderApi.placeOrder(loggedInSession, billingInfo, paymentMethod);
     // print(response);
     if (response is Success) {
       _orders.add(response.response as Order);
@@ -109,7 +110,6 @@ class Orders with ChangeNotifier {
     if (response is Success) {
       setOrders(response.response as List<Order>);
       // setOrder(response.response as Order);
-
     }
     if (response is Failure) {
       OrderError orderError = OrderError(
@@ -141,7 +141,32 @@ class Orders with ChangeNotifier {
     return false;
   }
 
-  // bool orderItemsContains(int bookId) {
-  //   return _orderItems.any((element) => element.productId == bookId);
-  // }
+  Future<bool> updatePaymentStatus(
+      Session currentSession, String orderId, String status) async {
+    setLoading(true);
+    var response = await OrderApi.updateOrder(currentSession, orderId, status);
+    // print(response);
+    if (response is Success) {
+      final postIndex = _orders.indexWhere((element) => element.id == orderId);
+
+      if (postIndex != -1) {
+        _orders[postIndex] = response.response as Order;
+      }
+
+      notifyListeners();
+      return true;
+    }
+
+    if (response is Failure) {
+      OrderError orderError = OrderError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setOrderError(orderError);
+      notifyListeners();
+      return false;
+    }
+
+    return false;
+  }
 }

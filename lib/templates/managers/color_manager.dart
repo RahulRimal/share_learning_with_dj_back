@@ -6,6 +6,7 @@ class ColorManager {
   static Color secondary = HexColor.fromHex("#2196f3");
   static Color grey = HexColor.fromHex("#737477");
   static Color lightGrey = HexColor.fromHex("#9E9E9E");
+  static Color purple = HexColor.fromHex("#FFAA0BAD");
   static Color lighterGrey = HexColor.fromHex("#CFCFCF");
 
   static Color primaryOpacity70 = HexColor.fromHex("#B3ED9728");
@@ -20,6 +21,8 @@ class ColorManager {
   static Color white = HexColor.fromHex("#FFFFFF");
   static Color black = HexColor.fromHex("#000000");
   static Color green = HexColor.fromHex("#FF008E0E");
+  static Color yellow = HexColor.fromHex("#FFD0B60F");
+
   static Color error = HexColor.fromHex("#e61f34"); // red color
 
   // static Color primaryColorWithOpacity = Color.fromRGBO(255, 82, 82, 0.7);
@@ -27,6 +30,7 @@ class ColorManager {
   static Color primaryColorWithOpacity = Color.fromARGB(89, 229, 99, 999);
 
   static Color blackWithOpacity = Color.fromARGB(89, 0, 0, 0);
+
   static Color transparent = Color.fromARGB(0, 0, 0, 0);
   static Color blackWithLowOpacity = Color.fromARGB(100, 0, 0, 0);
   static Color whiteWithOpacity = Color.fromARGB(89, 255, 255, 255);

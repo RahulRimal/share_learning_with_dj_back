@@ -8,43 +8,11 @@ import 'package:share_learning/models/user.dart';
 
 class Users with ChangeNotifier {
   Users(this._session);
-  // List<User> _users = [
-  //   User(
-  //     id: '0',
-  //     firstName: 'Rahul',
-  //     lastName: 'Rimal',
-  //     userName: 'RahulR',
-  //     password: '123',
-  //     image:
-  //         'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg',
-  //   ),
-  //   User(
-  //     id: '1',
-  //     firstName: 'Surendra',
-  //     lastName: 'Jha',
-  //     userName: 'SJha',
-  //     password: '123',
-  //     image:
-  //         'https://cdn.pixabay.com/photo/2021/08/10/18/32/cat-6536684__340.jpg',
-  //   ),
-  //   User(
-  //     id: '2',
-  //     firstName: 'Krishna Pd.',
-  //     lastName: 'Rimal',
-  //     userName: 'KrishR',
-  //     password: '123',
-  //     image:
-  //         'https://cdn.pixabay.com/photo/2021/06/25/17/51/ladybug-6364312__340.jpg',
-  //   ),
-  // ];
 
   List<User> _users = [];
 
-  // final Session _session;
-
   Session? _session;
 
-  // late User _user;
   User? _user;
   bool _loading = false;
   UserError? _userError;
@@ -300,23 +268,23 @@ class Users with ChangeNotifier {
     return false;
   }
 
-  Future<Object> googleSignIn() async {
-    var response = await UserApi.googleSignIn();
-    // print(response);
-    if (response is Success) {
-      setUser((response.response as Map)['user']);
-      notifyListeners();
-      return response;
-    }
-    if (response is Failure) {
-      UserError userError = UserError(
-        code: response.code,
-        message: response.errorResponse,
-      );
-      setUserError(userError);
-      notifyListeners();
-      return userError;
-    }
-    return response;
-  }
+  // Future<Object> googleSignIn() async {
+  //   var response = await UserApi.googleSignIn();
+  //   // print(response);
+  //   if (response is Success) {
+  //     setUser((response.response as Map)['user']);
+  //     notifyListeners();
+  //     return response;
+  //   }
+  //   if (response is Failure) {
+  //     UserError userError = UserError(
+  //       code: response.code,
+  //       message: response.errorResponse,
+  //     );
+  //     setUserError(userError);
+  //     notifyListeners();
+  //     return userError;
+  //   }
+  //   return response;
+  // }
 }
