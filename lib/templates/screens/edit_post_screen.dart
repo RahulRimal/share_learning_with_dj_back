@@ -6,7 +6,7 @@ import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
-import 'package:share_learning/models/category.dart';
+import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/categories.dart';
@@ -38,7 +38,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
   final _descFocusNode = FocusNode();
   final _cateFocusNode = FocusNode();
 
-  late Category _selectedCategory;
+  late PostCategory _selectedCategory;
 
   List<bool> postTypeSelling = [true, false];
 
@@ -272,7 +272,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     // Categories categoriesProvier =  Provider.of<Categories>(context, listen: false);
     Categories categoriesProvier = Provider.of<Categories>(context);
 
-    List<Category> _categories = categoriesProvier.categories;
+    List<PostCategory> _categories = categoriesProvier.categories;
 
     // dynamic _selectedCategory = _getBookCategory(
     //     context, loggedInUserSession, _edittedBook.category!.id);
@@ -525,7 +525,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                   snapshot.data as CategoryError;
                               return Text(error.message as String);
                             } else {
-                              _selectedCategory = snapshot.data as Category;
+                              _selectedCategory = snapshot.data as PostCategory;
 
                               return Container(
                                 padding: EdgeInsets.only(
@@ -558,7 +558,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                         .toList(),
                                     onChanged: (value) {
                                       setState(() {
-                                        _selectedCategory = value as Category;
+                                        _selectedCategory =
+                                            value as PostCategory;
                                       });
                                       // print(_selectedCategory);
                                     },

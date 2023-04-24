@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/category.dart';
+import '../../models/post_category.dart';
 import '../../providers/filters.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
@@ -35,32 +35,32 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
     },
   ];
 
-  List<Category> _categories = [
-    new Category(
+  List<PostCategory> _categories = [
+    new PostCategory(
       id: 1,
       name: 'All',
       postsCount: 1,
       featuredPost: null,
     ),
-    new Category(
+    new PostCategory(
       id: 1,
       name: 'Adventure',
       postsCount: 1,
       featuredPost: null,
     ),
-    new Category(
+    new PostCategory(
       id: 1,
       name: 'History',
       postsCount: 1,
       featuredPost: null,
     ),
-    new Category(
+    new PostCategory(
       id: 1,
       name: 'Science',
       postsCount: 1,
       featuredPost: null,
     ),
-    new Category(
+    new PostCategory(
       id: 1,
       name: 'Drama',
       postsCount: 1,

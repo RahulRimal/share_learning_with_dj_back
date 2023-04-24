@@ -1,11 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:share_learning/data/book_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:share_learning/models/post_category.dart';
 import '../models/book.dart';
-import 'package:collection/collection.dart';
 
 class Books with ChangeNotifier {
   List<Book> _myBooks = [];
@@ -112,6 +112,31 @@ class Books with ChangeNotifier {
           code: response.code, message: response.errorResponse);
       return error;
     }
+  }
+
+  Future<dynamic> getBooksByCategory(
+      Session loggedInSession, String categoryId) async {
+    setLoading(true);
+    var response =
+        await BookApi.getBooksByCategory(loggedInSession, categoryId);
+    // print(response);
+    if (response is Success) {
+      // if((response.response as List<Book>).isEmpty)
+      // {
+
+      // }
+
+      setBooks(response.response as List<Book>);
+    }
+    if (response is Failure) {
+      BookError error = new BookError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setBookError(error);
+    }
+    setLoading(false);
+    notifyListeners();
   }
 
   List<Book> postsByUser(String userId) {

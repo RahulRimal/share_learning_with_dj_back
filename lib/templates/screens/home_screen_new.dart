@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:share_learning/models/category.dart';
+import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -36,37 +37,7 @@ class HomeScreenNew extends StatefulWidget {
 class _HomeScreenNewState extends State<HomeScreenNew> {
   final _form = GlobalKey<FormState>();
   final _filterForm = GlobalKey<FormState>();
-  int _selectedIndex = 0;
-
-  List<Category> _categories = [
-    new Category(id: 1, name: "Adventure", postsCount: 0, featuredPost: null),
-    new Category(id: 2, name: "Drama", postsCount: 0, featuredPost: null),
-    new Category(id: 3, name: "Comic", postsCount: 0, featuredPost: null),
-    new Category(id: 4, name: "Biography", postsCount: 0, featuredPost: null),
-    new Category(id: 5, name: "Scientific", postsCount: 0, featuredPost: null),
-    new Category(id: 6, name: "Food", postsCount: 0, featuredPost: null),
-  ];
-
-  // List<String> images = [
-  //   'https://images.unsplash.com/photo-1679428997403-c75e1c148b28?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-  //   'https://images.unsplash.com/photo-1679760452619-cf2dcb88b659?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
-  //   'https://images.unsplash.com/photo-1679946026929-454c89c3af10?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1440&q=80',
-  //   'https://images.unsplash.com/photo-1679766826593-738e9b6338c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80',
-  //   'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
-  // ];
-
-  // List<String> locationOptions = [
-  //   'Kathmandu',
-  //   'Bhaktapur',
-  //   'Lalitpur',
-  //   'Nepalgunj',
-  // ];
-
-  // Map<String, dynamic> filterOptions = {
-  //   'selected_loaction': '',
-  //   'min_price': 0,
-  //   'max_price': 0,
-  // };
+  late int _selectedCategoryIndex;
 
   User _user = new User(
       id: "temp",
@@ -80,6 +51,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       userClass: 'userClass',
       followers: 'followers',
       createdDate: DateTime.now());
+
+  // List<PostCategory> _categories = [];
 
   // ScrollController _scrollController = ScrollController();
 
@@ -111,6 +84,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   // }
 
   @override
+  void initState() {
+    _selectedCategoryIndex = 0;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Session authenticatedSession =
         Provider.of<SessionProvider>(context).session as Session;
@@ -121,8 +100,18 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     } else {
       _user = _users.user as User;
     }
-    Books _books = context.watch<Books>();
+    // Books _books = context.watch<Books>();
+    Books _books = Provider.of<Books>(context, listen: false);
     Orders _orders = context.watch<Orders>();
+
+    Categories _categoryProvider =
+        Provider.of<Categories>(context, listen: false);
+
+    List<PostCategory> _categories = _categoryProvider.categories;
+    _categories.insert(
+      0,
+      PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
+    );
 
     return SafeArea(
       child: Scaffold(
@@ -200,6 +189,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         body: SingleChildScrollView(
           // controller: _scrollController,
           child: Container(
+            padding: EdgeInsets.only(
+              bottom: AppPadding.p12,
+            ),
             color: ColorManager.lighterGrey,
             child: Column(
               children: [
@@ -516,59 +508,36 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     ),
                   ],
                 ),
-
                 SizedBox(
                   height: 100,
-                  child: FutureBuilder(
-                    future: Provider.of<Categories>(context, listen: false)
-                        .getCategories(authenticatedSession),
-                    builder: (ctx, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(
-                          color: ColorManager.secondary,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _categories.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: FilterChip(
+                            label: Text(_categories[index].name),
+                            selectedColor: ColorManager.primary,
+                            showCheckmark: false,
+                            selected: _selectedCategoryIndex == index,
+                            onSelected: (bool isSelected) async {
+                              setState(() {
+                                _selectedCategoryIndex = index;
+                              });
+                            },
+                          ),
                         );
-                      } else {
-                        if (snapshot.hasError) {
-                          return CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://ojasfilms.org/assets/img/ojas-logo.png'),
-                          );
-                        } else {
-                          if (snapshot.data is UserError) {
-                            UserError error = snapshot.data as UserError;
-                            return Text(error.message as String);
-                          } else {
-                            _categories =
-                                Provider.of<Categories>(context, listen: false)
-                                    .categories;
-                            return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: _categories.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6),
-                                    child: FilterChip(
-                                      label: Text(_categories[index].name),
-                                      selectedColor: ColorManager.primary,
-                                      showCheckmark: false,
-                                      selected: _selectedIndex == index,
-                                      onSelected: (bool isSelected) {
-                                        setState(() {
-                                          _selectedIndex = index;
-                                        });
-                                      },
-                                    ),
-                                  );
-                                });
-                          }
-                        }
-                      }
-                    },
-                  ),
+                      }),
                 ),
                 FutureBuilder(
-                  future: _books.getBooksAnnonimusly(authenticatedSession),
+                  future: _categories[_selectedCategoryIndex]
+                              .name
+                              .toLowerCase() ==
+                          'all'
+                      ? _books.getBooksAnnonimusly(authenticatedSession)
+                      : _books.getBooksByCategory(authenticatedSession,
+                          _categories[_selectedCategoryIndex].id.toString()),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -606,7 +575,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                             crossAxisCount: 2),
                                     itemCount: books.books.length,
                                     itemBuilder: (ctx, idx) => PostNew(
-                                      book: _books.books[idx],
+                                      book: books.books[idx],
                                       authSession: authenticatedSession,
                                     ),
                                   );
@@ -616,16 +585,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     }
                   },
                 ),
-                // MasonryGridView.builder(
-                //   physics: NeverScrollableScrollPhysics(),
-                //   shrinkWrap: true,
-                //   crossAxisSpacing: 12,
-                //   mainAxisSpacing: 12,
-                //   gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                //       crossAxisCount: 2),
-                //   itemCount: images.length,
-                //   itemBuilder: (ctx, idx) => PostNew(book: _books.books[idx]),
-                // ),
               ],
             ),
           ),

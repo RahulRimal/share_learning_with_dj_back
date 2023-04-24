@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -154,9 +155,12 @@ class _LoginScreenState extends State<LoginScreen> {
             print('here');
           }
 
-          Wishlists wishlists = Provider.of<Wishlists>(context);
+          Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);
+          Categories categories =
+              Provider.of<Categories>(context, listen: false);
 
           wishlists.getWishlistedBooks(userSession.session as Session);
+          categories.getCategories(userSession.session as Session);
 
           if (prefs.containsKey('isFirstTime') &&
               prefs.getBool('isFirstTime') == false) {

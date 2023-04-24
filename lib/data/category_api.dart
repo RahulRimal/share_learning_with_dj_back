@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:share_learning/models/category.dart';
+import 'package:share_learning/models/post_category.dart';
 
 import '../models/api_status.dart';
 import '../models/session.dart';

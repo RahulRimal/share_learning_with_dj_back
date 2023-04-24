@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/carts.dart';
+import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
@@ -81,6 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Carts carts = Provider.of<Carts>(context, listen: false);
       Users users = Provider.of<Users>(context, listen: false);
       Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);
+      Categories categories = Provider.of<Categories>(context, listen: false);
 
       sessions.setSession(
           new Session(accessToken: accessToken, refreshToken: refreshToken));
@@ -104,6 +106,7 @@ class _SplashScreenState extends State<SplashScreen> {
       }
       // Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
       await wishlists.getWishlistedBooks(sessions.session as Session);
+      await categories.getCategories(sessions.session as Session);
       Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
           arguments: {
             'authSession': sessions.session,

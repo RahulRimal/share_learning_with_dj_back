@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:share_learning/data/category_api.dart';
-import 'package:share_learning/models/category.dart';
+import 'package:share_learning/models/post_category.dart';
 
 import '../models/api_status.dart';
 import '../models/session.dart';
 
 class Categories with ChangeNotifier {
-  List<Category> _categories = [];
+  List<PostCategory> _categories = [];
   bool _loading = false;
 
   CategoryError? _categoryError;
 
-  List<Category> get categories {
+  List<PostCategory> get categories {
     return [..._categories];
   }
 
@@ -36,12 +36,12 @@ class Categories with ChangeNotifier {
     _categoryError = categoryError;
   }
 
-  add(Category category) {
+  add(PostCategory category) {
     _categories.add(category);
     notifyListeners();
   }
 
-  remove(Category category) {
+  remove(PostCategory category) {
     _categories.remove(category);
     notifyListeners();
   }
@@ -75,7 +75,7 @@ class Categories with ChangeNotifier {
       // setCategories(response.response);
       setLoading(false);
 
-      return response.response as Category;
+      return response.response as PostCategory;
     }
     if (response is Failure) {
       CategoryError categoryError = CategoryError(

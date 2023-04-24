@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:share_learning/models/category.dart';
+import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/providers/wishlists.dart';
 
@@ -38,13 +38,16 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
   final _filterForm = GlobalKey<FormState>();
   int _selectedIndex = 0;
 
-  List<Category> _categories = [
-    new Category(id: 1, name: "Adventure", postsCount: 0, featuredPost: null),
-    new Category(id: 2, name: "Drama", postsCount: 0, featuredPost: null),
-    new Category(id: 3, name: "Comic", postsCount: 0, featuredPost: null),
-    new Category(id: 4, name: "Biography", postsCount: 0, featuredPost: null),
-    new Category(id: 5, name: "Scientific", postsCount: 0, featuredPost: null),
-    new Category(id: 6, name: "Food", postsCount: 0, featuredPost: null),
+  List<PostCategory> _categories = [
+    new PostCategory(
+        id: 1, name: "Adventure", postsCount: 0, featuredPost: null),
+    new PostCategory(id: 2, name: "Drama", postsCount: 0, featuredPost: null),
+    new PostCategory(id: 3, name: "Comic", postsCount: 0, featuredPost: null),
+    new PostCategory(
+        id: 4, name: "Biography", postsCount: 0, featuredPost: null),
+    new PostCategory(
+        id: 5, name: "Scientific", postsCount: 0, featuredPost: null),
+    new PostCategory(id: 6, name: "Food", postsCount: 0, featuredPost: null),
   ];
 
   User _user = new User(

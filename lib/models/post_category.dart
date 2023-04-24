@@ -1,20 +1,19 @@
-// To parse this JSON data, do
-//
-//     final category = categoryFromJson(jsonString);
+// ! Name is PostCategory instead of Category because it clash with the framework Category class
 
 import 'dart:convert';
 
 import 'package:share_learning/models/book.dart';
 
-Category categoryFromJson(String str) => Category.fromJson(json.decode(str));
+PostCategory categoryFromJson(String str) =>
+    PostCategory.fromJson(json.decode(str));
 
-List<Category> categoriesFromJson(String str) =>
-    List<Category>.from(json.decode(str).map((x) => Category.fromJson(x)));
+List<PostCategory> categoriesFromJson(String str) => List<PostCategory>.from(
+    json.decode(str).map((x) => PostCategory.fromJson(x)));
 
-String categoryToJson(Category data) => json.encode(data.toJson());
+String categoryToJson(PostCategory data) => json.encode(data.toJson());
 
-class Category {
-  Category({
+class PostCategory {
+  PostCategory({
     required this.id,
     required this.name,
     required this.postsCount,
@@ -31,7 +30,7 @@ class Category {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Category &&
+      other is PostCategory &&
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
@@ -41,7 +40,7 @@ class Category {
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
 
-  factory Category.fromJson(Map<String, dynamic> json) => Category(
+  factory PostCategory.fromJson(Map<String, dynamic> json) => PostCategory(
         id: json["id"],
         name: json["name"],
         postsCount: json["posts_count"],
