@@ -12,6 +12,7 @@ import 'package:share_learning/providers/filters.dart';
 import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/strings_manager.dart';
 import 'package:share_learning/templates/managers/theme_manager.dart';
 import 'package:share_learning/templates/screens/add_post_screen.dart';
@@ -30,6 +31,7 @@ import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
+import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
 import 'templates/screens/order_screen_new.dart';
@@ -71,6 +73,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Orders()),
         ChangeNotifierProvider(create: (_) => Categories()),
         ChangeNotifierProvider(create: (_) => BookFilters()),
+        ChangeNotifierProvider(create: (_) => Wishlists()),
       ],
       child: Theme.of(context).platform == TargetPlatform.iOS
           ? CupertinoApp(
@@ -91,6 +94,8 @@ class MyApp extends StatelessWidget {
                 UserPostsScreen.routeName: (context) => UserPostsScreen(),
                 AddPostScreen.routeName: (context) => AddPostScreen(),
                 EditPostScreen.routeName: (context) => EditPostScreen(),
+                WishlistedBooksScreen.routeName: (context) =>
+                    WishlistedBooksScreen(),
                 HomeScreen.routeName: (context) => HomeScreen(),
                 HomeScreenNew.routeName: (context) => HomeScreenNew(),
                 SplashScreen.routeName: (context) => SplashScreen(),
@@ -140,6 +145,8 @@ class MyApp extends StatelessWidget {
                     UserPostsScreen.routeName: (context) => UserPostsScreen(),
                     AddPostScreen.routeName: (context) => AddPostScreen(),
                     EditPostScreen.routeName: (context) => EditPostScreen(),
+                    WishlistedBooksScreen.routeName: (context) =>
+                        WishlistedBooksScreen(),
                     HomeScreen.routeName: (context) => HomeScreen(),
                     HomeScreenNew.routeName: (context) => HomeScreenNew(),
                     SplashScreen.routeName: (context) => SplashScreen(),

@@ -91,7 +91,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     category: null,
     boughtDate: DateTime.now().toNepaliDateTime(),
     description: '',
-    wishlisted: false,
+    // wishlisted: false,
     price: 0,
     bookCount: 1,
     images: [],
@@ -148,15 +148,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
         _edittedBook = books.books.last;
         _edittedBook.images = _storedImages;
 
-        if(await books.updatePictures(loggedInUser, _edittedBook)){
+        if (await books.updatePictures(loggedInUser, _edittedBook)) {
           showSpinner = false;
           return true;
-        }
-        else{
+        } else {
           showSpinner = false;
           return false;
         }
-
       }
     }
     showSpinner = false;
@@ -258,7 +256,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       //   postedOn: _edittedBook.postedOn,
                       //   postRating: _edittedBook.postRating,
                       // );
-                      _edittedBook = Book.withPoperty(_edittedBook, {'bookName': value as String});
+                      _edittedBook = Book.withPoperty(
+                          _edittedBook, {'bookName': value as String});
                     }),
                 Row(
                   children: [
@@ -293,7 +292,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               //   postedOn: _edittedBook.postedOn,
                               //   postRating: _edittedBook.postRating,
                               // );
-                              _edittedBook = Book.withPoperty(_edittedBook, {'author': value!.isEmpty ? 'Unknown' : value});
+                              _edittedBook = Book.withPoperty(_edittedBook, {
+                                'author': value!.isEmpty ? 'Unknown' : value
+                              });
                             }),
                       ),
                     ),
@@ -364,7 +365,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               //   postedOn: _edittedBook.postedOn,
                               //   postRating: _edittedBook.postRating,
                               // );
-                              _edittedBook = Book.withPoperty(_edittedBook, {'boughtDate': picker.NepaliDateTime.parse( value as String)});
+                              _edittedBook = Book.withPoperty(_edittedBook, {
+                                'boughtDate':
+                                    picker.NepaliDateTime.parse(value as String)
+                              });
                             }),
                       ),
                     ),
@@ -415,7 +419,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               //   postRating: _edittedBook.postRating,
                               // );
 
-                              _edittedBook = Book.withPoperty(_edittedBook, {'price': double.parse( value as String)});
+                              _edittedBook = Book.withPoperty(_edittedBook,
+                                  {'price': double.parse(value as String)});
                             }),
                       ),
                     ),
@@ -460,7 +465,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             //   postedOn: _edittedBook.postedOn,
                             //   postRating: _edittedBook.postRating,
                             // );
-                            _edittedBook = Book.withPoperty(_edittedBook, {'bookCount': int.parse (value as String)});
+                            _edittedBook = Book.withPoperty(_edittedBook,
+                                {'bookCount': int.parse(value as String)});
                           },
                         ),
                       ),
@@ -505,7 +511,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       //   postedOn: _edittedBook.postedOn,
                       //   postRating: _edittedBook.postRating,
                       // );
-                      _edittedBook = Book.withPoperty(_edittedBook, {'description': value as String});
+                      _edittedBook = Book.withPoperty(
+                          _edittedBook, {'description': value as String});
                     },
                   ),
                 ),
@@ -587,17 +594,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          showSpinner ? Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: CircularProgressIndicator(),
-                          ) :
-                          ElevatedButton(
-                            child: Text('From Gallery'),
-                            style: ButtonStyle(),
-                            onPressed: () {
-                              _getPicture();
-                            },
-                          ),
+                          showSpinner
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  child: CircularProgressIndicator(),
+                                )
+                              : ElevatedButton(
+                                  child: Text('From Gallery'),
+                                  style: ButtonStyle(),
+                                  onPressed: () {
+                                    _getPicture();
+                                  },
+                                ),
                           SizedBox(
                             width: 10,
                           ),

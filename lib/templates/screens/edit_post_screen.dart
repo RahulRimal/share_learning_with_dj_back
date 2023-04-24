@@ -59,7 +59,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     postType: 'B',
     boughtDate: DateTime.now().toNepaliDateTime(),
     description: '',
-    wishlisted: false,
+    // wishlisted: false,
     price: 0,
     bookCount: 1,
     postedOn: DateTime.now().toNepaliDateTime(),

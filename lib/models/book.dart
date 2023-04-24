@@ -96,7 +96,7 @@ class Book {
     required this.boughtDate,
     required this.price,
     required this.bookCount,
-    required this.wishlisted,
+    // required this.wishlisted,
     required this.postType,
     required this.postRating,
     required this.postedOn,
@@ -112,7 +112,7 @@ class Book {
   NepaliDateTime boughtDate;
   double price;
   int bookCount;
-  bool wishlisted;
+  // bool wishlisted;
   String postType;
   double postRating;
   DateTime postedOn;
@@ -146,7 +146,7 @@ class Book {
         // bookCount: json["bookCount"] == null ? null : int.parse(json["bookCount"]),
         // bookCount: int.parse(json["bookCount"]),
         bookCount: json["book_count"],
-        wishlisted: json["wishlisted"] == null ? null : json["wishlisted"],
+        // wishlisted: json["wishlisted"] == null ? null : json["wishlisted"],
         // wishlisted: json["wishlisted"] == '1' ? true : false,
         postType: json["post_type"] == null ? null : json["post_type"],
         // postRating: json["postRating"] == null ? '' : json["postRating"],
@@ -173,7 +173,7 @@ class Book {
             "${boughtDate.year.toString().padLeft(4, '0')}-${boughtDate.month.toString().padLeft(2, '0')}-${boughtDate.day.toString().padLeft(2, '0')}",
         "price": price,
         "bookCount": bookCount,
-        "wishlisted": wishlisted,
+        // "wishlisted": wishlisted,
         "postType": postType,
         "postRating": postRating,
         "images": images == null
@@ -192,7 +192,7 @@ class Book {
       'boughtDate': boughtDate,
       'price': price,
       'bookCount': bookCount,
-      'wishlisted': wishlisted,
+      // 'wishlisted': wishlisted,
       'postType': postType,
       'postRating': postRating,
       'images': images,
@@ -211,7 +211,7 @@ class Book {
         boughtDate: map['boughtDate'],
         price: map['price'],
         bookCount: map['bookCount'],
-        wishlisted: map['wishlisted'],
+        // wishlisted: map['wishlisted'],
         postType: map['postType'],
         postRating: map['postRating'],
         images: map['images'],
@@ -237,9 +237,9 @@ class Book {
       bookCount: property['bookCount'] == null
           ? book.bookCount
           : property['bookCount'],
-      wishlisted: property['wishlisted'] == null
-          ? book.wishlisted
-          : property['wishlisted'],
+      // wishlisted: property['wishlisted'] == null
+      //     ? book.wishlisted
+      //     : property['wishlisted'],
       postType:
           property['postType'] == null ? book.postType : property['postType'],
       postRating: property['postRating'] == null

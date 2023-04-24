@@ -916,7 +916,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     category: null,
     boughtDate: DateTime.now().toNepaliDateTime(),
     description: '',
-    wishlisted: false,
+    // wishlisted: false,
     price: 0,
     bookCount: 1,
     images: [],

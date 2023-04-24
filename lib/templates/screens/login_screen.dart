@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
@@ -152,6 +153,10 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             print('here');
           }
+
+          Wishlists wishlists = Provider.of<Wishlists>(context);
+
+          wishlists.getWishlistedBooks(userSession.session as Session);
 
           if (prefs.containsKey('isFirstTime') &&
               prefs.getBool('isFirstTime') == false) {

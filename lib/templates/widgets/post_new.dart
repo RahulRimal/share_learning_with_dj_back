@@ -1,5 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
+import 'package:share_learning/models/wishlist.dart';
+import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/screens/single_post_screen_new.dart';
 
 import '../../models/session.dart';
@@ -23,10 +27,31 @@ class PostNew extends StatefulWidget {
 }
 
 class _PostNewState extends State<PostNew> {
+  _isWishlisted(List<Wishlist> wishlists, Book book) {
+    Wishlist? match = wishlists.firstWhereOrNull(
+        (Wishlist wishlist) => wishlist.post == int.parse(book.id));
+    if (match != null) {
+      return true;
+    }
+    // if (wishlistBooks.contains(book)) {
+    //   return true;
+    // }
+    return false;
+  }
+
+  // _getWishlistedBooks(Session authSession, Wishlists wishlist) async {
+  //   await wishlist.getWishlistedBooks(authSession);
+  // }
+
   @override
   Widget build(BuildContext context) {
     Book post = widget.book;
     Session loggedInUserSession = widget.authSession;
+
+    Wishlists _wishlists = Provider.of<Wishlists>(context);
+    // if (_wishlists.wishlistedBooks.isEmpty) {
+    //   _getWishlistedBooks(loggedInUserSession, _wishlists);
+    // }
 
     return Column(
       children: [
@@ -58,12 +83,21 @@ class _PostNewState extends State<PostNew> {
                         top: -9,
                         left: -10,
                         child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.favorite_border,
-                            size: 24,
-                          ),
-                          color: ColorManager.white,
+                          onPressed: () {
+                            _wishlists.toggleWishlistBook(
+                                loggedInUserSession, post);
+                          },
+                          icon: _isWishlisted(_wishlists.wishlists, post)
+                              ? Icon(
+                                  Icons.favorite,
+                                  size: 24,
+                                  color: ColorManager.primary,
+                                )
+                              : Icon(
+                                  Icons.favorite_border,
+                                  size: 24,
+                                  color: ColorManager.white,
+                                ),
                         ),
                       ),
                     ],

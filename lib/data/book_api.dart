@@ -90,7 +90,7 @@ class BookApi {
         errorResponse: ApiStrings.invalidFormatString,
       );
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
       return Failure(code: 103, errorResponse: e.toString());
       // return Failure(
       //   code: ApiStatusCode.unknownError,
@@ -109,7 +109,7 @@ class BookApi {
           HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
         },
       );
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         // print(json.encode(json.decode(response.body)['data']['posts']));
@@ -159,7 +159,7 @@ class BookApi {
         "bought_date": DateFormat('yyyy-MM-dd').format(updatedPost.boughtDate),
         "unit_price": updatedPost.price.toString(),
         "book_count": updatedPost.bookCount.toString(),
-        "wishlisted": updatedPost.wishlisted.toString(),
+        // "wishlisted": updatedPost.wishlisted.toString(),
         "post_type": updatedPost.postType,
         "post_rating": updatedPost.postRating,
       };
@@ -178,7 +178,6 @@ class BookApi {
           HttpHeaders.contentTypeHeader: "application/json",
         },
         body: json.encode(postBody),
-        // body: json.encode(updatedPost),
       );
       // print(response.body);
       if (response.statusCode == ApiStatusCode.responseSuccess) {
@@ -222,7 +221,7 @@ class BookApi {
         "unit_price": newPost.price.toString(),
         "book_count": int.parse(newPost.bookCount.toString()),
         // "wishlisted": newPost.wishlisted ? '2' : '1',
-        "wishlisted": newPost.wishlisted,
+        // "wishlisted": newPost.wishlisted,
         "post_type": newPost.postType,
         "post_rating": newPost.postRating,
         // "postedOn": newPost.postedOn.toIso8601String()

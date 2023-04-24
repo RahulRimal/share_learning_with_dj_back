@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
+import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
 
 import '../screens/cart_screen.dart';
 import '../screens/home_screen_new.dart';
@@ -25,7 +26,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     {
       'icon': Icons.favorite,
       'label': 'Wishlist',
-      'route': HomeScreenNew.routeName,
+      'route': WishlistedBooksScreen.routeName,
     },
     {
       'icon': Icons.person,

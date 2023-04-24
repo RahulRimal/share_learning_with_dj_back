@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/carts.dart';
 import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _goNext() async {
     // ! Just for development purpose when internet is absent fix it
     if (await InternetConnectionChecker.checkInternetConnection())
-    // if (true)
+      // if (true)
       Navigator.pushReplacementNamed(context, LoginScreen.routeName);
     else {
       BotToast.showWidget(
@@ -79,6 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Provider.of<SessionProvider>(context, listen: false);
       Carts carts = Provider.of<Carts>(context, listen: false);
       Users users = Provider.of<Users>(context, listen: false);
+      Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);
 
       sessions.setSession(
           new Session(accessToken: accessToken, refreshToken: refreshToken));
@@ -91,7 +93,6 @@ class _SplashScreenState extends State<SplashScreen> {
         await carts.getCartInfo(prefs.getString('cartId') as String);
         // await Provider.of<Carts>(context)
         //     .getCartInfo(prefs.getString('cartId') as String);
-
       } else {
         if (await Provider.of<Carts>(context, listen: false)
             .createCart(sessions.session as Session)) {
@@ -102,6 +103,7 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       }
       // Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
+      await wishlists.getWishlistedBooks(sessions.session as Session);
       Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
           arguments: {
             'authSession': sessions.session,
@@ -116,7 +118,6 @@ class _SplashScreenState extends State<SplashScreen> {
       //   else
       //     _startDelay();
       // });
-
     } else
       _startDelay();
   }
