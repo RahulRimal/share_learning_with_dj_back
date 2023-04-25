@@ -56,6 +56,24 @@ class Books with ChangeNotifier {
     _bookError = bookError;
   }
 
+  double getMinPrice() {
+    List<Book> books = _myBooks;
+    double minPrice = books
+        .reduce(
+            (value, element) => value.price < element.price ? value : element)
+        .price;
+    return minPrice;
+  }
+
+  double getMaxPrice() {
+    List<Book> books = _myBooks;
+    double maxPrice = books
+        .reduce(
+            (value, element) => value.price > element.price ? value : element)
+        .price;
+    return maxPrice;
+  }
+
   // getBooks(String uId) async {
   getBooks(Session loggedInSession) async {
     setLoading(true);

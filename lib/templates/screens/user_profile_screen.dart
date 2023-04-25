@@ -12,7 +12,9 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
+import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
+import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,8 +54,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   // }
 
   _profilePageUI(SessionProvider userSession, User user) {
-    // print(user.firstName);
-    // print(user.image);
     if (userSession.loading) {
       return Container(
         child: Center(
@@ -65,230 +65,230 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       return Container(
         child: Center(
           child: Text('Error fetching user data'),
-          // child: Text(
-          //   userSession.sessionError!.message.toString(),
-          // ),
         ),
       );
     }
 
     Session? userSessionData = userSession.session;
 
-    return Container(
-      padding: EdgeInsets.only(top: AppPadding.p12),
-      // child: Column(
-      //   children: [
-      //     ListTile(
-      //       horizontalTitleGap: AppHeight.h8,
-      //       contentPadding: EdgeInsets.zero,
-      //       leading: CircleAvatar(
-      //         // radius: AppPadding.p16,
-      //         // radius: AppRadius.r100,
-      //         radius: 70,
-      //         backgroundImage: user.image != null
-      //             ? NetworkImage(
-      //                 UserHelper.userProfileImage(user),
-      //               )
-      //             : Image.asset(
-      //                 ImageAssets.noProfile,
-      //               ) as ImageProvider,
-      //         // foregroundImage: NetworkImage(
-      //         //   UserHelper.userProfileImage(user),
-      //         // ),
-      //       ),
-      //       // title: Text(user.firstName),
-      //       title: Text(
-      //         UserHelper.userDisplayName(user),
-      //         textAlign: TextAlign.center,
-      //         style: getBoldStyle(
-      //           fontSize: FontSize.s20,
-      //           color: ColorManager.black,
-      //         ),
-      //       ),
-      //       subtitle: Text(
-      //         user.description.toString(),
-      //         // 'kfdjlfdkflsd djfkjfioa kd fdojfka kdfklafj jklkkljljklkk ll',
-      //         // textAlign: TextAlign.justify,
-      //         overflow: TextOverflow.ellipsis,
-      //         maxLines: 2,
-      //         style: getRegularStyle(
-      //           fontSize: FontSize.s12,
-      //           color: ColorManager.black,
-      //         ),
-      //       ),
-      //     ),
-      //     // Container(
-      //     //   // height: AppHeight.h100,
-      //     //   child: Row(
-      //     //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //     //     children: [
-      //     //       CircleAvatar(
-      //     //         radius: AppRadius.r50,
-      //     //         backgroundImage: NetworkImage(
-      //     //           UserHelper.userProfileImage(user),
-      //     //         ),
-      //     //       ),
-      //     //       // Text(user.firstName + user.lastName),
-      //     //       Column(
-      //     //         children: [
-      //     //           Text(
-      //     //             UserHelper.userDisplayName(user),
-      //     //             style: getBoldStyle(
-      //     //               fontSize: FontSize.s20,
-      //     //               color: ColorManager.black,
-      //     //             ),
-      //     //           ),
-      //     //           Text(
-      //     //             // user.description.toString(),
-      //     //             'kfdjlfdkflsd djfkjfioa kd fdojfka kdfklafj jklkkljljklkk llllllll',
-      //     //             textAlign: TextAlign.left,
-      //     //             overflow: TextOverflow.ellipsis,
-      //     //             maxLines: 2,
-      //     //             style: getRegularStyle(
-      //     //               fontSize: FontSize.s12,
-      //     //               color: ColorManager.black,
-      //     //             ),
-      //     //           ),
-      //     //         ],
-      //     //       ),
-      //     //     ],
-      //     //   ),
-      //     // ),
-      //     // Text(userSessionData!.accessToken),
-      //     // Text(userSessionData.accessTokenExpiry.toString()),
-      //   ],
-      // ),
-      child: Column(children: [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 360,
-              decoration: BoxDecoration(
-                // color: ColorManager.darkPrimary,
-                color: ColorManager.white,
-              ),
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 60, 0, 0),
-                      child: Row(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        // ---------------------- User top section starts here ----------------------------
+        Container(
+          // decoration: BoxDecoration(
+          //   color: ColorManager.grey,
+          // ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      // color: ColorManager.darkPrimary,
+                      color: ColorManager.white,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppPadding.p18,
+                        // vertical: AppPadding.p2,
+                      ),
+                      child: Column(
                         mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Card(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            color: ColorManager.primary,
-                            elevation: 2,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: AppPadding.p30,
                             ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                // child:Image.asset(
-                                //   user.image as String
-                                //   // ImageAssets.noProfile,
-                                // ),
-                                child: user.image == null
-                                    ? Image.asset(
-                                        ImageAssets.noProfile,
-                                      )
-                                    : CircleAvatar(
-                                        radius: 70,
-                                        backgroundImage: NetworkImage(
-                                          UserHelper.userProfileImage(user),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Card(
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      color: ColorManager.primary,
+                                      elevation: 2,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.r100,
                                         ),
                                       ),
-                              ),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(
+                                          AppPadding.p4,
+                                        ),
+                                        child: user.image == null
+                                            ? Image.asset(
+                                                ImageAssets.noProfile,
+                                              )
+                                            : CircleAvatar(
+                                                radius: AppRadius.r70,
+                                                backgroundImage: NetworkImage(
+                                                  UserHelper.userProfileImage(
+                                                      user),
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        top: AppPadding.p8,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Text(
+                                            // 'Rahul Rimal',
+                                            UserHelper.userDisplayName(user),
+                                            style: getBoldStyle(
+                                                fontSize: FontSize.s18,
+                                                color: ColorManager.primary),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              left: AppPadding.p14,
+                                            ),
+                                            child: Text(
+                                              // 'CSIT',
+                                              UserHelper.userClass(user),
+                                              style: getBoldStyle(
+                                                color: ColorManager.black,
+                                                fontSize: FontSize.s14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: AppPadding.p2,
+                                          ),
+                                          child: Text(
+                                            // 'mail@rahul.com',
+                                            user.email as String,
+                                            style: getMediumStyle(
+                                              color: ColorManager.black,
+                                              fontSize: FontSize.s12,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                    AppPadding.p8,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: ColorManager.primary,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: ColorManager.darkPrimary,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.edit_outlined,
+                                            color: ColorManager.white,
+                                            size: AppSize.s30,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pushNamed(
+                                              UserProfileEditScreen.routeName,
+                                              arguments: {
+                                                // 'loggedInUserSession': userSession.session,
+                                                'loggedInUserSession':
+                                                    userSession.session,
+                                                'user': user,
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(
+                                          AppPadding.p12,
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: ColorManager.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: ColorManager.darkPrimary,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.logout_rounded,
+                                              color: ColorManager.white,
+                                              size: AppSize.s30,
+                                            ),
+                                            onPressed: () async {
+                                              _logOut(userSession.session
+                                                  as Session);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          SizedBox(
+                            height: AppHeight.h14,
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
+                                EdgeInsets.symmetric(vertical: AppPadding.p8),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: ColorManager.primary,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: ColorManager.darkPrimary,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: IconButton(
-                                    icon: Icon(
-                                      Icons.edit_outlined,
-                                      color: ColorManager.white,
-                                      size: AppSize.s24,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pushNamed(
-                                        UserProfileEditScreen.routeName,
-                                        arguments: {
-                                          // 'loggedInUserSession': userSession.session,
-                                          'loggedInUserSession':
-                                              userSession.session,
-                                          'user': user,
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      12, 0, 0, 0),
-                                  child: Container(
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.primary,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: ColorManager.darkPrimary,
-                                        width: 2,
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Description',
+                                      textAlign: TextAlign.start,
+                                      style: getBoldStyle(
+                                        color: ColorManager.black,
+                                        fontSize: FontSize.s14,
                                       ),
                                     ),
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.login_rounded,
-                                        color: ColorManager.white,
-                                        size: 24,
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: AppPadding.p4,
                                       ),
-                                      onPressed: () async {
-                                        _logOut(userSession.session as Session);
-                                        // SharedPreferences prefs = await _prefs;
-                                        // Provider.of<Books>(context,
-                                        //         listen: false)
-                                        //     .setBooks([]);
-                                        // Provider.of<Users>(context,
-                                        //         listen: false)
-                                        //     .logoutUser(
-                                        //         userSession.session!.id);
-                                        // Provider.of<Comments>(context,
-                                        //         listen: false)
-                                        //     .setComments([]);
-                                        // prefs.remove('accessToken');
-                                        // Navigator.pushReplacementNamed(
-                                        //     context, LoginScreen.routeName);
-                                      },
+                                      child: Text(
+                                        // 'I am a student and future billionair',
+                                        UserHelper.userDescription(user),
+                                        style: getMediumStyle(
+                                          color: ColorManager.black,
+                                          fontSize: FontSize.s12,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -296,117 +296,149 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            // 'Rahul Rimal',
-                            UserHelper.userDisplayName(user),
-                            style: getBoldStyle(
-                                fontSize: FontSize.s12,
-                                color: ColorManager.primary),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
-                            child: Text(
-                              // profilePageUsersRecord.age.toString(),
-                              UserHelper.userClass(user),
-                              style: getBoldStyle(
-                                color: ColorManager.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                          child: Text(
-                              // profilePageUsersRecord.email,
-                              user.email as String,
-                              style:
-                                  getRegularStyle(color: ColorManager.primary)),
-                        ),
-                      ],
-                    ),
-                    // Padding(
-                    //   padding: EdgeInsetsDirectional.fromSTEB(0, 12, 20, 0),
-                    //   child: Row(
-                    //     mainAxisSize: MainAxisSize.max,
-                    //     children: [
-                    //       Text('Ailments',
-                    //           textAlign: TextAlign.start,
-                    //           style: getBoldStyle(color: ColorManager.primary)),
-                    //     ],
-                    //   ),
-                    // ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 8, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Container(),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Description',
-                                  textAlign: TextAlign.start,
-                                  style: getRegularStyle(
-                                      color: ColorManager.primary)),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                                child: Text(
-                                  UserHelper.userDescription(user),
-                                  style: getRegularStyle(
-                                    color: ColorManager.primary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        Column(mainAxisSize: MainAxisSize.max, children: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20, 12, 20, 12),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  'Past Appointments',
+        // ---------------------- User top section ends here ----------------------------
+        // ---------------------- User content section starts here ----------------------------
+        Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppPadding.p8,
+                  horizontal: AppPadding.p18,
+                ),
+                child: Text(
+                  'Content',
                   style: getBoldStyle(
                     color: ColorManager.primary,
+                    fontSize: FontSize.s14,
                   ),
                 ),
-              ],
-            ),
+              ),
+              ListTile(
+                iconColor: ColorManager.black,
+                textColor: ColorManager.black,
+                tileColor: ColorManager.white,
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed(WishlistedBooksScreen.routeName);
+                },
+                leading: Icon(
+                  Icons.favorite_border,
+                  size: FontSize.s24,
+                ),
+                title: Text(
+                  'Wishlisted',
+                  style: getBoldStyle(
+                    color: ColorManager.black,
+                    fontSize: FontSize.s16,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: AppSize.s30,
+                ),
+              ),
+              ListTile(
+                iconColor: ColorManager.black,
+                textColor: ColorManager.black,
+                tileColor: ColorManager.white,
+                onTap: () {
+                  Navigator.of(context).pushNamed(UserPostsScreen.routeName);
+                },
+                leading: Icon(
+                  Icons.book_rounded,
+                  size: FontSize.s24,
+                ),
+                title: Text(
+                  'Your Posts',
+                  style: getBoldStyle(
+                    color: ColorManager.black,
+                    fontSize: FontSize.s16,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: AppSize.s30,
+                ),
+              ),
+            ],
           ),
-        ]),
-      ]),
+        ),
+        // ---------------------- User content section ends here ----------------------------
+        // ---------------------- User preferences section starts here ----------------------------
+        Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // padding: EdgeInsets.zero,
+            // shrinkWrap: true,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppPadding.p8,
+                  horizontal: AppPadding.p18,
+                ),
+                child: Text(
+                  'Preferences',
+                  style: getBoldStyle(
+                    color: ColorManager.primary,
+                    fontSize: FontSize.s14,
+                  ),
+                ),
+              ),
+              ListTile(
+                iconColor: ColorManager.black,
+                textColor: ColorManager.black,
+                tileColor: ColorManager.white,
+                onTap: () {},
+                leading: Icon(
+                  Icons.language,
+                  size: FontSize.s24,
+                ),
+                title: Text(
+                  'Language',
+                  style: getBoldStyle(
+                    color: ColorManager.black,
+                    fontSize: FontSize.s16,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: AppSize.s30,
+                ),
+              ),
+              ListTile(
+                iconColor: ColorManager.black,
+                textColor: ColorManager.black,
+                tileColor: ColorManager.white,
+                onTap: () {},
+                leading: Icon(
+                  Icons.dark_mode_outlined,
+                  size: FontSize.s24,
+                ),
+                title: Text(
+                  'Darkmode',
+                  style: getBoldStyle(
+                    color: ColorManager.black,
+                    fontSize: FontSize.s16,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: AppSize.s30,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // ---------------------- User preferences section ends here ----------------------------
+      ],
     );
   }
 
@@ -424,6 +456,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     SessionProvider userSession = (context).watch<SessionProvider>();
     userSession.setSession(loggedInUserSession);
     return Scaffold(
+      backgroundColor: ColorManager.lightestGrey,
       appBar: AppBar(
         actions: [
           IconButton(
@@ -431,11 +464,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             onPressed: () {
               Navigator.of(context).pushNamed(
                 UserProfileEditScreen.routeName,
-                arguments: {
-                  // 'loggedInUserSession': userSession.session,
-                  'loggedInUserSession': loggedInUserSession,
-                  'user': user,
-                },
+                // arguments: {
+
+                //   'loggedInUserSession': loggedInUserSession,
+                //   'user': user,
+                // },
               );
             },
           ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/providers/categories.dart';
+import 'package:share_learning/providers/filters.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -136,6 +137,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
     );
 
+    BookFilters _bookFilters = context.watch<BookFilters>();
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -253,6 +256,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                     focusNode: _searchFocusNode,
                                     cursorColor: ColorManager.primary,
                                     decoration: InputDecoration(
+                                      // border: OutlineInputBorder(
+                                      //   borderSide: BorderSide(
+                                      //     width: 4,
+                                      //     color: ColorManager.green,
+                                      //   ),
+                                      // ),
                                       prefixIcon: Icon(Icons.search),
                                       prefixIconColor: ColorManager.primary,
                                       suffixIcon: IconButton(
@@ -314,217 +323,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                                 AppRadius.r20))),
                                     context: context,
                                     builder: (context) {
-                                      // return SingleChildScrollView(
-                                      //   child: Container(
-                                      //     height: 300,
-                                      //     padding: EdgeInsets.symmetric(
-                                      //       horizontal: AppPadding.p20,
-                                      //     ),
-                                      //     child: Form(
-                                      //       key: _filterForm,
-                                      //       child: Column(
-                                      //         crossAxisAlignment:
-                                      //             CrossAxisAlignment.start,
-                                      //         children: [
-                                      //           ListTile(
-                                      //             title: Column(
-                                      //               children: [
-                                      //                 Row(
-                                      //                   mainAxisAlignment:
-                                      //                       MainAxisAlignment
-                                      //                           .spaceBetween,
-                                      //                   children: [
-                                      //                     Text(
-                                      //                       'Filters',
-                                      //                       style: getBoldStyle(
-                                      //                         fontSize:
-                                      //                             AppSize.s24,
-                                      //                         color:
-                                      //                             ColorManager
-                                      //                                 .black,
-                                      //                       ),
-                                      //                     ),
-                                      //                     IconButton(
-                                      //                       onPressed: () {},
-                                      //                       icon: Icon(
-                                      //                         Icons.cancel,
-                                      //                       ),
-                                      //                     ),
-                                      //                   ],
-                                      //                 ),
-                                      //               ],
-                                      //             ),
-                                      //           ),
-                                      //           ListTile(
-                                      //             title: Column(
-                                      //               crossAxisAlignment:
-                                      //                   CrossAxisAlignment
-                                      //                       .start,
-                                      //               children: [
-                                      //                 Padding(
-                                      //                   padding:
-                                      //                       const EdgeInsets
-                                      //                           .only(
-                                      //                     bottom: AppPadding.p4,
-                                      //                   ),
-                                      //                   child: Text(
-                                      //                     'Price Range',
-                                      //                     style: getBoldStyle(
-                                      //                       fontSize:
-                                      //                           AppSize.s16,
-                                      //                       color: ColorManager
-                                      //                           .black,
-                                      //                     ),
-                                      //                   ),
-                                      //                 ),
-                                      //                 Row(
-                                      //                   children: [
-                                      //                     Flexible(
-                                      //                       child:
-                                      //                           TextFormField(
-                                      //                         keyboardType:
-                                      //                             TextInputType
-                                      //                                 .number,
-                                      //                         decoration:
-                                      //                             InputDecoration(
-                                      //                           fillColor:
-                                      //                               ColorManager
-                                      //                                   .lighterGrey,
-                                      //                           filled: true,
-                                      //                           prefix:
-                                      //                               Text('Rs.'),
-                                      //                           label: Text(
-                                      //                             'min',
-                                      //                             style:
-                                      //                                 TextStyle(
-                                      //                               color: ColorManager
-                                      //                                   .lighterGrey,
-                                      //                             ),
-                                      //                           ),
-                                      //                         ),
-                                      //                       ),
-                                      //                     ),
-                                      //                     SizedBox(
-                                      //                       width:
-                                      //                           AppMargin.m20,
-                                      //                     ),
-                                      //                     Flexible(
-                                      //                       child:
-                                      //                           TextFormField(
-                                      //                         keyboardType:
-                                      //                             TextInputType
-                                      //                                 .number,
-                                      //                         decoration:
-                                      //                             InputDecoration(
-                                      //                           prefix:
-                                      //                               Text('Rs.'),
-                                      //                           label: Text(
-                                      //                             'max',
-                                      //                             style:
-                                      //                                 TextStyle(
-                                      //                               color: Colors
-                                      //                                       .grey[
-                                      //                                   400],
-                                      //                             ),
-                                      //                           ),
-                                      //                         ),
-                                      //                       ),
-                                      //                     ),
-                                      //                   ],
-                                      //                 ),
-                                      //                 Padding(
-                                      //                   padding:
-                                      //                       const EdgeInsets
-                                      //                           .only(
-                                      //                     top: AppPadding.p12,
-                                      //                   ),
-                                      //                   child: Divider(
-                                      //                     height: 2,
-                                      //                     thickness: 2,
-                                      //                   ),
-                                      //                 ),
-                                      //               ],
-                                      //             ),
-                                      //           ),
-                                      //           ListTile(
-                                      //             title: Column(
-                                      //               crossAxisAlignment:
-                                      //                   CrossAxisAlignment
-                                      //                       .start,
-                                      //               children: [
-                                      //                 Padding(
-                                      //                   padding:
-                                      //                       const EdgeInsets
-                                      //                           .only(
-                                      //                     bottom: AppPadding.p4,
-                                      //                   ),
-                                      //                   child: Text(
-                                      //                     'Location',
-                                      //                     style: getBoldStyle(
-                                      //                       fontSize:
-                                      //                           AppSize.s16,
-                                      //                       color: ColorManager
-                                      //                           .black,
-                                      //                     ),
-                                      //                   ),
-                                      //                 ),
-                                      //                 Container(
-                                      //                   decoration:
-                                      //                       BoxDecoration(
-                                      //                           border:
-                                      //                               Border.all(
-                                      //                     color: Colors.grey,
-                                      //                     width: 1.0,
-                                      //                     style:
-                                      //                         BorderStyle.solid,
-                                      //                   )),
-                                      //                   child:
-                                      //                       DropdownButtonHideUnderline(
-                                      //                     child: DropdownButton(
-                                      //                         isExpanded: true,
-                                      //                         value:
-                                      //                             locationOptions[
-                                      //                                 0],
-                                      //                         items:
-                                      //                             locationOptions
-                                      //                                 .map((option) =>
-                                      //                                     DropdownMenuItem(
-                                      //                                       child:
-                                      //                                           Text(
-                                      //                                         option,
-                                      //                                         // style:
-                                      //                                         //     getMediumStyle(
-                                      //                                         //   color: ColorManager
-                                      //                                         //       .black,
-                                      //                                         // ),
-                                      //                                       ),
-                                      //                                       value:
-                                      //                                           option,
-                                      //                                     ))
-                                      //                                 .toList(),
-                                      //                         onChanged:
-                                      //                             (value) {}),
-                                      //                   ),
-                                      //                 ),
-                                      //                 Padding(
-                                      //                   padding:
-                                      //                       const EdgeInsets
-                                      //                           .only(
-                                      //                     top: AppPadding.p12,
-                                      //                   ),
-                                      //                   child: Divider(
-                                      //                     height: 2,
-                                      //                     thickness: 2,
-                                      //                   ),
-                                      //                 ),
-                                      //               ],
-                                      //             ),
-                                      //           ),
-                                      //         ],
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // );
                                       return Container(
                                         height:
                                             MediaQuery.of(context).size.height *
@@ -578,67 +376,101 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         );
                       }),
                 ),
-                FutureBuilder(
-                  future: _searchTextController.text.isNotEmpty
-                      ? _books.searchBooks(
-                          authenticatedSession, _searchTextController.text)
-                      : _categories[_selectedCategoryIndex]
-                                  .name
-                                  .toLowerCase() ==
-                              'all'
-                          ? _books.getBooksAnnonimusly(authenticatedSession)
-                          : _books.getBooksByCategory(
-                              authenticatedSession,
-                              _categories[_selectedCategoryIndex]
-                                  .id
-                                  .toString()),
-                  builder: (ctx, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: ColorManager.primary,
-                        ),
-                      );
-                    } else {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text('Error'),
-                        );
-                      } else {
-                        return Consumer<Books>(
-                          builder: (ctx, books, child) {
-                            return books.books.length <= 0
-                                ? Center(
-                                    child: Text(
-                                      'No books found',
-                                      style: getBoldStyle(
-                                          fontSize: FontSize.s20,
-                                          color: ColorManager.primary),
-                                    ),
-                                  )
-                                : MasonryGridView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    crossAxisSpacing: 12,
-                                    mainAxisSpacing: 12,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: AppPadding.p8,
-                                    ),
-                                    gridDelegate:
-                                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2),
-                                    itemCount: books.books.length,
-                                    itemBuilder: (ctx, idx) => PostNew(
-                                      book: books.books[idx],
-                                      authSession: authenticatedSession,
-                                    ),
-                                  );
-                          },
-                        );
-                      }
-                    }
-                  },
-                ),
+                _bookFilters.showFilteredResult
+                    ? Consumer<BookFilters>(
+                        builder: (ctx, books, child) {
+                          return books.filteredBooks.length <= 0
+                              ? Center(
+                                  child: Text(
+                                    'No books found',
+                                    style: getBoldStyle(
+                                        fontSize: FontSize.s20,
+                                        color: ColorManager.primary),
+                                  ),
+                                )
+                              : MasonryGridView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppPadding.p8,
+                                  ),
+                                  gridDelegate:
+                                      SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2),
+                                  itemCount: books.filteredBooks.length,
+                                  itemBuilder: (ctx, idx) => PostNew(
+                                    book: books.filteredBooks[idx],
+                                    authSession: authenticatedSession,
+                                  ),
+                                );
+                        },
+                      )
+                    : FutureBuilder(
+                        future: _searchTextController.text.isNotEmpty
+                            ? _books.searchBooks(authenticatedSession,
+                                _searchTextController.text)
+                            : _categories[_selectedCategoryIndex]
+                                        .name
+                                        .toLowerCase() ==
+                                    'all'
+                                ? _books
+                                    .getBooksAnnonimusly(authenticatedSession)
+                                : _books.getBooksByCategory(
+                                    authenticatedSession,
+                                    _categories[_selectedCategoryIndex]
+                                        .id
+                                        .toString()),
+                        builder: (ctx, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: ColorManager.primary,
+                              ),
+                            );
+                          } else {
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error'),
+                              );
+                            } else {
+                              return Consumer<Books>(
+                                builder: (ctx, books, child) {
+                                  return books.books.length <= 0
+                                      ? Center(
+                                          child: Text(
+                                            'No books found',
+                                            style: getBoldStyle(
+                                                fontSize: FontSize.s20,
+                                                color: ColorManager.primary),
+                                          ),
+                                        )
+                                      : MasonryGridView.builder(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          crossAxisSpacing: 12,
+                                          mainAxisSpacing: 12,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: AppPadding.p8,
+                                          ),
+                                          gridDelegate:
+                                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2),
+                                          itemCount: books.books.length,
+                                          itemBuilder: (ctx, idx) => PostNew(
+                                            book: books.books[idx],
+                                            authSession: authenticatedSession,
+                                          ),
+                                        );
+                                },
+                              );
+                            }
+                          }
+                        },
+                      ),
               ],
             ),
           ),

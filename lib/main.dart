@@ -26,6 +26,7 @@ import 'package:share_learning/templates/screens/single_post_screen.dart';
 import 'package:share_learning/templates/screens/single_post_screen_new.dart';
 import 'package:share_learning/templates/screens/splash_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
+import 'package:share_learning/templates/screens/temp_screen.dart';
 import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
@@ -82,6 +83,7 @@ class MyApp extends StatelessWidget {
               theme: getCupertinoApplicationTheme(),
               // home: HomeScreen(),
               home: SplashScreen(),
+              // home: TempScreen(),
               // home: OnBoardingScreen(),
               // home: AddPostScreen(),
               // home: LoginSignupScreen(),
@@ -128,6 +130,7 @@ class MyApp extends StatelessWidget {
                   theme: getApplicationTheme(),
 
                   home: SplashScreen(),
+                  // home: TempScreen(),
                   // home: OrderScreenNew(),
                   // home: SinglePostScreenNew(),
                   // home: HomeScreenNew(),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/post_category.dart';
+import '../../providers/books.dart';
+import '../../providers/categories.dart';
 import '../../providers/filters.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
@@ -35,38 +37,38 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
     },
   ];
 
-  List<PostCategory> _categories = [
-    new PostCategory(
-      id: 1,
-      name: 'All',
-      postsCount: 1,
-      featuredPost: null,
-    ),
-    new PostCategory(
-      id: 1,
-      name: 'Adventure',
-      postsCount: 1,
-      featuredPost: null,
-    ),
-    new PostCategory(
-      id: 1,
-      name: 'History',
-      postsCount: 1,
-      featuredPost: null,
-    ),
-    new PostCategory(
-      id: 1,
-      name: 'Science',
-      postsCount: 1,
-      featuredPost: null,
-    ),
-    new PostCategory(
-      id: 1,
-      name: 'Drama',
-      postsCount: 1,
-      featuredPost: null,
-    ),
-  ];
+  // List<PostCategory> _categories = [
+  //   new PostCategory(
+  //     id: 1,
+  //     name: 'All',
+  //     postsCount: 1,
+  //     featuredPost: null,
+  //   ),
+  //   new PostCategory(
+  //     id: 1,
+  //     name: 'Adventure',
+  //     postsCount: 1,
+  //     featuredPost: null,
+  //   ),
+  //   new PostCategory(
+  //     id: 1,
+  //     name: 'History',
+  //     postsCount: 1,
+  //     featuredPost: null,
+  //   ),
+  //   new PostCategory(
+  //     id: 1,
+  //     name: 'Science',
+  //     postsCount: 1,
+  //     featuredPost: null,
+  //   ),
+  //   new PostCategory(
+  //     id: 1,
+  //     name: 'Drama',
+  //     postsCount: 1,
+  //     featuredPost: null,
+  //   ),
+  // ];
 
   List<String> _locationOptions = [
     'Kathmandu',
@@ -77,10 +79,35 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
 
   List<String> _reviews = ['1+', '2+', '3+', '4+'];
 
+  late double _minPrice;
+  late double _maxPrice;
+
+  @override
+  void initState() {
+    BookFilters bookFilters = Provider.of<BookFilters>(context, listen: false);
+    Books _books = Provider.of<Books>(context, listen: false);
+    _minPrice = _books.getMinPrice();
+    _maxPrice = _books.getMaxPrice();
+    bookFilters.setMinPrice(_minPrice);
+    bookFilters.setMaxPrice(_maxPrice);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    Categories _categoryProvider =
+        Provider.of<Categories>(context, listen: false);
+
     BookFilters bookFilters = Provider.of<BookFilters>(context);
     Map<String, dynamic> filterOptions = bookFilters.filterOptions;
+    Books _books = Provider.of<Books>(context, listen: false);
+
+    List<PostCategory> _categories = _categoryProvider.categories;
+    _categories.insert(
+      0,
+      PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
+    );
+
     String _selectedSortOption = filterOptions['sort_by'];
 
     return Scaffold(
@@ -272,23 +299,25 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                             child: RangeSlider(
                               divisions: 20,
                               labels: RangeLabels(
-                                filterOptions['min_price'].toString(),
-                                filterOptions['max_price'].toString(),
+                                filterOptions['min_price'].round().toString(),
+                                filterOptions['max_price'].round().toString(),
                               ),
                               values: RangeValues(
-                                double.parse(
-                                    filterOptions['min_price'].toString()),
-                                double.parse(
-                                    filterOptions['max_price'].toString()),
+                                double.parse(filterOptions['min_price']
+                                    .round()
+                                    .toString()),
+                                double.parse(filterOptions['max_price']
+                                    .round()
+                                    .toString()),
                               ),
-                              min: 0.0,
-                              max: 100.0,
+                              // min: filterOptions['min_price'],
+                              // max: filterOptions['max_price'],
+                              min: _minPrice,
+                              max: _maxPrice,
                               onChanged: (RangeValues values) {
                                 setState(() {
-                                  filterOptions['min_price'] =
-                                      values.start.round();
-                                  filterOptions['max_price'] =
-                                      values.end.round();
+                                  filterOptions['min_price'] = values.start;
+                                  filterOptions['max_price'] = values.end;
                                 });
                               },
                             ),
@@ -455,10 +484,11 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
+                    bookFilters.clearFilters(_minPrice, _maxPrice, 'Kathmandu');
                     Navigator.pop(context);
                   },
                   child: Text(
-                    'Back',
+                    'Clear Filters',
                     style: getBoldStyle(
                       color: ColorManager.black,
                       fontSize: FontSize.s16,
@@ -482,7 +512,12 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                     shape: BoxShape.rectangle,
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      bookFilters.setAllBooks(
+                          Provider.of<Books>(context, listen: false).books);
+                      bookFilters.filterBooks(filterOptions);
+                      Navigator.pop(context);
+                    },
                     child: Text(
                       'Show results',
                       style: getBoldStyle(

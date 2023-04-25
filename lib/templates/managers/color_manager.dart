@@ -8,6 +8,7 @@ class ColorManager {
   static Color lightGrey = HexColor.fromHex("#9E9E9E");
   static Color purple = HexColor.fromHex("#FFAA0BAD");
   static Color lighterGrey = HexColor.fromHex("#CFCFCF");
+  static Color lightestGrey = HexColor.fromHex("#FFDADADA");
 
   static Color primaryOpacity70 = HexColor.fromHex("#B3ED9728");
 

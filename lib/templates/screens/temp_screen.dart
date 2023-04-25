@@ -1,177 +1,385 @@
 import 'package:flutter/material.dart';
-import 'package:share_learning/templates/managers/font_manager.dart';
-import 'package:share_learning/templates/managers/style_manager.dart';
+import 'package:nepali_date_picker/nepali_date_picker.dart';
 
+import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
+import '../managers/font_manager.dart';
+import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
 
-class TempScreen extends StatefulWidget {
+class TempScreen extends StatelessWidget {
   const TempScreen({Key? key}) : super(key: key);
-
-  @override
-  State<TempScreen> createState() => _TempScreenState();
-}
-
-class _TempScreenState extends State<TempScreen> {
-  List<Map<String, String>> sortByButtons = [
-    {
-      'title': 'Price: Low to High',
-      'value': 'low_to_high',
-    },
-    {
-      'title': 'Price: High to Low',
-      'value': 'high_to_low',
-    },
-    {
-      'title': 'Customer review',
-      'value': 'customer_review',
-    },
-    {
-      'title': 'Sale',
-      'value': 'sale',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Temporary Screen',
-          ),
-        ),
-      ),
-      body: Container(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            barrierColor: ColorManager.blackWithLowOpacity,
-            isScrollControlled: true,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppRadius.r20),
-                topRight: Radius.circular(AppRadius.r20),
-              ),
+      backgroundColor: ColorManager.lighterGrey,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // ---------------------- User top section starts here ----------------------------
+          Container(
+            padding: EdgeInsets.only(top: AppPadding.p12),
+            decoration: BoxDecoration(
+              color: ColorManager.grey,
             ),
-            context: context,
-            builder: (context) {
-              return Container(
-                height: MediaQuery.of(context).size.height * 0.4,
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppPadding.p20,
-                ),
-                child: Column(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    ListTile(
-                      leading: Text(
-                        'Select Payment Method',
-                        style: getBoldStyle(
-                          color: ColorManager.black,
-                          fontSize: FontSize.s18,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: Text(
-                        'Pay with e-Sewa',
-                        style: getBoldStyle(
-                          color: ColorManager.black,
-                          fontSize: FontSize.s18,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: Text(
-                        'Pay with Khalti',
-                        style: getBoldStyle(
-                          color: ColorManager.black,
-                          fontSize: FontSize.s18,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: Text(
-                        'Pay with fonePay',
-                        style: getBoldStyle(
-                          color: ColorManager.black,
-                          fontSize: FontSize.s18,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: Text(
-                        'Pay with cash',
-                        style: getBoldStyle(
-                          color: ColorManager.black,
-                          fontSize: FontSize.s18,
-                        ),
-                      ),
-                    ),
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: AppPadding.p14,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        // color: ColorManager.darkPrimary,
+                        color: ColorManager.white,
                       ),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppPadding.p18,
+                          // vertical: AppPadding.p2,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
                           children: [
-                            Text(
-                              'Sort By',
-                              style: getBoldStyle(
-                                color: ColorManager.black,
-                                fontSize: FontSize.s18,
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: AppPadding.p30,
                               ),
-                            ),
-                            Wrap(
-                              spacing: AppMargin.m4,
-                              children: List.generate(
-                                sortByButtons.length,
-                                (index) => Padding(
-                                  padding: const EdgeInsets.all(
-                                    AppPadding.p4,
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        // bookFilters.setSortBy(
-                                        //     sortByButtons[index]['value']
-                                        //         .toString());
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        // primary: _selectedSortOption ==
-                                        //         sortByButtons[index]['value']
-                                        //     // ? ColorManager.primary
-                                        //     ? ColorManager.black
-                                        //     : ColorManager.white,
-                                        ),
-                                    child: Text(
-                                      sortByButtons[index]['title'].toString(),
-                                      // style: getBoldStyle(
-                                      // color: _selectedSortOption ==
-                                      //         sortByButtons[index]['value']
-                                      //     ? ColorManager.white
-                                      //     : ColorManager.black,
-                                      // fontSize: FontSize.s12,
-                                      // ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Card(
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    color: ColorManager.primary,
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(40),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(
+                                        AppPadding.p8,
+                                      ),
+                                      child: Container(
+                                          // width: 80,
+                                          // height: 80,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                          ),
+                                          // child: user.image == null
+                                          //     ?
+                                          child: Image.asset(
+                                            ImageAssets.noProfile,
+                                          )
+                                          // : CircleAvatar(
+                                          //     radius: 70,
+                                          //     backgroundImage: NetworkImage(
+                                          //       UserHelper.userProfileImage(user),
+                                          //     ),
+                                          //   ),
+                                          ),
                                     ),
                                   ),
-                                ),
+                                  Padding(
+                                    padding: EdgeInsets.all(
+                                      AppPadding.p8,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          // width: 44,
+                                          // height: 44,
+                                          decoration: BoxDecoration(
+                                            color: ColorManager.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: ColorManager.darkPrimary,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.edit_outlined,
+                                              color: ColorManager.white,
+                                              size: AppSize.s30,
+                                            ),
+                                            onPressed: () {
+                                              // Navigator.of(context).pushNamed(
+                                              // UserProfileEditScreen.routeName,
+                                              // arguments: {
+                                              //   // 'loggedInUserSession': userSession.session,
+                                              //   'loggedInUserSession':
+                                              //       userSession.session,
+                                              //   'user': user,
+                                              // },
+                                              // );
+                                            },
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(
+                                            AppPadding.p12,
+                                          ),
+                                          child: Container(
+                                            // width: 44,
+                                            // height: 44,
+                                            decoration: BoxDecoration(
+                                              color: ColorManager.primary,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: ColorManager.darkPrimary,
+                                                width: 2,
+                                              ),
+                                            ),
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.logout_rounded,
+                                                color: ColorManager.white,
+                                                size: AppSize.s30,
+                                              ),
+                                              onPressed: () async {
+                                                // _logOut(userSession.session as Session);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ]),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppPadding.p8,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    'Rahul Rimal',
+                                    // UserHelper.userDisplayName(user),
+                                    style: getBoldStyle(
+                                        fontSize: FontSize.s12,
+                                        color: ColorManager.primary),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: AppPadding.p14,
+                                    ),
+                                    child: Text(
+                                      'CSIT',
+                                      // UserHelper.userClass(user),
+                                      style: getBoldStyle(
+                                        color: ColorManager.black,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: AppPadding.p4,
+                                  ),
+                                  child: Text('mail@rahul.com',
+                                      // user.email as String,
+                                      style: getRegularStyle(
+                                          color: ColorManager.primary)),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppPadding.p8,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    child: Container(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(vertical: AppPadding.p8),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Description',
+                                          textAlign: TextAlign.start,
+                                          style: getRegularStyle(
+                                              color: ColorManager.primary)),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: AppPadding.p4,
+                                        ),
+                                        child: Text(
+                                          'I am a student and future billionair',
+                                          // UserHelper.userDescription(user),
+                                          style: getRegularStyle(
+                                            color: ColorManager.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              );
-            },
-          );
-        },
-        child: Center(
-          child: Text(
-            'Click me',
+              ],
+            ),
           ),
-        ),
+          // ---------------------- User top section ends here ----------------------------
+          // ---------------------- User content section starts here ----------------------------
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppPadding.p8,
+                    horizontal: AppPadding.p18,
+                  ),
+                  child: Text(
+                    'Content',
+                    style: getBoldStyle(
+                      color: ColorManager.primary,
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  iconColor: ColorManager.black,
+                  textColor: ColorManager.black,
+                  tileColor: ColorManager.white,
+                  leading: Icon(
+                    Icons.favorite_border,
+                    size: FontSize.s24,
+                  ),
+                  title: Text(
+                    'Wishlisted',
+                    style: getBoldStyle(
+                      color: ColorManager.black,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right,
+                    size: AppSize.s30,
+                  ),
+                ),
+                ListTile(
+                  iconColor: ColorManager.black,
+                  textColor: ColorManager.black,
+                  tileColor: ColorManager.white,
+                  leading: Icon(
+                    Icons.book_rounded,
+                    size: FontSize.s24,
+                  ),
+                  title: Text(
+                    'Your Posts',
+                    style: getBoldStyle(
+                      color: ColorManager.black,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right,
+                    size: AppSize.s30,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ---------------------- User content section ends here ----------------------------
+          // ---------------------- User preferences section starts here ----------------------------
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // padding: EdgeInsets.zero,
+              // shrinkWrap: true,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppPadding.p8,
+                    horizontal: AppPadding.p18,
+                  ),
+                  child: Text(
+                    'Preferences',
+                    style: getBoldStyle(
+                      color: ColorManager.primary,
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  iconColor: ColorManager.black,
+                  textColor: ColorManager.black,
+                  tileColor: ColorManager.white,
+                  leading: Icon(
+                    Icons.language,
+                    size: FontSize.s24,
+                  ),
+                  title: Text(
+                    'Language',
+                    style: getBoldStyle(
+                      color: ColorManager.black,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right,
+                    size: AppSize.s30,
+                  ),
+                ),
+                ListTile(
+                  iconColor: ColorManager.black,
+                  textColor: ColorManager.black,
+                  tileColor: ColorManager.white,
+                  leading: Icon(
+                    Icons.dark_mode_outlined,
+                    size: FontSize.s24,
+                  ),
+                  title: Text(
+                    'Darkmode',
+                    style: getBoldStyle(
+                      color: ColorManager.black,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right,
+                    size: AppSize.s30,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ---------------------- User preferences section ends here ----------------------------
+        ],
       ),
     );
   }

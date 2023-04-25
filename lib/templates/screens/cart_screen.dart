@@ -174,30 +174,6 @@ class _CartScreenState extends State<CartScreen> {
                       );
                     },
                   );
-                  //   User user = users.user as User;
-                  //   if (await orders.placeOrder(authendicatedSession, {
-
-                  //     'first_name':
-                  //         user.firstName!.isEmpty ? "Temp" : user.firstName,
-                  //     'last_name':
-                  //         user.lastName!.isEmpty ? "Temp" : user.lastName,
-                  //     'phone': user.phone == null ? 'nullPhone' : user.phone,
-                  //     'email': user.email,
-                  //     'convenient_location': 'temp location',
-                  //     'side_note': 'Temp temp'
-                  //   })) {
-                  //     carts.setCart(null);
-                  //     carts.setCartItems([]);
-                  //     SharedPreferences prefs = await _prefs;
-                  //     prefs.remove('cartId');
-                  //     _showToastNotification("Order placed successfully");
-                  //     Navigator.pushReplacementNamed(
-                  //         context, HomeScreenNew.routeName,
-                  //         arguments: {'authSession': authendicatedSession});
-                  //   } else {
-                  //     _showToastNotification("Something went wrong");
-                  //   }
-                  // },
                 },
                 style: ElevatedButton.styleFrom(
                   primary: ColorManager.primary,
@@ -313,7 +289,7 @@ class _BillingInfoState extends State<BillingInfo> {
 
   Map<String, String> _billingInfo = {};
 
-  PaymentMethod _paymentMethod = PaymentMethod.Cash;
+  PaymentMethod _paymentMethod = PaymentMethod.Khalti;
 
   List<String> _locationOptions = [
     'Kathmandu',
@@ -333,7 +309,7 @@ class _BillingInfoState extends State<BillingInfo> {
       _billingInfo['email'] = user.email!;
     }
     if (user.phone != null) {
-      if (!user.phone!.isNotEmpty) {
+      if (user.phone!.isNotEmpty) {
         _billingInfo['phone'] = user.phone!;
       }
     }
