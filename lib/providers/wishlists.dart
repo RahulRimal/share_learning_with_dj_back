@@ -106,4 +106,49 @@ class Wishlists with ChangeNotifier {
     setLoading(false);
     notifyListeners();
   }
+
+  Future<dynamic> searchBooks(
+      Session loggedInSession, String searchTerm) async {
+    setLoading(true);
+    var response =
+        await WishlistApi.getBooksBySearchTerm(loggedInSession, searchTerm);
+    if (response is Success) {
+      setWishlists(response.response as List<Wishlist>);
+    }
+    if (response is Failure) {
+      WishlistError error = new WishlistError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setWishlistError(error);
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
+
+
+  Future<dynamic> getWishlistsByBookCategory(
+      Session loggedInSession, String categoryId) async {
+    setLoading(true);
+    var response =
+        await WishlistApi.getWishlistsByBookCategory(loggedInSession, categoryId);
+    // print(response);
+    if (response is Success) {
+      
+
+      setWishlists(response.response as List<Wishlist>);
+    }
+    if (response is Failure) {
+      WishlistError error = new WishlistError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setWishlistError(error);
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
+
 }

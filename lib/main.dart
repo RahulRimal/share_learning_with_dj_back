@@ -26,7 +26,6 @@ import 'package:share_learning/templates/screens/single_post_screen.dart';
 import 'package:share_learning/templates/screens/single_post_screen_new.dart';
 import 'package:share_learning/templates/screens/splash_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
-import 'package:share_learning/templates/screens/temp_screen.dart';
 import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';

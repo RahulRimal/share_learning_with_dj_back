@@ -173,4 +173,94 @@ class WishlistApi {
       //     errorResponse: ApiStrings.unknownErrorString);
     }
   }
+  static Future<Object> getBooksBySearchTerm(
+      Session loggedInUser, String searchTerm) async {
+    try {
+      var url =
+          Uri.parse(RemoteManager.BASE_URI + '/wishlist/?search=' + searchTerm);
+
+      var response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        },
+      );
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+          code: response.statusCode,
+          response: wishlistsFromJson(
+            json.encode(json.decode(response.body)),
+          ),
+        );
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString(),);
+      
+    }
+  }
+
+  static Future<Object> getWishlistsByBookCategory(
+      Session loggedInUser, String categoryId) async {
+    try {
+      var url =
+          Uri.parse(RemoteManager.BASE_URI + '/wishlist/?post__category=' + categoryId);
+
+      var response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        },
+      );
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        // print(json.encode(json.decode(response.body)['data']['posts']));
+
+        return Success(
+          code: response.statusCode,
+          response: wishlistsFromJson(
+            json.encode(json.decode(response.body)),
+          ),
+        );
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //   code: ApiStatusCode.unknownError,
+      //   errorResponse: ApiStrings.unknownErrorString,
+      // );
+    }
+  }
 }

@@ -139,6 +139,25 @@ class Books with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<dynamic> searchBooks(
+      Session loggedInSession, String searchTerm) async {
+    setLoading(true);
+    var response =
+        await BookApi.getBooksBySearchTerm(loggedInSession, searchTerm);
+    if (response is Success) {
+      setBooks(response.response as List<Book>);
+    }
+    if (response is Failure) {
+      BookError error = new BookError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setBookError(error);
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
   List<Book> postsByUser(String userId) {
     return books.where((book) => book.userId == userId).toList();
   }

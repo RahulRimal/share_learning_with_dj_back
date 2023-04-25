@@ -12,8 +12,12 @@ import 'package:share_learning/templates/managers/style_manager.dart';
 import '../../models/book.dart';
 import '../../models/order.dart';
 import '../../models/session.dart';
+import '../../models/user.dart';
+import '../../providers/users.dart';
+import '../managers/api_values_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/values_manager.dart';
+import '../utils/user_helper.dart';
 
 class OrderScreenNew extends StatelessWidget {
   static const routeName = '/order-list-new';
@@ -26,6 +30,7 @@ class OrderScreenNew extends StatelessWidget {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
 
     final Session authSession = args['loggedInUserSession'] as Session;
+    Users _users = context.watch<Users>();
     // Session authSession =
     //     Provider.of<SessionProvider>(context).session as Session;
 
@@ -49,10 +54,41 @@ class OrderScreenNew extends StatelessWidget {
                         fontSize: FontSize.s24,
                       ),
                     ),
-                    CircleAvatar(
-                      child: Image.asset(
-                        ImageAssets.noProfile,
-                      ),
+                    // CircleAvatar(
+                    //   child: Image.asset(
+                    //     ImageAssets.noProfile,
+                    //   ),
+                    FutureBuilder(
+                      future: _users.getUserByToken(authSession.accessToken),
+                      builder: (ctx, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator(
+                            color: ColorManager.secondary,
+                          );
+                        } else {
+                          if (snapshot.hasError) {
+                            return CircleAvatar(
+                              child: Image.asset(
+                                ImageAssets.noProfile,
+                              ),
+                            );
+                          } else {
+                            if (snapshot.data is UserError) {
+                              UserError error = snapshot.data as UserError;
+                              return Text(error.message as String);
+                            } else {
+                              User _user = snapshot.data as User;
+                              return CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    _user.image == null
+                                        ? RemoteManager.IMAGE_PLACEHOLDER
+                                        : UserHelper.userProfileImage(_user)),
+                              );
+                            }
+                          }
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -161,7 +197,7 @@ class OrderScreenNew extends StatelessWidget {
                                   ? Center(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
-                                            top: AppPadding.p45),
+                                            top: AppPadding.p12),
                                         child: Text(
                                           'No orders found',
                                           style: getBoldStyle(
@@ -239,9 +275,9 @@ class OrderItemWidget extends StatelessWidget {
       },
     );
     return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: AppMargin.m12,
-      ),
+      // margin: EdgeInsets.symmetric(
+      // vertical: AppMargin.m8,
+      // ),
       decoration: BoxDecoration(
         color: ColorManager.lighterGrey,
         borderRadius: BorderRadius.circular(
@@ -263,9 +299,17 @@ class OrderItemWidget extends StatelessWidget {
                 AppRadius.r12,
               ),
             ),
-            child: Image.asset(
-              ImageAssets.noProfile,
-            ),
+            // child: Image.asset(
+            //   ImageAssets.noProfile,
+            // ),
+            child: product.images != null
+                ? Image.network(
+                    product.images![0].image,
+                    height: AppHeight.h75,
+                  )
+                : Image.asset(
+                    ImageAssets.noProfile,
+                  ),
           ),
           Expanded(
             child: Column(
@@ -282,11 +326,6 @@ class OrderItemWidget extends StatelessWidget {
                 SizedBox(
                   height: AppHeight.h4,
                 ),
-                // Row(
-                //   children: [
-
-                //   ],
-                // ),
                 Text(
                   'Unit price: Rs. ${product.price.toString()}',
                   style: getMediumStyle(
@@ -363,7 +402,7 @@ class _OrdersWidgetState extends State<OrdersWidget> {
 
               return ListTile(
                 contentPadding: EdgeInsets.symmetric(
-                  vertical: AppPadding.p8,
+                  vertical: AppPadding.p2,
                   horizontal: AppPadding.p8,
                 ),
                 title: Text(
@@ -381,12 +420,24 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                           Row(
                             children: [
                               Text(
-                                'Delivering on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+                                'Delivering on ${DateFormat('d MMMM y').format(DateTime.parse((item['order'] as Order).deliveryInfo!['expected_delivery_date']))}',
                                 style: getBoldStyle(
                                     color: Colors.orange,
                                     fontSize: FontSize.s14),
                               ),
                             ],
+                          ),
+                          Text(
+                            (item['order'] as Order).paymentStatus ==
+                                    PaymentStatus.PENDING
+                                ? 'Payment: Cash on delivery'
+                                : 'Payment: Completed',
+                            style: getBoldStyle(
+                                color: (item['order'] as Order).paymentStatus ==
+                                        PaymentStatus.PENDING
+                                    ? ColorManager.yellow
+                                    : ColorManager.green,
+                                fontSize: FontSize.s14),
                           ),
                           Text(
                             'Total: Rs.${totalPrice.toString()}',
@@ -402,7 +453,9 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                           Row(
                             children: [
                               Text(
-                                'Delivered on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+                                // 'Delivered on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+
+                                'Delivered on ${DateFormat('d MMMM y').format(DateTime.parse((item['order'] as Order).deliveryInfo!['expected_delivery_date']))}',
                                 style: getBoldStyle(
                                     color: ColorManager.green,
                                     fontSize: FontSize.s14),
@@ -413,6 +466,7 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                               Icon(
                                 Icons.check_circle,
                                 color: ColorManager.green,
+                                size: AppSize.s18,
                               ),
                             ],
                           ),
@@ -446,7 +500,9 @@ class _OrdersWidgetState extends State<OrdersWidget> {
               itemCount: item['order'].items.length,
               itemBuilder: (ctx, idx) {
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(
+                    AppPadding.p8,
+                  ),
                   child: OrderItemWidget(
                     orderItem: item['order'].items[idx],
                   ),

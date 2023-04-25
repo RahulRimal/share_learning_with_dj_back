@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/providers/categories.dart';
-import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -15,7 +13,6 @@ import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/templates/widgets/post_new.dart';
 
-import '../../models/book.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../providers/books.dart';
@@ -38,6 +35,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   final _form = GlobalKey<FormState>();
   final _filterForm = GlobalKey<FormState>();
   late int _selectedCategoryIndex;
+
+  final _searchTextController = TextEditingController();
+  final _searchFocusNode = FocusNode();
 
   User _user = new User(
       id: "temp",
@@ -87,6 +87,29 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   void initState() {
     _selectedCategoryIndex = 0;
     super.initState();
+  }
+
+  _getSearchResult(Session authSession) async {
+    final _isValid = _form.currentState!.validate();
+    if (!_isValid) {
+      return false;
+    }
+    _form.currentState!.save();
+    // String searchTerm = _searchTextController.text;
+    // _searchTextController.text = '';
+    _searchFocusNode.unfocus();
+    _selectedCategoryIndex = 0;
+    // Navigator.of(context).pop;
+
+    // await Provider.of<Books>(context, listen: false)
+    //     .searchBooks(authSession, searchTerm);
+  }
+
+  @override
+  void dispose() {
+    _searchTextController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -226,14 +249,27 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 12),
                                   child: TextFormField(
-                                    cursorColor: ColorManager.white,
+                                    controller: _searchTextController,
+                                    focusNode: _searchFocusNode,
+                                    cursorColor: ColorManager.primary,
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.search),
                                       prefixIconColor: ColorManager.primary,
+                                      suffixIcon: IconButton(
+                                          icon: Icon(
+                                            Icons.send,
+                                          ),
+                                          onPressed: () {
+                                            _getSearchResult(
+                                                authenticatedSession);
+                                          }),
+                                      suffixIconColor: ColorManager.primary,
                                       fillColor: ColorManager.white,
                                       filled: true,
                                       focusColor: ColorManager.white,
                                       labelText: 'Search',
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.never,
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: ColorManager.white,
@@ -247,12 +283,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
-                                    textInputAction: TextInputAction.next,
+                                    textInputAction: TextInputAction.done,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please provide the bookName';
                                       }
                                       return null;
+                                    },
+                                    onFieldSubmitted: (_) {
+                                      _getSearchResult(authenticatedSession);
                                     },
                                   ),
                                 ),
@@ -517,7 +556,16 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: FilterChip(
-                            label: Text(_categories[index].name),
+                            label: Text(
+                              _categories[index].name,
+                              style: _selectedCategoryIndex == index
+                                  ? getBoldStyle(
+                                      color: ColorManager.black,
+                                    )
+                                  : getMediumStyle(
+                                      color: ColorManager.black,
+                                    ),
+                            ),
                             selectedColor: ColorManager.primary,
                             showCheckmark: false,
                             selected: _selectedCategoryIndex == index,
@@ -531,13 +579,19 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       }),
                 ),
                 FutureBuilder(
-                  future: _categories[_selectedCategoryIndex]
-                              .name
-                              .toLowerCase() ==
-                          'all'
-                      ? _books.getBooksAnnonimusly(authenticatedSession)
-                      : _books.getBooksByCategory(authenticatedSession,
-                          _categories[_selectedCategoryIndex].id.toString()),
+                  future: _searchTextController.text.isNotEmpty
+                      ? _books.searchBooks(
+                          authenticatedSession, _searchTextController.text)
+                      : _categories[_selectedCategoryIndex]
+                                  .name
+                                  .toLowerCase() ==
+                              'all'
+                          ? _books.getBooksAnnonimusly(authenticatedSession)
+                          : _books.getBooksByCategory(
+                              authenticatedSession,
+                              _categories[_selectedCategoryIndex]
+                                  .id
+                                  .toString()),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(

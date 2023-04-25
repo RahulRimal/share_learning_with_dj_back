@@ -36,19 +36,10 @@ class WishlistedBooksScreen extends StatefulWidget {
 class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
   final _form = GlobalKey<FormState>();
   final _filterForm = GlobalKey<FormState>();
-  int _selectedIndex = 0;
+  late int _selectedCategoryIndex;
 
-  List<PostCategory> _categories = [
-    new PostCategory(
-        id: 1, name: "Adventure", postsCount: 0, featuredPost: null),
-    new PostCategory(id: 2, name: "Drama", postsCount: 0, featuredPost: null),
-    new PostCategory(id: 3, name: "Comic", postsCount: 0, featuredPost: null),
-    new PostCategory(
-        id: 4, name: "Biography", postsCount: 0, featuredPost: null),
-    new PostCategory(
-        id: 5, name: "Scientific", postsCount: 0, featuredPost: null),
-    new PostCategory(id: 6, name: "Food", postsCount: 0, featuredPost: null),
-  ];
+  final _searchTextController = TextEditingController();
+  final _searchFocusNode = FocusNode();
 
   User _user = new User(
       id: "temp",
@@ -63,6 +54,61 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
       followers: 'followers',
       createdDate: DateTime.now());
 
+  // List<PostCategory> _categories = [];
+
+  // ScrollController _scrollController = ScrollController();
+
+  // double _appBarHeight = 75.0;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _scrollController.addListener(_scrollListener);
+  // }
+
+  // @override
+  // void dispose() {
+  //   _scrollController.removeListener(_scrollListener);
+  //   _scrollController.dispose();
+  //   super.dispose();
+  // }
+
+  // void _scrollListener() {
+  //   setState(() {
+  //     if (_scrollController.offset > 0 && _scrollController.offset < 30) {
+  //       _appBarHeight = 75.0 - _scrollController.offset;
+  //     } else if (_scrollController.offset >= 30) {
+  //       _appBarHeight = 50.0;
+  //     } else {
+  //       _appBarHeight = 75.0;
+  //     }
+  //   });
+  // }
+
+  @override
+  void initState() {
+    _selectedCategoryIndex = 0;
+    super.initState();
+  }
+
+  _getSearchResult(Session authSession) async {
+    final _isValid = _form.currentState!.validate();
+    if (!_isValid) {
+      return false;
+    }
+    _form.currentState!.save();
+    _searchFocusNode.unfocus();
+    _selectedCategoryIndex = 0;
+    
+  }
+
+  @override
+  void dispose(){
+    _searchTextController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Session authenticatedSession =
@@ -74,9 +120,19 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
     } else {
       _user = _users.user as User;
     }
-    // Wishlists _wishlists = context.watch<Wishlists>();
-    Wishlists _wishlists = Provider.of<Wishlists>(context, listen: false);
+    // Books _books = context.watch<Books>();
+    Books _books = Provider.of<Books>(context, listen: false);
+    Wishlists _wishlists= Provider.of<Wishlists>(context, listen: false);
     Orders _orders = context.watch<Orders>();
+
+    Categories _categoryProvider =
+        Provider.of<Categories>(context, listen: false);
+
+    List<PostCategory> _categories = _categoryProvider.categories;
+    _categories.insert(
+      0,
+      PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
+    );
 
     return SafeArea(
       child: Scaffold(
@@ -152,7 +208,11 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
           ],
         ),
         body: SingleChildScrollView(
+          // controller: _scrollController,
           child: Container(
+            padding: EdgeInsets.only(
+              bottom: AppPadding.p12,
+            ),
             color: ColorManager.lighterGrey,
             child: Column(
               children: [
@@ -187,14 +247,28 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 12),
                                   child: TextFormField(
-                                    cursorColor: ColorManager.white,
+                                    controller: _searchTextController,
+                                    focusNode: _searchFocusNode,
+                                    cursorColor: ColorManager.primary,
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.search),
                                       prefixIconColor: ColorManager.primary,
+                                      suffixIcon: IconButton(
+                                          icon: Icon(
+                                            Icons.send,
+                                          ),
+                                          onPressed: () {
+                                             _getSearchResult(
+                                                authenticatedSession);
+                                            
+                                          }),
+                                      suffixIconColor: ColorManager.primary,
                                       fillColor: ColorManager.white,
                                       filled: true,
                                       focusColor: ColorManager.white,
                                       labelText: 'Search',
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.never,
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: ColorManager.white,
@@ -208,12 +282,16 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
-                                    textInputAction: TextInputAction.next,
+                                    textInputAction: TextInputAction.done,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please provide the bookName';
                                       }
                                       return null;
+                                    },
+                                    onFieldSubmitted: (_) {
+                                       _getSearchResult(authenticatedSession);
+                                      
                                     },
                                   ),
                                 ),
@@ -236,6 +314,217 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                                 AppRadius.r20))),
                                     context: context,
                                     builder: (context) {
+                                      // return SingleChildScrollView(
+                                      //   child: Container(
+                                      //     height: 300,
+                                      //     padding: EdgeInsets.symmetric(
+                                      //       horizontal: AppPadding.p20,
+                                      //     ),
+                                      //     child: Form(
+                                      //       key: _filterForm,
+                                      //       child: Column(
+                                      //         crossAxisAlignment:
+                                      //             CrossAxisAlignment.start,
+                                      //         children: [
+                                      //           ListTile(
+                                      //             title: Column(
+                                      //               children: [
+                                      //                 Row(
+                                      //                   mainAxisAlignment:
+                                      //                       MainAxisAlignment
+                                      //                           .spaceBetween,
+                                      //                   children: [
+                                      //                     Text(
+                                      //                       'Filters',
+                                      //                       style: getBoldStyle(
+                                      //                         fontSize:
+                                      //                             AppSize.s24,
+                                      //                         color:
+                                      //                             ColorManager
+                                      //                                 .black,
+                                      //                       ),
+                                      //                     ),
+                                      //                     IconButton(
+                                      //                       onPressed: () {},
+                                      //                       icon: Icon(
+                                      //                         Icons.cancel,
+                                      //                       ),
+                                      //                     ),
+                                      //                   ],
+                                      //                 ),
+                                      //               ],
+                                      //             ),
+                                      //           ),
+                                      //           ListTile(
+                                      //             title: Column(
+                                      //               crossAxisAlignment:
+                                      //                   CrossAxisAlignment
+                                      //                       .start,
+                                      //               children: [
+                                      //                 Padding(
+                                      //                   padding:
+                                      //                       const EdgeInsets
+                                      //                           .only(
+                                      //                     bottom: AppPadding.p4,
+                                      //                   ),
+                                      //                   child: Text(
+                                      //                     'Price Range',
+                                      //                     style: getBoldStyle(
+                                      //                       fontSize:
+                                      //                           AppSize.s16,
+                                      //                       color: ColorManager
+                                      //                           .black,
+                                      //                     ),
+                                      //                   ),
+                                      //                 ),
+                                      //                 Row(
+                                      //                   children: [
+                                      //                     Flexible(
+                                      //                       child:
+                                      //                           TextFormField(
+                                      //                         keyboardType:
+                                      //                             TextInputType
+                                      //                                 .number,
+                                      //                         decoration:
+                                      //                             InputDecoration(
+                                      //                           fillColor:
+                                      //                               ColorManager
+                                      //                                   .lighterGrey,
+                                      //                           filled: true,
+                                      //                           prefix:
+                                      //                               Text('Rs.'),
+                                      //                           label: Text(
+                                      //                             'min',
+                                      //                             style:
+                                      //                                 TextStyle(
+                                      //                               color: ColorManager
+                                      //                                   .lighterGrey,
+                                      //                             ),
+                                      //                           ),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                     SizedBox(
+                                      //                       width:
+                                      //                           AppMargin.m20,
+                                      //                     ),
+                                      //                     Flexible(
+                                      //                       child:
+                                      //                           TextFormField(
+                                      //                         keyboardType:
+                                      //                             TextInputType
+                                      //                                 .number,
+                                      //                         decoration:
+                                      //                             InputDecoration(
+                                      //                           prefix:
+                                      //                               Text('Rs.'),
+                                      //                           label: Text(
+                                      //                             'max',
+                                      //                             style:
+                                      //                                 TextStyle(
+                                      //                               color: Colors
+                                      //                                       .grey[
+                                      //                                   400],
+                                      //                             ),
+                                      //                           ),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                   ],
+                                      //                 ),
+                                      //                 Padding(
+                                      //                   padding:
+                                      //                       const EdgeInsets
+                                      //                           .only(
+                                      //                     top: AppPadding.p12,
+                                      //                   ),
+                                      //                   child: Divider(
+                                      //                     height: 2,
+                                      //                     thickness: 2,
+                                      //                   ),
+                                      //                 ),
+                                      //               ],
+                                      //             ),
+                                      //           ),
+                                      //           ListTile(
+                                      //             title: Column(
+                                      //               crossAxisAlignment:
+                                      //                   CrossAxisAlignment
+                                      //                       .start,
+                                      //               children: [
+                                      //                 Padding(
+                                      //                   padding:
+                                      //                       const EdgeInsets
+                                      //                           .only(
+                                      //                     bottom: AppPadding.p4,
+                                      //                   ),
+                                      //                   child: Text(
+                                      //                     'Location',
+                                      //                     style: getBoldStyle(
+                                      //                       fontSize:
+                                      //                           AppSize.s16,
+                                      //                       color: ColorManager
+                                      //                           .black,
+                                      //                     ),
+                                      //                   ),
+                                      //                 ),
+                                      //                 Container(
+                                      //                   decoration:
+                                      //                       BoxDecoration(
+                                      //                           border:
+                                      //                               Border.all(
+                                      //                     color: Colors.grey,
+                                      //                     width: 1.0,
+                                      //                     style:
+                                      //                         BorderStyle.solid,
+                                      //                   )),
+                                      //                   child:
+                                      //                       DropdownButtonHideUnderline(
+                                      //                     child: DropdownButton(
+                                      //                         isExpanded: true,
+                                      //                         value:
+                                      //                             locationOptions[
+                                      //                                 0],
+                                      //                         items:
+                                      //                             locationOptions
+                                      //                                 .map((option) =>
+                                      //                                     DropdownMenuItem(
+                                      //                                       child:
+                                      //                                           Text(
+                                      //                                         option,
+                                      //                                         // style:
+                                      //                                         //     getMediumStyle(
+                                      //                                         //   color: ColorManager
+                                      //                                         //       .black,
+                                      //                                         // ),
+                                      //                                       ),
+                                      //                                       value:
+                                      //                                           option,
+                                      //                                     ))
+                                      //                                 .toList(),
+                                      //                         onChanged:
+                                      //                             (value) {}),
+                                      //                   ),
+                                      //                 ),
+                                      //                 Padding(
+                                      //                   padding:
+                                      //                       const EdgeInsets
+                                      //                           .only(
+                                      //                     top: AppPadding.p12,
+                                      //                   ),
+                                      //                   child: Divider(
+                                      //                     height: 2,
+                                      //                     thickness: 2,
+                                      //                   ),
+                                      //                 ),
+                                      //               ],
+                                      //             ),
+                                      //           ),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // );
                                       return Container(
                                         height:
                                             MediaQuery.of(context).size.height *
@@ -260,56 +549,39 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                 ),
                 SizedBox(
                   height: 100,
-                  child: FutureBuilder(
-                    future: Provider.of<Categories>(context, listen: false)
-                        .getCategories(authenticatedSession),
-                    builder: (ctx, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(
-                          color: ColorManager.secondary,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _categories.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: FilterChip(
+                            label: Text(_categories[index].name),
+                            selectedColor:  ColorManager.primary,
+                            // selectedColor: _searchTextController.text.isEmpty ? ColorManager.primary: ColorManager.lightGrey,
+                            showCheckmark: false,
+                            selected: _selectedCategoryIndex == index,
+                            onSelected: (bool isSelected) async {
+                              setState(() {
+                                _searchTextController.text = '';
+                                _selectedCategoryIndex = index;
+                              });
+                            },
+                          ),
                         );
-                      } else {
-                        if (snapshot.hasError) {
-                          return CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://ojasfilms.org/assets/img/ojas-logo.png'),
-                          );
-                        } else {
-                          if (snapshot.data is UserError) {
-                            UserError error = snapshot.data as UserError;
-                            return Text(error.message as String);
-                          } else {
-                            _categories =
-                                Provider.of<Categories>(context, listen: false)
-                                    .categories;
-                            return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: _categories.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6),
-                                    child: FilterChip(
-                                      label: Text(_categories[index].name),
-                                      selectedColor: ColorManager.primary,
-                                      showCheckmark: false,
-                                      selected: _selectedIndex == index,
-                                      onSelected: (bool isSelected) {
-                                        setState(() {
-                                          _selectedIndex = index;
-                                        });
-                                      },
-                                    ),
-                                  );
-                                });
-                          }
-                        }
-                      }
-                    },
-                  ),
+                      }),
                 ),
                 FutureBuilder(
-                  future: _wishlists.getWishlistedBooks(authenticatedSession),
+                  future: _searchTextController.text.isNotEmpty ?
+                  _wishlists.searchBooks(authenticatedSession, _searchTextController.text):
+                   _categories[_selectedCategoryIndex]
+                              .name
+                              .toLowerCase() ==
+                          'all'
+                      ? _wishlists.getWishlistedBooks(authenticatedSession)
+                      : _wishlists.getWishlistsByBookCategory(authenticatedSession,
+                          _categories[_selectedCategoryIndex].id.toString()),
+                  
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -394,5 +666,87 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
         ),
       ),
     );
+
+    
   }
 }
+
+
+
+
+// FutureBuilder(
+//                   future: _wishlists.getWishlistedBooks(authenticatedSession),
+//                   builder: (ctx, snapshot) {
+//                     if (snapshot.connectionState == ConnectionState.waiting) {
+//                       return Center(
+//                         child: CircularProgressIndicator(
+//                           color: ColorManager.primary,
+//                         ),
+//                       );
+//                     } else {
+//                       if (snapshot.hasError) {
+//                         return Center(
+//                           child: Text('Error'),
+//                         );
+//                       } else {
+//                         return Consumer<Wishlists>(
+//                           builder: (ctx, wishlists, child) {
+//                             return wishlists.wishlists.length <= 0
+//                                 ? Center(
+//                                     child: Text(
+//                                       'No book has been wishlisted',
+//                                       style: getBoldStyle(
+//                                           fontSize: FontSize.s20,
+//                                           color: ColorManager.primary),
+//                                     ),
+//                                   )
+//                                 : MasonryGridView.builder(
+//                                     physics: NeverScrollableScrollPhysics(),
+//                                     shrinkWrap: true,
+//                                     crossAxisSpacing: 12,
+//                                     mainAxisSpacing: 12,
+//                                     padding: EdgeInsets.symmetric(
+//                                       horizontal: AppPadding.p8,
+//                                     ),
+//                                     gridDelegate:
+//                                         SliverSimpleGridDelegateWithFixedCrossAxisCount(
+//                                             crossAxisCount: 2),
+//                                     itemCount: _wishlists.wishlists.length,
+//                                     itemBuilder: (ctx, idx) => FutureBuilder(
+//                                         future: Provider.of<Books>(context,
+//                                                 listen: false)
+//                                             .getBookByIdFromServer(
+//                                                 authenticatedSession,
+//                                                 _wishlists.wishlists[idx].post
+//                                                     .toString()),
+//                                         builder: (context, snapshot) {
+//                                           if (snapshot.connectionState ==
+//                                               ConnectionState.waiting) {
+//                                             return Center(
+//                                               child: CircularProgressIndicator(
+//                                                 color: ColorManager.primary,
+//                                               ),
+//                                             );
+//                                           }
+//                                           if (snapshot.hasError) {
+//                                             return Text(
+//                                               'Error',
+//                                               style: getBoldStyle(
+//                                                 fontSize: FontSize.s20,
+//                                                 color: ColorManager.primary,
+//                                               ),
+//                                             );
+//                                           } else {
+//                                             return PostNew(
+//                                               book: snapshot.data as Book,
+//                                               authSession: authenticatedSession,
+//                                             );
+//                                           }
+//                                         }),
+//                                   );
+//                           },
+//                         );
+//                       }
+//                     }
+//                   },
+//                 ),

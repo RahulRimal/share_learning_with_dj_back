@@ -5,6 +5,7 @@ import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/edit_post_screen.dart';
 import 'package:share_learning/templates/widgets/post_comments_new.dart';
 
@@ -933,26 +934,34 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   Future<void> _showPicker(BuildContext context) async {
     _buyerExpectedDeadline = await picker.showAdaptiveDatePicker(
       context: context,
-      // initialDate: picker.NepaliDateTime.now(),
       initialDate: _getTomorrowDate(),
-      // firstDate: picker.NepaliDateTime.t
       firstDate: _getTomorrowDate(),
-      // lastDate: picker.NepaliDateTime.now(),
-      lastDate: picker.NepaliDateTime(2080),
+      lastDate: NepaliDateTime.now().add(
+        const Duration(
+          days: 365,
+        ),
+      ),
     );
-    _datePickercontroller.text = DateFormat('yyyy-MM-dd')
-        .format(_buyerExpectedDeadline as DateTime)
-        .toString();
+    if (_buyerExpectedDeadline != null) {
+      _datePickercontroller.text = DateFormat('yyyy-MM-dd')
+          .format(_buyerExpectedDeadline as DateTime)
+          .toString();
+    }
   }
 
   _showToastNotification(String msg) {
     BotToast.showSimpleNotification(
-      title: msg,
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+        title: msg,
+        // duration: Duration(seconds: 3),
+        backgroundColor: ColorManager.primary,
+        titleStyle: getBoldStyle(color: ColorManager.white),
+        // align: Alignment(1, 1),
+        align: Alignment(1, -1),
+        hideCloseButton: true,
+        dismissDirections: [
+          DismissDirection.horizontal,
+          DismissDirection.vertical,
+        ]);
   }
 
   @override
@@ -989,13 +998,20 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                     ? null
                     : carts.cartItemsContains(int.parse(selectedPost.id))
                         ? ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                CartScreen.routeName,
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
-                              primary: ColorManager.primaryColorWithOpacity,
+                              // primary: ColorManager.primaryColorWithOpacity,
+                              primary: ColorManager.primary,
                               minimumSize: const Size.fromHeight(40), // NEW
                             ),
                             child: const Text(
-                              "Already added to cart",
+                              // "Already added to cart",
+                              "Go to cart",
                               style: TextStyle(
                                 fontSize: FontSize.s16,
                                 fontWeight: FontWeight.w600,
@@ -1161,7 +1177,11 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                               initialValue:
                                                                   _buyerExpectedBook
                                                                       .price
+                                                                      .round()
                                                                       .toString(),
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
                                                               cursorColor: Theme
                                                                       .of(context)
                                                                   .primaryColor,
