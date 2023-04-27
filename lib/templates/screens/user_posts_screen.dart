@@ -4,6 +4,7 @@ import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/providers/books.dart';
+import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
@@ -15,15 +16,19 @@ class UserPostsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    final String userId = args['uId'];
-    var loggedInUserSession = args['loggedInUserSession'] as Session;
+    // final String userId = args['uId'];
+    // var loggedInUserSession = args['loggedInUserSession'] as Session;
 
-    Users users = new Users(loggedInUserSession);
+    Users users = Provider.of<Users>(context);
+    Session loggedInUserSession =
+        Provider.of<SessionProvider>(context).session as Session;
+
     users.getUserByToken(loggedInUserSession.accessToken);
 
-    List<Book> _allPosts = Provider.of<Books>(context).postsByUser(userId);
+    List<Book> _allPosts =
+        Provider.of<Books>(context).postsByUser(users.user!.id);
 
     return Scaffold(
       // drawer: AppDrawer(loggedInUserSession),

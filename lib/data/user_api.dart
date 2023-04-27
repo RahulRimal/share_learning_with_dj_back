@@ -220,8 +220,73 @@ class UserApi {
     }
   }
 
+  static Future<Object> updateCoreUserInfo(
+      Session currentSession, Map<String, dynamic> edittedInfo) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI + '/auth/users/me/');
+      var response = await http.patch(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
+          "Accept": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+        body: json.encode(edittedInfo),
+        // body: json.encode(updatedPost),
+      );
+      // print(response.body);
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+          code: response.statusCode,
+          // response: userFromJson(json.encode(json.decode(response.body)))
+          response: json.decode(response.body),
+        );
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
   static Future<Object> updateUserInfo(
       Session currentSession, Map<String, dynamic> edittedInfo) async {
+    Map<String, dynamic> coreInfo = {};
+    if (edittedInfo.containsKey('username')) {
+      coreInfo['username'] = edittedInfo['username'];
+      edittedInfo.remove('username');
+    }
+    if (edittedInfo.containsKey('email')) {
+      coreInfo['email'] = edittedInfo['email'];
+      edittedInfo.remove('email');
+    }
+    if (edittedInfo.containsKey('first_name')) {
+      coreInfo['first_name'] = edittedInfo['first_name'];
+      edittedInfo.remove('first_name');
+    }
+    if (edittedInfo.containsKey('last_name')) {
+      coreInfo['last_name'] = edittedInfo['last_name'];
+      edittedInfo.remove('last_name');
+    }
+    if (coreInfo.isNotEmpty) {
+      var coreInfoUpdation = await updateCoreUserInfo(currentSession, coreInfo);
+      if (coreInfoUpdation is Failure) return coreInfoUpdation;
+    }
     try {
       var url = Uri.parse(
           RemoteManager.BASE_URI + '/customers/' + edittedInfo['id'] + '/');

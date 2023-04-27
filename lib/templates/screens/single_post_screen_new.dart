@@ -541,7 +541,7 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
           DetailsPageImageGallery(selectedPost: post),
 
           Positioned(
-            bottom: 0,
+            bottom: AppHeight.h18,
             left: 0,
             right: 0,
             child: Container(
@@ -1645,61 +1645,133 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
       right: 0,
       child: Column(
         children: [
-          Image.network(
-            // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-            post.images![_selectedImage].image,
-            fit: BoxFit.cover,
-            height: MediaQuery.of(context).size.height * 0.33,
-          ),
           Container(
-            padding: const EdgeInsets.only(
-              top: AppPadding.p8,
-              bottom: AppPadding.p16,
-              left: AppPadding.p4,
-              right: AppPadding.p4,
-            ),
-            color: ColorManager.blackWithLowOpacity,
-            child: SizedBox(
-              height: 50,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: post.images!.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: (() {
-                      setState(() {
-                        _selectedImage = index;
-                      });
-                    }),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
-                      child: Container(
-                        padding: EdgeInsets.all(0),
-                        decoration: _selectedImage == index
-                            ? BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.red,
-                                  width: 2,
+            width: MediaQuery.of(context).size.width,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.network(
+                  // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+                  post.images![_selectedImage].image,
+                  fit: BoxFit.cover,
+                  height: MediaQuery.of(context).size.height * 0.4,
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                      top: AppPadding.p8,
+                      bottom: AppPadding.p24,
+                      left: AppPadding.p4,
+                      right: AppPadding.p4,
+                    ),
+                    // padding: EdgeInsets.symmetric(
+                    //   vertical: AppPadding.p8,
+                    //   horizontal: AppPadding.p4,
+                    // ),
+                    color: ColorManager.blackWithLowOpacity,
+                    child: SizedBox(
+                      height: AppHeight.h60,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: post.images!.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: (() {
+                              setState(() {
+                                _selectedImage = index;
+                              });
+                            }),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Container(
+                                padding: EdgeInsets.all(0),
+                                decoration: _selectedImage == index
+                                    ? BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.red,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            AppRadius.r12),
+                                      )
+                                    : null,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+                                    post.images![index].image,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.r12),
-                              )
-                            : null,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                            post.images![index].image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
+          // Image.network(
+          //   // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+          //   post.images![_selectedImage].image,
+          //   fit: BoxFit.cover,
+          //   height: MediaQuery.of(context).size.height * 0.33,
+          // ),
+          // Container(
+          //   padding: const EdgeInsets.only(
+          //     top: AppPadding.p8,
+          //     bottom: AppPadding.p16,
+          //     left: AppPadding.p4,
+          //     right: AppPadding.p4,
+          //   ),
+          //   color: ColorManager.blackWithLowOpacity,
+          //   child: SizedBox(
+          //     height: 50,
+          //     child: ListView.builder(
+          //       scrollDirection: Axis.horizontal,
+          //       itemCount: post.images!.length,
+          //       itemBuilder: (context, index) {
+          //         return GestureDetector(
+          //           onTap: (() {
+          //             setState(() {
+          //               _selectedImage = index;
+          //             });
+          //           }),
+          //           child: Padding(
+          //             padding: EdgeInsets.symmetric(horizontal: 2),
+          //             child: Container(
+          //               padding: EdgeInsets.all(0),
+          //               decoration: _selectedImage == index
+          //                   ? BoxDecoration(
+          //                       border: Border.all(
+          //                         color: Colors.red,
+          //                         width: 2,
+          //                       ),
+          //                       borderRadius:
+          //                           BorderRadius.circular(AppRadius.r12),
+          //                     )
+          //                   : null,
+          //               child: ClipRRect(
+          //                 borderRadius: BorderRadius.circular(10),
+          //                 child: Image.network(
+          //                   // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+          //                   post.images![index].image,
+          //                   fit: BoxFit.cover,
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

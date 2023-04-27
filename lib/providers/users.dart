@@ -67,7 +67,7 @@ class Users with ChangeNotifier {
       return userError;
     }
     setLoading(false);
-    // notifyListeners();
+    notifyListeners();
   }
 
   Future<User?> getUserById(String uId) async {

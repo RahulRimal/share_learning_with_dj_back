@@ -38,6 +38,7 @@ class AppHeight {
   static const double h30 = 20.0;
   static const double h40 = 40.0;
   static const double h50 = 50.0;
+  static const double h60 = 60.0;
   static const double h75 = 75.0;
   static const double h100 = 100.0;
   static const double h125 = 100.0;

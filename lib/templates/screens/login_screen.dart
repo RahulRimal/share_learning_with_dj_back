@@ -122,7 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // showSpinner = true;
       _form.currentState!.save();
-      SessionProvider userSession = new SessionProvider();
+      // SessionProvider userSession = new SessionProvider();
+      SessionProvider userSession = Provider.of(context, listen: false);
       if (await userSession.createSession(usernameOrEmail, userpassword)) {
         if (mounted) {
           setState(() {

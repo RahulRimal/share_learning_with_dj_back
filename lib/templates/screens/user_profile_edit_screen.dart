@@ -5,12 +5,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
+import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
+import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/style_manager.dart';
 
@@ -106,7 +108,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
         }
       }
       BotToast.showSimpleNotification(
-        title: 'Post has been successfully updated',
+        title: 'Profile has been successfully updated',
         duration: Duration(seconds: 3),
         backgroundColor: ColorManager.primary,
         titleStyle: getBoldStyle(color: ColorManager.white),
@@ -141,12 +143,16 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    Session loggedInUserSession = args['loggedInUserSession'] as Session;
+    // Session loggedInUserSession = args['loggedInUserSession'] as Session;
 
-    User user = args['user'] as User;
-    _edittedUser = user;
+    // User user = args['user'] as User;
+    // Users _users = Provider.of<Users>(context);
+    Session loggedInUserSession =
+        Provider.of<SessionProvider>(context).session as Session;
+    User _user = Provider.of<Users>(context).user as User;
+    _edittedUser = _user as User;
 
     Users users = context.watch<Users>();
 
@@ -156,9 +162,9 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () async {
-              user.image = _addedImage?.path;
+              _user.image = _addedImage?.path;
               // users.updatePicture(loggedInUserSession, user);
-              if (await users.updatePicture(loggedInUserSession, user)) {
+              if (await users.updatePicture(loggedInUserSession, _user)) {
                 Navigator.pop(context);
               }
 
@@ -176,13 +182,19 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
             children: [
               Center(
                 child: CircleAvatar(
-                  radius: 70,
-                  backgroundImage: _imageAdded
-                      ? FileImage(File(_addedImage!.path)) as ImageProvider
-                      : NetworkImage(
-                          UserHelper.userProfileImage(user),
-                        ),
-                ),
+                    radius: 70,
+                    backgroundImage: _imageAdded
+                        ? FileImage(File(_addedImage!.path)) as ImageProvider
+                        // : NetworkImage(
+                        //     UserHelper.userProfileImage(user),
+                        //   ),
+                        : _user.image != null
+                            ? NetworkImage(
+                                UserHelper.userProfileImage(_user),
+                              ) as ImageProvider
+                            : AssetImage(
+                                ImageAssets.noProfile,
+                              )),
               ),
               ElevatedButton(
                 child: Text('From Gallery'),
@@ -352,12 +364,11 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                         ),
                         onPressed: () async {
                           if (await _updateProfile(
-                              loggedInUserSession, user, _edittedUser))
+                              loggedInUserSession, _user, _edittedUser))
                             Navigator.pushReplacementNamed(
-                                context, UserProfileScreen.routeName,
-                                arguments: {
-                                  'loggedInUserSession': loggedInUserSession,
-                                });
+                              context,
+                              UserProfileScreen.routeName,
+                            );
                           // _showUpdateSnackbar(context);
                           // BotToast.showSimpleNotification(
                           //   title: 'Posted Updated Successfully',
@@ -369,7 +380,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                           // );
                         },
                         child: Text(
-                          'Update Post',
+                          'Update Profile',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

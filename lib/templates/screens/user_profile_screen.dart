@@ -475,7 +475,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ],
       ),
       body: SafeArea(
-        child: _profilePageUI(userSession, user),
+        child: SingleChildScrollView(
+          child: _profilePageUI(userSession, user),
+        ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         index: 2,

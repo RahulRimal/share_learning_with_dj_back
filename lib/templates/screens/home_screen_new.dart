@@ -4,10 +4,12 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/providers/filters.dart';
+import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/book_filters.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
@@ -165,18 +167,31 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             ),
           ),
           actions: [
-            Padding(
+            IconButton(
               padding: const EdgeInsets.only(
                 right: AppPadding.p20,
                 top: AppPadding.p4,
                 bottom: AppPadding.p4,
               ),
-              child: _user.id != "temp"
-                  ? CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        (UserHelper.userProfileImage(_user)),
-                      ),
-                    )
+              iconSize: AppSize.s40,
+              onPressed: () =>
+                  Navigator.pushNamed(context, UserProfileScreen.routeName),
+              icon: _user.id != "temp"
+                  ?
+                  // CircleAvatar(
+                  //     backgroundImage: NetworkImage(
+                  //       (UserHelper.userProfileImage(_user)),
+                  //     ),
+                  //   )
+                  _user.image == null
+                      ? CircleAvatar(
+                          // radius: AppRadius.r24,
+                          backgroundImage: AssetImage(ImageAssets.noProfile),
+                        )
+                      : CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(UserHelper.userProfileImage(_user)),
+                        )
                   : FutureBuilder(
                       future: _users
                           .getUserByToken(authenticatedSession.accessToken),
@@ -189,8 +204,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         } else {
                           if (snapshot.hasError) {
                             return CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  'https://ojasfilms.org/assets/img/ojas-logo.png'),
+                              // backgroundImage: NetworkImage(
+                              //     'https://ojasfilms.org/assets/img/ojas-logo.png'),
+                              backgroundImage:
+                                  AssetImage(ImageAssets.noProfile),
                             );
                           } else {
                             if (snapshot.data is UserError) {
@@ -198,12 +215,18 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               return Text(error.message as String);
                             } else {
                               _user = snapshot.data as User;
-                              return CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    _user.image == null
-                                        ? RemoteManager.IMAGE_PLACEHOLDER
-                                        : UserHelper.userProfileImage(_user)),
-                              );
+                              return _user.image == null
+                                  ? CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(ImageAssets.noProfile),
+                                    )
+                                  : CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          // _user.image == null
+                                          //     ? RemoteManager.IMAGE_PLACEHOLDER
+                                          //     :
+                                          UserHelper.userProfileImage(_user)),
+                                    );
                             }
                           }
                         }
