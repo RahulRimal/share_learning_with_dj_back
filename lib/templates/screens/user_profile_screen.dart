@@ -396,7 +396,51 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 iconColor: ColorManager.black,
                 textColor: ColorManager.black,
                 tileColor: ColorManager.white,
-                onTap: () {},
+                onTap: () {
+                  // Define a list of options
+                  List<String> languages = [
+                    'English',
+                    'Nepali',
+                    'Hindi',
+                    'Chinese',
+                  ];
+
+                  String selectedLanguage = 'English';
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        // title: Text('Select an option'),
+                        contentPadding: EdgeInsets.zero,
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: languages
+                              .map(
+                                (option) => ListTile(
+                                  tileColor: selectedLanguage == option
+                                      ? ColorManager.lightGrey
+                                      : null,
+                                  title: Text(
+                                    option,
+                                    style: getBoldStyle(
+                                      color: ColorManager.black,
+                                      fontSize: FontSize.s16,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    // Do something when the option is tapped
+                                    selectedLanguage = option;
+                                    Navigator.of(context).pop(option);
+                                  },
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      );
+                    },
+                  );
+                },
                 leading: Icon(
                   Icons.language,
                   size: FontSize.s24,
@@ -417,7 +461,49 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 iconColor: ColorManager.black,
                 textColor: ColorManager.black,
                 tileColor: ColorManager.white,
-                onTap: () {},
+                onTap: () {
+                  // Define a list of options
+                  List<String> appThemes = [
+                    'Light',
+                    'Dark',
+                  ];
+
+                  String selectedMode = 'Light';
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        // title: Text('Select an option'),
+                        contentPadding: EdgeInsets.zero,
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: appThemes
+                              .map(
+                                (option) => ListTile(
+                                  tileColor: selectedMode == option
+                                      ? ColorManager.lightGrey
+                                      : null,
+                                  title: Text(
+                                    option,
+                                    style: getBoldStyle(
+                                      color: ColorManager.black,
+                                      fontSize: FontSize.s16,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    // Do something when the option is tapped
+                                    selectedMode = option;
+                                    Navigator.of(context).pop(option);
+                                  },
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      );
+                    },
+                  );
+                },
                 leading: Icon(
                   Icons.dark_mode_outlined,
                   size: FontSize.s24,

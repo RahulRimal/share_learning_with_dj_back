@@ -36,6 +36,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
   // final _booksCountFocusNode = FocusNode();
   // final _descFocusNode = FocusNode();
 
+  bool _showLoading = false;
   ImagePicker imagePicker = ImagePicker();
 
   bool _imageAdded = false;
@@ -363,21 +364,38 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                               Theme.of(context).primaryColor),
                         ),
                         onPressed: () async {
+                          setState(() => _showLoading = true);
+
+                          if (_showLoading) {
+                            // BotToast.showLoading(
+
+                            // );
+                            BotToast.showCustomLoading(
+                              toastBuilder: (cancelFunc) => Container(
+                                width: 100,
+                                height: 100,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    // Colors.white,
+                                    ColorManager.primary,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
                           if (await _updateProfile(
                               loggedInUserSession, _user, _edittedUser))
-                            Navigator.pushReplacementNamed(
-                              context,
-                              UserProfileScreen.routeName,
-                            );
-                          // _showUpdateSnackbar(context);
-                          // BotToast.showSimpleNotification(
-                          //   title: 'Posted Updated Successfully',
-                          //   duration: Duration(seconds: 3),
-                          //   backgroundColor: ColorManager.primary,
-                          //   titleStyle:
-                          //       getBoldStyle(color: ColorManager.white),
-                          //   align: Alignment(1, 1),
-                          // );
+                            setState(() => {_showLoading = false});
+                          Navigator.pushReplacementNamed(
+                            context,
+                            UserProfileScreen.routeName,
+                          );
                         },
                         child: Text(
                           'Update Profile',
