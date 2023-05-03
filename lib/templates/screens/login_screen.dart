@@ -22,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/carts.dart';
 import '../../providers/users.dart';
 import '../managers/assets_manager.dart';
+import '../managers/values_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.title}) : super(key: key);
@@ -411,15 +412,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   textInputAction:
                       isPassword ? TextInputAction.done : TextInputAction.next,
-                  // keyboardType:
-                  //     isPassword ? TextInputType.number : TextInputType.text,
                   keyboardType: TextInputType.text,
                   decoration: new InputDecoration(
+                    // contentPadding: EdgeInsets.symmetric(
+                    //   horizontal: AppPadding.p12,
+                    //   vertical: AppPadding.p2,
+                    // ),
+                    // contentPadding: EdgeInsets.only(
+                    //   top: 0,
+                    //   left: AppPadding.p12,
+                    //   bottom: AppPadding.p12,
+                    // ),
                     suffix: isPassword
                         ? IconButton(
-                            icon: Icon(visible
-                                ? Icons.visibility
-                                : Icons.visibility_off),
+                            padding: EdgeInsets.zero,
+                            icon: Icon(
+                              visible ? Icons.visibility : Icons.visibility_off,
+                            ),
                             onPressed: () {
                               setState(() {
                                 visible = !visible;
