@@ -65,52 +65,50 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _googleSignIn() async {
-    // setState(() {
-    //   showSpinner = true;
-    // });
-    // final users = Provider.of<Users>(context, listen: false);
-    // final sessions = Provider.of<SessionProvider>(context, listen: false);
-    // var response = await users.googleSignIn();
+    setState(() {
+      showSpinner = true;
+    });
+    final users = Provider.of<Users>(context, listen: false);
+    final sessions = Provider.of<SessionProvider>(context, listen: false);
+    var response = await users.googleSignIn();
 
-    // if (response is Success) {
-    //   sessions.setSession((response.response as Map)['session']);
+    if (response is Success) {
+      sessions.setSession((response.response as Map)['session']);
 
-    //   SharedPreferences prefs = await _prefs;
+      SharedPreferences prefs = await _prefs;
 
-    //   Users users = Provider.of<Users>(context, listen: false);
-    //   users.getUserByToken(sessions.session!.accessToken);
+      Users users = Provider.of<Users>(context, listen: false);
+      users.getUserByToken(sessions.session!.accessToken);
 
-    //   prefs.setString('accessToken', sessions.session!.accessToken);
-    //   prefs.setString('refreshToken', sessions.session!.refreshToken);
+      prefs.setString('accessToken', sessions.session!.accessToken);
+      prefs.setString('refreshToken', sessions.session!.refreshToken);
 
-    //   if (!prefs.containsKey('cartId')) {
-    //     if (await Provider.of<Carts>(context, listen: false)
-    //         .createCart(sessions.session as Session)) {
-    //       prefs.setString('cartId',
-    //           Provider.of<Carts>(context, listen: false).cart!.id.toString());
-    //     } else {
-    //       print('here');
-    //     }
-    //   } else {
-    //     print('here');
-    //   }
+      if (!prefs.containsKey('cartId')) {
+        if (await Provider.of<Carts>(context, listen: false)
+            .createCart(sessions.session as Session)) {
+          prefs.setString('cartId',
+              Provider.of<Carts>(context, listen: false).cart!.id.toString());
+        } else {
+          print('here');
+        }
+      } else {
+        print('here');
+      }
 
-    //   setState(() {
-    //     showSpinner = false;
-    //   });
-    //   if (prefs.containsKey('isFirstTime') &&
-    //       prefs.getBool('isFirstTime') == false) {
-    //     Navigator.of(context)
-
-    //         .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
-    //       'authSession': sessions.session,
-    //     });
-    //   } else {
-    //     Navigator.of(context)
-    //         .pushReplacementNamed(UserInterestsScreen.routeName);
-    //   }
-
-    // }
+      setState(() {
+        showSpinner = false;
+      });
+      if (prefs.containsKey('isFirstTime') &&
+          prefs.getBool('isFirstTime') == false) {
+        Navigator.of(context)
+            .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
+          'authSession': sessions.session,
+        });
+      } else {
+        Navigator.of(context)
+            .pushReplacementNamed(UserInterestsScreen.routeName);
+      }
+    }
   }
 
   void _saveForm() async {

@@ -129,8 +129,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             : CircleAvatar(
                                                 radius: AppRadius.r70,
                                                 backgroundImage: NetworkImage(
-                                                  UserHelper.userProfileImage(
-                                                      user),
+                                                  user.image!.contains('http')
+                                                      ? user.image as String
+                                                      : UserHelper
+                                                          .userProfileImage(
+                                                              user),
                                                 ),
                                               ),
                                       ),

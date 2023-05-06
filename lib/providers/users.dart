@@ -202,42 +202,20 @@ class Users with ChangeNotifier {
     return false;
   }
 
-  // Future<bool> updateUserData(String userId, String key, )
   Future<Object> updateUserData(
       String userId, String key, List<String> value) async {
     var response = await UserApi.updateUserData(userId, key, value);
-    // print(response);
-    // if (response is Success) {
-    // setUser(response.response as User);
-    // notifyListeners();
-    // return true;
-    // return {'message': response.response};
-    // }
-    // if (response is Failure) {
-    // UserError userError = UserError(
-    //   code: response.code,
-    //   message: response.errorResponse,
-    // );
-    // setUserError(userError);
-    // notifyListeners();
-    // return true;
-    // return {'message': response.errorResponse};
-    // }
-    // return false;
+
     return response;
   }
 
   Future<bool> haveProvidedData(String userId) async {
     var response = await UserApi.haveProvidedData(userId);
-    // print(response);
+
     if (response is Success) {
-      // return response.response;
       return true;
     }
-    // if(response is Failure)
-    // {
-    //   return false;
-    // }
+
     return false;
   }
 
@@ -245,8 +223,6 @@ class Users with ChangeNotifier {
       Session userSession, String userId, XFile image) async {
     setLoading(true);
     var response = await UserApi.postUserPicture(userSession, userId, image);
-
-    // print(response);
 
     if (response is Success) {
       setUser(response.response as User);
@@ -268,23 +244,23 @@ class Users with ChangeNotifier {
     return false;
   }
 
-  // Future<Object> googleSignIn() async {
-  //   var response = await UserApi.googleSignIn();
-  //   // print(response);
-  //   if (response is Success) {
-  //     setUser((response.response as Map)['user']);
-  //     notifyListeners();
-  //     return response;
-  //   }
-  //   if (response is Failure) {
-  //     UserError userError = UserError(
-  //       code: response.code,
-  //       message: response.errorResponse,
-  //     );
-  //     setUserError(userError);
-  //     notifyListeners();
-  //     return userError;
-  //   }
-  //   return response;
-  // }
+  Future<Object> googleSignIn() async {
+    var response = await UserApi.googleSignIn();
+    print(response);
+    if (response is Success) {
+      setUser((response.response as Map)['user']);
+      notifyListeners();
+      return response;
+    }
+    if (response is Failure) {
+      UserError userError = UserError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setUserError(userError);
+      notifyListeners();
+      return userError;
+    }
+    return response;
+  }
 }

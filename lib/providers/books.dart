@@ -380,8 +380,7 @@ class Books with ChangeNotifier {
     if (response is Success) {
       final postIndex = _myBooks.indexWhere((element) => element.id == postId);
       _myBooks.removeAt(postIndex);
-      // notifyListeners();
-      return true;
+      // return true;
     }
     if (response is Failure) {
       BookError bookError = BookError(
@@ -389,8 +388,7 @@ class Books with ChangeNotifier {
         message: response.errorResponse,
       );
       setBookError(bookError);
-      // notifyListeners();
-      return false;
+      // return false;
     }
     notifyListeners();
     return false;

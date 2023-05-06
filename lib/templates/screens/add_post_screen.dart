@@ -14,6 +14,7 @@ import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
+import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../providers/users.dart';
@@ -661,9 +662,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           align: Alignment(1, 1),
                           hideCloseButton: true,
                         );
+                        // Navigator.pushReplacementNamed(
+                        //     context, HomeScreen.routeName,
+                        //     arguments: {'authSession': loggedInUserSession});
                         Navigator.pushReplacementNamed(
-                            context, HomeScreen.routeName,
-                            arguments: {'authSession': loggedInUserSession});
+                          context,
+                          HomeScreenNew.routeName,
+                        );
                       }
                     },
                     child: Text(

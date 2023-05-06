@@ -15,8 +15,12 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
+import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
+
+import '../../models/user.dart';
+import '../../providers/users.dart';
 
 class EditPostScreen extends StatefulWidget {
   static const routeName = '/edit-post';
@@ -28,6 +32,7 @@ class EditPostScreen extends StatefulWidget {
 class _EditPostScreenState extends State<EditPostScreen> {
   bool _first = true;
   bool _presentInFile = true;
+  bool _showLoading = false;
 
   final _form = GlobalKey<FormState>();
 
@@ -273,6 +278,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     Categories categoriesProvier = Provider.of<Categories>(context);
 
     List<PostCategory> _categories = categoriesProvier.categories;
+    User loggedInUser = Provider.of<Users>(context).user as User;
 
     // dynamic _selectedCategory = _getBookCategory(
     //     context, loggedInUserSession, _edittedBook.category!.id);
@@ -281,17 +287,65 @@ class _EditPostScreenState extends State<EditPostScreen> {
       appBar: AppBar(
         title: Text('Edit Post'),
         actions: <Widget>[
-          // loggedInUserSession.userId == _edittedBook.userId
-          '1' == _edittedBook.userId
+          loggedInUser.id == _edittedBook.userId
+
+              // ? IconButton(
+              //     icon: Icon(Icons.save),
+              //     onPressed: () async {
+              //       if (await _updatePost(loggedInUserSession, _edittedBook))
+              //         Navigator.pushReplacementNamed(
+              //             context, HomeScreen.routeName,
+              //             arguments: {'authSession': loggedInUserSession});
+              //     },
+              //     // onPressed: _updatePost,
+              //   )
               ? IconButton(
-                  icon: Icon(Icons.save),
+                  icon: Icon(Icons.delete),
                   onPressed: () async {
-                    if (await _updatePost(loggedInUserSession, _edittedBook))
+                    setState(() => _showLoading = true);
+
+                    if (_showLoading) {
+                      BotToast.showCustomLoading(
+                        toastBuilder: (cancelFunc) => Container(
+                          width: 100,
+                          height: 100,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              // Colors.white,
+                              ColorManager.primary,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    if (await Provider.of<Books>(context, listen: false)
+                        .deletePost(loggedInUserSession, _edittedBook.id)) {
+                      setState(() => _showLoading = false);
+                      BotToast.showSimpleNotification(
+                        title: 'Post has been deleted successfully',
+                        duration: Duration(seconds: 3),
+                        backgroundColor: ColorManager.primary,
+                        titleStyle: getBoldStyle(color: ColorManager.white),
+                        align: Alignment(1, 1),
+                      );
                       Navigator.pushReplacementNamed(
-                          context, HomeScreen.routeName,
-                          arguments: {'authSession': loggedInUserSession});
+                          context, HomeScreenNew.routeName);
+                    } else {
+                      BotToast.showSimpleNotification(
+                        title: 'Something went wrong',
+                        duration: Duration(seconds: 3),
+                        backgroundColor: ColorManager.primary,
+                        titleStyle: getBoldStyle(color: ColorManager.white),
+                        align: Alignment(1, 1),
+                      );
+                      setState(() => _showLoading = false);
+                    }
                   },
-                  // onPressed: _updatePost,
                 )
               : Container(),
         ],
@@ -678,10 +732,35 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).primaryColor),
                     ),
-                    // onPressed: _savePost,
                     onPressed: () async {
-                      if (await _updatePost(loggedInUserSession, _edittedBook))
-                        // _showUpdateSnackbar(context);
+                      setState(() => _showLoading = true);
+
+                      if (_showLoading) {
+                        // BotToast.showLoading(
+
+                        // );
+                        BotToast.showCustomLoading(
+                          toastBuilder: (cancelFunc) => Container(
+                            width: 100,
+                            height: 100,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                // Colors.white,
+                                ColorManager.primary,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      if (await _updatePost(
+                          loggedInUserSession, _edittedBook)) {
+                        setState(() => {_showLoading = false});
+
                         BotToast.showSimpleNotification(
                           title: 'Posted Updated Successfully',
                           duration: Duration(seconds: 3),
@@ -689,6 +768,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                           titleStyle: getBoldStyle(color: ColorManager.white),
                           align: Alignment(1, 1),
                         );
+                        Navigator.pushReplacementNamed(
+                          context,
+                          HomeScreenNew.routeName,
+                        );
+                      }
                     },
                     child: Text(
                       'Update Post',

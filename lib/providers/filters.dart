@@ -118,6 +118,15 @@ class BookFilters with ChangeNotifier {
     List<Book> filteredBooks = _allBooks;
     // print('here');
 
+    if (filters.containsKey('sort_by')) {
+      if (filters['sort_by'] == 'low_to_high') {
+        filteredBooks.sort((a, b) => a.price.compareTo(b.price));
+      }
+      if (filters['sort_by'] == 'high_to_low') {
+        filteredBooks.sort((a, b) => b.price.compareTo(a.price));
+      }
+    }
+
     if (filters.containsKey('min_price')) {
       filteredBooks = filteredBooks
           .where((book) => book.price >= filters['min_price'])

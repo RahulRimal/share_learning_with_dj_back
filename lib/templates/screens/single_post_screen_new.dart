@@ -1650,12 +1650,14 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Image.network(
-                  // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                  post.images![_selectedImage].image,
-                  fit: BoxFit.cover,
-                  height: MediaQuery.of(context).size.height * 0.4,
-                ),
+                post.images!.isEmpty
+                    ? Container()
+                    : Image.network(
+                        // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+                        post.images![_selectedImage].image,
+                        fit: BoxFit.cover,
+                        height: MediaQuery.of(context).size.height * 0.4,
+                      ),
                 Positioned(
                   bottom: 0,
                   left: 0,

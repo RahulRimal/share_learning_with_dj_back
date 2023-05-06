@@ -7,9 +7,6 @@ class UserHelper {
   }
 
   static String userProfileImage(User user) {
-    // String username = user.username.toString();
-
-    // return "${RemoteManager.PROFILE_POOL}/$username/${user.image}";
     return user.image == null
         ? RemoteManager.IMAGE_PLACEHOLDER
         : user.image!.contains('http://')

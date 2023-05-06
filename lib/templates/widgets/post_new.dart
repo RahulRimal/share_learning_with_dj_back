@@ -62,9 +62,11 @@ class _PostNewState extends State<PostNew> {
                 topLeft: Radius.circular(10),
                 topRight: Radius.circular(10),
               ),
-              child: Image.network(
-                post.images![0].image,
-              ),
+              child: post.images!.isEmpty
+                  ? Container()
+                  : Image.network(
+                      post.images![0].image,
+                    ),
             ),
             Align(
               alignment: Alignment.topRight,
