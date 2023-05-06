@@ -1,4 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
@@ -32,11 +34,62 @@ import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
+import 'package:share_learning/templates/utils/notification_service.dart';
+import 'firebase_options.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
 import 'templates/screens/order_screen_new.dart';
 
-void main() => runApp(MyApp());
+Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message: ${message.messageId}');
+  if (message.notification != null) {
+    print("Message also contained a notification: ${message.notification}");
+    NotificationService.showNotification(
+      title: message.notification!.title as String,
+      body: message.notification!.body as String,
+    );
+  }
+}
+
+// void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // print(await messaging.getToken());
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  print("Granted permissions:  ${settings.authorizationStatus}");
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print("Message data ${message.data}");
+
+    if (message.notification != null) {
+      print("Message also contained a notification: ${message.notification}");
+      NotificationService.showNotification(
+        title: message.notification!.title as String,
+        body: message.notification!.body as String,
+      );
+    }
+  });
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessengingBackgroundHandler);
+  await NotificationService.initializeNotification();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
