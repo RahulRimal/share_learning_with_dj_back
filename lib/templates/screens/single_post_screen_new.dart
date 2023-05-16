@@ -1,9 +1,12 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:share_learning/models/order_request.dart';
+import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/edit_post_screen.dart';
@@ -15,11 +18,13 @@ import '../../models/cart_item.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../providers/carts.dart';
+import '../../providers/order_request_provider.dart';
 import '../../providers/sessions.dart';
 import '../../providers/users.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
+import '../widgets/billing_info.dart';
 
 class SinglePostScreenNew extends StatefulWidget {
   static const routeName = '/post-details-new';
@@ -919,13 +924,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     postRating: 0.0,
   );
 
-  _checkBookInCart(Carts carts, Book selectedPost) {
-    var check = carts.cartItems
-        .indexWhere((element) => element.product.id == selectedPost.id);
-    if (check == -1) return false;
-    return true;
-  }
-
   NepaliDateTime _getTomorrowDate() {
     NepaliDateTime initDate = NepaliDateTime.now();
     NepaliDateTime tomorrow =
@@ -968,667 +966,904 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    Session authenticatedSession =
+        Provider.of<SessionProvider>(context).session as Session;
     final _form = GlobalKey<FormState>();
     Book selectedPost = widget.selectedPost;
     Users users = context.watch<Users>();
 
     Carts carts = Provider.of<Carts>(context);
+    OrderRequests orderRequests = Provider.of<OrderRequests>(context);
+    Orders orders = Provider.of<Orders>(context);
+
     User _loggedInUser;
     if (users.user != null) {
       _loggedInUser = users.user as User;
     } else {
       _loggedInUser = widget.loggedInUser;
     }
-    return _loggedInUser.id != selectedPost.userId
-        ? (context.watch<Carts>().cartItems.length > 0 &&
-                _checkBookInCart(carts, selectedPost)
-            ? ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: ColorManager.grey,
-                  // primary: Colors.black,
-                  minimumSize: const Size.fromHeight(50), // NEW
-                ),
-                onPressed: () async {},
-                child: const Text(
-                  'Book already ordered',
-                  style: TextStyle(fontSize: 24),
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(AppPadding.p8),
-                child: selectedPost.userId == _loggedInUser.id
-                    ? null
-                    : carts.cartItemsContains(int.parse(selectedPost.id))
-                        ? ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                CartScreen.routeName,
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              // primary: ColorManager.primaryColorWithOpacity,
-                              primary: ColorManager.primary,
-                              minimumSize: const Size.fromHeight(40), // NEW
-                            ),
-                            child: const Text(
-                              // "Already added to cart",
-                              "Go to cart",
-                              style: TextStyle(
-                                fontSize: FontSize.s16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+
+    if (_loggedInUser.id == selectedPost.userId) {
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPadding.p14,
+          vertical: AppPadding.p4,
+        ),
+        child: ElevatedButton(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.05,
+            alignment: Alignment.center,
+            child: Text(
+              'Edit post',
+              style: getBoldStyle(
+                color: ColorManager.white,
+                fontSize: FontSize.s16,
+              ),
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(context)
+                .pushNamed(EditPostScreen.routeName, arguments: {
+              'bookId': selectedPost.id,
+              'loggedInUserSession':
+                  Provider.of<SessionProvider>(context, listen: false).session,
+            });
+          },
+        ),
+      );
+    }
+    if (carts.cartItemsContains(int.parse(selectedPost.id))) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppPadding.p12,
+          horizontal: AppPadding.p12,
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              CartScreen.routeName,
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            // primary: ColorManager.primaryColorWithOpacity,
+            primary: ColorManager.primary,
+            minimumSize: const Size.fromHeight(40), // NEW
+          ),
+          child: const Text(
+            // "Already added to cart",
+            "Go to cart",
+            style: TextStyle(
+              fontSize: FontSize.s16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+    if (orderRequests.orderRequestsContains(int.parse(selectedPost.id))) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppPadding.p12,
+          horizontal: AppPadding.p12,
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              CartScreen.routeName,
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            primary: ColorManager.primary,
+            minimumSize: const Size.fromHeight(40), // NEW
+          ),
+          child: const Text(
+            "Check request status",
+            style: TextStyle(
+              fontSize: FontSize.s16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(AppPadding.p8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppPadding.p18,
+          vertical: AppPadding.p8,
+        ),
+        child: SizedBox(
+          height: AppHeight.h40,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Text(
+                      'Total price',
+                      softWrap: true,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        fontSize: FontSize.s12,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: AppPadding.p2,
+                    ),
+                    child: Text(
+                      'Rs. ${selectedPost.price}',
+                      softWrap: true,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: FontSize.s17,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                ],
+              ),
+              orderRequests.orderRequests.firstWhereOrNull((orderRequest) =>
+                          orderRequest.product.id == _buyerExpectedBook.id) !=
+                      null
+                  ? ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Check request progress',
+                      ),
+                    )
+                  : ElevatedButton.icon(
+                      onPressed: () {
+                        _buyerExpectedBook = selectedPost;
+                        showModalBottomSheet(
+                          barrierColor: ColorManager.blackWithLowOpacity,
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(AppRadius.r20),
+                              topRight: Radius.circular(
+                                AppRadius.r20,
                               ),
                             ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppPadding.p18,
-                              vertical: AppPadding.p8,
-                            ),
-                            child: SizedBox(
-                              height: AppHeight.h40,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          'Total price',
-                                          softWrap: true,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey,
-                                            fontSize: FontSize.s12,
-                                          ),
-                                          textAlign: TextAlign.start,
+                          ),
+                          context: context,
+                          builder: (context) {
+                            ValueNotifier<bool> _shouldRequest =
+                                ValueNotifier(false);
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                top: AppPadding.p8,
+                                left: AppPadding.p8,
+                                right: AppPadding.p8,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom,
+                              ),
+                              child: Form(
+                                key: _form,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: AppPadding.p18,
+                                          horizontal: AppPadding.p12,
                                         ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                          top: AppPadding.p2,
-                                        ),
-                                        child: Text(
-                                          'Rs. ${selectedPost.price}',
-                                          softWrap: true,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: FontSize.s17,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      _buyerExpectedBook = selectedPost;
-                                      showModalBottomSheet(
-                                        barrierColor:
-                                            ColorManager.blackWithLowOpacity,
-                                        isScrollControlled: true,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft:
-                                                Radius.circular(AppRadius.r20),
-                                            topRight: Radius.circular(
-                                              AppRadius.r20,
+                                        child: TextFormField(
+                                          controller: _datePickercontroller,
+                                          focusNode: _buyerDateFocusNode,
+                                          keyboardType: TextInputType.datetime,
+                                          cursorColor:
+                                              Theme.of(context).primaryColor,
+                                          decoration: InputDecoration(
+                                            labelText: 'Your expected deadline',
+                                            suffix: IconButton(
+                                              icon: Icon(Icons.calendar_today),
+                                              tooltip:
+                                                  'Tap to open date picker',
+                                              onPressed: () {
+                                                _showPicker(context);
+                                              },
                                             ),
                                           ),
+                                          textInputAction: TextInputAction.next,
+                                          autovalidateMode:
+                                              AutovalidateMode.always,
+                                          onFieldSubmitted: (_) {
+                                            FocusScope.of(context).requestFocus(
+                                                _buyerPriceFocusNode);
+                                          },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please provide your expected deadline';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (value) {},
                                         ),
-                                        context: context,
-                                        builder: (context) {
-                                          return Padding(
-                                            padding: EdgeInsets.only(
-                                              top: AppPadding.p8,
-                                              left: AppPadding.p8,
-                                              right: AppPadding.p8,
-                                              bottom: MediaQuery.of(context)
-                                                  .viewInsets
-                                                  .bottom,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: AppPadding.p8,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: AppPadding.p12,
+                                              ),
+                                              child: TextFormField(
+                                                initialValue: _buyerExpectedBook
+                                                    .price
+                                                    .round()
+                                                    .toString(),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                cursorColor: Theme.of(context)
+                                                    .primaryColor,
+                                                focusNode: _buyerPriceFocusNode,
+                                                decoration: InputDecoration(
+                                                  prefix: Text('Rs. '),
+                                                  labelText:
+                                                      'Expected price per piece',
+                                                  focusColor: Colors.redAccent,
+                                                ),
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                autovalidateMode:
+                                                    AutovalidateMode.always,
+                                                onFieldSubmitted: (_) {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(
+                                                          _buyerBooksCountFocusNode);
+                                                },
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return 'Price can\'t be empty';
+                                                  }
+                                                  if (double.tryParse(value) ==
+                                                      null) {
+                                                    return 'Invalid number';
+                                                  }
+                                                  return null;
+                                                },
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _expectedUnitPrice =
+                                                        double.parse(value);
+                                                    print(_expectedUnitPrice);
+                                                    print(_buyerExpectedBook
+                                                        .price);
+                                                    if (_expectedUnitPrice ==
+                                                        _buyerExpectedBook
+                                                            .price) {
+                                                      _shouldRequest.value =
+                                                          false;
+                                                    } else {
+                                                      _shouldRequest.value =
+                                                          true;
+                                                    }
+                                                    print(_shouldRequest);
+                                                  });
+                                                },
+                                                // onSaved: (value) {
+                                                //   _expectedUnitPrice =
+                                                //       double.parse(
+                                                //           value
+                                                //               as String);
+                                                // },
+                                              ),
                                             ),
-                                            child: Form(
-                                              key: _form,
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Flexible(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        vertical:
-                                                            AppPadding.p18,
-                                                        horizontal:
-                                                            AppPadding.p12,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: AppPadding.p12,
+                                            ),
+                                            // child:
+                                            //     TextFormField(
+                                            //   initialValue:
+                                            //       _buyerExpectedBook
+                                            //           .bookCount
+                                            //           .toString(),
+                                            //   focusNode:
+                                            //       _buyerBooksCountFocusNode,
+                                            //   keyboardType:
+                                            //       TextInputType
+                                            //           .number,
+                                            //   cursorColor: Theme
+                                            //           .of(context)
+                                            //       .primaryColor,
+                                            //   decoration:
+                                            //       InputDecoration(
+                                            //     labelText:
+                                            //         'Number of Books you want',
+                                            //   ),
+                                            //   textInputAction:
+                                            //       TextInputAction
+                                            //           .next,
+                                            //   autovalidateMode:
+                                            //       AutovalidateMode
+                                            //           .always,
+                                            //   // onFieldSubmitted: (_) {
+                                            //   //   FocusScope.of(context).requestFocus(_descFocusNode);
+                                            //   // },
+                                            //   validator:
+                                            //       (value) {
+                                            //     if (double.tryParse(
+                                            //             value
+                                            //                 as String) ==
+                                            //         null) {
+                                            //       return 'Invalid Number';
+                                            //     }
+
+                                            //     if (double.parse(
+                                            //             value) <
+                                            //         1) {
+                                            //       return 'Book count must be at least 1';
+                                            //     }
+                                            //     return null;
+                                            //   },
+                                            //   onSaved: (value) {
+                                            //     _buyerExpectedBook
+                                            //             .bookCount =
+                                            //         int.parse(value
+                                            //             .toString());
+                                            //     print(
+                                            //         _buyerExpectedBook);
+                                            //   },
+                                            // ),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[200],
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              // child: ButtonBar(
+                                              //   buttonPadding:
+                                              //       EdgeInsets
+                                              //           .zero,
+                                              //   children: [
+                                              //     IconButton(
+                                              //       color: Colors
+                                              //           .black,
+                                              //       padding:
+                                              //           EdgeInsets
+                                              //               .zero,
+                                              //       disabledColor:
+                                              //           Colors
+                                              //               .grey,
+                                              //       splashRadius:
+                                              //           AppRadius
+                                              //               .r12,
+                                              //       onPressed:
+                                              //           _itemCount >
+                                              //                   1
+                                              //               ? () {
+                                              //                   setState(() {
+                                              //                     _itemCount--;
+                                              //                   });
+                                              //                 }
+                                              //               : null,
+                                              //       icon: Icon(Icons
+                                              //           .remove),
+                                              //     ),
+                                              //     Text(
+                                              //       _itemCount
+                                              //           .toString(),
+                                              //       textAlign:
+                                              //           TextAlign
+                                              //               .center,
+                                              //       style:
+                                              //           getBoldStyle(
+                                              //         color: ColorManager
+                                              //             .black,
+                                              //         fontSize:
+                                              //             FontSize
+                                              //                 .s17,
+                                              //       ),
+                                              //     ),
+                                              //     IconButton(
+                                              //       color: Colors
+                                              //           .black,
+                                              //       padding:
+                                              //           EdgeInsets
+                                              //               .zero,
+                                              //       disabledColor:
+                                              //           Colors
+                                              //               .grey,
+                                              //       splashRadius:
+                                              //           AppRadius
+                                              //               .r12,
+                                              //       onPressed:
+                                              //           () {
+                                              //         setState(
+                                              //             () {
+                                              //           _itemCount++;
+                                              //         });
+                                              //       },
+                                              //       icon: Icon(
+                                              //           Icons
+                                              //               .add),
+                                              //     ),
+                                              //   ],
+                                              // ),
+                                              child: StatefulBuilder(builder:
+                                                  (BuildContext context,
+                                                      StateSetter setState) {
+                                                return Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    IconButton(
+                                                      color: Colors.black,
+                                                      padding: EdgeInsets.zero,
+                                                      disabledColor:
+                                                          Colors.grey,
+                                                      splashRadius:
+                                                          AppRadius.r12,
+                                                      onPressed: _itemCount > 1
+                                                          ? () {
+                                                              setState(() {
+                                                                _itemCount--;
+                                                              });
+                                                            }
+                                                          : null,
+                                                      icon: Icon(Icons.remove),
+                                                    ),
+                                                    Text(
+                                                      _itemCount.toString(),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: getBoldStyle(
+                                                        color:
+                                                            ColorManager.black,
+                                                        fontSize: FontSize.s17,
                                                       ),
-                                                      child: TextFormField(
-                                                        controller:
-                                                            _datePickercontroller,
-                                                        focusNode:
-                                                            _buyerDateFocusNode,
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .datetime,
-                                                        cursorColor:
-                                                            Theme.of(context)
-                                                                .primaryColor,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          labelText:
-                                                              'Your expected deadline',
-                                                          suffix: IconButton(
-                                                            icon: Icon(Icons
-                                                                .calendar_today),
-                                                            tooltip:
-                                                                'Tap to open date picker',
-                                                            onPressed: () {
-                                                              _showPicker(
-                                                                  context);
-                                                            },
-                                                          ),
+                                                    ),
+                                                    IconButton(
+                                                      color: Colors.black,
+                                                      padding: EdgeInsets.zero,
+                                                      disabledColor:
+                                                          Colors.grey,
+                                                      splashRadius:
+                                                          AppRadius.r12,
+                                                      onPressed: selectedPost
+                                                                  .bookCount >
+                                                              _itemCount
+                                                          ? () {
+                                                              setState(() {
+                                                                _itemCount++;
+                                                              });
+                                                            }
+                                                          : null,
+                                                      icon: Icon(Icons.add),
+                                                    ),
+                                                  ],
+                                                );
+                                              }),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Wrap(
+                                      spacing: AppHeight.h16,
+                                      alignment: WrapAlignment.center,
+                                      runSpacing: AppHeight.h4,
+                                      children: [
+                                        ValueListenableBuilder(
+                                            valueListenable: _shouldRequest,
+                                            builder: (BuildContext context,
+                                                bool shouldRequest,
+                                                Widget? child) {
+                                              return ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    // minimumSize:
+                                                    // const Size
+                                                    //     .fromHeight(40),
+                                                    ),
+                                                child: _isLoading
+                                                    ? CircularProgressIndicator
+                                                        .adaptive()
+                                                    : Text(
+                                                        'Request for this price',
+                                                        style: getBoldStyle(
+                                                          color: ColorManager
+                                                              .white,
+                                                          fontSize:
+                                                              FontSize.s14,
                                                         ),
-                                                        textInputAction:
-                                                            TextInputAction
-                                                                .next,
-                                                        autovalidateMode:
-                                                            AutovalidateMode
-                                                                .always,
-                                                        onFieldSubmitted: (_) {
-                                                          FocusScope.of(context)
-                                                              .requestFocus(
-                                                                  _buyerPriceFocusNode);
-                                                        },
-                                                        validator: (value) {
-                                                          if (value!.isEmpty) {
-                                                            return 'Please provide your expected deadline';
+                                                      ),
+                                                onPressed: !shouldRequest
+                                                    ? null
+                                                    // : () async {
+                                                    //     setState(() {
+                                                    //       _isLoading = true;
+                                                    //     });
+
+                                                    //     if (carts.cart == null) {
+                                                    //       await carts.createCart(Provider.of<SessionProvider>(context, listen: false).session as Session);
+                                                    //       // print(carts.cart);
+                                                    //     }
+                                                    //     if (carts.cart != null) {
+                                                    //       final isValid = _form.currentState!.validate();
+                                                    //       if (!isValid) {
+                                                    //         _showToastNotification('Something went wrong');
+                                                    //       }
+                                                    //       _form.currentState!.save();
+
+                                                    //       CartItem edittedItem = new CartItem(
+                                                    //         id: 0,
+                                                    //         product: new Product(
+                                                    //           id: int.parse(selectedPost.id),
+                                                    //           bookName: selectedPost.bookName,
+                                                    //           unitPrice: selectedPost.price.toString(),
+                                                    //         ),
+                                                    //         quantity: _itemCount,
+                                                    //         expectedUnitPrice: _expectedUnitPrice,
+                                                    //         totalPrice: 0,
+                                                    //       );
+
+                                                    //       if (await carts.addItemToCart(carts.cart as Cart, edittedItem)) {
+                                                    //         // await carts.createCart(Provider.of<SessionProvider>(context, listen: false).session as Session);
+                                                    //         Navigator.pop(context);
+                                                    //         _showToastNotification('Book added to cart successfully');
+                                                    //       }
+                                                    //     } else {
+                                                    //       _showToastNotification('Something went wrong');
+                                                    //     }
+                                                    //   },
+                                                    : () async {
+                                                        setState(() {
+                                                          _isLoading = true;
+                                                        });
+
+                                                        final isValid = _form
+                                                            .currentState!
+                                                            .validate();
+                                                        if (!isValid) {
+                                                          _showToastNotification(
+                                                              'Something went wrong');
+                                                        }
+                                                        _form.currentState!
+                                                            .save();
+                                                        Map<String, dynamic>
+                                                            requestInfo = {
+                                                          'product_id':
+                                                              _buyerExpectedBook
+                                                                  .id,
+                                                          'quantity':
+                                                              _itemCount,
+                                                          'requested_price':
+                                                              _expectedUnitPrice
+                                                        };
+
+                                                        if (await orderRequests
+                                                            .createOrderRequest(
+                                                                authenticatedSession,
+                                                                requestInfo)) {
+                                                          Navigator.pop(
+                                                              context);
+                                                          _showToastNotification(
+                                                              'Request has been sent successfully');
+                                                        } else {
+                                                          _showToastNotification(
+                                                              'Something went wrong');
+                                                        }
+                                                      },
+                                              );
+                                            }),
+                                        ValueListenableBuilder(
+                                            valueListenable: _shouldRequest,
+                                            builder: (BuildContext context,
+                                                bool shouldRequest,
+                                                Widget? child) {
+                                              return ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    // minimumSize:
+                                                    //     const Size
+                                                    //             .fromHeight(
+                                                    //         AppHeight
+                                                    //             .h36),
+                                                    ),
+                                                child: _isLoading
+                                                    ? CircularProgressIndicator
+                                                        .adaptive()
+                                                    : Text(
+                                                        'Add book to cart',
+                                                        style: getBoldStyle(
+                                                          color: ColorManager
+                                                              .white,
+                                                          fontSize:
+                                                              FontSize.s14,
+                                                        ),
+                                                      ),
+                                                onPressed: shouldRequest
+                                                    ? null
+                                                    : () async {
+                                                        // ----------------------Order without cart starts here ----------------------
+                                                        // if (await orders.getUserOrder(
+                                                        //     loggedInUserSession,
+                                                        //     users.user as User)) {
+                                                        //   final isValid = _form
+                                                        //       .currentState!
+                                                        //       .validate();
+                                                        //   if (!isValid) {
+                                                        //     _showToastNotification(
+                                                        //         'Something went wrong');
+                                                        //   }
+                                                        //   _form.currentState!.save();
+                                                        //   OrderItem item =
+                                                        //       new OrderItem(
+                                                        //           id: 0,
+                                                        //           productId: int.parse(
+                                                        //               selectedPost.id),
+                                                        //           quantity:
+                                                        //               _buyerExpectedBook
+                                                        //                   .bookCount);
+                                                        //   if (await orders.addOrderItem(
+                                                        //       item,
+                                                        //       orders.order as Order)) {
+                                                        //     Navigator.pop(context);
+                                                        //     _showToastNotification(
+                                                        //         'Book has been ordered successfully');
+                                                        //   }
+                                                        // } else {
+                                                        //   _showToastNotification(
+                                                        //       'Something went wrong');
+                                                        // }
+                                                        // ----------------------Order without cart ends here ----------------------
+
+                                                        setState(() {
+                                                          _isLoading = true;
+                                                        });
+
+                                                        if (carts.cart ==
+                                                            null) {
+                                                          await carts.createCart(
+                                                              Provider.of<SessionProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .session as Session);
+                                                          // print(carts.cart);
+                                                        }
+                                                        if (carts.cart !=
+                                                            null) {
+                                                          final isValid = _form
+                                                              .currentState!
+                                                              .validate();
+                                                          if (!isValid) {
+                                                            _showToastNotification(
+                                                                'Something went wrong');
                                                           }
-                                                          return null;
-                                                        },
-                                                        onSaved: (value) {
-                                                          
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      bottom: AppPadding.p8,
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Flexible(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal:
-                                                                  AppPadding
-                                                                      .p12,
-                                                            ),
-                                                            child:
-                                                                TextFormField(
-                                                              initialValue:
-                                                                  _buyerExpectedBook
+                                                          _form.currentState!
+                                                              .save();
+
+                                                          CartItem edittedItem =
+                                                              new CartItem(
+                                                            id: 0,
+                                                            product:
+                                                                new Product(
+                                                              id: int.parse(
+                                                                  selectedPost
+                                                                      .id),
+                                                              bookName:
+                                                                  selectedPost
+                                                                      .bookName,
+                                                              unitPrice:
+                                                                  selectedPost
                                                                       .price
-                                                                      .round()
                                                                       .toString(),
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
-                                                              cursorColor: Theme
-                                                                      .of(context)
-                                                                  .primaryColor,
-                                                              focusNode:
-                                                                  _buyerPriceFocusNode,
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                prefix: Text(
-                                                                    'Rs. '),
-                                                                labelText:
-                                                                    'Expected price per piece',
-                                                                focusColor: Colors
-                                                                    .redAccent,
-                                                              ),
-                                                              textInputAction:
-                                                                  TextInputAction
-                                                                      .next,
-                                                              autovalidateMode:
-                                                                  AutovalidateMode
-                                                                      .always,
-                                                              onFieldSubmitted:
-                                                                  (_) {
-                                                                FocusScope.of(
-                                                                        context)
-                                                                    .requestFocus(
-                                                                        _buyerBooksCountFocusNode);
-                                                              },
-                                                              validator:
-                                                                  (value) {
-                                                                if (value!
-                                                                    .isEmpty) {
-                                                                  return 'Price can\'t be empty';
-                                                                }
-                                                                if (double.tryParse(
-                                                                        value) ==
-                                                                    null) {
-                                                                  return 'Invalid number';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              onSaved:
-                                                                  (value) {
-                                                                    _expectedUnitPrice = double.parse(value as String);
-                                                                  },
                                                             ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                            horizontal:
-                                                                AppPadding.p12,
-                                                          ),
-                                                          // child:
-                                                          //     TextFormField(
-                                                          //   initialValue:
-                                                          //       _buyerExpectedBook
-                                                          //           .bookCount
-                                                          //           .toString(),
-                                                          //   focusNode:
-                                                          //       _buyerBooksCountFocusNode,
-                                                          //   keyboardType:
-                                                          //       TextInputType
-                                                          //           .number,
-                                                          //   cursorColor: Theme
-                                                          //           .of(context)
-                                                          //       .primaryColor,
-                                                          //   decoration:
-                                                          //       InputDecoration(
-                                                          //     labelText:
-                                                          //         'Number of Books you want',
-                                                          //   ),
-                                                          //   textInputAction:
-                                                          //       TextInputAction
-                                                          //           .next,
-                                                          //   autovalidateMode:
-                                                          //       AutovalidateMode
-                                                          //           .always,
-                                                          //   // onFieldSubmitted: (_) {
-                                                          //   //   FocusScope.of(context).requestFocus(_descFocusNode);
-                                                          //   // },
-                                                          //   validator:
-                                                          //       (value) {
-                                                          //     if (double.tryParse(
-                                                          //             value
-                                                          //                 as String) ==
-                                                          //         null) {
-                                                          //       return 'Invalid Number';
-                                                          //     }
+                                                            quantity:
+                                                                _itemCount,
+                                                            totalPrice: 0,
+                                                          );
 
-                                                          //     if (double.parse(
-                                                          //             value) <
-                                                          //         1) {
-                                                          //       return 'Book count must be at least 1';
-                                                          //     }
-                                                          //     return null;
-                                                          //   },
-                                                          //   onSaved: (value) {
-                                                          //     _buyerExpectedBook
-                                                          //             .bookCount =
-                                                          //         int.parse(value
-                                                          //             .toString());
-                                                          //     print(
-                                                          //         _buyerExpectedBook);
-                                                          //   },
-                                                          // ),
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Colors
-                                                                  .grey[200],
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                            ),
-                                                            // child: ButtonBar(
-                                                            //   buttonPadding:
-                                                            //       EdgeInsets
-                                                            //           .zero,
-                                                            //   children: [
-                                                            //     IconButton(
-                                                            //       color: Colors
-                                                            //           .black,
-                                                            //       padding:
-                                                            //           EdgeInsets
-                                                            //               .zero,
-                                                            //       disabledColor:
-                                                            //           Colors
-                                                            //               .grey,
-                                                            //       splashRadius:
-                                                            //           AppRadius
-                                                            //               .r12,
-                                                            //       onPressed:
-                                                            //           _itemCount >
-                                                            //                   1
-                                                            //               ? () {
-                                                            //                   setState(() {
-                                                            //                     _itemCount--;
-                                                            //                   });
-                                                            //                 }
-                                                            //               : null,
-                                                            //       icon: Icon(Icons
-                                                            //           .remove),
-                                                            //     ),
-                                                            //     Text(
-                                                            //       _itemCount
-                                                            //           .toString(),
-                                                            //       textAlign:
-                                                            //           TextAlign
-                                                            //               .center,
-                                                            //       style:
-                                                            //           getBoldStyle(
-                                                            //         color: ColorManager
-                                                            //             .black,
-                                                            //         fontSize:
-                                                            //             FontSize
-                                                            //                 .s17,
-                                                            //       ),
-                                                            //     ),
-                                                            //     IconButton(
-                                                            //       color: Colors
-                                                            //           .black,
-                                                            //       padding:
-                                                            //           EdgeInsets
-                                                            //               .zero,
-                                                            //       disabledColor:
-                                                            //           Colors
-                                                            //               .grey,
-                                                            //       splashRadius:
-                                                            //           AppRadius
-                                                            //               .r12,
-                                                            //       onPressed:
-                                                            //           () {
-                                                            //         setState(
-                                                            //             () {
-                                                            //           _itemCount++;
-                                                            //         });
-                                                            //       },
-                                                            //       icon: Icon(
-                                                            //           Icons
-                                                            //               .add),
-                                                            //     ),
-                                                            //   ],
-                                                            // ),
-                                                            child: StatefulBuilder(
-                                                                builder: (BuildContext
-                                                                        context,
-                                                                    StateSetter
-                                                                        setState) {
-                                                              return Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceEvenly,
-                                                                children: [
-                                                                  IconButton(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    disabledColor:
-                                                                        Colors
-                                                                            .grey,
-                                                                    splashRadius:
-                                                                        AppRadius
-                                                                            .r12,
-                                                                    onPressed:
-                                                                        _itemCount >
-                                                                                1
-                                                                            ? () {
-                                                                                setState(() {
-                                                                                  _itemCount--;
-                                                                                });
-                                                                              }
-                                                                            : null,
-                                                                    icon: Icon(Icons
-                                                                        .remove),
-                                                                  ),
-                                                                  Text(
-                                                                    _itemCount
-                                                                        .toString(),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style:
-                                                                        getBoldStyle(
-                                                                      color: ColorManager
-                                                                          .black,
-                                                                      fontSize:
-                                                                          FontSize
-                                                                              .s17,
-                                                                    ),
-                                                                  ),
-                                                                  IconButton(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    disabledColor:
-                                                                        Colors
-                                                                            .grey,
-                                                                    splashRadius:
-                                                                        AppRadius
-                                                                            .r12,
-                                                                    onPressed: selectedPost.bookCount >
-                                                                            _itemCount
-                                                                        ? () {
-                                                                            setState(() {
-                                                                              _itemCount++;
-                                                                            });
-                                                                          }
-                                                                        : null,
-                                                                    icon: Icon(
-                                                                        Icons
-                                                                            .add),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            }),
-                                                          ),
+                                                          if (await carts
+                                                              .addItemToCart(
+                                                                  carts.cart
+                                                                      as Cart,
+                                                                  edittedItem)) {
+                                                            // await carts.createCart(Provider.of<SessionProvider>(context, listen: false).session as Session);
+                                                            Navigator.pop(
+                                                                context);
+                                                            _showToastNotification(
+                                                                'Book added to cart successfully');
+                                                          }
+                                                        } else {
+                                                          _showToastNotification(
+                                                              'Something went wrong');
+                                                        }
+                                                      },
+                                              );
+                                            }),
+                                        ValueListenableBuilder(
+                                            valueListenable: _shouldRequest,
+                                            builder: (BuildContext context,
+                                                bool shouldRequest,
+                                                Widget? child) {
+                                              return ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  minimumSize:
+                                                      const Size.fromHeight(
+                                                          AppHeight.h36),
+                                                ),
+                                                child: _isLoading
+                                                    ? CircularProgressIndicator
+                                                        .adaptive()
+                                                    : Text(
+                                                        'Place direct order',
+                                                        style: getBoldStyle(
+                                                          color: ColorManager
+                                                              .white,
+                                                          fontSize:
+                                                              FontSize.s14,
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Flexible(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              bottom: AppPadding
-                                                                  .p14),
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          minimumSize: const Size
-                                                                  .fromHeight(
-                                                              40),
-                                                        ),
-                                                        child: _isLoading? CircularProgressIndicator.adaptive(): Text(
-                                                          
-                                                          'Add book to cart',
-                                                          style: getBoldStyle(
-                                                            color: ColorManager
-                                                                .white,
-                                                            fontSize:
-                                                                FontSize.s14,
-                                                          ),
-                                                        ),
-                                                        onPressed: () async {
-                                                          // ----------------------Order without cart starts here ----------------------
-                                                          // if (await orders.getUserOrder(
-                                                          //     loggedInUserSession,
-                                                          //     users.user as User)) {
-                                                          //   final isValid = _form
-                                                          //       .currentState!
-                                                          //       .validate();
-                                                          //   if (!isValid) {
-                                                          //     _showToastNotification(
-                                                          //         'Something went wrong');
-                                                          //   }
-                                                          //   _form.currentState!.save();
-                                                          //   OrderItem item =
-                                                          //       new OrderItem(
-                                                          //           id: 0,
-                                                          //           productId: int.parse(
-                                                          //               selectedPost.id),
-                                                          //           quantity:
-                                                          //               _buyerExpectedBook
-                                                          //                   .bookCount);
-                                                          //   if (await orders.addOrderItem(
-                                                          //       item,
-                                                          //       orders.order as Order)) {
-                                                          //     Navigator.pop(context);
-                                                          //     _showToastNotification(
-                                                          //         'Book has been ordered successfully');
-                                                          //   }
-                                                          // } else {
-                                                          //   _showToastNotification(
-                                                          //       'Something went wrong');
-                                                          // }
-                                                          // ----------------------Order without cart ends here ----------------------
+                                                      ),
+                                                onPressed: shouldRequest
+                                                    ? null
+                                                    :
+                                                    // _expectedUnitPrice ==
+                                                    //             _buyerExpectedBook
+                                                    //                 .price
+                                                    //         ? null
+                                                    //         :
+                                                    () async {
+                                                        setState(() {
+                                                          _isLoading = true;
+                                                        });
 
-                                                          setState(() {
-                                                            _isLoading = true;
-                                                          });
-
-                                                          if (carts.cart ==
-                                                              null) {
-                                                            await carts.createCart(
+                                                        var tempCart = await carts
+                                                            .createTemporaryCart(
                                                                 Provider.of<SessionProvider>(
                                                                         context,
                                                                         listen:
                                                                             false)
                                                                     .session as Session);
-                                                            // print(carts.cart);
-                                                          }
-                                                          if (carts.cart !=
-                                                              null) {
-                                                            final isValid = _form
-                                                                .currentState!
-                                                                .validate();
-                                                            if (!isValid) {
-                                                              _showToastNotification(
-                                                                  'Something went wrong');
-                                                            }
-                                                            _form.currentState!
-                                                                .save();
 
-                                                            CartItem
-                                                                edittedItem =
-                                                                new CartItem(
-                                                              id: 0,
-                                                              product:
-                                                                  new Product(
-                                                                id: int.parse(
-                                                                    selectedPost
-                                                                        .id),
-                                                                bookName:
-                                                                    selectedPost
-                                                                        .bookName,
-                                                                unitPrice:
-                                                                    selectedPost
-                                                                        .price
-                                                                        .toString(),
-                                                                
-                                                              ),
-                                                              
-                                                              quantity:
-                                                                  _itemCount,
-                                                              expectedUnitPrice: _expectedUnitPrice,
-                                                              totalPrice: 0,
-                                                            );
-
-                                                            if (await carts
-                                                                .addItemToCart(
-                                                                    carts.cart
-                                                                        as Cart,
-                                                                    edittedItem)) {
-                                                              // await carts.createCart(Provider.of<SessionProvider>(context, listen: false).session as Session);
-                                                              Navigator.pop(
-                                                                  context);
-                                                              _showToastNotification(
-                                                                  'Book added to cart successfully');
-                                                            }
-                                                          } else {
+                                                        if (tempCart
+                                                            is CartError) {
+                                                          _showToastNotification(
+                                                              'Something went wrong');
+                                                        }
+                                                        if (tempCart is Cart) {
+                                                          final isValid = _form
+                                                              .currentState!
+                                                              .validate();
+                                                          if (!isValid) {
                                                             _showToastNotification(
                                                                 'Something went wrong');
                                                           }
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(Icons.shopping_cart),
-                                    label: Text(
-                                      'Add to cart',
+                                                          _form.currentState!
+                                                              .save();
+
+                                                          CartItem edittedItem =
+                                                              new CartItem(
+                                                            id: 0,
+                                                            product:
+                                                                new Product(
+                                                              id: int.parse(
+                                                                  selectedPost
+                                                                      .id),
+                                                              bookName:
+                                                                  selectedPost
+                                                                      .bookName,
+                                                              unitPrice:
+                                                                  selectedPost
+                                                                      .price
+                                                                      .toString(),
+                                                            ),
+                                                            quantity:
+                                                                _itemCount,
+                                                            totalPrice: 0,
+                                                          );
+
+                                                          if (await carts
+                                                              .addItemToTemporaryCart(
+                                                                  tempCart,
+                                                                  edittedItem)) {
+                                                            return showModalBottomSheet(
+                                                              barrierColor:
+                                                                  ColorManager
+                                                                      .blackWithLowOpacity,
+                                                              isScrollControlled:
+                                                                  true,
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          AppRadius
+                                                                              .r20),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                    AppRadius
+                                                                        .r20,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return Container(
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      0.9,
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .symmetric(
+                                                                    horizontal:
+                                                                        AppPadding
+                                                                            .p20,
+                                                                  ),
+                                                                  child: BillingInfo(
+                                                                      cartId:
+                                                                          tempCart
+                                                                              .id),
+                                                                );
+                                                              },
+                                                            );
+
+                                                            Navigator.pop(
+                                                                context);
+                                                            _showToastNotification(
+                                                                'Order has been placed successfully');
+                                                          }
+                                                        } else {
+                                                          // print('here');
+                                                          _showToastNotification(
+                                                              'Something went wrong');
+                                                        }
+                                                      },
+                                              );
+                                            }),
+                                      ],
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
-              ))
-        // : SizedBox(
-        //     height: 5.0,
-        //   );
-        : Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppPadding.p14,
-              vertical: AppPadding.p4,
-            ),
-            child: ElevatedButton(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.05,
-                alignment: Alignment.center,
-                child: Text(
-                  'Edit post',
-                  style: getBoldStyle(
-                    color: ColorManager.white,
-                    fontSize: FontSize.s16,
-                  ),
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamed(EditPostScreen.routeName, arguments: {
-                  'bookId': selectedPost.id,
-                  'loggedInUserSession':
-                      Provider.of<SessionProvider>(context, listen: false)
-                          .session,
-                });
-              },
-            ),
-          );
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.shopping_cart),
+                      label: Text(
+                        // 'Add to cart',
+                        'Get this book',
+                      ),
+                    ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

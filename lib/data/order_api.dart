@@ -293,6 +293,53 @@ class OrderApi {
     }
   }
 
+  // ------------------ This function is for placing direct order without involiving the preexisting cart
+  static Future<Object> placeDirectOrder(Session currentSession, String cartId,
+      Map<String, dynamic> billingInfo, String paymentMethod) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI + '/orders/');
+      Map<String, dynamic> postBody = {
+        "cart_id": cartId,
+        "payment_method": paymentMethod,
+        "billing_info": billingInfo,
+      };
+      var response = await http.post(url,
+          headers: {
+            HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
+            "Accept": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin":
+                "*", // Required for CORS support to work
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            HttpHeaders.contentTypeHeader: "application/json",
+          },
+          body: json.encode(postBody));
+
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+            code: response.statusCode,
+            response: orderFromJson(json.encode(json.decode(response.body))));
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
   static Future<Object> updateOrder(
       Session currentSession, String orderId, String status) async {
     try {

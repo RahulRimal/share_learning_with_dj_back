@@ -32,9 +32,34 @@ class OrderRequests with ChangeNotifier {
     _orderRequestError = orderRequestError;
   }
 
-  Future<bool> createOrderRequest(Session loggedInSession) async {
+//  -------------------------- Create order requests using the cart starts here ---------------------------
+
+  // Future<bool> createOrderRequest(Session loggedInSession) async {
+  //   setLoading(true);
+  //   var response = await OrderRequestApi.placeOrderRequest(loggedInSession);
+  //   // print(response);
+  //   if (response is Success) {
+  //     _orderRequests.add(response.response as OrderRequest);
+  //     setLoading(false);
+  //     notifyListeners();
+  //     return true;
+  //   } else if (response is Failure) {
+  //     OrderRequestError orderRequestError = OrderRequestError(
+  //         code: response.code, message: response.errorResponse);
+  //     setOrderRequestError(orderRequestError);
+  //     setLoading(false);
+  //     notifyListeners();
+  //   }
+  //   return false;
+  // }
+
+  //  -------------------------- Create order requests using the cart ends here ---------------------------
+
+  Future<bool> createOrderRequest(
+      Session loggedInSession, Map<String, dynamic> requestInfo) async {
     setLoading(true);
-    var response = await OrderRequestApi.placeOrderRequest(loggedInSession);
+    var response =
+        await OrderRequestApi.placeOrderRequest(loggedInSession, requestInfo);
     // print(response);
     if (response is Success) {
       _orderRequests.add(response.response as OrderRequest);
@@ -147,4 +172,8 @@ class OrderRequests with ChangeNotifier {
 
   //   return false;
   // }
+
+  bool orderRequestsContains(int bookId) {
+    return _orderRequests.any((element) => element.product.id == bookId);
+  }
 }

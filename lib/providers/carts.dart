@@ -98,6 +98,27 @@ class Carts with ChangeNotifier {
     return false;
   }
 
+  // ---------------- This function creates a cart for temporary purpose like placing direct order without affecting the pre existing cart --------------------------------------------------------
+  Future<Object> createTemporaryCart(Session currentSession) async {
+    var response = await CartApi.createCart(currentSession);
+    // print(response);
+    if (response is Success) {
+      // setCart(response.response as Cart);
+      // notifyListeners();
+      // return true;
+      return response.response as Cart;
+    }
+    if (response is Failure) {
+      CartError cartError = CartError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      // setCartError(cartError);
+      return cartError;
+    }
+    return Object();
+  }
+
   Future<bool> getCartInfo(String cartId) async {
     var response = await CartApi.getCartInfo(cartId);
     if (response is Success) {
@@ -142,6 +163,33 @@ class Carts with ChangeNotifier {
     if (response is Success) {
       setCart(response.response as Cart);
       setCartItems((response.response as Cart).items as List<CartItem>);
+      setLoading(false);
+      notifyListeners();
+      return true;
+    }
+    if (response is Failure) {
+      CartError cartError = CartError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setCartError(cartError);
+      setLoading(false);
+      notifyListeners();
+    }
+    return false;
+  }
+
+  // ---------------- This function adds items to tempoaray cart for temporary purpose like placing direct order without affecting the pre existing cart --------------------------------------------------------
+
+  Future<bool> addItemToTemporaryCart(Cart cart, CartItem receivedInfo) async {
+    setLoading(true);
+    // notifyListeners();
+    var response = await CartApi.addItemToCart(cart, receivedInfo);
+    // print(response);
+
+    if (response is Success) {
+      // setCart(response.response as Cart);
+      // setCartItems((response.response as Cart).items as List<CartItem>);
       setLoading(false);
       notifyListeners();
       return true;

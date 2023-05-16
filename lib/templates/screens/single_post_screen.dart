@@ -1152,7 +1152,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                           return null;
                                                         },
                                                         onSaved: (value) {
-                                                          _expectedUnitPrice = double.parse(value as String);
+                                                          _expectedUnitPrice =
+                                                              double.parse(value
+                                                                  as String);
                                                         }),
                                                   ),
                                                 ),
@@ -1292,7 +1294,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                       quantity:
                                                           _buyerExpectedBook
                                                               .bookCount,
-                                                      expectedUnitPrice: _expectedUnitPrice,
                                                       totalPrice: 0,
                                                     );
 

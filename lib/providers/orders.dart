@@ -50,11 +50,21 @@ class Orders with ChangeNotifier {
     _orderItemError = orderItemError;
   }
 
-  Future<bool> placeOrder(Session loggedInSession,
-      Map<String, dynamic> billingInfo, String paymentMethod) async {
+//  -------------------- This function places direct order if cartId is given without affecting the pre existing cart otherwise creates an order using the preexisting cart ---------------------------
+  Future<bool> placeOrder(
+      {required Session loggedInSession,
+      String? cartId,
+      required Map<String, dynamic> billingInfo,
+      required String paymentMethod}) async {
     setLoading(true);
-    var response =
-        await OrderApi.placeOrder(loggedInSession, billingInfo, paymentMethod);
+    var response;
+    if (cartId != null) {
+      response = await OrderApi.placeDirectOrder(
+          loggedInSession, cartId, billingInfo, paymentMethod);
+    } else {
+      response = await OrderApi.placeOrder(
+          loggedInSession, billingInfo, paymentMethod);
+    }
     // print(response);
     if (response is Success) {
       _orders.add(response.response as Order);

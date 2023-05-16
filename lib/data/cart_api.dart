@@ -162,7 +162,8 @@ class CartApi {
         SharedPreferences prefs = await _prefs;
         String accessToken = prefs.getString('accessToken') as String;
         String refreshToken = prefs.getString('refreshToken') as String;
-        return createCart(Session(accessToken: accessToken, refreshToken: refreshToken));
+        return createCart(
+            Session(accessToken: accessToken, refreshToken: refreshToken));
       }
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
@@ -199,7 +200,6 @@ class CartApi {
       Map<String, String> postBody = {
         "product_id": cartItem.product.id.toString(),
         "quantity": cartItem.quantity.toString(),
-        "expected_price": cartItem.expectedUnitPrice.toString(),
       };
       var url =
           Uri.parse(RemoteManager.BASE_URI + '/carts/' + cart.id + '/items/');

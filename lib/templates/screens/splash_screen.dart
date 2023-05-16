@@ -20,6 +20,7 @@ import 'package:share_learning/templates/utils/internet_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
+import '../../providers/order_request_provider.dart';
 import '../../providers/users.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -85,23 +86,23 @@ class _SplashScreenState extends State<SplashScreen> {
       Users users = Provider.of<Users>(context, listen: false);
       Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);
       Categories categories = Provider.of<Categories>(context, listen: false);
+      OrderRequests orderRequests =
+          Provider.of<OrderRequests>(context, listen: false);
 
       sessions.setSession(
           new Session(accessToken: accessToken, refreshToken: refreshToken));
 
-      
       var user = await users.getUserByToken(accessToken);
-      
-      if(user is UserError && user.code == ApiStatusCode.unauthorized){
-        if(! await sessions.refreshSession(refreshToken)){
-          if(sessions.sessionError!.code == ApiStatusCode.unauthorized){
+
+      if (user is UserError && user.code == ApiStatusCode.unauthorized) {
+        if (!await sessions.refreshSession(refreshToken)) {
+          if (sessions.sessionError!.code == ApiStatusCode.unauthorized) {
             print('here');
             Navigator.pushReplacementNamed(context, LoginScreen.routeName);
             return;
           }
         }
       }
-      
 
       if (prefs.containsKey('cartId')) {
         // print(prefs.getString('cartId'));
@@ -120,6 +121,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
       await wishlists.getWishlistedBooks(sessions.session as Session);
       await categories.getCategories(sessions.session as Session);
+      await orderRequests.getOrderRequests(sessions.session as Session);
       Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
           arguments: {
             'authSession': sessions.session,

@@ -247,12 +247,58 @@ class OrderRequestApi {
     }
   }
 
-  static Future<Object> placeOrderRequest(Session currentSession) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _cartId = prefs.getString('cartId') as String;
+  //  -------------------------- Create order requests using the cart starts here ---------------------------
+
+  // static Future<Object> placeOrderRequest(Session currentSession) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String _cartId = prefs.getString('cartId') as String;
+  //   try {
+  //     var url = Uri.parse(RemoteManager.BASE_URI + '/order_requests/');
+  //     Map<String, dynamic> postBody = {"cart_id": _cartId};
+  //     var response = await http.post(url,
+  //         headers: {
+  //           HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
+  //           "Accept": "application/json; charset=utf-8",
+  //           "Access-Control-Allow-Origin":
+  //               "*", // Required for CORS support to work
+  //           "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+  //           HttpHeaders.contentTypeHeader: "application/json",
+  //         },
+  //         body: json.encode(postBody));
+
+  //     print(response.body);
+
+  //     if (response.statusCode == ApiStatusCode.responseSuccess) {
+  //       return Success(
+  //           code: response.statusCode,
+  //           response:
+  //               orderRequestFromJson(json.encode(json.decode(response.body))));
+  //     }
+  //     return Failure(
+  //         code: ApiStatusCode.invalidResponse,
+  //         errorResponse: ApiStrings.invalidResponseString);
+  //   } on HttpException {
+  //     return Failure(
+  //         code: ApiStatusCode.httpError,
+  //         errorResponse: ApiStrings.noInternetString);
+  //   } on FormatException {
+  //     return Failure(
+  //         code: ApiStatusCode.invalidResponse,
+  //         errorResponse: ApiStrings.invalidFormatString);
+  //   } catch (e) {
+  //     // return Failure(code: 103, errorResponse: e.toString());
+  //     return Failure(
+  //         code: ApiStatusCode.unknownError,
+  //         errorResponse: ApiStrings.unknownErrorString);
+  //   }
+  // }
+  //  -------------------------- Create order requests using the cart ends here ---------------------------
+
+  static Future<Object> placeOrderRequest(
+      Session currentSession, Map<String, dynamic> requestInfo) async {
     try {
       var url = Uri.parse(RemoteManager.BASE_URI + '/order_requests/');
-      Map<String, dynamic> postBody = {"cart_id": _cartId};
+
       var response = await http.post(url,
           headers: {
             HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
@@ -262,9 +308,9 @@ class OrderRequestApi {
             "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
             HttpHeaders.contentTypeHeader: "application/json",
           },
-          body: json.encode(postBody));
+          body: json.encode(requestInfo));
 
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(

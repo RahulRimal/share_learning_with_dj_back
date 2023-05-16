@@ -20,6 +20,7 @@ import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../providers/carts.dart';
+import '../../providers/order_request_provider.dart';
 import '../../providers/users.dart';
 import '../managers/assets_manager.dart';
 import '../managers/values_manager.dart';
@@ -152,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   .getCartInfo(prefs.getString('cartId') as String);
             }
           } else {
-            if(Provider.of<Carts>(context, listen: false).cart == null){
+            if (Provider.of<Carts>(context, listen: false).cart == null) {
               Provider.of<Carts>(context, listen: false)
                   .getCartInfo(prefs.getString('cartId') as String);
             }
@@ -162,9 +163,12 @@ class _LoginScreenState extends State<LoginScreen> {
           Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);
           Categories categories =
               Provider.of<Categories>(context, listen: false);
+          OrderRequests orderRequests =
+              Provider.of<OrderRequests>(context, listen: false);
 
           wishlists.getWishlistedBooks(userSession.session as Session);
           categories.getCategories(userSession.session as Session);
+          orderRequests.getOrderRequests(userSession.session as Session);
 
           if (prefs.containsKey('isFirstTime') &&
               prefs.getBool('isFirstTime') == false) {

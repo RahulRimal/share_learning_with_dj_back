@@ -268,7 +268,7 @@ class OrderRequestList extends StatelessWidget {
       itemBuilder: (context, index) {
         return OrderRequestItemWidget(
           // cartItem: carts.cartItems[index],
-          requestedItem: orderRequests.orderRequests[0].requestedItems[0],
+          requestedItem: orderRequests.orderRequests[index],
         );
       },
     );
@@ -880,9 +880,9 @@ class _BillingInfoState extends State<BillingInfo> {
                       }
 
                       if (await orders.placeOrder(
-                        authSession,
-                        _billingInfo,
-                        _paymentMethod == PaymentMethod.Cash
+                        loggedInSession: authSession,
+                        billingInfo: _billingInfo,
+                        paymentMethod: _paymentMethod == PaymentMethod.Cash
                             ? "C"
                             : _paymentMethod == PaymentMethod.Esewa
                                 ? "E"
@@ -937,7 +937,7 @@ class OrderRequestItemWidget extends StatefulWidget {
   const OrderRequestItemWidget({Key? key, required this.requestedItem})
       : super(key: key);
 
-  final RequestedItem requestedItem;
+  final OrderRequest requestedItem;
 
   @override
   State<OrderRequestItemWidget> createState() => _OrderRequestItemWidgetState();
@@ -946,12 +946,11 @@ class OrderRequestItemWidget extends StatefulWidget {
 class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
   late ValueNotifier<bool> _requestedItemChanged;
   late ValueNotifier<int> _quantity;
-  late RequestedItem _edittedItem;
+  late OrderRequest _edittedItem;
 
   _ifRequestItemChanged() {
     if (_quantity.value != widget.requestedItem.quantity) {
       _requestedItemChanged.value = true;
-
       return;
     }
 

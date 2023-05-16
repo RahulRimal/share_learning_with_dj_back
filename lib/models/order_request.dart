@@ -15,70 +15,49 @@ String orderRequestToJson(OrderRequest data) => json.encode(data.toJson());
 class OrderRequest {
   String id;
   RequestingCustomer requestingCustomer;
-  List<RequestedItem> requestedItems;
+  RequestedProduct product;
+  int quantity;
+  String requestedPrice;
 
   OrderRequest({
     required this.id,
     required this.requestingCustomer,
-    required this.requestedItems,
+    required this.product,
+    required this.quantity,
+    required this.requestedPrice,
   });
 
   factory OrderRequest.fromJson(Map<String, dynamic> json) => OrderRequest(
         id: json["id"],
         requestingCustomer:
             RequestingCustomer.fromJson(json["requesting_customer"]),
-        requestedItems: List<RequestedItem>.from(
-            json["requested_items"].map((x) => RequestedItem.fromJson(x))),
+        product: RequestedProduct.fromJson(json["product"]),
+        quantity: json["quantity"],
+        requestedPrice: json["requested_price"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "requesting_customer": requestingCustomer.toJson(),
-        "requested_items":
-            List<dynamic>.from(requestedItems.map((x) => x.toJson())),
-      };
-}
-
-class RequestedItem {
-  int id;
-  Product product;
-  String requestedPrice;
-  int quantity;
-
-  RequestedItem({
-    required this.id,
-    required this.product,
-    required this.requestedPrice,
-    required this.quantity,
-  });
-
-  factory RequestedItem.fromJson(Map<String, dynamic> json) => RequestedItem(
-        id: json["id"],
-        product: Product.fromJson(json["product"]),
-        requestedPrice: json["requested_price"],
-        quantity: json["quantity"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
         "product": product.toJson(),
-        "requested_price": requestedPrice,
         "quantity": quantity,
+        "requested_price": requestedPrice,
       };
 }
 
-class Product {
+class RequestedProduct {
   int id;
   String bookName;
   String unitPrice;
 
-  Product({
+  RequestedProduct({
     required this.id,
     required this.bookName,
     required this.unitPrice,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
+  factory RequestedProduct.fromJson(Map<String, dynamic> json) =>
+      RequestedProduct(
         id: json["id"],
         bookName: json["book_name"],
         unitPrice: json["unit_price"],
