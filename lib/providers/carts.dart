@@ -135,7 +135,7 @@ class Carts with ChangeNotifier {
 
   Future<bool> addItemToCart(Cart cart, CartItem receivedInfo) async {
     setLoading(true);
-    notifyListeners();
+    // notifyListeners();
     var response = await CartApi.addItemToCart(cart, receivedInfo);
     // print(response);
 

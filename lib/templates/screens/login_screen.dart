@@ -152,7 +152,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   .getCartInfo(prefs.getString('cartId') as String);
             }
           } else {
-            print('here');
+            if(Provider.of<Carts>(context, listen: false).cart == null){
+              Provider.of<Carts>(context, listen: false)
+                  .getCartInfo(prefs.getString('cartId') as String);
+            }
+            // print('here');
           }
 
           Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);

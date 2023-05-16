@@ -97,6 +97,57 @@ class SessionApi {
       //     errorResponse: ApiStrings.unknownErrorString);
     }
   }
+  static Future<Object> refreshSession(String refreshToken) async {
+    try {
+      Map<String, String> postBody = {
+        "refresh": refreshToken
+        };
+
+      var url = Uri.parse(RemoteManager.BASE_URI + '/auth/jwt/refresh');
+
+      var response = await http.post(
+        url,
+        headers: {
+          "Accept": "application/json; charset=utf-8",
+
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+        body: json.encode(postBody),
+        
+      );
+
+      print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+          code: response.statusCode,
+          response: sessionFromJson(response.body),
+        );
+      }
+      return Failure(
+          // code: ApiStatusCode.invalidResponse,
+          code: response.statusCode,
+          // errorResponse: response.body);
+          errorResponse: json.decode(response.body));
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //     code: ApiStatusCode.unknownError,
+      //     errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
 
   static Future<Object> deleteSession(String sessionId) async {
     try {
@@ -142,4 +193,7 @@ class SessionApi {
       );
     }
   }
+
+
+
 }

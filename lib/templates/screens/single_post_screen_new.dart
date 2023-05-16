@@ -885,12 +885,14 @@ class CartBottomSheet extends StatefulWidget {
 
 class _CartBottomSheetState extends State<CartBottomSheet> {
   NepaliDateTime initDate = NepaliDateTime.now();
+  bool _isLoading = false;
 
   final _buyerDateFocusNode = FocusNode();
   final _buyerPriceFocusNode = FocusNode();
   final _buyerBooksCountFocusNode = FocusNode();
 
   int _itemCount = 1;
+  double _expectedUnitPrice = 0;
 
   final _datePickercontroller = TextEditingController(
     text: DateFormat('yyyy-MM-dd').format(NepaliDateTime(
@@ -1149,7 +1151,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                           }
                                                           return null;
                                                         },
-                                                        onSaved: (value) {},
+                                                        onSaved: (value) {
+                                                          
+                                                        },
                                                       ),
                                                     ),
                                                   ),
@@ -1223,7 +1227,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                 return null;
                                                               },
                                                               onSaved:
-                                                                  (value) {},
+                                                                  (value) {
+                                                                    _expectedUnitPrice = double.parse(value as String);
+                                                                  },
                                                             ),
                                                           ),
                                                         ),
@@ -1458,10 +1464,10 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             .styleFrom(
                                                           minimumSize: const Size
                                                                   .fromHeight(
-                                                              40), // NEW
+                                                              40),
                                                         ),
-                                                        child: Text(
-                                                          // 'Place an order',
+                                                        child: _isLoading? CircularProgressIndicator.adaptive(): Text(
+                                                          
                                                           'Add book to cart',
                                                           style: getBoldStyle(
                                                             color: ColorManager
@@ -1504,6 +1510,10 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                           // }
                                                           // ----------------------Order without cart ends here ----------------------
 
+                                                          setState(() {
+                                                            _isLoading = true;
+                                                          });
+
                                                           if (carts.cart ==
                                                               null) {
                                                             await carts.createCart(
@@ -1542,12 +1552,12 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                     selectedPost
                                                                         .price
                                                                         .toString(),
+                                                                
                                                               ),
-                                                              // quantity:
-                                                              //     _buyerExpectedBook
-                                                              //         .bookCount,
+                                                              
                                                               quantity:
                                                                   _itemCount,
+                                                              expectedUnitPrice: _expectedUnitPrice,
                                                               totalPrice: 0,
                                                             );
 

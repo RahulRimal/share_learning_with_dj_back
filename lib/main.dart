@@ -11,6 +11,7 @@ import 'package:share_learning/providers/categories.dart';
 import 'package:share_learning/providers/comment.dart';
 import 'package:share_learning/providers/carts.dart';
 import 'package:share_learning/providers/filters.dart';
+import 'package:share_learning/providers/order_request_provider.dart';
 import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
@@ -38,6 +39,7 @@ import 'package:share_learning/templates/utils/notification_service.dart';
 import 'firebase_options.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
+import 'templates/screens/order_request_screen.dart';
 import 'templates/screens/order_screen_new.dart';
 
 Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
@@ -121,6 +123,7 @@ class MyApp extends StatelessWidget {
         ),
 
         ChangeNotifierProvider(create: (_) => Carts()),
+        ChangeNotifierProvider(create: (_) => OrderRequests()),
         ChangeNotifierProvider(create: (_) => Books()),
         ChangeNotifierProvider(create: (_) => Comments()),
         ChangeNotifierProvider(create: (_) => Orders()),
@@ -161,6 +164,7 @@ class MyApp extends StatelessWidget {
                 UserProfileEditScreen.routeName: (context) =>
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
+                OrderRequestScreen.routeName: (context) => OrderRequestScreen(),
                 OrderScreen.routeName: (context) => OrderScreen(),
                 OrderScreenNew.routeName: (context) => OrderScreenNew(),
                 UserInterestsScreen.routeName: (context) =>
@@ -215,6 +219,8 @@ class MyApp extends StatelessWidget {
                     UserProfileEditScreen.routeName: (context) =>
                         UserProfileEditScreen(),
                     CartScreen.routeName: (context) => CartScreen(),
+                    OrderRequestScreen.routeName: (context) =>
+                        OrderRequestScreen(),
                     OrderScreen.routeName: (context) => OrderScreen(),
                     OrderScreenNew.routeName: (context) => OrderScreenNew(),
                     UserInterestsScreen.routeName: (context) =>

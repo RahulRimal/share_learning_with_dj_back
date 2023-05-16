@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/wishlist.dart';
@@ -11,6 +15,7 @@ import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
+import 'custom_image.dart';
 
 class PostNew extends StatefulWidget {
   const PostNew({
@@ -58,16 +63,33 @@ class _PostNewState extends State<PostNew> {
         Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-              child: post.images!.isEmpty
-                  ? Container()
-                  : Image.network(
-                      post.images![0].image,
-                    ),
-            ),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+                // child: post.images!.isEmpty
+                //     ? Container()
+                //     : post.images.runtimeType is List<XFile>
+                //         // ? Image.asset(post.images![0])
+                //         // ? FileImage(File(post.images![0].name))
+
+                //         : Image.network(
+                //             post.images![0].image,
+                //           ),
+                child: post.images!.isEmpty
+                    ? Container()
+                    : SizedBox(
+                        height: AppHeight.h150,
+                        // width: 100,
+                        child: PhotoView(
+                          imageProvider: post.images.runtimeType is List<XFile>
+                              ? FileImage(File(post.images![0]))
+                              : NetworkImage(post.images![0].image)
+                                  as ImageProvider,
+                          minScale: PhotoViewComputedScale.contained * 0.8,
+                          maxScale: PhotoViewComputedScale.covered * 2,
+                        ),
+                      )),
             Align(
               alignment: Alignment.topRight,
               child: Padding(

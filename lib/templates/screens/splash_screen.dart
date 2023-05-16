@@ -10,6 +10,7 @@ import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
+import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
@@ -18,6 +19,7 @@ import 'package:share_learning/templates/screens/onboarding_screen.dart';
 import 'package:share_learning/templates/utils/internet_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/user.dart';
 import '../../providers/users.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -87,8 +89,19 @@ class _SplashScreenState extends State<SplashScreen> {
       sessions.setSession(
           new Session(accessToken: accessToken, refreshToken: refreshToken));
 
-      await users.getUserByToken(accessToken);
-      // print(users);
+      
+      var user = await users.getUserByToken(accessToken);
+      
+      if(user is UserError && user.code == ApiStatusCode.unauthorized){
+        if(! await sessions.refreshSession(refreshToken)){
+          if(sessions.sessionError!.code == ApiStatusCode.unauthorized){
+            print('here');
+            Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            return;
+          }
+        }
+      }
+      
 
       if (prefs.containsKey('cartId')) {
         // print(prefs.getString('cartId'));

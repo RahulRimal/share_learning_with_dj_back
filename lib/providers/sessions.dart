@@ -52,6 +52,26 @@ class SessionProvider with ChangeNotifier {
     }
     return false;
   }
+  Future<bool> refreshSession(String accessToken)async {
+    setLoading(true);
+    var response = await SessionApi.refreshSession(accessToken);
+    if (response is Success) {
+      // setSession(response.response as Session);
+      setSession(response.response as Session);
+      setLoading(false);
+      return true;
+    }
+    if (response is Failure) {
+      SessionError sessionError = SessionError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setSessionError(sessionError);
+      setLoading(false);
+      return false;
+    }
+    return false;
+  }
 
   Future<bool> getPreviousSession(String accessToken) async {
     setLoading(true);

@@ -159,6 +159,7 @@ enum DeliveryStatus {
   DELIVERED,
   CANCELED,
 }
+
 enum DeliveryMethod {
   STANDARD,
   EMERGENCY,

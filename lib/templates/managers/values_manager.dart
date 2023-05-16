@@ -100,4 +100,6 @@ class ApiStatusCode {
   static const int httpError = 101;
   static const int formatError = 102;
   static const int unknownError = 103;
+  static const int notFound = 404;
+  static const int unauthorized = 401;
 }

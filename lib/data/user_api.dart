@@ -26,6 +26,7 @@ class UserApi {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         HttpHeaders.contentTypeHeader: "application/json",
       });
+      // print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
@@ -34,7 +35,8 @@ class UserApi {
       }
 
       return Failure(
-          code: ApiStatusCode.invalidResponse,
+          // code: ApiStatusCode.invalidResponse,
+          code: response.statusCode,
           errorResponse: ApiStrings.invalidResponseString);
     } on HttpException {
       return Failure(

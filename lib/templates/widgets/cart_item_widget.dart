@@ -23,16 +23,18 @@ class CartItemWidget extends StatefulWidget {
 
 class _CartItemWidgetState extends State<CartItemWidget> {
   // bool _cartItemChanged = false;
-  late bool _cartItemChanged;
-  late int _quantity;
+  late ValueNotifier<bool> _cartItemChanged;
+  // late int _quantity;
+  late ValueNotifier<int> _quantity;
   // late bool _wishlisted;
   late CartItem _edittedItem;
 
   _ifCartItemChanged() {
-    if (_quantity != widget.cartItem.quantity) {
-      setState(() {
-        _cartItemChanged = true;
-      });
+    if (_quantity.value != widget.cartItem.quantity) {
+      // setState(() {
+      //   _cartItemChanged = true;
+      // });
+      _cartItemChanged.value = true;
 
       return;
     }
@@ -42,22 +44,23 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     //   });
     //   return;
     // }
-    setState(() {
-      _cartItemChanged = false;
-    });
+    // setState(() {
+    //   _cartItemChanged = false;
+    // });
+    _cartItemChanged.value = false;
   }
 
   @override
   void initState() {
     _edittedItem = widget.cartItem;
-    _cartItemChanged = false;
-    _quantity = widget.cartItem.quantity;
+    _cartItemChanged = ValueNotifier<bool>(false);
+    _quantity = ValueNotifier<int>(widget.cartItem.quantity);
     // _wishlisted = widget.cartItem.wishlisted;
     super.initState();
   }
 
   Future<bool> _updateCartItem(Cart cart, CartItem edittedItem) async {
-    _edittedItem.quantity = _quantity;
+    _edittedItem.quantity = _quantity.value;
     // _edittedItem.wishlisted = _wishlisted;
 
     await Provider.of<Carts>(context, listen: false)
@@ -74,7 +77,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
             align: Alignment(-1, -1),
             hideCloseButton: true,
           );
-          _cartItemChanged = false;
+          _cartItemChanged.value = false;
         } else
           BotToast.showSimpleNotification(
             title: "Something went wrong, Please try again!",
@@ -367,12 +370,19 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                           children: [
                                             IconButton(
                                               color: Colors.black,
-                                              onPressed: _quantity < 2
-                                                  ? null
-                                                  : () {
-                                                      _quantity--;
-                                                      _ifCartItemChanged();
-                                                    },
+                                              // onPressed: _quantity.value > 1
+                                              //     ? () {
+                                              //         _quantity.value--;
+                                              //         _ifCartItemChanged();
+                                              //       }
+                                              //     : null,
+                                              onPressed: () {
+                                                if (_quantity.value > 1) {
+                                                  _quantity.value--;
+                                                  _ifCartItemChanged();
+                                                }
+                                              },
+
                                               icon: Container(
                                                 width: AppSize.s40,
                                                 alignment: Alignment.center,
@@ -385,17 +395,23 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                                 ),
                                               ),
                                             ),
-                                            Text(
-                                              _quantity.toString(),
-                                              style: getBoldStyle(
-                                                color: ColorManager.primary,
-                                                fontSize: FontSize.s20,
-                                              ),
+                                            ValueListenableBuilder(
+                                              valueListenable: _quantity,
+                                              builder: (BuildContext context,
+                                                  int quantity, Widget? child) {
+                                                return Text(
+                                                  quantity.toString(),
+                                                  style: getBoldStyle(
+                                                    color: ColorManager.primary,
+                                                    fontSize: FontSize.s20,
+                                                  ),
+                                                );
+                                              },
                                             ),
                                             IconButton(
                                               color: ColorManager.white,
                                               onPressed: () {
-                                                _quantity++;
+                                                _quantity.value++;
                                                 _ifCartItemChanged();
                                               },
                                               icon: Container(
@@ -418,15 +434,29 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                           ),
                         ],
                       ),
-                      _cartItemChanged
-                          ? ElevatedButton(
-                              onPressed: () => _updateCartItem(
-                                  // context.watch<Carts>().cart as Cart,
-                                  Provider.of<Carts>(context, listen: false)
-                                      .cart as Cart,
-                                  _edittedItem),
-                              child: Text('Update Cart'))
-                          : Container(),
+                      ValueListenableBuilder(
+                        valueListenable: _cartItemChanged,
+                        builder: (BuildContext context, bool itemChanged,
+                            Widget? child) {
+                          return itemChanged
+                              ? ElevatedButton(
+                                  onPressed: () => _updateCartItem(
+                                      Provider.of<Carts>(context, listen: false)
+                                          .cart as Cart,
+                                      _edittedItem),
+                                  child: Text('Update Cart'))
+                              : Container();
+                        },
+                      ),
+                      // _cartItemChanged.value
+                      //     ? ElevatedButton(
+                      //         onPressed: () => _updateCartItem(
+                      //             // context.watch<Carts>().cart as Cart,
+                      //             Provider.of<Carts>(context, listen: false)
+                      //                 .cart as Cart,
+                      //             _edittedItem),
+                      //         child: Text('Update Cart'))
+                      //     : Container(),
                     ],
                   ),
                 );

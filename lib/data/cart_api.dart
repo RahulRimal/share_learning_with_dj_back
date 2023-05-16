@@ -10,6 +10,7 @@ import 'package:share_learning/templates/managers/api_values_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_learning/templates/managers/strings_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartApi {
   static Future<Object> createCart(Session loggedInSession) async {
@@ -156,6 +157,14 @@ class CartApi {
       );
       // print(response);
 
+      if (response.statusCode == ApiStatusCode.notFound) {
+        Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+        SharedPreferences prefs = await _prefs;
+        String accessToken = prefs.getString('accessToken') as String;
+        String refreshToken = prefs.getString('refreshToken') as String;
+        return createCart(Session(accessToken: accessToken, refreshToken: refreshToken));
+      }
+
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
             code: response.statusCode,
@@ -189,7 +198,8 @@ class CartApi {
     try {
       Map<String, String> postBody = {
         "product_id": cartItem.product.id.toString(),
-        "quantity": cartItem.quantity.toString()
+        "quantity": cartItem.quantity.toString(),
+        "expected_price": cartItem.expectedUnitPrice.toString(),
       };
       var url =
           Uri.parse(RemoteManager.BASE_URI + '/carts/' + cart.id + '/items/');

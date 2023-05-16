@@ -39,7 +39,6 @@ class SinglePostScreen extends StatelessWidget {
   // final _form = GlobalKey<FormState>();
 
   NepaliDateTime initDate = NepaliDateTime.now();
-
   // final _buyerDateFocusNode = FocusNode();
   // final _buyerPriceFocusNode = FocusNode();
   // final _buyerBooksCountFocusNode = FocusNode();
@@ -967,6 +966,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   Widget build(BuildContext context) {
     final _form = GlobalKey<FormState>();
     Book selectedPost = widget.selectedPost;
+    double _expectedUnitPrice = 0;
     // Book _buyerExpectedBook = widget.buyerExpectedBook;
     Users users = context.watch<Users>();
 
@@ -1151,7 +1151,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                           }
                                                           return null;
                                                         },
-                                                        onSaved: (value) {}),
+                                                        onSaved: (value) {
+                                                          _expectedUnitPrice = double.parse(value as String);
+                                                        }),
                                                   ),
                                                 ),
                                                 Flexible(
@@ -1290,6 +1292,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                       quantity:
                                                           _buyerExpectedBook
                                                               .bookCount,
+                                                      expectedUnitPrice: _expectedUnitPrice,
                                                       totalPrice: 0,
                                                     );
 

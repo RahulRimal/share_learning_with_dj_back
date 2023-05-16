@@ -558,72 +558,75 @@ class _EditPostScreenState extends State<EditPostScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
 
-                  child: FutureBuilder(
-                      future: categoriesProvier.getCategoryById(
-                          loggedInUserSession, _edittedBook.category!.id),
-                      builder: (ctx, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: ColorManager.secondary,
-                            ),
-                          );
-                        } else {
-                          if (snapshot.hasError) {
-                            return Text(
-                                'Error fetching data, please try again');
-                          } else {
-                            if (snapshot.data is CategoryError) {
-                              CategoryError error =
-                                  snapshot.data as CategoryError;
-                              return Text(error.message as String);
-                            } else {
-                              _selectedCategory = snapshot.data as PostCategory;
-
-                              return Container(
-                                padding: EdgeInsets.only(
-                                  left: AppPadding.p8,
-                                ),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                  style: BorderStyle.solid,
-                                )),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    value: _selectedCategory,
-                                    items: _categories
-                                        .map((option) => DropdownMenuItem(
-                                              value: option,
-                                              child: ListTile(
-                                                selected:
-                                                    option == _selectedCategory,
-                                                selectedColor:
-                                                    ColorManager.black,
-                                                selectedTileColor:
-                                                    ColorManager.primary,
-                                                // tileColor: ColorManager.grey1,
-                                                title: Text(option.name),
-                                              ),
-                                            ))
-                                        .toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedCategory =
-                                            value as PostCategory;
-                                      });
-                                      // print(_selectedCategory);
-                                    },
-                                  ),
+                  child: _edittedBook.category == null
+                      ? Container()
+                      : FutureBuilder(
+                          future: categoriesProvier.getCategoryById(
+                              loggedInUserSession, _edittedBook.category!.id),
+                          builder: (ctx, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: ColorManager.secondary,
                                 ),
                               );
+                            } else {
+                              if (snapshot.hasError) {
+                                return Text(
+                                    'Error fetching data, please try again');
+                              } else {
+                                if (snapshot.data is CategoryError) {
+                                  CategoryError error =
+                                      snapshot.data as CategoryError;
+                                  return Text(error.message as String);
+                                } else {
+                                  _selectedCategory =
+                                      snapshot.data as PostCategory;
+
+                                  return Container(
+                                    padding: EdgeInsets.only(
+                                      left: AppPadding.p8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                      style: BorderStyle.solid,
+                                    )),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        isExpanded: true,
+                                        value: _selectedCategory,
+                                        items: _categories
+                                            .map((option) => DropdownMenuItem(
+                                                  value: option,
+                                                  child: ListTile(
+                                                    selected: option ==
+                                                        _selectedCategory,
+                                                    selectedColor:
+                                                        ColorManager.black,
+                                                    selectedTileColor:
+                                                        ColorManager.primary,
+                                                    // tileColor: ColorManager.grey1,
+                                                    title: Text(option.name),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedCategory =
+                                                value as PostCategory;
+                                          });
+                                          // print(_selectedCategory);
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
                             }
-                          }
-                        }
-                      }),
+                          }),
 
                   //
                 ),
