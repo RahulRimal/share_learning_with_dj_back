@@ -374,13 +374,16 @@ class Books with ChangeNotifier {
   }
 
   Future<bool> deletePost(Session currentSession, String postId) async {
+    setLoading(true);
     var response = await BookApi.deletePost(currentSession, postId);
     // print(response);
 
     if (response is Success) {
       final postIndex = _myBooks.indexWhere((element) => element.id == postId);
       _myBooks.removeAt(postIndex);
-      // return true;
+      notifyListeners();
+      setLoading(true);
+      return true;
     }
     if (response is Failure) {
       BookError bookError = BookError(
@@ -391,6 +394,7 @@ class Books with ChangeNotifier {
       // return false;
     }
     notifyListeners();
+    setLoading(false);
     return false;
   }
 }

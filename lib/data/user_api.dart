@@ -26,7 +26,7 @@ class UserApi {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         HttpHeaders.contentTypeHeader: "application/json",
       });
-      // print(response);
+      // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(

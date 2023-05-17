@@ -55,7 +55,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     } else {
       setState(() {
         XFile imageToRemove =
-            _storedImages!.firstWhere((element) => element.path == image);
+            _storedImages!.firstWhere((element) => element.path == image.image);
         _storedImages?.remove(imageToRemove);
         actualImages.remove(image);
       });
@@ -202,8 +202,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   align: Alignment(1, 1),
                   hideCloseButton: true,
                 );
-                Navigator.pushReplacementNamed(context, HomeScreen.routeName,
-                    arguments: {'authSession': loggedInUserSession});
+                // Navigator.pushReplacementNamed(context, HomeScreen.routeName,
+                //     arguments: {'authSession': loggedInUserSession});
+                Navigator.pushReplacementNamed(
+                  context,
+                  HomeScreenNew.routeName,
+                );
               }
             },
           ),
@@ -650,9 +654,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           titleStyle: getBoldStyle(color: ColorManager.white),
                           align: Alignment(1, 1),
                         );
+                        // Navigator.pushReplacementNamed(
+                        //     context, HomeScreen.routeName,
+                        //     arguments: {'authSession': loggedInUserSession});
                         Navigator.pushReplacementNamed(
-                            context, HomeScreen.routeName,
-                            arguments: {'authSession': loggedInUserSession});
+                          context,
+                          HomeScreenNew.routeName,
+                        );
                       } else {
                         BotToast.showSimpleNotification(
                           title: 'Couldn\'t post your book, please try again!!',

@@ -9,7 +9,8 @@ class UserHelper {
   static String userProfileImage(User user) {
     return user.image == null
         ? RemoteManager.IMAGE_PLACEHOLDER
-        : user.image!.contains('http://')
+        // : user.image!.contains('http://')
+        : user.image!.contains('https://')
             ? user.image as String
             : RemoteManager.BASE_URI + user.image! as String;
   }

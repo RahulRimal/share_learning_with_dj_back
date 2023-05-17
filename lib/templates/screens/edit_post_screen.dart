@@ -335,6 +335,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       );
                       Navigator.pushReplacementNamed(
                           context, HomeScreenNew.routeName);
+                      // Navigator.pop(context);
                     } else {
                       BotToast.showSimpleNotification(
                         title: 'Something went wrong',

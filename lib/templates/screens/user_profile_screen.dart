@@ -267,7 +267,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Column(
-                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -282,12 +282,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       padding: EdgeInsets.symmetric(
                                         vertical: AppPadding.p4,
                                       ),
-                                      child: Text(
-                                        // 'I am a student and future billionair',
-                                        UserHelper.userDescription(user),
-                                        style: getMediumStyle(
-                                          color: ColorManager.black,
-                                          fontSize: FontSize.s12,
+                                      child: Expanded(
+                                        child: Text(
+                                          // 'I am a student and future billionair',
+                                          UserHelper.userDescription(user),
+                                          softWrap: true,
+                                          style: getMediumStyle(
+                                            color: ColorManager.black,
+                                            fontSize: FontSize.s12,
+                                          ),
                                         ),
                                       ),
                                     ),

@@ -91,7 +91,7 @@ class OrderRequests with ChangeNotifier {
         message: response.errorResponse,
       );
       setOrderRequestError(orderRequestError);
-      return _orderRequestError as OrderError;
+      return _orderRequestError as OrderRequestError;
     }
     OrderRequestError orderRequestError = OrderRequestError(
       code: (response as Failure).code,

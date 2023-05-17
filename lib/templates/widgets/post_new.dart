@@ -82,8 +82,10 @@ class _PostNewState extends State<PostNew> {
                         height: AppHeight.h150,
                         // width: 100,
                         child: PhotoView(
-                          imageProvider: post.images.runtimeType is List<XFile>
-                              ? FileImage(File(post.images![0]))
+                          // imageProvider: post.images.runtimeType is List<XFile>
+
+                          imageProvider: post.images is List<XFile>
+                              ? FileImage(File(post.images![0].path))
                               : NetworkImage(post.images![0].image)
                                   as ImageProvider,
                           minScale: PhotoViewComputedScale.contained * 0.8,

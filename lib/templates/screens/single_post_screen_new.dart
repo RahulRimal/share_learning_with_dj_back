@@ -551,7 +551,8 @@ class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
             right: 0,
             child: Container(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6,
+                // maxHeight: MediaQuery.of(context).size.height * 0.7,
+                minHeight: MediaQuery.of(context).size.height * 0.6,
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
