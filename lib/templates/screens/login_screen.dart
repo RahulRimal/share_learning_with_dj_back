@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final users = Provider.of<Users>(context, listen: false);
     final sessions = Provider.of<SessionProvider>(context, listen: false);
     var response = await users.googleSignIn();
-
+    // print(response);
     if (response is Success) {
       sessions.setSession((response.response as Map)['session']);
 

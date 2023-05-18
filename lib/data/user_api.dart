@@ -523,6 +523,7 @@ class UserApi {
     final _googleSignIn = GoogleSignIn(
         clientId:
             '117721238163-makqi8gtb0gvt4v374dsd1hl732lu6ud.apps.googleusercontent.com');
+    // '117721238163-618v173cte10mqjurff1u01kgimp8kg1.apps.googleusercontent.com');
 
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -546,7 +547,7 @@ class UserApi {
           "auth_token": idToken,
         }),
       );
-      print(response);
+      // print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         var respBody = json.decode(response.body);
