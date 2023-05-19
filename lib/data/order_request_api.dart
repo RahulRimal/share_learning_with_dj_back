@@ -158,23 +158,23 @@ class OrderRequestApi {
     }
   }
 
-  static Future<Object> getOrderInfo(int orderId) async {
+  static Future<Object> getOrderRequestInfo(String orderRequestId) async {
     try {
       var url = Uri.parse(
-          RemoteManager.BASE_URI + "/orders/" + orderId.toString() + "/");
+          RemoteManager.BASE_URI + "/order_requests/" + orderRequestId + "/");
       var response = await http.get(
         url,
         // headers: {
         //   HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
         // }
       );
-      // print(response);
+      print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
             code: ApiStatusCode.responseSuccess,
-            response: orderFromJson(json.encode(json.decode(response.body))));
-        // response: orderFromJson(json.encode(response.body)));
+            response:
+                orderRequestFromJson(json.encode(json.decode(response.body))));
       }
       return Failure(
         code: ApiStatusCode.invalidResponse,
@@ -195,6 +195,100 @@ class OrderRequestApi {
         code: ApiStatusCode.unknownError,
         errorResponse: ApiStrings.unknownErrorString,
       );
+    }
+  }
+
+  static Future<Object> getRequestedItemBook(
+      Session loggedInUser, String bookId) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/' + bookId + "/");
+
+      var response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken
+        },
+      );
+      // print(response);
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+            code: response.statusCode,
+            // response: bookFromJson(json.encode(json.decode(response.body))));
+            response: bookFromJson(json.encode(json.decode(response.body))));
+      }
+
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+        code: ApiStatusCode.unknownError,
+        errorResponse: ApiStrings.unknownErrorString,
+      );
+    }
+  }
+
+  static Future<Object> updateRequestPrice(
+      String orderRequestId, double newRequestPrice) async {
+    try {
+      Map<String, String> postBody = {
+        "requested_price": newRequestPrice.toString()
+      };
+      var url = Uri.parse(
+          RemoteManager.BASE_URI + '/order_requests/' + orderRequestId + '/');
+
+      var response = await http.patch(
+        url,
+        headers: {
+          // HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
+          "Accept": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+        body: json.encode(postBody),
+      );
+
+      print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return await getOrderRequestInfo(orderRequestId);
+        // return Success(
+        //   code: response.statusCode,
+        //   response: cartFromJson(
+        //     json.encode(json.decode(response.body)['data']['carts']),
+        //   ),
+        // );
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
     }
   }
 

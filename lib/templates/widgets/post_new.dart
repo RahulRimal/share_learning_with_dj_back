@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/wishlist.dart';
 import 'package:share_learning/providers/wishlists.dart';
-import 'package:share_learning/templates/screens/single_post_screen_new.dart';
+import 'package:share_learning/templates/screens/post_details_screen.dart';
 
 import '../../models/session.dart';
 import '../managers/color_manager.dart';
@@ -135,7 +135,7 @@ class _PostNewState extends State<PostNew> {
         ),
         GestureDetector(
           onTap: () => Navigator.of(context).pushNamed(
-            SinglePostScreenNew.routeName,
+            PostDetailsScreen.routeName,
             arguments: {
               'post': post,
               'authSession': loggedInUserSession,

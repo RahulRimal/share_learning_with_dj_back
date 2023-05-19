@@ -68,13 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     Session authenticatedSession;
-    if(args['authSession'] != null)
-    {
-
-    authenticatedSession = args['authSession'] as Session;
-    }
-    else{
-      authenticatedSession = Provider.of<SessionProvider>(context).session as Session;
+    if (args['authSession'] != null) {
+      authenticatedSession = args['authSession'] as Session;
+    } else {
+      authenticatedSession =
+          Provider.of<SessionProvider>(context).session as Session;
     }
 
     Users _users = context.watch<Users>();
@@ -306,9 +304,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
               ),
             ),
-            drawer: _user.id == "temp"
-                ? AppDrawer(authenticatedSession, null)
-                : AppDrawer(authenticatedSession, _user),
+            // drawer: _user.id == "temp"
+            //     ? AppDrawer(authenticatedSession, null)
+            //     : AppDrawer(authenticatedSession, _user),
+
+            drawer: AppDrawer(authenticatedSession),
           );
   }
 }

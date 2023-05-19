@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
@@ -44,6 +45,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);
   }
 
+  _deleteUserAccount(Session userSession, String password) async {
+    bool value = await Provider.of<Users>(context, listen: false)
+        .deleteUserAccount(userSession, password);
+    if (value) {
+      BotToast.showSimpleNotification(
+        title: 'Account deleted successfully',
+        duration: Duration(seconds: 3),
+        backgroundColor: ColorManager.primary,
+        titleStyle: getBoldStyle(color: ColorManager.white),
+        align: Alignment(-1, -1),
+        hideCloseButton: true,
+      );
+    } else
+      BotToast.showSimpleNotification(
+        title: 'Something went wrong, Please try again!',
+        duration: Duration(seconds: 3),
+        backgroundColor: ColorManager.primary,
+        titleStyle: getBoldStyle(color: ColorManager.white),
+        align: Alignment(-1, -1),
+        hideCloseButton: true,
+      );
+  }
+
   // Future<void> _logout(Session session) async {
   //   SharedPreferences prefs = await _prefs;
   //   Provider.of<Books>(context, listen: false).setBooks([]);
@@ -69,7 +93,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       );
     }
 
-    Session? userSessionData = userSession.session;
+    Session? authSession = userSession.session;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -278,10 +302,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         fontSize: FontSize.s14,
                                       ),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: AppPadding.p4,
-                                      ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
                                       child: Expanded(
                                         child: Text(
                                           // 'I am a student and future billionair',
@@ -530,6 +553,134 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ),
         // ---------------------- User preferences section ends here ----------------------------
+        // ---------------------- More section starts here ----------------------------
+        Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // padding: EdgeInsets.zero,
+            // shrinkWrap: true,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppPadding.p8,
+                  horizontal: AppPadding.p18,
+                ),
+                child: Text(
+                  'More options',
+                  style: getBoldStyle(
+                    color: ColorManager.primary,
+                    fontSize: FontSize.s14,
+                  ),
+                ),
+              ),
+              ListTile(
+                iconColor: ColorManager.black,
+                textColor: ColorManager.black,
+                tileColor: ColorManager.white,
+                onTap: () {
+                  bool userDeletionConfirmed = false;
+                  bool showConfirmButton = false;
+                  String password = "";
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Are you sure?'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "You won't be able to recover your account",
+                            style: getRegularStyle(
+                              fontSize: FontSize.s16,
+                              color: ColorManager.black,
+                            ),
+                          ),
+                          SizedBox(
+                            height: AppHeight.h12,
+                          ),
+                          TextFormField(
+                            cursorColor: Theme.of(context).primaryColor,
+                            decoration: InputDecoration(
+                              labelText: 'Enter your password to confirm',
+                              focusColor: Colors.redAccent,
+                            ),
+                            textInputAction: TextInputAction.next,
+                            autovalidateMode: AutovalidateMode.always,
+                            onChanged: (value) {
+                              setState(() {
+                                password = value;
+                              });
+                              if (password.isNotEmpty) {
+                                setState(() {
+                                  showConfirmButton = true;
+                                });
+                              }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter your password to confirm';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text(
+                            'Confirm delete',
+                            style: getBoldStyle(
+                              fontSize: FontSize.s16,
+                              color: ColorManager.primary,
+                            ),
+                          ),
+                          onPressed: password.isEmpty
+                              ? null
+                              : () {
+                                  userDeletionConfirmed = true;
+                                  Navigator.of(context).pop();
+                                },
+                        ),
+                        // TextButton(
+                        //   child: Text(
+                        //     'No',
+                        //     style: getBoldStyle(
+                        //       fontSize: FontSize.s16,
+                        //       color: Colors.green,
+                        //     ),
+                        //   ),
+                        //   onPressed: () {
+                        //     Navigator.of(context).pop();
+                        //   },
+                        // ),
+                      ],
+                    ),
+                  ).then((_) {
+                    if (userDeletionConfirmed) {
+                      _deleteUserAccount(authSession as Session, password);
+                    }
+                  });
+                },
+                leading: Icon(
+                  Icons.delete_forever,
+                  size: FontSize.s24,
+                ),
+                title: Text(
+                  'Delete Account',
+                  style: getBoldStyle(
+                    color: ColorManager.black,
+                    fontSize: FontSize.s16,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: AppSize.s30,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // ---------------------- MOre preferences section ends here ----------------------------
       ],
     );
   }

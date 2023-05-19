@@ -25,8 +25,9 @@ import 'package:share_learning/templates/screens/onboarding_screen.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/order_screen.dart';
 import 'package:share_learning/templates/screens/signup_screen.dart';
+import 'package:share_learning/templates/screens/order_details_screen.dart';
 import 'package:share_learning/templates/screens/single_post_screen.dart';
-import 'package:share_learning/templates/screens/single_post_screen_new.dart';
+import 'package:share_learning/templates/screens/post_details_screen.dart';
 import 'package:share_learning/templates/screens/splash_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/temp_screen.dart';
@@ -40,7 +41,7 @@ import 'firebase_options.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
 import 'templates/screens/order_request_screen.dart';
-import 'templates/screens/order_screen_new.dart';
+import 'templates/screens/orders_screen_new.dart';
 
 Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -89,7 +90,6 @@ Future<void> main() async {
   });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessengingBackgroundHandler);
   await NotificationService.initializeNotification();
-
   runApp(MyApp());
 }
 
@@ -166,7 +166,8 @@ class MyApp extends StatelessWidget {
                 CartScreen.routeName: (context) => CartScreen(),
                 OrderRequestScreen.routeName: (context) => OrderRequestScreen(),
                 OrderScreen.routeName: (context) => OrderScreen(),
-                OrderScreenNew.routeName: (context) => OrderScreenNew(),
+                OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
+                OrderDetailsScreen.routeName: (context) => OrderDetailsScreen(),
                 UserInterestsScreen.routeName: (context) =>
                     UserInterestsScreen(),
               },
@@ -199,8 +200,8 @@ class MyApp extends StatelessWidget {
                   // home: SignUpScreen(),
                   routes: {
                     SinglePostScreen.routeName: (context) => SinglePostScreen(),
-                    SinglePostScreenNew.routeName: (context) =>
-                        SinglePostScreenNew(),
+                    PostDetailsScreen.routeName: (context) =>
+                        PostDetailsScreen(),
                     UserPostsScreen.routeName: (context) => UserPostsScreen(),
                     AddPostScreen.routeName: (context) => AddPostScreen(),
                     EditPostScreen.routeName: (context) => EditPostScreen(),
@@ -222,7 +223,9 @@ class MyApp extends StatelessWidget {
                     OrderRequestScreen.routeName: (context) =>
                         OrderRequestScreen(),
                     OrderScreen.routeName: (context) => OrderScreen(),
-                    OrderScreenNew.routeName: (context) => OrderScreenNew(),
+                    OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
+                    OrderDetailsScreen.routeName: (context) =>
+                        OrderDetailsScreen(),
                     UserInterestsScreen.routeName: (context) =>
                         UserInterestsScreen(),
                   },

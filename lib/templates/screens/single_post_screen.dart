@@ -195,15 +195,16 @@ class SinglePostScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      drawer: users.user == null
-          ? AppDrawer(
-              loggedInUserSession,
-              null,
-            )
-          : AppDrawer(
-              loggedInUserSession,
-              users.user,
-            ),
+      // drawer: users.user == null
+      //     ? AppDrawer(
+      //         loggedInUserSession,
+      //         null,
+      //       )
+      //     : AppDrawer(
+      //         loggedInUserSession,
+      //         users.user,
+      //       ),
+      drawer: AppDrawer(loggedInUserSession),
       appBar: AppBar(
         actions: [
           Padding(
@@ -1294,6 +1295,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                       quantity:
                                                           _buyerExpectedBook
                                                               .bookCount,
+                                                      negotiatedPrice:
+                                                          _expectedUnitPrice,
                                                       totalPrice: 0,
                                                     );
 

@@ -166,6 +166,49 @@ class UserApi {
     }
   }
 
+  static Future<Object> deleteUser(Session userSession, String password) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI + '/auth/users/me/');
+
+      var response = await http.delete(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
+          "Accept": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+      );
+
+      print(response.body);
+
+      if (response.statusCode == ApiStatusCode.noContent) {
+        return Success(
+            code: response.statusCode,
+            response: "Cart Item deleted successfully");
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
+// This seems like an old function
   static Future<Object> postUserPic(Session loggedinSession, User user) async {
     try {
       var url = Uri.parse(RemoteManager.BASE_URI + '/users/pic/' + user.id);
@@ -555,6 +598,7 @@ class UserApi {
         Session userSession = Session.fromMap(respBody['tokens']);
 
         var userData = await getUserFromToken(respBody['tokens']['access']);
+        ((userData as Success).response as User).image = googleUser.photoUrl;
 
         Map<String, dynamic> data = {
           "session": userSession,

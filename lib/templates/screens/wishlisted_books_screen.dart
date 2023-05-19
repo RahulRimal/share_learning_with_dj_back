@@ -99,11 +99,10 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
     _form.currentState!.save();
     _searchFocusNode.unfocus();
     _selectedCategoryIndex = 0;
-    
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _searchTextController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
@@ -122,7 +121,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
     }
     // Books _books = context.watch<Books>();
     Books _books = Provider.of<Books>(context, listen: false);
-    Wishlists _wishlists= Provider.of<Wishlists>(context, listen: false);
+    Wishlists _wishlists = Provider.of<Wishlists>(context, listen: false);
     Orders _orders = context.watch<Orders>();
 
     Categories _categoryProvider =
@@ -258,9 +257,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                             Icons.send,
                                           ),
                                           onPressed: () {
-                                             _getSearchResult(
+                                            _getSearchResult(
                                                 authenticatedSession);
-                                            
                                           }),
                                       suffixIconColor: ColorManager.primary,
                                       fillColor: ColorManager.white,
@@ -290,8 +288,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                       return null;
                                     },
                                     onFieldSubmitted: (_) {
-                                       _getSearchResult(authenticatedSession);
-                                      
+                                      _getSearchResult(authenticatedSession);
                                     },
                                   ),
                                 ),
@@ -557,7 +554,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: FilterChip(
                             label: Text(_categories[index].name),
-                            selectedColor:  ColorManager.primary,
+                            selectedColor: ColorManager.primary,
                             // selectedColor: _searchTextController.text.isEmpty ? ColorManager.primary: ColorManager.lightGrey,
                             showCheckmark: false,
                             selected: _selectedCategoryIndex == index,
@@ -572,16 +569,19 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                       }),
                 ),
                 FutureBuilder(
-                  future: _searchTextController.text.isNotEmpty ?
-                  _wishlists.searchBooks(authenticatedSession, _searchTextController.text):
-                   _categories[_selectedCategoryIndex]
-                              .name
-                              .toLowerCase() ==
-                          'all'
-                      ? _wishlists.getWishlistedBooks(authenticatedSession)
-                      : _wishlists.getWishlistsByBookCategory(authenticatedSession,
-                          _categories[_selectedCategoryIndex].id.toString()),
-                  
+                  future: _searchTextController.text.isNotEmpty
+                      ? _wishlists.searchBooks(
+                          authenticatedSession, _searchTextController.text)
+                      : _categories[_selectedCategoryIndex]
+                                  .name
+                                  .toLowerCase() ==
+                              'all'
+                          ? _wishlists.getWishlistedBooks(authenticatedSession)
+                          : _wishlists.getWishlistsByBookCategory(
+                              authenticatedSession,
+                              _categories[_selectedCategoryIndex]
+                                  .id
+                                  .toString()),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -660,14 +660,13 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
             ),
           ),
         ),
-        drawer: AppDrawer(authenticatedSession, null),
+        // drawer: AppDrawer(authenticatedSession, null),
+        drawer: AppDrawer(authenticatedSession),
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 1,
         ),
       ),
     );
-
-    
   }
 }
 

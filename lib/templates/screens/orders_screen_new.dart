@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,7 @@ import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
+import 'package:share_learning/templates/screens/order_details_screen.dart';
 
 import '../../models/book.dart';
 import '../../models/order.dart';
@@ -19,17 +22,18 @@ import '../managers/color_manager.dart';
 import '../managers/values_manager.dart';
 import '../utils/user_helper.dart';
 
-class OrderScreenNew extends StatelessWidget {
-  static const routeName = '/order-list-new';
-  OrderScreenNew({Key? key}) : super(key: key);
+class OrdersScreenNew extends StatelessWidget {
+  static const routeName = '/orders-list-new';
+  OrdersScreenNew({Key? key}) : super(key: key);
   final _filterForm = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     // Provider.of<Orders>(context).or
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    final Session authSession = args['loggedInUserSession'] as Session;
+    // final Session authSession = args['loggedInUserSession'] as Session;
+    Session authSession = context.watch<SessionProvider>().session as Session;
     Users _users = context.watch<Users>();
     // Session authSession =
     //     Provider.of<SessionProvider>(context).session as Session;
@@ -397,7 +401,7 @@ class _OrdersWidgetState extends State<OrdersWidget> {
               double totalPrice = 0;
 
               item['order'].items.forEach((OrderItem item) {
-                totalPrice += item.quantity * item.unitPrice;
+                totalPrice += item.quantity * item.orderedPrice;
               });
 
               return ListTile(
@@ -503,8 +507,16 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                   padding: const EdgeInsets.all(
                     AppPadding.p8,
                   ),
-                  child: OrderItemWidget(
-                    orderItem: item['order'].items[idx],
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                        OrderDetailsScreen.routeName,
+                        arguments: {'order': item['order']},
+                      );
+                    },
+                    child: OrderItemWidget(
+                      orderItem: item['order'].items[idx],
+                    ),
                   ),
                 );
               },

@@ -177,11 +177,25 @@ class _SplashScreenState extends State<SplashScreen> {
     // );
     return Scaffold(
       backgroundColor: ColorManager.primary,
-      body: Center(
-        //   child: Image.network(
-        //       'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg'),
-        child: SvgPicture.asset(ImageAssets.onboardingLogo2),
-      ),
+      body: Stack(children: [
+        Center(
+          //   child: Image.network(
+          //       'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg'),
+
+          child: SvgPicture.asset(ImageAssets.onboardingLogo2),
+        ),
+        Positioned(
+          bottom: MediaQuery.of(context).size.height * 0.2,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: CircularProgressIndicator.adaptive(
+              backgroundColor: ColorManager.primary,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ),
+        ),
+      ]),
       // body: FutureBuilder(
       //   future: InternetConnectionChecker.checkInternetConnection(),
       //   builder: (context, snapshot) {

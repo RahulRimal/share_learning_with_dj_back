@@ -13,18 +13,21 @@ class CartItem {
     required this.id,
     required this.product,
     required this.quantity,
+    required this.negotiatedPrice,
     required this.totalPrice,
   });
 
   int id;
   Product product;
   int quantity;
+  double negotiatedPrice;
   double totalPrice;
 
   factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
         id: json["id"],
         product: Product.fromJson(json["product"]),
         quantity: json["quantity"],
+        negotiatedPrice: double.parse(json["negotiated_price"]),
         totalPrice: json["total_price"],
       );
 
@@ -32,6 +35,7 @@ class CartItem {
         "id": id,
         "product": product.toJson(),
         "quantity": quantity,
+        "negotiated_price": negotiatedPrice,
         "total_price": totalPrice,
       };
 }

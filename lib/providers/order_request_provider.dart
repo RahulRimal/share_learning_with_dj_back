@@ -4,6 +4,7 @@ import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 
 import '../data/order_request_api.dart';
+import '../models/book.dart';
 import '../models/order.dart';
 import '../models/order_item.dart';
 import '../models/order_request.dart';
@@ -99,6 +100,59 @@ class OrderRequests with ChangeNotifier {
     );
     setOrderRequestError(orderRequestError);
     return _orderRequestError as OrderError;
+  }
+
+  Future<Object> getRequestedItemBook(
+      Session loggedInSession, String bookId) async {
+    var response =
+        await OrderRequestApi.getRequestedItemBook(loggedInSession, bookId);
+    if (response is Success) {
+      // List<Book> responseList = response.response as List<Book>;
+      return response.response as Book;
+    }
+    if (response is Failure) {
+      OrderRequestError orderRequestError = OrderRequestError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setOrderRequestError(orderRequestError);
+      return _orderRequestError as OrderRequestError;
+    }
+
+    OrderRequestError orderRequestError = OrderRequestError(
+      code: (response as OrderRequestError).code,
+      message: (response).message,
+    );
+    setOrderRequestError(orderRequestError);
+    return _orderRequestError as OrderRequestError;
+  }
+
+  Future<bool> updateRequestPrice(
+      String requestId, double newRequestPrice) async {
+    var response =
+        await OrderRequestApi.updateRequestPrice(requestId, newRequestPrice);
+
+    if (response is Success) {
+      final postIndex =
+          _orderRequests.indexWhere((element) => element.id == requestId);
+
+      OrderRequest updatedRequest = response.response as OrderRequest;
+      _orderRequests[postIndex] = updatedRequest;
+      notifyListeners();
+      return true;
+    }
+
+    if (response is Failure) {
+      OrderRequestError orderRequestError = OrderRequestError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setOrderRequestError(orderRequestError);
+      notifyListeners();
+      return false;
+    }
+
+    return false;
   }
 
   // // OrderItem getOrderItemById(int id) {

@@ -97,11 +97,10 @@ class SessionApi {
       //     errorResponse: ApiStrings.unknownErrorString);
     }
   }
+
   static Future<Object> refreshSession(String refreshToken) async {
     try {
-      Map<String, String> postBody = {
-        "refresh": refreshToken
-        };
+      Map<String, String> postBody = {"refresh": refreshToken};
 
       var url = Uri.parse(RemoteManager.BASE_URI + '/auth/jwt/refresh');
 
@@ -116,15 +115,17 @@ class SessionApi {
           HttpHeaders.contentTypeHeader: "application/json",
         },
         body: json.encode(postBody),
-        
       );
 
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
+        Map<String, dynamic> data = json.decode(response.body);
+        data['refresh'] = refreshToken;
         return Success(
           code: response.statusCode,
-          response: sessionFromJson(response.body),
+          // response: sessionFromJson(response.body),
+          response: sessionFromJson(json.encode(data)),
         );
       }
       return Failure(
@@ -193,7 +194,4 @@ class SessionApi {
       );
     }
   }
-
-
-
 }

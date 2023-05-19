@@ -31,10 +31,10 @@ class UserPostsScreen extends StatelessWidget {
         Provider.of<Books>(context).postsByUser(users.user!.id);
 
     return Scaffold(
-      // drawer: AppDrawer(loggedInUserSession),
-      drawer: users.user == null
-          ? AppDrawer(loggedInUserSession, null)
-          : AppDrawer(loggedInUserSession, users.user),
+      // drawer: users.user == null
+      //     ? AppDrawer(loggedInUserSession, null)
+      //     : AppDrawer(loggedInUserSession, users.user),
+      drawer: AppDrawer(loggedInUserSession),
       appBar: AppBar(
         actions: [
           Padding(

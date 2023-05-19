@@ -10,6 +10,7 @@ import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/edit_post_screen.dart';
+import 'package:share_learning/templates/screens/order_request_screen.dart';
 import 'package:share_learning/templates/widgets/post_comments_new.dart';
 
 import '../../models/book.dart';
@@ -26,16 +27,16 @@ import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../widgets/billing_info.dart';
 
-class SinglePostScreenNew extends StatefulWidget {
-  static const routeName = '/post-details-new';
+class PostDetailsScreen extends StatefulWidget {
+  static const routeName = '/post-details-screen';
 
-  const SinglePostScreenNew({Key? key}) : super(key: key);
+  const PostDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  State<SinglePostScreenNew> createState() => _SinglePostScreenNewState();
+  State<PostDetailsScreen> createState() => _PostDetailsScreenState();
 }
 
-class _SinglePostScreenNewState extends State<SinglePostScreenNew> {
+class _PostDetailsScreenState extends State<PostDetailsScreen> {
 // class SinglePostScreenNew extends StatelessWidget {
   int _selectedImage = 0;
 
@@ -891,7 +892,9 @@ class CartBottomSheet extends StatefulWidget {
 
 class _CartBottomSheetState extends State<CartBottomSheet> {
   NepaliDateTime initDate = NepaliDateTime.now();
-  bool _isLoading = false;
+  bool _isRequestLoading = false;
+  bool _isCartLoading = false;
+  bool _isOrderPlacementLoading = false;
 
   final _buyerDateFocusNode = FocusNode();
   final _buyerPriceFocusNode = FocusNode();
@@ -1054,7 +1057,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           onPressed: () {
             Navigator.pushNamed(
               context,
-              CartScreen.routeName,
+              OrderRequestScreen.routeName,
             );
           },
           style: ElevatedButton.styleFrom(
@@ -1478,24 +1481,32 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             builder: (BuildContext context,
                                                 bool shouldRequest,
                                                 Widget? child) {
-                                              return ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    // minimumSize:
-                                                    // const Size
-                                                    //     .fromHeight(40),
-                                                    ),
-                                                child: _isLoading
-                                                    ? CircularProgressIndicator
-                                                        .adaptive()
-                                                    : Text(
-                                                        'Request for this price',
-                                                        style: getBoldStyle(
-                                                          color: ColorManager
-                                                              .white,
-                                                          fontSize:
-                                                              FontSize.s14,
+                                              return ElevatedButton.icon(
+                                                icon: _isRequestLoading
+                                                    ? SizedBox(
+                                                        height: AppHeight.h20,
+                                                        width: AppHeight.h20,
+                                                        child:
+                                                            CircularProgressIndicator
+                                                                .adaptive(
+                                                          strokeWidth: 3,
+                                                          valueColor:
+                                                              AlwaysStoppedAnimation<
+                                                                      Color>(
+                                                                  Colors.white),
+                                                          backgroundColor:
+                                                              ColorManager
+                                                                  .primary,
                                                         ),
-                                                      ),
+                                                      )
+                                                    : Container(),
+                                                label: Text(
+                                                  'Request for this price',
+                                                  style: getBoldStyle(
+                                                    color: ColorManager.white,
+                                                    fontSize: FontSize.s14,
+                                                  ),
+                                                ),
                                                 onPressed: !shouldRequest
                                                     ? null
                                                     // : () async {
@@ -1537,7 +1548,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     //   },
                                                     : () async {
                                                         setState(() {
-                                                          _isLoading = true;
+                                                          _isRequestLoading =
+                                                              true;
                                                         });
 
                                                         final isValid = _form
@@ -1580,26 +1592,32 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             builder: (BuildContext context,
                                                 bool shouldRequest,
                                                 Widget? child) {
-                                              return ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    // minimumSize:
-                                                    //     const Size
-                                                    //             .fromHeight(
-                                                    //         AppHeight
-                                                    //             .h36),
-                                                    ),
-                                                child: _isLoading
-                                                    ? CircularProgressIndicator
-                                                        .adaptive()
-                                                    : Text(
-                                                        'Add book to cart',
-                                                        style: getBoldStyle(
-                                                          color: ColorManager
-                                                              .white,
-                                                          fontSize:
-                                                              FontSize.s14,
+                                              return ElevatedButton.icon(
+                                                icon: _isCartLoading
+                                                    ? SizedBox(
+                                                        height: AppHeight.h20,
+                                                        width: AppHeight.h20,
+                                                        child:
+                                                            CircularProgressIndicator
+                                                                .adaptive(
+                                                          strokeWidth: 3,
+                                                          valueColor:
+                                                              AlwaysStoppedAnimation<
+                                                                      Color>(
+                                                                  Colors.white),
+                                                          backgroundColor:
+                                                              ColorManager
+                                                                  .primary,
                                                         ),
-                                                      ),
+                                                      )
+                                                    : Container(),
+                                                label: Text(
+                                                  'Add book to cart',
+                                                  style: getBoldStyle(
+                                                    color: ColorManager.white,
+                                                    fontSize: FontSize.s14,
+                                                  ),
+                                                ),
                                                 onPressed: shouldRequest
                                                     ? null
                                                     : () async {
@@ -1637,7 +1655,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         // ----------------------Order without cart ends here ----------------------
 
                                                         setState(() {
-                                                          _isLoading = true;
+                                                          _isCartLoading = true;
                                                         });
 
                                                         if (carts.cart ==
@@ -1678,6 +1696,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                       .price
                                                                       .toString(),
                                                             ),
+                                                            negotiatedPrice:
+                                                                selectedPost
+                                                                    .price,
                                                             quantity:
                                                                 _itemCount,
                                                             totalPrice: 0,
@@ -1689,6 +1710,10 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                       as Cart,
                                                                   edittedItem)) {
                                                             // await carts.createCart(Provider.of<SessionProvider>(context, listen: false).session as Session);
+                                                            setState(() {
+                                                              _isCartLoading =
+                                                                  false;
+                                                            });
                                                             Navigator.pop(
                                                                 context);
                                                             _showToastNotification(
@@ -1706,24 +1731,37 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             builder: (BuildContext context,
                                                 bool shouldRequest,
                                                 Widget? child) {
-                                              return ElevatedButton(
+                                              return ElevatedButton.icon(
                                                 style: ElevatedButton.styleFrom(
                                                   minimumSize:
                                                       const Size.fromHeight(
                                                           AppHeight.h36),
                                                 ),
-                                                child: _isLoading
-                                                    ? CircularProgressIndicator
-                                                        .adaptive()
-                                                    : Text(
-                                                        'Place direct order',
-                                                        style: getBoldStyle(
-                                                          color: ColorManager
-                                                              .white,
-                                                          fontSize:
-                                                              FontSize.s14,
+                                                icon: _isOrderPlacementLoading
+                                                    ? SizedBox(
+                                                        height: AppHeight.h20,
+                                                        width: AppHeight.h20,
+                                                        child:
+                                                            CircularProgressIndicator
+                                                                .adaptive(
+                                                          strokeWidth: 3,
+                                                          valueColor:
+                                                              AlwaysStoppedAnimation<
+                                                                      Color>(
+                                                                  Colors.white),
+                                                          backgroundColor:
+                                                              ColorManager
+                                                                  .primary,
                                                         ),
-                                                      ),
+                                                      )
+                                                    : Container(),
+                                                label: Text(
+                                                  'Place direct order',
+                                                  style: getBoldStyle(
+                                                    color: ColorManager.white,
+                                                    fontSize: FontSize.s14,
+                                                  ),
+                                                ),
                                                 onPressed: shouldRequest
                                                     ? null
                                                     :
@@ -1734,9 +1772,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     //         :
                                                     () async {
                                                         setState(() {
-                                                          _isLoading = true;
+                                                          _isOrderPlacementLoading =
+                                                              true;
                                                         });
-
                                                         var tempCart = await carts
                                                             .createTemporaryCart(
                                                                 Provider.of<SessionProvider>(
@@ -1744,7 +1782,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                         listen:
                                                                             false)
                                                                     .session as Session);
-
                                                         if (tempCart
                                                             is CartError) {
                                                           _showToastNotification(
@@ -1779,6 +1816,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             ),
                                                             quantity:
                                                                 _itemCount,
+                                                            negotiatedPrice:
+                                                                selectedPost
+                                                                    .price,
                                                             totalPrice: 0,
                                                           );
 

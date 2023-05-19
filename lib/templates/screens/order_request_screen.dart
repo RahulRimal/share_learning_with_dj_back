@@ -28,6 +28,7 @@ import '../../models/order.dart';
 import '../../models/user.dart';
 
 import '../../providers/users.dart';
+import '../widgets/billing_info.dart';
 import '../widgets/custom_bottom_navbar.dart';
 
 class OrderRequestScreen extends StatefulWidget {
@@ -56,190 +57,148 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
         Provider.of<OrderRequests>(context, listen: false);
 
     return Scaffold(
-        // appBar: AppBar(),
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: AppHeight.h20,
-                ),
-                Form(
-                  key: _form,
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppPadding.p20),
-                    child: TextFormField(
-                      controller: _searchController,
-                      // focusNode: _searchFocusNode,
-                      keyboardType: TextInputType.text,
-                      cursorColor: Theme.of(context).primaryColor,
-                      style: getBoldStyle(
-                          fontSize: FontSize.s14, color: ColorManager.black),
-                      textInputAction: TextInputAction.next,
-                      autovalidateMode: AutovalidateMode.always,
-                      decoration: InputDecoration(
-                        hintText: 'Find your order request',
-                        hintStyle: getBoldStyle(
-                            fontSize: FontSize.s17,
-                            color: ColorManager.primaryOpacity70),
-                        prefixIcon: Icon(
-                          Icons.search,
+      // appBar: AppBar(),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(
+                height: AppHeight.h20,
+              ),
+              Form(
+                key: _form,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppPadding.p20),
+                  child: TextFormField(
+                    controller: _searchController,
+                    // focusNode: _searchFocusNode,
+                    keyboardType: TextInputType.text,
+                    cursorColor: Theme.of(context).primaryColor,
+                    style: getBoldStyle(
+                        fontSize: FontSize.s14, color: ColorManager.black),
+                    textInputAction: TextInputAction.next,
+                    autovalidateMode: AutovalidateMode.always,
+                    decoration: InputDecoration(
+                      hintText: 'Find your order request',
+                      hintStyle: getBoldStyle(
+                          fontSize: FontSize.s17,
+                          color: ColorManager.primaryOpacity70),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: ColorManager.primaryOpacity70,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          Icons.send,
                           color: ColorManager.primaryOpacity70,
                         ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            color: ColorManager.primaryOpacity70,
-                          ),
-                          onPressed: () {},
-                        ),
+                        onPressed: () {},
                       ),
-                      onFieldSubmitted: (_) {
-                        // FocusScope.of(context)
-                        //     .requestFocus(_priceFocusNode);
-                      },
                     ),
+                    onFieldSubmitted: (_) {
+                      // FocusScope.of(context)
+                      //     .requestFocus(_priceFocusNode);
+                    },
                   ),
                 ),
-                SizedBox(
-                  height: AppHeight.h20,
+              ),
+              SizedBox(
+                height: AppHeight.h20,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: AppMargin.m20),
+                height: AppHeight.h150,
+                decoration: BoxDecoration(
+                  color: ColorManager.lightPrimary,
+                  borderRadius: BorderRadius.circular(AppRadius.r20),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: AppMargin.m20),
-                  height: AppHeight.h150,
-                  decoration: BoxDecoration(
-                    color: ColorManager.lightPrimary,
-                    borderRadius: BorderRadius.circular(AppRadius.r20),
-                  ),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        "$IMAGE_PATH/education.svg",
-                        // width: AppSize.s100,
-                        height: AppHeight.h140,
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      "$IMAGE_PATH/education.svg",
+                      // width: AppSize.s100,
+                      height: AppHeight.h140,
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Free Shipping inside the Valley',
+                        style: getBoldStyle(
+                            fontSize: FontSize.s20, color: ColorManager.white),
                       ),
-                      Flexible(
-                        child: Text(
-                          'Free Shipping inside the Valley',
-                          style: getBoldStyle(
-                              fontSize: FontSize.s20,
-                              color: ColorManager.white),
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-                // carts.cart!.items!.length <= 0
-                // orderRequests.orderRequests.length <= 0
-                //     ? Center(
-                //         child: Padding(
-                //           padding: const EdgeInsets.only(top: AppPadding.p45),
-                //           child: Text(
-                //             'No request for the order found',
-                //             style: getBoldStyle(
-                //               fontSize: FontSize.s20,
-                //               color: ColorManager.primary,
-                //             ),
-                //           ),
-                //         ),
-                //       )
-                //     : Expanded(
-                //         child: OrderRequestList(
-                //             orderRequests: orderRequests,
-                //             authendicatedSession: authendicatedSession),
-                //       ),
-                FutureBuilder(
-                  future: orderRequests.getOrderRequests(authendicatedSession),
-                  builder: (ctx, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(
-                        color: ColorManager.secondary,
-                      );
+              ),
+              // carts.cart!.items!.length <= 0
+              // orderRequests.orderRequests.length <= 0
+              //     ? Center(
+              //         child: Padding(
+              //           padding: const EdgeInsets.only(top: AppPadding.p45),
+              //           child: Text(
+              //             'No request for the order found',
+              //             style: getBoldStyle(
+              //               fontSize: FontSize.s20,
+              //               color: ColorManager.primary,
+              //             ),
+              //           ),
+              //         ),
+              //       )
+              //     : Expanded(
+              //         child: OrderRequestList(
+              //             orderRequests: orderRequests,
+              //             authendicatedSession: authendicatedSession),
+              //       ),
+              FutureBuilder(
+                future: orderRequests.getOrderRequests(authendicatedSession),
+                builder: (ctx, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(
+                      color: ColorManager.secondary,
+                    );
+                  } else {
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
                     } else {
-                      if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
+                      if (snapshot.data is OrderRequestError) {
+                        OrderRequestError error =
+                            snapshot.data as OrderRequestError;
+                        return Text(error.message as String);
                       } else {
-                        if (snapshot.data is OrderRequestError) {
-                          OrderRequestError error =
-                              snapshot.data as OrderRequestError;
-                          return Text(error.message as String);
-                        } else {
-                          List<OrderRequest> data =
-                              snapshot.data as List<OrderRequest>;
-                          return data.length <= 0
-                              ? Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: AppPadding.p45),
-                                    child: Text(
-                                      'No request for the order found',
-                                      style: getBoldStyle(
-                                        fontSize: FontSize.s20,
-                                        color: ColorManager.primary,
-                                      ),
+                        List<OrderRequest> data =
+                            snapshot.data as List<OrderRequest>;
+                        return data.length <= 0
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: AppPadding.p45),
+                                  child: Text(
+                                    'No request for the order found',
+                                    style: getBoldStyle(
+                                      fontSize: FontSize.s20,
+                                      color: ColorManager.primary,
                                     ),
                                   ),
-                                )
-                              : Expanded(
-                                  child: OrderRequestList(
-                                      orderRequests: orderRequests,
-                                      authendicatedSession:
-                                          authendicatedSession),
-                                );
-                        }
+                                ),
+                              )
+                            : Expanded(
+                                child: OrderRequestList(
+                                    orderRequests: orderRequests,
+                                    authendicatedSession: authendicatedSession),
+                              );
                       }
                     }
-                  },
-                ),
-              ],
-            ),
+                  }
+                },
+              ),
+            ],
           ),
         ),
-        bottomNavigationBar: CustomBottomNavigationBar(
-          index: 3,
-        ),
-        // bottomSheet: context.watch<Carts>().cartItems.length > 0
-        bottomSheet: context.watch<OrderRequests>().orderRequests.length > 0
-            ? ElevatedButton(
-                onPressed: () async {
-                  showModalBottomSheet(
-                    barrierColor: ColorManager.blackWithLowOpacity,
-                    isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(AppRadius.r20),
-                        topRight: Radius.circular(
-                          AppRadius.r20,
-                        ),
-                      ),
-                    ),
-                    context: context,
-                    builder: (context) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppPadding.p20,
-                        ),
-                        child: BillingInfo(),
-                      );
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: ColorManager.primary,
-                  minimumSize: const Size.fromHeight(40), // NEW
-                ),
-                child: const Text(
-                  "Order these items",
-                  style: TextStyle(
-                    fontSize: FontSize.s16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-              )
-            : null);
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        index: 3,
+      ),
+    );
   }
 }
 
@@ -275,664 +234,6 @@ class OrderRequestList extends StatelessWidget {
   }
 }
 
-enum PaymentMethod {
-  Esewa,
-  Khalti,
-  Cash,
-}
-
-class BillingInfo extends StatefulWidget {
-  const BillingInfo({Key? key}) : super(key: key);
-
-  @override
-  State<BillingInfo> createState() => _BillingInfoState();
-}
-
-class _BillingInfoState extends State<BillingInfo> {
-  final _form = GlobalKey<FormState>();
-
-  final _firstNameFocusNode = FocusNode();
-  final _lastNameFocusNode = FocusNode();
-  final _phoneNumberFocusNode = FocusNode();
-  final _emailFocusNode = FocusNode();
-
-  final _sideNoteFocusNode = FocusNode();
-
-  Map<String, String> _billingInfo = {};
-
-  PaymentMethod _paymentMethod = PaymentMethod.Khalti;
-
-  List<String> _locationOptions = [
-    'Kathmandu',
-    'Bhaktapur',
-    'Lalitpur',
-    'Nepalgunj',
-  ];
-
-  _setBillingInfo(User user) {
-    if (user.firstName!.isNotEmpty) {
-      _billingInfo['first_name'] = user.firstName!;
-    }
-    if (user.lastName!.isNotEmpty) {
-      _billingInfo['last_name'] = user.lastName!;
-    }
-    if (user.email!.isNotEmpty) {
-      _billingInfo['email'] = user.email!;
-    }
-    if (user.phone != null) {
-      if (user.phone!.isNotEmpty) {
-        _billingInfo['phone'] = user.phone!;
-      }
-    }
-    // print(_billingInfo);
-  }
-
-  _showToastNotification(String msg) {
-    BotToast.showSimpleNotification(
-      title: msg,
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
-  }
-
-  _payWithKhalti() async {
-    bool paymentSuccess = false;
-    await KhaltiScope.of(context).pay(
-        config: PaymentConfig(
-          amount: 1000,
-          productIdentity: 'cart/product id',
-          productName: 'productName',
-        ),
-        preferences: [
-          PaymentPreference.khalti,
-          PaymentPreference.connectIPS,
-          PaymentPreference.eBanking,
-          PaymentPreference.mobileBanking,
-          PaymentPreference.sct,
-        ],
-        onSuccess: (PaymentSuccessModel success) {
-          paymentSuccess = true;
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Payment Successful'),
-                // actions: [
-                //   SimpleDialogOption(
-                //     child: Text('OK'),
-                //     onPressed: () {
-                //       Navigator.pop(context);
-                //     },
-                //   ),
-                // ],
-              );
-            },
-          );
-        },
-        onFailure: (PaymentFailureModel failure) {
-          print(failure.toString());
-          paymentSuccess = false;
-        },
-        onCancel: () {
-          print('Khalti Canceled');
-          paymentSuccess = false;
-        });
-
-    return paymentSuccess;
-  }
-
-  _payWithEsewa() {
-    EsewaClient _esewaClient = EsewaClient.configure(
-      clientId: "JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R",
-      secretKey: "BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==",
-      environment: EsewaEnvironment.TEST,
-    );
-
-    /*
-    * Enter your own callback url to receive response callback from esewa to your client server
-    * */
-    EsewaPayment payment = EsewaPayment(
-        productId: "test_id",
-        amount: "10",
-        name: "Test Product",
-        callbackUrl: "http://example.com/");
-
-    // start your payment procedure
-    _esewaClient.startPayment(
-        esewaPayment: payment,
-        onSuccess: (data) {
-          print("success");
-          return false;
-        },
-        onFailure: (data) {
-          print("failure");
-          return false;
-        },
-        onCancelled: (data) {
-          print("cancelled");
-          return false;
-        });
-  }
-
-  @override
-  void initState() {
-    _billingInfo['convenient_location'] = _locationOptions[0];
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // BookFilters bookFilters = Provider.of<BookFilters>(context);
-    // Map<String, dynamic> filterOptions = bookFilters.filterOptions;
-
-    User user = Provider.of<Users>(context).user as User;
-    Orders orders = Provider.of<Orders>(context);
-    Users users = Provider.of<Users>(context);
-    Carts carts = Provider.of<Carts>(context, listen: false);
-    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-    Session authSession =
-        Provider.of<SessionProvider>(context).session as Session;
-
-    _setBillingInfo(user);
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorManager.white,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.cancel,
-            color: ColorManager.black,
-          ),
-        ),
-        title: Center(
-          child: Text(
-            'Billing Information',
-            style: getBoldStyle(
-              color: ColorManager.black,
-              fontSize: FontSize.s20,
-            ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            vertical: AppPadding.p16,
-            horizontal: AppPadding.p14,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ----------------------    Name section ends here -----------------------------------
-
-              Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: AppPadding.p12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Billing Information',
-                      style: getBoldStyle(
-                        color: ColorManager.black,
-                        fontSize: FontSize.s18,
-                      ),
-                    ),
-                    SizedBox(
-                      height: AppHeight.h4,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          // border: Border.all(
-                          //   color: Colors.grey,
-                          //   width: 1.0,
-                          //   style: BorderStyle.solid,
-                          // ),
-                          ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Form(
-                            key: _form,
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                            // initialValue: _edittedUser.firstName,
-                                            initialValue: _billingInfo
-                                                    .containsKey('first_name')
-                                                ? _billingInfo['first_name']
-                                                : null,
-                                            cursorColor:
-                                                Theme.of(context).primaryColor,
-                                            focusNode: _firstNameFocusNode,
-                                            decoration: InputDecoration(
-                                              labelText: 'First Name',
-                                              focusColor: Colors.redAccent,
-                                            ),
-                                            textInputAction:
-                                                TextInputAction.next,
-                                            autovalidateMode:
-                                                AutovalidateMode.always,
-                                            onFieldSubmitted: (_) {
-                                              FocusScope.of(context)
-                                                  .requestFocus(
-                                                      _lastNameFocusNode);
-                                            },
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return 'Please provide the first name';
-                                              }
-                                              return null;
-                                            },
-                                            onSaved: (value) {
-                                              _billingInfo['first_name'] =
-                                                  value.toString();
-                                            }),
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          initialValue: _billingInfo
-                                                  .containsKey('last_name')
-                                              ? _billingInfo['last_name']
-                                              : null,
-                                          keyboardType: TextInputType.text,
-                                          cursorColor:
-                                              Theme.of(context).primaryColor,
-                                          focusNode: _lastNameFocusNode,
-                                          decoration: InputDecoration(
-                                            labelText: 'Last Name',
-                                          ),
-                                          textInputAction: TextInputAction.next,
-                                          autovalidateMode:
-                                              AutovalidateMode.always,
-                                          onFieldSubmitted: (_) {
-                                            FocusScope.of(context)
-                                                .requestFocus(_emailFocusNode);
-                                          },
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return 'Please provide the last name';
-                                            }
-                                            return null;
-                                          },
-                                          onSaved: (value) {
-                                            _billingInfo['last_name'] =
-                                                value.toString();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                      initialValue:
-                                          _billingInfo.containsKey('email')
-                                              ? _billingInfo['email']
-                                              : null,
-                                      focusNode: _emailFocusNode,
-                                      keyboardType: TextInputType.text,
-                                      cursorColor:
-                                          Theme.of(context).primaryColor,
-                                      decoration: InputDecoration(
-                                        labelText: 'Email Address',
-                                      ),
-                                      textInputAction: TextInputAction.next,
-                                      autovalidateMode: AutovalidateMode.always,
-                                      onFieldSubmitted: (_) {
-                                        FocusScope.of(context).requestFocus(
-                                            _phoneNumberFocusNode);
-                                      },
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please provide email to receive notifications';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (value) {
-                                        _billingInfo['email'] =
-                                            value.toString();
-                                      }),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                      initialValue:
-                                          _billingInfo.containsKey('phone')
-                                              ? _billingInfo['phone']
-                                              : null,
-                                      focusNode: _phoneNumberFocusNode,
-                                      keyboardType: TextInputType.number,
-                                      cursorColor:
-                                          Theme.of(context).primaryColor,
-                                      decoration: InputDecoration(
-                                        labelText: 'Phone Number',
-                                      ),
-                                      textInputAction: TextInputAction.next,
-                                      autovalidateMode: AutovalidateMode.always,
-                                      onFieldSubmitted: (_) {
-                                        FocusScope.of(context)
-                                            .requestFocus(_sideNoteFocusNode);
-                                      },
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please provide the phone number to be contacted';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (value) {
-                                        _billingInfo['phone'] =
-                                            value.toString();
-                                      }),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                    // initialValue: _edittedUser.description,
-                                    focusNode: _sideNoteFocusNode,
-                                    keyboardType: TextInputType.multiline,
-                                    cursorColor: Theme.of(context).primaryColor,
-                                    decoration: InputDecoration(
-                                      labelText: 'Side Note',
-                                    ),
-                                    textInputAction: TextInputAction.newline,
-                                    autovalidateMode: AutovalidateMode.always,
-                                    minLines: 3,
-                                    maxLines: 7,
-                                    // onFieldSubmitted: (_) {
-                                    //   FocusScope.of(context)
-                                    //       .requestFocus(_classFocusNode);
-                                    // },
-                                    // validator: (value) {
-                                    //   if (value!.length < 15) {
-                                    //     return 'Please provide a big description';
-                                    //   }
-                                    //   return null;
-                                    // },
-                                    onSaved: (value) {
-                                      _billingInfo['side_note'] =
-                                          value.toString();
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // ----------------------    Name section ends here -----------------------------------
-              // ----------------------    Sort by locations section ends here -----------------------------------
-              Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: AppPadding.p12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Location',
-                      style: getBoldStyle(
-                        color: ColorManager.black,
-                        fontSize: FontSize.s18,
-                      ),
-                    ),
-                    SizedBox(
-                      height: AppHeight.h4,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                        color: Colors.grey,
-                        width: 1.0,
-                        style: BorderStyle.solid,
-                      )),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton(
-                            isExpanded: true,
-                            style: getBoldStyle(color: ColorManager.black),
-                            value: _billingInfo['convenient_location'],
-                            // value: _locationOptions[0],
-                            items: _locationOptions
-                                .map((option) => DropdownMenuItem(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: AppPadding.p12,
-                                        ),
-                                        child: Text(
-                                          option,
-                                        ),
-                                      ),
-                                      value: option,
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _billingInfo['convenient_location'] =
-                                    value as String;
-                              });
-                            }),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // ----------------------    Sort by location section ends here -----------------------------------
-              // ----------------------    Payment gateway section starts here -----------------------------------
-
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: AppPadding.p12,
-                ),
-              ),
-
-              Text(
-                'Select Payment Gateway',
-                style: getBoldStyle(
-                  color: ColorManager.black,
-                  fontSize: FontSize.s18,
-                ),
-              ),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: _paymentMethod == PaymentMethod.Esewa
-                      ? ColorManager.green
-                      : ColorManager.lightGrey,
-                  fixedSize: Size.fromWidth(
-                    MediaQuery.of(context).size.width,
-                  ),
-                ),
-                onPressed: () async {
-                  setState(() {
-                    _paymentMethod = PaymentMethod.Esewa;
-                  });
-                },
-                child: Text("Pay with e-Sewa"),
-              ),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: _paymentMethod == PaymentMethod.Khalti
-                      ? ColorManager.purple
-                      : ColorManager.lightGrey,
-                  fixedSize: Size.fromWidth(
-                    MediaQuery.of(context).size.width,
-                  ),
-                ),
-                onPressed: () async {
-                  // _payWithKhalti();
-                  setState(() {
-                    _paymentMethod = PaymentMethod.Khalti;
-                  });
-                },
-                child: Text("Pay with Khalti"),
-              ),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: _paymentMethod == PaymentMethod.Cash
-                      ? ColorManager.primary
-                      : ColorManager.lightGrey,
-                  fixedSize: Size.fromWidth(
-                    MediaQuery.of(context).size.width,
-                  ),
-                ),
-                onPressed: () async {
-                  setState(() {
-                    _paymentMethod = PaymentMethod.Cash;
-                  });
-                  // Initiate Ewsea payment
-                  // EwseaResult result = await Ewsea.initializePayment(
-                  //   "your-ewsea-key",
-                  //   100.0, // payment amount
-                  //   "USD", // currency code
-                  // );
-
-                  // // Handle payment response
-                  // if (result.success) {
-                  //   setState(() {
-                  //     paymentGateway = "Ewsea";
-                  //   });
-                  // } else {
-                  //   // Handle payment error
-                  // }
-                },
-                child: Text("Pay with Cash"),
-              ),
-
-              // ----------------------    Payment gateway section ends here -----------------------------------
-
-              SizedBox(
-                height: AppHeight.h50,
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomSheet: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: ColorManager.lighterGrey,
-                width: 1,
-              ),
-            ),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: AppPadding.p12,
-            vertical: AppPadding.p8,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final _isValid = _form.currentState!.validate();
-                      if (!_isValid) {
-                        return;
-                      }
-                      _form.currentState!.save();
-
-                      String paymentStatus = 'P';
-
-                      if (_paymentMethod == PaymentMethod.Esewa) {
-                        if (_payWithEsewa() == false) {
-                          _showToastNotification(
-                              "Something went wrong during payment. Please try again");
-                          return;
-                        } else
-                          paymentStatus = "C";
-                      }
-                      if (_paymentMethod == PaymentMethod.Khalti) {
-                        if (await _payWithKhalti() == false) {
-                          _showToastNotification(
-                              "Something went wrong during the payment, please try again");
-                          return;
-                        } else
-                          paymentStatus = "C";
-                      }
-
-                      if (await orders.placeOrder(
-                        loggedInSession: authSession,
-                        billingInfo: _billingInfo,
-                        paymentMethod: _paymentMethod == PaymentMethod.Cash
-                            ? "C"
-                            : _paymentMethod == PaymentMethod.Esewa
-                                ? "E"
-                                : "K",
-                      )) {
-                        if (_paymentMethod != PaymentMethod.Cash) {
-                          Order order = orders.orders.last;
-                          await orders.updatePaymentStatus(
-                              authSession, order.id.toString(), paymentStatus);
-                        }
-                        // carts.setCart(null);
-                        // carts.setCartItems([]);
-                        // SharedPreferences prefs = await _prefs;
-                        // prefs.remove('cartId');
-
-                        await carts.createCart(authSession);
-                        carts.setCartItems([]);
-                        SharedPreferences prefs = await _prefs;
-                        prefs.remove('cartId');
-                        prefs.setString('cartId', carts.cart!.id);
-                        _showToastNotification("Order placed successfully");
-                        Navigator.pushReplacementNamed(
-                            context, HomeScreenNew.routeName,
-                            arguments: {'authSession': authSession});
-                      } else {
-                        _showToastNotification("Something went wrong");
-                      }
-                    },
-                    child: Text(
-                      'Place an order',
-                      style: getBoldStyle(
-                        color: ColorManager.black,
-                        fontSize: FontSize.s18,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: ColorManager.primary,
-                      padding: EdgeInsets.symmetric(
-                        vertical: AppPadding.p12,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )),
-    );
-  }
-}
-
 class OrderRequestItemWidget extends StatefulWidget {
   const OrderRequestItemWidget({Key? key, required this.requestedItem})
       : super(key: key);
@@ -944,39 +245,40 @@ class OrderRequestItemWidget extends StatefulWidget {
 }
 
 class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
-  late ValueNotifier<bool> _requestedItemChanged;
-  late ValueNotifier<int> _quantity;
-  late OrderRequest _edittedItem;
+  ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
+  ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
+  bool _isLoading = false;
 
-  _ifRequestItemChanged() {
-    if (_quantity.value != widget.requestedItem.quantity) {
-      _requestedItemChanged.value = true;
+  double _newRequestPrice = 0;
+
+  _shouldShowRequestButton() {
+    if (_newRequestPrice != double.parse(widget.requestedItem.requestedPrice) &&
+        _newRequestPrice !=
+            double.parse(widget.requestedItem.product.unitPrice)) {
+      _showRequestButton.value = true;
       return;
     }
-
-    _requestedItemChanged.value = false;
+    _showRequestButton.value = false;
   }
 
-  @override
-  void initState() {
-    _edittedItem = widget.requestedItem;
-    _requestedItemChanged = ValueNotifier<bool>(false);
-    _quantity = ValueNotifier<int>(widget.requestedItem.quantity);
-    // _wishlisted = widget.cartItem.wishlisted;
-    super.initState();
+  _shouldShowOrderButton() {
+    if (_newRequestPrice ==
+        double.parse(widget.requestedItem.product.unitPrice)) {
+      _showOrderButton.value = true;
+      return;
+    }
+    _showOrderButton.value = false;
   }
 
-  Future<bool> _updateCartItem(Cart cart, CartItem edittedItem) async {
-    _edittedItem.quantity = _quantity.value;
-    // _edittedItem.wishlisted = _wishlisted;
-
-    await Provider.of<Carts>(context, listen: false)
-        .updateCartItem(cart.id, edittedItem)
+  Future<bool> _updateRequestPrice(
+      String requestId, double newRequestPrice) async {
+    await Provider.of<OrderRequests>(context, listen: false)
+        .updateRequestPrice(widget.requestedItem.id, _newRequestPrice)
         .then(
       (value) {
         if (value) {
           BotToast.showSimpleNotification(
-            title: 'Cart Item updated',
+            title: 'Request price changed',
             duration: Duration(seconds: 3),
             backgroundColor: ColorManager.primary,
             titleStyle: getBoldStyle(color: ColorManager.white),
@@ -984,7 +286,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
             align: Alignment(-1, -1),
             hideCloseButton: true,
           );
-          _requestedItemChanged.value = false;
+          _showRequestButton.value = false;
         } else
           BotToast.showSimpleNotification(
             title: "Something went wrong, Please try again!",
@@ -1050,15 +352,34 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
   //   );
   // }
 
+  _showToastNotification(String msg) {
+    BotToast.showSimpleNotification(
+        title: msg,
+        // duration: Duration(seconds: 3),
+        backgroundColor: ColorManager.primary,
+        titleStyle: getBoldStyle(color: ColorManager.white),
+        // align: Alignment(1, 1),
+        align: Alignment(1, -1),
+        hideCloseButton: true,
+        dismissDirections: [
+          DismissDirection.horizontal,
+          DismissDirection.vertical,
+        ]);
+  }
+
   @override
   Widget build(BuildContext context) {
+    OrderRequest requestedItem = widget.requestedItem;
     Session authendicatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
     Carts _carts = context.watch<Carts>();
+    OrderRequests _orderRequests = context.watch<OrderRequests>();
 
     return FutureBuilder(
-        future: _carts.getCartItemBook(
+        // future: _carts.getCartItemBook(
+        //     authendicatedSession, widget.requestedItem.product.id.toString()),
+        future: _orderRequests.getRequestedItemBook(
             authendicatedSession, widget.requestedItem.product.id.toString()),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -1072,7 +393,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
               );
             } else {
               if (snapshot.data is Book) {
-                final Book orderedBook = snapshot.data as Book;
+                final Book requestedBook = snapshot.data as Book;
                 return Container(
                   margin: EdgeInsets.all(AppMargin.m8),
                   decoration: BoxDecoration(
@@ -1097,8 +418,13 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                               top: 16.00,
                               bottom: 16.00,
                             ),
+                            // child: Image.network(
+                            //   'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg',
+                            //   width: 100.0,
+                            //   height: 100.0,
+                            // ),
                             child: Image.network(
-                              'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg',
+                              requestedBook.images![0].image,
                               width: 100.0,
                               height: 100.0,
                             ),
@@ -1127,7 +453,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       Container(
                                         width: 158.00,
                                         child: Text(
-                                          orderedBook.bookName,
+                                          requestedBook.bookName,
                                           maxLines: null,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
@@ -1156,7 +482,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                     AlertDialog(
                                                   title: Text('Are you sure?'),
                                                   content: Text(
-                                                    'This will remove the item from  your cart',
+                                                    'The request will be deleted forever',
                                                     style: getRegularStyle(
                                                       fontSize: FontSize.s16,
                                                       color: ColorManager.black,
@@ -1241,8 +567,8 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
                                                 style: TextStyle(
-                                                  color: Colors.lightBlue,
-                                                  fontSize: 12,
+                                                  color: ColorManager.black,
+                                                  fontSize: FontSize.s12,
                                                   fontFamily: 'Poppins',
                                                   fontWeight: FontWeight.w700,
                                                   letterSpacing: 0.50,
@@ -1255,12 +581,12 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 bottom: 1.00,
                                               ),
                                               child: Text(
-                                                "Rs. ${widget.requestedItem.requestedPrice}",
+                                                "Rs. ${widget.requestedItem.product.unitPrice}",
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
                                                 style: TextStyle(
                                                   color: Colors.lightBlue,
-                                                  fontSize: 12,
+                                                  fontSize: FontSize.s14,
                                                   fontFamily: 'Poppins',
                                                   fontWeight: FontWeight.w700,
                                                   letterSpacing: 0.50,
@@ -1285,12 +611,12 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 bottom: 1.00,
                                               ),
                                               child: Text(
-                                                "Expected unit price",
+                                                "Requested unit price",
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
                                                 style: TextStyle(
-                                                  color: Colors.lightBlue,
-                                                  fontSize: 12,
+                                                  color: ColorManager.black,
+                                                  fontSize: FontSize.s12,
                                                   fontFamily: 'Poppins',
                                                   fontWeight: FontWeight.w700,
                                                   letterSpacing: 0.50,
@@ -1308,7 +634,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 textAlign: TextAlign.left,
                                                 style: TextStyle(
                                                   color: Colors.lightBlue,
-                                                  fontSize: 12,
+                                                  fontSize: FontSize.s14,
                                                   fontFamily: 'Poppins',
                                                   fontWeight: FontWeight.w700,
                                                   letterSpacing: 0.50,
@@ -1319,6 +645,170 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                         ),
                                       ),
                                       // --------------------------Expected Unit Price ends here-----------------------
+
+                                      // --------------------------Change Request Price starts here-----------------------
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: AppPadding.p8,
+                                        ),
+                                        child: TextFormField(
+                                          keyboardType: TextInputType.number,
+                                          cursorColor:
+                                              Theme.of(context).primaryColor,
+                                          decoration: InputDecoration(
+                                            labelText: 'Change requst price',
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.redAccent,
+                                              ),
+                                            ),
+                                          ),
+                                          textInputAction: TextInputAction.done,
+                                          onChanged: (value) {
+                                            _newRequestPrice =
+                                                double.parse(value);
+                                            _shouldShowRequestButton();
+                                            _shouldShowOrderButton();
+                                          },
+                                          // onFieldSubmitted: (_) {
+                                          //   FocusScope.of(context).requestFocus(_authorFocusNode);
+                                          // },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please provide the bookName';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (value) {},
+                                        ),
+                                      ),
+
+                                      ValueListenableBuilder(
+                                        valueListenable: _showRequestButton,
+                                        builder: (BuildContext context,
+                                            bool showRequestButton,
+                                            Widget? child) {
+                                          return showRequestButton
+                                              ? ElevatedButton(
+                                                  onPressed: () =>
+                                                      _updateRequestPrice(
+                                                          requestedItem.id,
+                                                          _newRequestPrice),
+                                                  // child: Text('Update Request Price'),
+                                                  child: Text(
+                                                      'Request for this price'),
+                                                )
+                                              : Container();
+                                        },
+                                      ),
+                                      ValueListenableBuilder(
+                                        valueListenable: _showOrderButton,
+                                        builder: (BuildContext context,
+                                            bool showOrderButton,
+                                            Widget? child) {
+                                          return showOrderButton
+                                              ? ElevatedButton(
+                                                  onPressed: () async {
+                                                    Carts carts = Provider.of(
+                                                        context,
+                                                        listen: false);
+                                                    setState(() {
+                                                      _isLoading = true;
+                                                    });
+                                                    var tempCart = await carts
+                                                        .createTemporaryCart(
+                                                            Provider.of<SessionProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .session
+                                                                as Session);
+                                                    if (tempCart is CartError) {
+                                                      _showToastNotification(
+                                                          'Something went wrong');
+                                                    }
+                                                    if (tempCart is Cart) {
+                                                      CartItem edittedItem =
+                                                          new CartItem(
+                                                        id: 0,
+                                                        product: new Product(
+                                                          id: int.parse(
+                                                              requestedBook.id),
+                                                          bookName:
+                                                              requestedBook
+                                                                  .bookName,
+                                                          unitPrice:
+                                                              requestedBook
+                                                                  .price
+                                                                  .toString(),
+                                                        ),
+                                                        negotiatedPrice:
+                                                            _newRequestPrice,
+                                                        quantity: requestedItem
+                                                            .quantity,
+                                                        totalPrice: 0,
+                                                      );
+
+                                                      if (await carts
+                                                          .addItemToTemporaryCart(
+                                                              tempCart,
+                                                              edittedItem)) {
+                                                        return showModalBottomSheet(
+                                                          barrierColor: ColorManager
+                                                              .blackWithLowOpacity,
+                                                          isScrollControlled:
+                                                              true,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(
+                                                                      AppRadius
+                                                                          .r20),
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                AppRadius.r20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return Container(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.9,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                horizontal:
+                                                                    AppPadding
+                                                                        .p20,
+                                                              ),
+                                                              child: BillingInfo(
+                                                                  cartId:
+                                                                      tempCart
+                                                                          .id),
+                                                            );
+                                                          },
+                                                        );
+                                                      }
+                                                    } else {
+                                                      // print('here');
+                                                      _showToastNotification(
+                                                          'Something went wrong');
+                                                    }
+                                                  },
+                                                  child: Text(
+                                                      'Order this book now'),
+                                                )
+                                              : Container();
+                                        },
+                                      ),
+
+                                      // --------------------------Change Request Price ends here-----------------------
                                     ],
                                   ),
                                 ),
@@ -1326,22 +816,6 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                             ),
                           ),
                         ],
-                      ),
-                      ValueListenableBuilder(
-                        valueListenable: _requestedItemChanged,
-                        builder: (BuildContext context, bool itemChanged,
-                            Widget? child) {
-                          return itemChanged
-                              ? ElevatedButton(
-                                  // onPressed: () => _updateCartItem(
-                                  //     Provider.of<Carts>(context, listen: false)
-                                  //         .cart as Cart,
-                                  //     _requestedItem),
-                                  onPressed: () {},
-                                  child: Text('Update Request Price'),
-                                )
-                              : Container();
-                        },
                       ),
                     ],
                   ),

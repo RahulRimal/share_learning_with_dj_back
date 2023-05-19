@@ -13,14 +13,14 @@ class OrderItem {
     required this.id,
     required this.productId,
     // required this.productName,
-    required this.unitPrice,
+    required this.orderedPrice,
     required this.quantity,
   });
 
   int id;
   int productId;
   // String productName;
-  double unitPrice;
+  double orderedPrice;
 
   int quantity;
 
@@ -29,17 +29,16 @@ class OrderItem {
         productId: json.containsKey('product_id')
             ? json['product_id']
             : json["product"]["id"],
-        // productName: json["product"]["book_name"],
-        unitPrice: double.parse(json["product"]["unit_price"]),
+
+        // unitPrice: double.parse(json["product"]["unit_price"]),
+        orderedPrice: double.parse(json["ordered_price"]),
         quantity: json["quantity"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "product_id": productId,
-        // "product_name": productName,
-        // "product_price": productPrice,
-        "unit_price": unitPrice,
+        "ordered_price": orderedPrice,
         "quantity": quantity,
       };
 }

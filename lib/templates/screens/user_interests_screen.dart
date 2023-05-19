@@ -139,6 +139,7 @@ import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
+import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -155,6 +156,7 @@ class UserInterestsScreen extends StatefulWidget {
 
 class _UserInterestsScreenState extends State<UserInterestsScreen> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  bool _isLoading = false;
 
   List<String> interests = [
     'Cooking',
@@ -207,6 +209,9 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
 
   // Future<bool> _handleNextButtonPress() {
   _handleNextButtonPress() async {
+    setState(() {
+      _isLoading = true;
+    });
     Users users = Provider.of<Users>(context, listen: false);
     SharedPreferences prefs = await _prefs;
 
@@ -235,6 +240,11 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
         );
 
         prefs.setBool('isFirstTime', false);
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
 
         // Navigator.pushReplacementNamed(context, HomeScreen.routeName,
         //     arguments: {
@@ -244,6 +254,9 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
         Navigator.pushReplacementNamed(context, HomeScreenNew.routeName);
       }
       if (response is Failure) {
+        setState(() {
+          _isLoading = false;
+        });
         BotToast.showSimpleNotification(
           // title: (response as Map)['message'],
           title: response.errorResponse.toString(),
@@ -346,7 +359,19 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
                     .toList(),
               ),
               SizedBox(height: 32),
-              ElevatedButton(
+              ElevatedButton.icon(
+                icon: _isLoading
+                    ? SizedBox(
+                        height: AppHeight.h20,
+                        width: AppHeight.h20,
+                        child: CircularProgressIndicator.adaptive(
+                          strokeWidth: 3,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          backgroundColor: ColorManager.primary,
+                        ),
+                      )
+                    : Container(),
                 onPressed:
                     selectedInterests.isNotEmpty && selectedHobbies.isNotEmpty
                         ? _handleNextButtonPress
@@ -359,7 +384,7 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
                         //     }
                         //   }
                         : null,
-                child: Text(
+                label: Text(
                   'Next',
                   style: getBoldStyle(color: ColorManager.white),
                 ),

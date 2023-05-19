@@ -204,8 +204,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         } else {
                           if (snapshot.hasError) {
                             return CircleAvatar(
-                              // backgroundImage: NetworkImage(
-                              //     'https://ojasfilms.org/assets/img/ojas-logo.png'),
                               backgroundImage:
                                   AssetImage(ImageAssets.noProfile),
                             );
@@ -498,7 +496,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             ),
           ),
         ),
-        drawer: AppDrawer(authenticatedSession, null),
+        // drawer: AppDrawer(authenticatedSession, null),
+        drawer: AppDrawer(authenticatedSession),
+
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 0,
         ),

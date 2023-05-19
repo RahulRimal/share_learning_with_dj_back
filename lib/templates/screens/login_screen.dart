@@ -78,8 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       SharedPreferences prefs = await _prefs;
 
-      Users users = Provider.of<Users>(context, listen: false);
-      users.getUserByToken(sessions.session!.accessToken);
+      // Users users = Provider.of<Users>(context, listen: false);
+      // users.getUserByToken(sessions.session!.accessToken);
 
       prefs.setString('accessToken', sessions.session!.accessToken);
       prefs.setString('refreshToken', sessions.session!.refreshToken);
@@ -99,8 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         showSpinner = false;
       });
-      if (prefs.containsKey('isFirstTime') &&
-          prefs.getBool('isFirstTime') == false) {
+      if (await users.haveProvidedData(users.user!.id)) {
+        // if (prefs.containsKey('isFirstTime') &&
+        //     prefs.getBool('isFirstTime') == false) {
         Navigator.of(context)
             .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
           'authSession': sessions.session,

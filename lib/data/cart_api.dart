@@ -200,6 +200,7 @@ class CartApi {
       Map<String, String> postBody = {
         "product_id": cartItem.product.id.toString(),
         "quantity": cartItem.quantity.toString(),
+        "negotiated_price": cartItem.negotiatedPrice.toString(),
       };
       var url =
           Uri.parse(RemoteManager.BASE_URI + '/carts/' + cart.id + '/items/');

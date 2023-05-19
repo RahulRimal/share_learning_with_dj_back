@@ -12,26 +12,24 @@ import 'package:share_learning/templates/screens/add_post_screen.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
-import 'package:share_learning/templates/screens/order_screen_new.dart';
+import 'package:share_learning/templates/screens/orders_screen_new.dart';
 import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../managers/assets_manager.dart';
 import '../screens/order_request_screen.dart';
 import '../screens/order_screen.dart';
 
 class AppDrawer extends StatelessWidget {
-  // User user;
-  // AppDrawer(this.loggedInSession);
-  // AppDrawer({required this.loggedInSession, required this.loggedInUser});
-
-  AppDrawer(this.loggedInSession, this.loggedInUser);
+  // AppDrawer(this.loggedInSession, this.loggedInUser);
+  AppDrawer(this.loggedInSession);
 
   // final String accessToken;
   final Session loggedInSession;
-  final User? loggedInUser;
+  // final User? loggedInUser;
 
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -57,11 +55,11 @@ class AppDrawer extends StatelessWidget {
   );
 
   List<DrawerItem> _drawerItems = [
-    DrawerItem(
-      icon: Icons.home,
-      title: 'Home',
-      route: HomeScreen.routeName,
-    ),
+    // DrawerItem(
+    //   icon: Icons.home,
+    //   title: 'Home',
+    //   route: HomeScreen.routeName,
+    // ),
     DrawerItem(
       icon: Icons.add_circle,
       title: 'Add Post',
@@ -95,7 +93,7 @@ class AppDrawer extends StatelessWidget {
     DrawerItem(
         title: 'Your Orders',
         icon: Icons.carpenter,
-        route: OrderScreenNew.routeName),
+        route: OrdersScreenNew.routeName),
 
     DrawerItem(
       title: 'Your Interests',
@@ -121,48 +119,56 @@ class AppDrawer extends StatelessWidget {
           ),
           onTap: () {
             if (item.route == HomeScreen.routeName)
-              Navigator.pushNamed(context, item.route,
-                  arguments: {'authSession': loggedInSession});
+              Navigator.pushNamed(
+                context, item.route,
+                // arguments: {'authSession': loggedInSession}
+              );
             if (item.route == AddPostScreen.routeName)
-              Navigator.pushNamed(context, item.route, arguments: {
-                'loggedInUserSession': loggedInSession,
-              });
+              Navigator.pushNamed(
+                context, item.route,
+                // arguments: {
+                //   'loggedInUserSession': loggedInSession,
+                // }
+              );
             if (item.route == UserPostsScreen.routeName)
-              Navigator.pushNamed(context, item.route, arguments: {
-                // 'uId': loggedInSession.userId,
-                'uId': '1',
-                'loggedInUserSession': loggedInSession
-              });
+              Navigator.pushNamed(
+                context, item.route,
+                // arguments: {
+                //   // 'uId': loggedInSession.userId,
+                //   'uId': '1',
+                //   'loggedInUserSession': loggedInSession
+                // }
+              );
             if (item.route == UserProfileScreen.routeName) {
               Navigator.pushNamed(
                 context,
                 item.route,
-                arguments: {
-                  'loggedInUserSession': loggedInSession,
-                  // 'user': users.user,
-                  // 'user': loggedInUser,
-                },
+                // arguments: {
+                //   'loggedInUserSession': loggedInSession,
+                //   // 'user': users.user,
+                //   // 'user': loggedInUser,
+                // },
               );
             }
             if (item.route == CartScreen.routeName)
               Navigator.pushNamed(
                 context,
                 item.route,
-                arguments: {
-                  // 'uId': loggedInSession.userId,
-                  'loggedInUserSession': loggedInSession
-                },
+                // arguments: {
+                //   // 'uId': loggedInSession.userId,
+                //   'loggedInUserSession': loggedInSession
+                // },
               );
             if (item.route == OrderRequestScreen.routeName)
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            if (item.route == OrderScreenNew.routeName)
+            if (item.route == OrdersScreenNew.routeName)
               Navigator.pushNamed(
                 context,
                 item.route,
-                arguments: {'loggedInUserSession': loggedInSession},
+                // arguments: {'loggedInUserSession': loggedInSession},
               );
             if (item.route == UserInterestsScreen.routeName) {
               Navigator.pushNamed(
@@ -207,7 +213,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final user = Provider.of<Users>(context, listen: false).getUserByToken(this.accessToken);
-
+    User loggedInUser = Provider.of<Users>(context).user as User;
     return SafeArea(
       child: Drawer(
         elevation: 100.0,
@@ -564,18 +570,33 @@ class AppDrawer extends StatelessWidget {
                         child: Center(
                           child: Column(
                             children: [
-                              CircleAvatar(
-                                radius: 70,
-                                backgroundImage: NetworkImage(
-                                  // UserHelper.userProfileImage(users.user as User),
-                                  UserHelper.userProfileImage(
-                                      loggedInUser as User),
-                                ),
+                              // CircleAvatar(
+                              //   radius: 70,
+                              //   backgroundImage: NetworkImage(
+                              //     // UserHelper.userProfileImage(users.user as User),
+                              //     UserHelper.userProfileImage(loggedInUser),
+                              //   ),
+                              // ),
+                              GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                    context, UserProfileScreen.routeName),
+                                child: loggedInUser.image == null
+                                    ? CircleAvatar(
+                                        radius: 70,
+                                        backgroundImage:
+                                            AssetImage(ImageAssets.noProfile),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 70,
+                                        backgroundImage: NetworkImage(
+                                            UserHelper.userProfileImage(
+                                                loggedInUser)),
+                                      ),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 // users.user!.firstName,
-                                loggedInUser!.firstName.toString(),
+                                loggedInUser.firstName.toString(),
                                 style: getBoldStyle(
                                     color: ColorManager.black,
                                     fontSize: FontSize.s18),

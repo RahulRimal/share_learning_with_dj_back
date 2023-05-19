@@ -54,6 +54,7 @@ class Users with ChangeNotifier {
     setLoading(true);
 
     var response = await UserApi.getUserFromToken(accessToken);
+    // print(response);
     if (response is Success) {
       setUser(response.response as User);
       return user;
@@ -246,7 +247,7 @@ class Users with ChangeNotifier {
 
   Future<Object> googleSignIn() async {
     var response = await UserApi.googleSignIn();
-    print(response);
+    // print(response);
     if (response is Success) {
       setUser((response.response as Map)['user']);
       notifyListeners();
@@ -262,5 +263,26 @@ class Users with ChangeNotifier {
       return userError;
     }
     return response;
+  }
+
+  Future<bool> deleteUserAccount(Session userSession, String password) async {
+    var response = await UserApi.deleteUser(userSession, password);
+    print(response);
+    if (response is Success) {
+      // final postIndex = _cartItems
+      //     .indexWhere((element) => element.id == int.parse(cartItemId));
+      // // _cartItems.removeAt(postIndex);
+      notifyListeners();
+      return true;
+    }
+    if (response is Failure) {
+      // CartError cartError = CartError(
+      //   code: response.code,
+      //   message: response.errorResponse,
+      // );
+      // setCartError(cartError);
+      notifyListeners();
+    }
+    return false;
   }
 }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:share_learning/models/order.dart';
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({Key? key}) : super(key: key);
+class OrderRequestDetailsScreen extends StatelessWidget {
+  static const routeName = 'order-request-details-screen';
+  const OrderRequestDetailsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // Order order = args['order'];
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Request'),
