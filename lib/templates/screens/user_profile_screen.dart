@@ -607,14 +607,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onChanged: (value) {
+                              print(showConfirmButton);
+
                               setState(() {
                                 password = value;
+                                showConfirmButton = password.isNotEmpty;
                               });
-                              if (password.isNotEmpty) {
-                                setState(() {
-                                  showConfirmButton = true;
-                                });
-                              }
+
+                              print(showConfirmButton);
                             },
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -626,21 +626,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ],
                       ),
                       actions: [
-                        TextButton(
-                          child: Text(
-                            'Confirm delete',
-                            style: getBoldStyle(
-                              fontSize: FontSize.s16,
-                              color: ColorManager.primary,
+                        if (showConfirmButton)
+                          TextButton(
+                            child: Text(
+                              'Confirm delete',
+                              style: getBoldStyle(
+                                fontSize: FontSize.s16,
+                                color: ColorManager.primary,
+                              ),
                             ),
+                            // onPressed: showConfirmButton
+                            //     ? null
+                            onPressed: () {
+                              print('hello');
+                              userDeletionConfirmed = true;
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          onPressed: password.isEmpty
-                              ? null
-                              : () {
-                                  userDeletionConfirmed = true;
-                                  Navigator.of(context).pop();
-                                },
-                        ),
                         // TextButton(
                         //   child: Text(
                         //     'No',

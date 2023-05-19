@@ -168,7 +168,7 @@ class OrderRequestApi {
         //   HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
         // }
       );
-      print(response);
+      // print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(
@@ -404,7 +404,7 @@ class OrderRequestApi {
           },
           body: json.encode(requestInfo));
 
-      // print(response.body);
+      print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
         return Success(

@@ -169,7 +169,9 @@ class UserApi {
   static Future<Object> deleteUser(Session userSession, String password) async {
     try {
       var url = Uri.parse(RemoteManager.BASE_URI + '/auth/users/me/');
-
+      Map<String, String> postBody = {
+        "current_password": password,
+      };
       var response = await http.delete(
         url,
         headers: {
@@ -180,6 +182,7 @@ class UserApi {
           "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
           HttpHeaders.contentTypeHeader: "application/json",
         },
+        body: postBody,
       );
 
       print(response.body);
