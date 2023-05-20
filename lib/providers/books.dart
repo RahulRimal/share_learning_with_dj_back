@@ -189,6 +189,25 @@ class Books with ChangeNotifier {
       return false;
   }
 
+  Future<dynamic> getUserBooks(String userId) async {
+    setLoading(true);
+    var response = await BookApi.getUserBooks(userId);
+    // print(response);
+    if (response is Success) {
+      // setBooks(response.response as List<Book>);
+      return response.response;
+    }
+    if (response is Failure) {
+      BookError error = new BookError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setBookError(error);
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
   void addPost(Book receivedInfo) {
     // Book newBook = Book(
     //   id: receivedInfo.id,
@@ -229,15 +248,6 @@ class Books with ChangeNotifier {
     _myBooks.addAll(receivedInfo);
     notifyListeners();
   }
-
-  // void updatePost(String id, Book edittedPost){
-
-  //   final postIndex = _myBooks.indexWhere((element) => element.id == id);
-
-  //   _myBooks[postIndex] = edittedPost;
-
-  //   notifyListeners();
-  // }
 
   Future<bool> createPost(Session currentSession, Book receivedInfo) async {
     var response = await BookApi.createPost(currentSession, receivedInfo);

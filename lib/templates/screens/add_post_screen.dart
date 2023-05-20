@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
+import 'package:share_learning/providers/sessions.dart';
 
 // import 'package:path/path.dart' as path;
 // import 'package:path_provider/path_provider.dart' as syspaths;
@@ -164,8 +165,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    final Session loggedInUserSession = args['loggedInUserSession'] as Session;
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // final Session loggedInUserSession = args['loggedInUserSession'] as Session;
+    Session loggedInUserSession =
+        Provider.of<SessionProvider>(context).session as Session;
 
     return Scaffold(
       appBar: AppBar(

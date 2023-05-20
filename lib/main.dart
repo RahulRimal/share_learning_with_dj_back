@@ -1,10 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/categories.dart';
@@ -90,6 +95,7 @@ Future<void> main() async {
   });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessengingBackgroundHandler);
   await NotificationService.initializeNotification();
+
   runApp(MyApp());
 }
 

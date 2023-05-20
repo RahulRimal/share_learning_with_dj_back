@@ -10,6 +10,7 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
+import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/book_filters.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
@@ -41,6 +42,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
   final _searchTextController = TextEditingController();
   final _searchFocusNode = FocusNode();
+
+  // This flag will be used to render either send button or clear button on search bar. I need to use this because i can't clear the search bar if searchtext is not empty because the search will not work on text change but on button click. So the search might not have been completed even if the text is not empty
+  bool _enableClearSearch = false;
 
   User _user = new User(
       id: "temp",
@@ -98,14 +102,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       return false;
     }
     _form.currentState!.save();
-    // String searchTerm = _searchTextController.text;
-    // _searchTextController.text = '';
+
     _searchFocusNode.unfocus();
     _selectedCategoryIndex = 0;
-    // Navigator.of(context).pop;
-
-    // await Provider.of<Books>(context, listen: false)
-    //     .searchBooks(authSession, searchTerm);
+    setState(() {
+      _enableClearSearch = true;
+    });
   }
 
   @override
@@ -119,6 +121,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   Widget build(BuildContext context) {
     Session authenticatedSession =
         Provider.of<SessionProvider>(context).session as Session;
+
+    // Registering FMC Device sarts here
+    FCMDeviceHelper.registerDeviceToFCM(authenticatedSession);
+    // Registering FMC Device ends here
 
     Users _users = context.watch<Users>();
     if (_users.user == null) {
@@ -285,14 +291,26 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                       // ),
                                       prefixIcon: Icon(Icons.search),
                                       prefixIconColor: ColorManager.primary,
-                                      suffixIcon: IconButton(
-                                          icon: Icon(
-                                            Icons.send,
-                                          ),
-                                          onPressed: () {
-                                            _getSearchResult(
-                                                authenticatedSession);
-                                          }),
+                                      suffixIcon: _enableClearSearch
+                                          ? IconButton(
+                                              icon: Icon(
+                                                Icons.cancel_outlined,
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _searchTextController.text =
+                                                      '';
+                                                  _enableClearSearch = false;
+                                                });
+                                              })
+                                          : IconButton(
+                                              icon: Icon(
+                                                Icons.send,
+                                              ),
+                                              onPressed: () {
+                                                _getSearchResult(
+                                                    authenticatedSession);
+                                              }),
                                       suffixIconColor: ColorManager.primary,
                                       fillColor: ColorManager.white,
                                       filled: true,

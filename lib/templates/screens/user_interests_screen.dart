@@ -251,7 +251,9 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
         //       'authSession':
         //           Provider.of<SessionProvider>(context, listen: false).session,
         //     });
-        Navigator.pushReplacementNamed(context, HomeScreenNew.routeName);
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, HomeScreenNew.routeName);
+        }
       }
       if (response is Failure) {
         setState(() {

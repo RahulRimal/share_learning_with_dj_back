@@ -239,6 +239,51 @@ class BookApi {
     }
   }
 
+  static Future<Object> getUserBooks(String userId) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI + '/posts/?user=' + userId);
+      // var url = Uri.parse(RemoteManager.BASE_URI + '/posts/?user=3');
+
+      var response = await http.get(
+        url,
+        // headers: {
+        //   HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        // },
+      );
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+          code: response.statusCode,
+          response: booksFromJson(
+            json.encode(json.decode(response.body)),
+          ),
+        );
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //   code: ApiStatusCode.unknownError,
+      //   errorResponse: ApiStrings.unknownErrorString,
+      // );
+    }
+  }
+
   static Future<Object> updatePost(
       // Session currentSession, String bookId, Map<String, dynamic> updatedPost) async {
       Session currentSession,

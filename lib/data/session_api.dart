@@ -195,3 +195,54 @@ class SessionApi {
     }
   }
 }
+
+class FCMDeviceApi {
+  static Future<Object> registerNewDevice(
+      Session authSession, Map<String, dynamic> deviceInfo) async {
+    try {
+      // var url = Uri.parse('http://localhost/apiforsharelearn/sessions');
+      var url = Uri.parse(RemoteManager.BASE_URI + '/devices/');
+
+      var response = await http.post(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + authSession.accessToken,
+          "Accept": "application/json; charset=utf-8",
+
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+        body: json.encode(deviceInfo),
+      );
+
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseCreated) {
+        return Success(
+          code: response.statusCode,
+          response: "Device registered successfully",
+        );
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          // errorResponse: response.body);
+          errorResponse: json.decode(response.body));
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //     code: ApiStatusCode.unknownError,
+      //     errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+}
