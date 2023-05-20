@@ -150,97 +150,240 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          // toolbarHeight: _appBarHeight,
-          elevation: 0.0,
-
-          leading: Padding(
-            padding: const EdgeInsets.only(left: AppPadding.p20),
-            child: CircleAvatar(
-              backgroundColor: ColorManager.black,
-              radius: 30,
-              child: Builder(
-                builder: (context) {
-                  return IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      size: AppSize.s22,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          backgroundColor: ColorManager.lighterGrey,
+          toolbarHeight: MediaQuery.of(context).size.height * 0.16,
+          flexibleSpace: Container(
+            child: Stack(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.12,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(25),
+                      bottomRight: Radius.circular(25),
                     ),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                    color: ColorManager.white,
-                  );
-                },
-              ),
+                    color: ColorManager.primary,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: ColorManager.black,
+                            radius: 20,
+                            child: Builder(
+                              builder: (context) {
+                                return IconButton(
+                                  icon: Icon(
+                                    Icons.menu,
+                                    size: AppSize.s22,
+                                  ),
+                                  onPressed: () =>
+                                      Scaffold.of(context).openDrawer(),
+                                  color: ColorManager.white,
+                                );
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            padding: const EdgeInsets.only(
+                              right: AppPadding.p20,
+                              top: AppPadding.p4,
+                              bottom: AppPadding.p4,
+                            ),
+                            iconSize: AppSize.s40,
+                            onPressed: () => Navigator.pushNamed(
+                                context, UserProfileScreen.routeName),
+                            icon: _user.id != "temp"
+                                ?
+                                // CircleAvatar(
+                                //     backgroundImage: NetworkImage(
+                                //       (UserHelper.userProfileImage(_user)),
+                                //     ),
+                                //   )
+                                _user.image == null
+                                    ? CircleAvatar(
+                                        // radius: AppRadius.r24,
+                                        backgroundImage:
+                                            AssetImage(ImageAssets.noProfile),
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            UserHelper.userProfileImage(_user)),
+                                      )
+                                : FutureBuilder(
+                                    future: _users.getUserByToken(
+                                        authenticatedSession.accessToken),
+                                    builder: (ctx, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return CircularProgressIndicator(
+                                          color: ColorManager.secondary,
+                                        );
+                                      } else {
+                                        if (snapshot.hasError) {
+                                          return CircleAvatar(
+                                            backgroundImage: AssetImage(
+                                                ImageAssets.noProfile),
+                                          );
+                                        } else {
+                                          if (snapshot.data is UserError) {
+                                            UserError error =
+                                                snapshot.data as UserError;
+                                            return Text(
+                                                error.message as String);
+                                          } else {
+                                            _user = snapshot.data as User;
+                                            return _user.image == null
+                                                ? CircleAvatar(
+                                                    backgroundImage: AssetImage(
+                                                        ImageAssets.noProfile),
+                                                  )
+                                                : CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                            // _user.image == null
+                                                            //     ? RemoteManager.IMAGE_PLACEHOLDER
+                                                            //     :
+                                                            UserHelper
+                                                                .userProfileImage(
+                                                                    _user)),
+                                                  );
+                                          }
+                                        }
+                                      }
+                                    },
+                                  ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: AppHeight.h20,
+                      ),
+                      Row(
+                        children: [
+                          Form(
+                            key: _form,
+                            child: Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: TextFormField(
+                                  controller: _searchTextController,
+                                  focusNode: _searchFocusNode,
+                                  cursorColor: ColorManager.primary,
+                                  decoration: InputDecoration(
+                                    // border: OutlineInputBorder(
+                                    //   borderSide: BorderSide(
+                                    //     width: 4,
+                                    //     color: ColorManager.green,
+                                    //   ),
+                                    // ),
+                                    prefixIcon: Icon(Icons.search),
+                                    prefixIconColor: ColorManager.primary,
+                                    suffixIcon: _enableClearSearch
+                                        ? IconButton(
+                                            icon: Icon(
+                                              Icons.cancel_outlined,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _searchTextController.text = '';
+                                                _enableClearSearch = false;
+                                              });
+                                            })
+                                        : IconButton(
+                                            icon: Icon(
+                                              Icons.send,
+                                            ),
+                                            onPressed: () {
+                                              _getSearchResult(
+                                                  authenticatedSession);
+                                            }),
+                                    suffixIconColor: ColorManager.primary,
+                                    fillColor: ColorManager.white,
+                                    filled: true,
+                                    focusColor: ColorManager.white,
+                                    labelText: 'Search',
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.never,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: ColorManager.white,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: ColorManager.white,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please provide the bookName';
+                                    }
+                                    return null;
+                                  },
+                                  onFieldSubmitted: (_) {
+                                    _getSearchResult(authenticatedSession);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          CircleAvatar(
+                            backgroundColor: ColorManager.black,
+                            radius: 20,
+                            child: IconButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  barrierColor:
+                                      ColorManager.blackWithLowOpacity,
+                                  isScrollControlled: true,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft:
+                                              Radius.circular(AppRadius.r20),
+                                          topRight:
+                                              Radius.circular(AppRadius.r20))),
+                                  context: context,
+                                  builder: (context) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.9,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: AppPadding.p20,
+                                      ),
+                                      child: BookFiltersWidget(),
+                                    );
+                                  },
+                                );
+                              },
+                              icon: Icon(Icons.settings),
+                              color: ColorManager.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          actions: [
-            IconButton(
-              padding: const EdgeInsets.only(
-                right: AppPadding.p20,
-                top: AppPadding.p4,
-                bottom: AppPadding.p4,
-              ),
-              iconSize: AppSize.s40,
-              onPressed: () =>
-                  Navigator.pushNamed(context, UserProfileScreen.routeName),
-              icon: _user.id != "temp"
-                  ?
-                  // CircleAvatar(
-                  //     backgroundImage: NetworkImage(
-                  //       (UserHelper.userProfileImage(_user)),
-                  //     ),
-                  //   )
-                  _user.image == null
-                      ? CircleAvatar(
-                          // radius: AppRadius.r24,
-                          backgroundImage: AssetImage(ImageAssets.noProfile),
-                        )
-                      : CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(UserHelper.userProfileImage(_user)),
-                        )
-                  : FutureBuilder(
-                      future: _users
-                          .getUserByToken(authenticatedSession.accessToken),
-                      builder: (ctx, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator(
-                            color: ColorManager.secondary,
-                          );
-                        } else {
-                          if (snapshot.hasError) {
-                            return CircleAvatar(
-                              backgroundImage:
-                                  AssetImage(ImageAssets.noProfile),
-                            );
-                          } else {
-                            if (snapshot.data is UserError) {
-                              UserError error = snapshot.data as UserError;
-                              return Text(error.message as String);
-                            } else {
-                              _user = snapshot.data as User;
-                              return _user.image == null
-                                  ? CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage(ImageAssets.noProfile),
-                                    )
-                                  : CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          // _user.image == null
-                                          //     ? RemoteManager.IMAGE_PLACEHOLDER
-                                          //     :
-                                          UserHelper.userProfileImage(_user)),
-                                    );
-                            }
-                          }
-                        }
-                      },
-                    ),
-            ),
-          ],
         ),
+
         body: SingleChildScrollView(
-          // controller: _scrollController,
           child: Container(
             padding: EdgeInsets.only(
               bottom: AppPadding.p12,
@@ -248,142 +391,143 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             color: ColorManager.lighterGrey,
             child: Column(
               children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(25),
-                              bottomRight: Radius.circular(25),
-                            ),
-                            color: ColorManager.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: -10,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          children: [
-                            Form(
-                              key: _form,
-                              child: Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 12),
-                                  child: TextFormField(
-                                    controller: _searchTextController,
-                                    focusNode: _searchFocusNode,
-                                    cursorColor: ColorManager.primary,
-                                    decoration: InputDecoration(
-                                      // border: OutlineInputBorder(
-                                      //   borderSide: BorderSide(
-                                      //     width: 4,
-                                      //     color: ColorManager.green,
-                                      //   ),
-                                      // ),
-                                      prefixIcon: Icon(Icons.search),
-                                      prefixIconColor: ColorManager.primary,
-                                      suffixIcon: _enableClearSearch
-                                          ? IconButton(
-                                              icon: Icon(
-                                                Icons.cancel_outlined,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _searchTextController.text =
-                                                      '';
-                                                  _enableClearSearch = false;
-                                                });
-                                              })
-                                          : IconButton(
-                                              icon: Icon(
-                                                Icons.send,
-                                              ),
-                                              onPressed: () {
-                                                _getSearchResult(
-                                                    authenticatedSession);
-                                              }),
-                                      suffixIconColor: ColorManager.primary,
-                                      fillColor: ColorManager.white,
-                                      filled: true,
-                                      focusColor: ColorManager.white,
-                                      labelText: 'Search',
-                                      floatingLabelBehavior:
-                                          FloatingLabelBehavior.never,
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: ColorManager.white,
-                                        ),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: ColorManager.white,
-                                        ),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    textInputAction: TextInputAction.done,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please provide the bookName';
-                                      }
-                                      return null;
-                                    },
-                                    onFieldSubmitted: (_) {
-                                      _getSearchResult(authenticatedSession);
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                            CircleAvatar(
-                              backgroundColor: ColorManager.black,
-                              radius: 25,
-                              child: IconButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    barrierColor:
-                                        ColorManager.blackWithLowOpacity,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft:
-                                                Radius.circular(AppRadius.r20),
-                                            topRight: Radius.circular(
-                                                AppRadius.r20))),
-                                    context: context,
-                                    builder: (context) {
-                                      return Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.9,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: AppPadding.p20,
-                                        ),
-                                        child: BookFiltersWidget(),
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(Icons.settings),
-                                color: ColorManager.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Stack(
+                //   clipBehavior: Clip.none,
+                //   children: [
+                //     // Stack(
+                //     //   children: [
+                //     //     Container(
+                //     //       height: MediaQuery.of(context).size.height * 0.1,
+                //     //       decoration: BoxDecoration(
+                //     //         borderRadius: BorderRadius.only(
+                //     //           bottomLeft: Radius.circular(25),
+                //     //           bottomRight: Radius.circular(25),
+                //     //         ),
+                //     //         color: ColorManager.primary,
+                //     //       ),
+                //     //     ),
+                //     //   ],
+                //     // ),
+
+                //     Positioned(
+                //       bottom: -10,
+                //       left: 0,
+                //       right: 0,
+                //       child: Padding(
+                //         padding: const EdgeInsets.symmetric(horizontal: 12),
+                //         child: Row(
+                //           children: [
+                //             Form(
+                //               key: _form,
+                //               child: Expanded(
+                //                 child: Padding(
+                //                   padding: const EdgeInsets.only(right: 12),
+                //                   child: TextFormField(
+                //                     controller: _searchTextController,
+                //                     focusNode: _searchFocusNode,
+                //                     cursorColor: ColorManager.primary,
+                //                     decoration: InputDecoration(
+                //                       // border: OutlineInputBorder(
+                //                       //   borderSide: BorderSide(
+                //                       //     width: 4,
+                //                       //     color: ColorManager.green,
+                //                       //   ),
+                //                       // ),
+                //                       prefixIcon: Icon(Icons.search),
+                //                       prefixIconColor: ColorManager.primary,
+                //                       suffixIcon: _enableClearSearch
+                //                           ? IconButton(
+                //                               icon: Icon(
+                //                                 Icons.cancel_outlined,
+                //                               ),
+                //                               onPressed: () {
+                //                                 setState(() {
+                //                                   _searchTextController.text =
+                //                                       '';
+                //                                   _enableClearSearch = false;
+                //                                 });
+                //                               })
+                //                           : IconButton(
+                //                               icon: Icon(
+                //                                 Icons.send,
+                //                               ),
+                //                               onPressed: () {
+                //                                 _getSearchResult(
+                //                                     authenticatedSession);
+                //                               }),
+                //                       suffixIconColor: ColorManager.primary,
+                //                       fillColor: ColorManager.white,
+                //                       filled: true,
+                //                       focusColor: ColorManager.white,
+                //                       labelText: 'Search',
+                //                       floatingLabelBehavior:
+                //                           FloatingLabelBehavior.never,
+                //                       enabledBorder: OutlineInputBorder(
+                //                         borderSide: BorderSide(
+                //                           color: ColorManager.white,
+                //                         ),
+                //                         borderRadius: BorderRadius.circular(20),
+                //                       ),
+                //                       focusedBorder: OutlineInputBorder(
+                //                         borderSide: BorderSide(
+                //                           color: ColorManager.white,
+                //                         ),
+                //                         borderRadius: BorderRadius.circular(20),
+                //                       ),
+                //                     ),
+                //                     textInputAction: TextInputAction.done,
+                //                     validator: (value) {
+                //                       if (value!.isEmpty) {
+                //                         return 'Please provide the bookName';
+                //                       }
+                //                       return null;
+                //                     },
+                //                     onFieldSubmitted: (_) {
+                //                       _getSearchResult(authenticatedSession);
+                //                     },
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //             CircleAvatar(
+                //               backgroundColor: ColorManager.black,
+                //               radius: 25,
+                //               child: IconButton(
+                //                 onPressed: () {
+                //                   showModalBottomSheet(
+                //                     barrierColor:
+                //                         ColorManager.blackWithLowOpacity,
+                //                     isScrollControlled: true,
+                //                     shape: RoundedRectangleBorder(
+                //                         borderRadius: BorderRadius.only(
+                //                             topLeft:
+                //                                 Radius.circular(AppRadius.r20),
+                //                             topRight: Radius.circular(
+                //                                 AppRadius.r20))),
+                //                     context: context,
+                //                     builder: (context) {
+                //                       return Container(
+                //                         height:
+                //                             MediaQuery.of(context).size.height *
+                //                                 0.9,
+                //                         padding: EdgeInsets.symmetric(
+                //                           horizontal: AppPadding.p20,
+                //                         ),
+                //                         child: BookFiltersWidget(),
+                //                       );
+                //                     },
+                //                   );
+                //                 },
+                //                 icon: Icon(Icons.settings),
+                //                 color: ColorManager.white,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 SizedBox(
                   height: 100,
                   child: ListView.builder(

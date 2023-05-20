@@ -104,7 +104,6 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
     return SafeArea(
       child: Scaffold(
         drawer: AppDrawer(loggedInUserSession),
-        // appBar: AppBar(
         //   elevation: 0,
         //   leading: Padding(
         //     padding: const EdgeInsets.only(left: AppPadding.p20),
@@ -178,7 +177,8 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
         // ),
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
+          elevation: 0,
+          backgroundColor: ColorManager.lightGrey,
           toolbarHeight: MediaQuery.of(context).size.height * 0.16,
           flexibleSpace: Stack(
             children: [
@@ -343,81 +343,6 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Container(
-              //   padding: const EdgeInsets.symmetric(
-              //     horizontal: AppPadding.p12,
-              //     vertical: AppPadding.p8,
-              //   ),
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.only(
-              //       bottomLeft: Radius.circular(25),
-              //       bottomRight: Radius.circular(25),
-              //     ),
-              //     color: ColorManager.primary,
-              //   ),
-              //   // child:
-              //   // Form(
-              //   //   key: _form,
-              //   //   child: Padding(
-              //   //     padding: const EdgeInsets.only(right: 12),
-              //   //     child: TextFormField(
-              //   //       controller: _searchTextController,
-              //   //       focusNode: _searchFocusNode,
-              //   //       cursorColor: ColorManager.primary,
-              //   //       decoration: InputDecoration(
-              //   //         prefixIcon: Icon(Icons.search),
-              //   //         prefixIconColor: ColorManager.primary,
-              //   //         suffixIcon: filteredBooks == null
-              //   //             ? IconButton(
-              //   //                 icon: Icon(
-              //   //                   Icons.send,
-              //   //                 ),
-              //   //                 onPressed: () => _searchUserBooks(_allPosts))
-              //   //             : IconButton(
-              //   //                 icon: Icon(
-              //   //                   Icons.cancel_outlined,
-              //   //                 ),
-              //   //                 onPressed: () {
-              //   //                   setState(() {
-              //   //                     filteredBooks = null;
-              //   //                     _searchTextController.text = '';
-              //   //                   });
-              //   //                 },
-              //   //               ),
-              //   //         suffixIconColor: ColorManager.primary,
-              //   //         fillColor: ColorManager.white,
-              //   //         filled: true,
-              //   //         focusColor: ColorManager.white,
-              //   //         labelText: 'Search your posts',
-              //   //         floatingLabelBehavior: FloatingLabelBehavior.never,
-              //   //         enabledBorder: OutlineInputBorder(
-              //   //           borderSide: BorderSide(
-              //   //             color: ColorManager.white,
-              //   //           ),
-              //   //           borderRadius: BorderRadius.circular(20),
-              //   //         ),
-              //   //         focusedBorder: OutlineInputBorder(
-              //   //           borderSide: BorderSide(
-              //   //             color: ColorManager.white,
-              //   //           ),
-              //   //           borderRadius: BorderRadius.circular(20),
-              //   //         ),
-              //   //       ),
-              //   //       textInputAction: TextInputAction.done,
-              //   //       validator: (value) {
-              //   //         if (value!.isEmpty) {
-              //   //           return 'Please provide the bookName';
-              //   //         }
-              //   //         return null;
-              //   //       },
-              //   //       onFieldSubmitted: (_) {
-              //   //         _searchUserBooks(_allPosts);
-              //   //       },
-              //   //     ),
-              //   //   ),
-              //   // ),
-              // ),
-
               SizedBox(
                 height: AppHeight.h20,
               ),
