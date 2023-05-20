@@ -101,239 +101,426 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
       PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
     );
 
-    return Scaffold(
-      drawer: AppDrawer(loggedInUserSession),
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          'Your Posts',
-          style: getBoldStyle(
-            color: ColorManager.white,
-            fontSize: FontSize.s16,
+    return SafeArea(
+      child: Scaffold(
+        drawer: AppDrawer(loggedInUserSession),
+        // appBar: AppBar(
+        //   elevation: 0,
+        //   leading: Padding(
+        //     padding: const EdgeInsets.only(left: AppPadding.p20),
+        //     child: CircleAvatar(
+        //       backgroundColor: ColorManager.black,
+        //       radius: 30,
+        //       child: Builder(
+        //         builder: (context) {
+        //           return IconButton(
+        //             icon: Icon(
+        //               Icons.menu,
+        //               size: AppSize.s22,
+        //             ),
+        //             onPressed: () => Scaffold.of(context).openDrawer(),
+        //             color: ColorManager.white,
+        //           );
+        //         },
+        //       ),
+        //     ),
+        //   ),
+        //   title: Text(
+        //     'Your Posts',
+        //     style: getBoldStyle(
+        //       color: ColorManager.white,
+        //       fontSize: FontSize.s16,
+        //     ),
+        //   ),
+        //   actions: [
+        //     Padding(
+        //       padding: const EdgeInsets.all(8.0),
+        //       child: users.user != null
+        //           ? CircleAvatar(
+        //               backgroundImage: NetworkImage(
+        //                 UserHelper.userProfileImage(users.user as User),
+        //               ),
+        //             )
+        //           : FutureBuilder(
+        //               // future: users.getUserByIdAndSession(
+        //               future: users.getUserById(
+        //                   // loggedInUserSession, loggedInUserSession.userId),
+        //                   '1'),
+        //               builder: (ctx, snapshot) {
+        //                 // if (snapshot.data != null)
+        //                 // user = snapshot.data as User;
+        //                 if (snapshot.connectionState ==
+        //                     ConnectionState.waiting) {
+        //                   return CircularProgressIndicator(
+        //                     color: ColorManager.secondary,
+        //                   );
+        //                 } else {
+        //                   if (snapshot.hasError) {
+        //                     return CircleAvatar(
+        //                       backgroundImage: NetworkImage(
+        //                           'https://ojasfilms.org/assets/img/ojas-logo.png'),
+        //                     );
+        //                   } else {
+        //                     // user = snapshot.data as User;
+        //                     return CircleAvatar(
+        //                       backgroundImage: NetworkImage(
+        //                         // ((snapshot.data as User).image) as String),
+        //                         (UserHelper.userProfileImage(
+        //                             snapshot.data as User)),
+        //                       ),
+        //                     );
+        //                   }
+        //                 }
+        //               },
+        //             ),
+        //     ),
+        //   ],
+        // ),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          toolbarHeight: MediaQuery.of(context).size.height * 0.16,
+          flexibleSpace: Stack(
+            children: [
+              // Background container with rounded corners
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
+                  ),
+                  color: ColorManager.primary,
+                ),
+              ),
+
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: ColorManager.black,
+                          radius: 20,
+                          child: Builder(
+                            builder: (context) {
+                              return IconButton(
+                                icon: Icon(
+                                  Icons.menu,
+                                  size: AppSize.s22,
+                                ),
+                                onPressed: () =>
+                                    Scaffold.of(context).openDrawer(),
+                                color: ColorManager.white,
+                              );
+                            },
+                          ),
+                        ),
+                        Text(
+                          'Your Posts',
+                          style: getBoldStyle(
+                            color: ColorManager.white,
+                            fontSize: FontSize.s16,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: users.user != null
+                              ? CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    UserHelper.userProfileImage(
+                                        users.user as User),
+                                  ),
+                                )
+                              : FutureBuilder(
+                                  // future: users.getUserByIdAndSession(
+                                  future: users.getUserById(
+                                      // loggedInUserSession, loggedInUserSession.userId),
+                                      '1'),
+                                  builder: (ctx, snapshot) {
+                                    // if (snapshot.data != null)
+                                    // user = snapshot.data as User;
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return CircularProgressIndicator(
+                                        color: ColorManager.secondary,
+                                      );
+                                    } else {
+                                      if (snapshot.hasError) {
+                                        return CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              'https://ojasfilms.org/assets/img/ojas-logo.png'),
+                                        );
+                                      } else {
+                                        // user = snapshot.data as User;
+                                        return CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                            // ((snapshot.data as User).image) as String),
+                                            (UserHelper.userProfileImage(
+                                                snapshot.data as User)),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: AppHeight.h8,
+                    ),
+                    Form(
+                      key: _form,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: TextFormField(
+                          controller: _searchTextController,
+                          focusNode: _searchFocusNode,
+                          cursorColor: ColorManager.primary,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.search),
+                            prefixIconColor: ColorManager.primary,
+                            suffixIcon: filteredBooks == null
+                                ? IconButton(
+                                    icon: Icon(
+                                      Icons.send,
+                                    ),
+                                    onPressed: () =>
+                                        _searchUserBooks(_allPosts))
+                                : IconButton(
+                                    icon: Icon(
+                                      Icons.cancel_outlined,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        filteredBooks = null;
+                                        _searchTextController.text = '';
+                                      });
+                                    },
+                                  ),
+                            suffixIconColor: ColorManager.primary,
+                            fillColor: ColorManager.white,
+                            filled: true,
+                            focusColor: ColorManager.white,
+                            labelText: 'Search your posts',
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: ColorManager.white,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: ColorManager.white,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          textInputAction: TextInputAction.done,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please provide the bookName';
+                            }
+                            return null;
+                          },
+                          onFieldSubmitted: (_) {
+                            _searchUserBooks(_allPosts);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: users.user != null
-                ? CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      UserHelper.userProfileImage(users.user as User),
-                    ),
-                  )
-                : FutureBuilder(
-                    // future: users.getUserByIdAndSession(
-                    future: users.getUserById(
-                        // loggedInUserSession, loggedInUserSession.userId),
-                        '1'),
-                    builder: (ctx, snapshot) {
-                      // if (snapshot.data != null)
-                      // user = snapshot.data as User;
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(
-                          color: ColorManager.secondary,
-                        );
-                      } else {
-                        if (snapshot.hasError) {
-                          return CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://ojasfilms.org/assets/img/ojas-logo.png'),
-                          );
-                        } else {
-                          // user = snapshot.data as User;
-                          return CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              // ((snapshot.data as User).image) as String),
-                              (UserHelper.userProfileImage(
-                                  snapshot.data as User)),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppPadding.p12,
-                vertical: AppPadding.p8,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
-                ),
-                color: ColorManager.primary,
-              ),
-              child: Form(
-                key: _form,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: TextFormField(
-                    controller: _searchTextController,
-                    focusNode: _searchFocusNode,
-                    cursorColor: ColorManager.primary,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      prefixIconColor: ColorManager.primary,
-                      suffixIcon: filteredBooks == null
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.send,
-                              ),
-                              onPressed: () => _searchUserBooks(_allPosts))
-                          : IconButton(
-                              icon: Icon(
-                                Icons.cancel_outlined,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  filteredBooks = null;
-                                  _searchTextController.text = '';
-                                });
-                              },
-                            ),
-                      suffixIconColor: ColorManager.primary,
-                      fillColor: ColorManager.white,
-                      filled: true,
-                      focusColor: ColorManager.white,
-                      labelText: 'Search your posts',
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: ColorManager.white,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: ColorManager.white,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    textInputAction: TextInputAction.done,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please provide the bookName';
-                      }
-                      return null;
-                    },
-                    onFieldSubmitted: (_) {
-                      _searchUserBooks(_allPosts);
-                    },
-                  ),
-                ),
-              ),
-            ),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Container(
+              //   padding: const EdgeInsets.symmetric(
+              //     horizontal: AppPadding.p12,
+              //     vertical: AppPadding.p8,
+              //   ),
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.only(
+              //       bottomLeft: Radius.circular(25),
+              //       bottomRight: Radius.circular(25),
+              //     ),
+              //     color: ColorManager.primary,
+              //   ),
+              //   // child:
+              //   // Form(
+              //   //   key: _form,
+              //   //   child: Padding(
+              //   //     padding: const EdgeInsets.only(right: 12),
+              //   //     child: TextFormField(
+              //   //       controller: _searchTextController,
+              //   //       focusNode: _searchFocusNode,
+              //   //       cursorColor: ColorManager.primary,
+              //   //       decoration: InputDecoration(
+              //   //         prefixIcon: Icon(Icons.search),
+              //   //         prefixIconColor: ColorManager.primary,
+              //   //         suffixIcon: filteredBooks == null
+              //   //             ? IconButton(
+              //   //                 icon: Icon(
+              //   //                   Icons.send,
+              //   //                 ),
+              //   //                 onPressed: () => _searchUserBooks(_allPosts))
+              //   //             : IconButton(
+              //   //                 icon: Icon(
+              //   //                   Icons.cancel_outlined,
+              //   //                 ),
+              //   //                 onPressed: () {
+              //   //                   setState(() {
+              //   //                     filteredBooks = null;
+              //   //                     _searchTextController.text = '';
+              //   //                   });
+              //   //                 },
+              //   //               ),
+              //   //         suffixIconColor: ColorManager.primary,
+              //   //         fillColor: ColorManager.white,
+              //   //         filled: true,
+              //   //         focusColor: ColorManager.white,
+              //   //         labelText: 'Search your posts',
+              //   //         floatingLabelBehavior: FloatingLabelBehavior.never,
+              //   //         enabledBorder: OutlineInputBorder(
+              //   //           borderSide: BorderSide(
+              //   //             color: ColorManager.white,
+              //   //           ),
+              //   //           borderRadius: BorderRadius.circular(20),
+              //   //         ),
+              //   //         focusedBorder: OutlineInputBorder(
+              //   //           borderSide: BorderSide(
+              //   //             color: ColorManager.white,
+              //   //           ),
+              //   //           borderRadius: BorderRadius.circular(20),
+              //   //         ),
+              //   //       ),
+              //   //       textInputAction: TextInputAction.done,
+              //   //       validator: (value) {
+              //   //         if (value!.isEmpty) {
+              //   //           return 'Please provide the bookName';
+              //   //         }
+              //   //         return null;
+              //   //       },
+              //   //       onFieldSubmitted: (_) {
+              //   //         _searchUserBooks(_allPosts);
+              //   //       },
+              //   //     ),
+              //   //   ),
+              //   // ),
+              // ),
 
-            //     ?
-            SizedBox(
-              height: AppHeight.h20,
-            ),
-            if (filteredBooks != null && filteredBooks!.length <= 0)
-              Center(
-                child: Text(
-                  'No books found',
-                  style: getBoldStyle(
-                      fontSize: FontSize.s20, color: ColorManager.primary),
-                ),
+              SizedBox(
+                height: AppHeight.h20,
               ),
-            if (filteredBooks != null)
-              MasonryGridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppPadding.p8,
+              if (filteredBooks != null && filteredBooks!.length <= 0)
+                Center(
+                  child: Text(
+                    'No books found',
+                    style: getBoldStyle(
+                        fontSize: FontSize.s20, color: ColorManager.primary),
+                  ),
                 ),
-                gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemCount: filteredBooks!.length,
-                itemBuilder: (ctx, idx) => PostNew(
-                  book: filteredBooks![idx],
-                  authSession: loggedInUserSession,
-                ),
-              )
-            else
-              FutureBuilder(
-                future:
-                    _categories[_selectedCategoryIndex].name.toLowerCase() ==
-                            'all'
-                        ? _books.getUserBooks(
-                            Provider.of<Users>(context, listen: false).user!.id)
-                        : _books.getBooksByCategory(loggedInUserSession,
-                            _categories[_selectedCategoryIndex].id.toString()),
-                builder: (ctx, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: ColorManager.primary,
-                      ),
-                    );
-                  } else {
-                    if (snapshot.hasError) {
+              if (filteredBooks != null)
+                MasonryGridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppPadding.p8,
+                  ),
+                  gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2),
+                  itemCount: filteredBooks!.length,
+                  itemBuilder: (ctx, idx) => PostNew(
+                    book: filteredBooks![idx],
+                    authSession: loggedInUserSession,
+                  ),
+                )
+              else
+                FutureBuilder(
+                  future: _categories[_selectedCategoryIndex]
+                              .name
+                              .toLowerCase() ==
+                          'all'
+                      ? _books.getUserBooks(
+                          Provider.of<Users>(context, listen: false).user!.id)
+                      : _books.getBooksByCategory(loggedInUserSession,
+                          _categories[_selectedCategoryIndex].id.toString()),
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
-                        child: Text('Error'),
+                        child: CircularProgressIndicator(
+                          color: ColorManager.primary,
+                        ),
                       );
                     } else {
-                      if (snapshot.data is BookError) {
+                      if (snapshot.hasError) {
                         return Center(
-                          child: Text(
-                              (snapshot.data as BookError).message.toString()),
+                          child: Text('Error'),
                         );
-                      }
-                      // if (snapshot.data is List<Book>) {
-                      else {
-                        _userBooks = snapshot.data as List<Book>;
-                        return _userBooks.length <= 0
-                            ? Center(
-                                child: Text(
-                                  'No books found',
-                                  style: getBoldStyle(
-                                      fontSize: FontSize.s20,
-                                      color: ColorManager.primary),
-                                ),
-                              )
-                            : MasonryGridView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: AppPadding.p8,
-                                ),
-                                gridDelegate:
-                                    SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2),
-                                itemCount: _userBooks.length,
-                                itemBuilder: (ctx, idx) => PostNew(
-                                  book: _userBooks[idx],
-                                  authSession: loggedInUserSession,
-                                ),
-                              );
+                      } else {
+                        if (snapshot.data is BookError) {
+                          return Center(
+                            child: Text((snapshot.data as BookError)
+                                .message
+                                .toString()),
+                          );
+                        }
+                        // if (snapshot.data is List<Book>) {
+                        else {
+                          _userBooks = snapshot.data as List<Book>;
+                          return _userBooks.length <= 0
+                              ? Center(
+                                  child: Text(
+                                    'No books found',
+                                    style: getBoldStyle(
+                                        fontSize: FontSize.s20,
+                                        color: ColorManager.primary),
+                                  ),
+                                )
+                              : MasonryGridView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppPadding.p8,
+                                  ),
+                                  gridDelegate:
+                                      SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2),
+                                  itemCount: _userBooks.length,
+                                  itemBuilder: (ctx, idx) => PostNew(
+                                    book: _userBooks[idx],
+                                    authSession: loggedInUserSession,
+                                  ),
+                                );
+                        }
                       }
                     }
-                  }
-                },
-              ),
-            // : Center(
-            //     child: Text(
-            //       'No Posts yet',
-            //       style: TextStyle(
-            //         fontWeight: FontWeight.bold,
-            //         fontSize: 20,
-            //       ),
-            //     ),
-            //   ),
-          ],
+                  },
+                ),
+              // : Center(
+              //     child: Text(
+              //       'No Posts yet',
+              //       style: TextStyle(
+              //         fontWeight: FontWeight.bold,
+              //         fontSize: 20,
+              //       ),
+              //     ),
+              //   ),
+            ],
+          ),
         ),
       ),
     );
