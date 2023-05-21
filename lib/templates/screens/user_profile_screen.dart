@@ -33,6 +33,8 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  bool userDeletionConfirmed = false;
+  bool showConfirmButton = false;
 
   _logOut(Session session) async {
     SharedPreferences prefs = await _prefs;
@@ -305,15 +307,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.9,
-                                      child: Expanded(
-                                        child: Text(
-                                          // 'I am a student and future billionair',
-                                          UserHelper.userDescription(user),
-                                          softWrap: true,
-                                          style: getMediumStyle(
-                                            color: ColorManager.black,
-                                            fontSize: FontSize.s12,
-                                          ),
+                                      child: Text(
+                                        // 'I am a student and future billionair',
+                                        UserHelper.userDescription(user),
+                                        softWrap: true,
+                                        style: getMediumStyle(
+                                          color: ColorManager.black,
+                                          fontSize: FontSize.s12,
                                         ),
                                       ),
                                     ),
@@ -578,8 +578,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 textColor: ColorManager.black,
                 tileColor: ColorManager.white,
                 onTap: () {
-                  bool userDeletionConfirmed = false;
-                  bool showConfirmButton = false;
                   String password = "";
                   showDialog(
                     context: context,
@@ -607,14 +605,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onChanged: (value) {
-                              print(showConfirmButton);
-
                               setState(() {
                                 password = value;
                                 showConfirmButton = password.isNotEmpty;
                               });
-
-                              print(showConfirmButton);
+                              // print(showConfirmButton);
                             },
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -638,7 +633,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             // onPressed: showConfirmButton
                             //     ? null
                             onPressed: () {
-                              print('hello');
                               userDeletionConfirmed = true;
                               Navigator.of(context).pop();
                             },

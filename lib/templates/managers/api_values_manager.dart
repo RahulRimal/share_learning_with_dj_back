@@ -5,13 +5,13 @@ class RemoteManager {
   // static const String BASE_URI = 'http://10.0.0.55:8000';
   // static const String BASE_URI = 'http://192.168.1.76:8000';
   // static const String BASE_URI = 'http://192.168.1.72:8000';
-  static const String BASE_URI = 'http://192.168.1.77:8000';
+  // static const String BASE_URI = 'http://192.168.1.77:8000';
   // static const String BASE_URI = 'http://192.168.16.100:8000';
   // static const String BASE_URI = 'http://localhost:8000';
   // static const String BASE_URI = 'http://192.168.1.174:8000';
   // static const String BASE_URI = 'https://sharelearn.pythonanywhere.com';
   // static const String BASE_URI = 'https://share-learning-api-xhui.onrender.com';
-  // static const String BASE_URI = 'http://192.168.1.77:8000';
+  static const String BASE_URI = 'http://10.0.2.103:8000';
   // static const String BASE_URI = 'http://10.0.3.190:8000';
   //static const String BASE_URI = 'http://192.168.1.108:8000';
 

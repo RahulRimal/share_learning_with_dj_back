@@ -267,7 +267,7 @@ class Users with ChangeNotifier {
 
   Future<bool> deleteUserAccount(Session userSession, String password) async {
     var response = await UserApi.deleteUser(userSession, password);
-    print(response);
+    // print(response);
     if (response is Success) {
       // final postIndex = _cartItems
       //     .indexWhere((element) => element.id == int.parse(cartItemId));

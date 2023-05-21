@@ -551,10 +551,11 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
             left: 0,
             right: 0,
             child: Container(
+              height: MediaQuery.of(context).size.height * 0.6,
               constraints: BoxConstraints(
-                // maxHeight: MediaQuery.of(context).size.height * 0.7,
-                minHeight: MediaQuery.of(context).size.height * 0.6,
-              ),
+                  // maxHeight: MediaQuery.of(context).size.height * 0.7,
+
+                  ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
