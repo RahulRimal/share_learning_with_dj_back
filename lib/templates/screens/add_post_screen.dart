@@ -121,22 +121,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
     // DateFormat('yyyy/MM/dd').format(_boughtDate as DateTime).toString();
   }
 
-  Future<bool> _savePost(Session loggedInUser) async {
+  // Future<bool> _savePost(Session loggedInUser) async {
+  _savePost(Session loggedInUser) async {
     final isValid = _form.currentState!.validate();
 
     if (!isValid) {
-      return false;
+      // return false;
+      return;
     }
 
     setState(() {
       showSpinner = true;
     });
-    // if (isUploading) {
-    //   BotToast.showLoading(
-    //     crossPage: false,
-    //     clickClose: false,
-    //   );
-    // }
 
     _form.currentState!.save();
     _edittedBook.postType = ispostType ? 'S' : 'B';
@@ -637,19 +633,20 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           Theme.of(context).primaryColor),
                     ),
                     onPressed: () async {
-                      if (await _savePost(loggedInUserSession)) {
-                        // final snackBar = SnackBar(
-                        //   content: Text(
-                        //     'Posted Successfully',
-                        //     textAlign: TextAlign.center,
-                        //     style: TextStyle(
-                        //       fontSize: 13,
-                        //       fontWeight: FontWeight.bold,
-                        //     ),
-                        //   ),
-                        // );
-                        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
+                      var result = await _savePost(loggedInUserSession);
+                      // if (await _savePost(loggedInUserSession)) {
+                      if (result == null) {
+                        BotToast.showSimpleNotification(
+                          title: 'Fields not valid',
+                          duration: Duration(seconds: 3),
+                          backgroundColor: ColorManager.primary,
+                          titleStyle: getBoldStyle(color: ColorManager.white),
+                          align: Alignment(1, 1),
+                          hideCloseButton: true,
+                        );
+                        return;
+                      }
+                      if (result) {
                         BotToast.showSimpleNotification(
                           title: 'Your book has been posted!!',
                           duration: Duration(seconds: 3),

@@ -764,11 +764,8 @@ class _PostCommentsNewState extends State<PostCommentsNew> {
                                                           UserPostsScreen
                                                               .routeName,
                                                           arguments: {
-                                                            'uId':
+                                                            'userId':
                                                                 _commentUser.id,
-                                                            'loggedInUserSession':
-                                                                widget
-                                                                    .loggedInSession,
                                                           },
                                                         );
                                                       } else {

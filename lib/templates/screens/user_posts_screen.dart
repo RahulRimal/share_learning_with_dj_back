@@ -77,10 +77,11 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // final String userId = args['uId'];
-    // var loggedInUserSession = args['loggedInUserSession'] as Session;
+    Object? args = ModalRoute.of(context)!.settings.arguments;
+    String? _selectedUserId;
+    if (args != null) {
+      _selectedUserId = (args as Map)['userId'];
+    }
 
     Users users = Provider.of<Users>(context);
     Session loggedInUserSession =
@@ -147,13 +148,38 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                             },
                           ),
                         ),
-                        Text(
-                          'Your Posts',
-                          style: getBoldStyle(
-                            color: ColorManager.white,
-                            fontSize: FontSize.s16,
-                          ),
-                        ),
+                        _selectedUserId != null
+                            ? FutureBuilder(
+                                future: users.getUserById(_selectedUserId),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator(
+                                      color: ColorManager.secondary,
+                                    );
+                                  } else {
+                                    if (snapshot.hasError) {
+                                      return Container();
+                                    } else {
+                                      User user = snapshot.data as User;
+                                      return Text(
+                                        "${user.firstName}'s Posts",
+                                        style: getBoldStyle(
+                                          color: ColorManager.white,
+                                          fontSize: FontSize.s16,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                              )
+                            : Text(
+                                'Your Posts',
+                                style: getBoldStyle(
+                                  color: ColorManager.white,
+                                  fontSize: FontSize.s16,
+                                ),
+                              ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: users.user != null
@@ -306,8 +332,9 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                               .name
                               .toLowerCase() ==
                           'all'
-                      ? _books.getUserBooks(
-                          Provider.of<Users>(context, listen: false).user!.id)
+                      ? _books.getUserBooks(_selectedUserId != null
+                          ? _selectedUserId
+                          : Provider.of<Users>(context, listen: false).user!.id)
                       : _books.getBooksByCategory(loggedInUserSession,
                           _categories[_selectedCategoryIndex].id.toString()),
                   builder: (ctx, snapshot) {
