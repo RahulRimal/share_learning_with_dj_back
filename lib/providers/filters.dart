@@ -32,6 +32,7 @@ class BookFilters with ChangeNotifier {
     'max_price': 0,
     'sort_by': 'low_to_high',
     'categories': ['all'],
+    // 'categories': [],
     'reviews': '2+',
     'location': 'Kathmandu',
   };
@@ -104,12 +105,26 @@ class BookFilters with ChangeNotifier {
   }
 
   addFilterToSortByCategories(String value) {
-    (_filterOptions['categories'] as List<String>).add(value);
+    if (value == 'all') {
+      // if user selected all categories options then remove every filter from the list and add only add all so no specific product is selected and all products are made available
+      _filterOptions['categories'] = <String>[];
+      _filterOptions['categories'].add(value);
+    } else {
+      (_filterOptions['categories'] as List<String>).add(value);
+      // Remove all from categories if any other category filters are available by all includes all products while having other filters should make only specific products available
+      if ((_filterOptions['categories'] as List<String>).contains('all')) {
+        (_filterOptions['categories'] as List<String>).remove('all');
+      }
+    }
     notifyListeners();
   }
 
   removeFilterFromSortByCategories(String value) {
     (_filterOptions['categories'] as List<String>).remove(value);
+    // Add all to categories if any the categories list become empty this means no specific element is required so all products should be available which is done by all option
+    if ((_filterOptions['categories'] as List<String>).isEmpty) {
+      (_filterOptions['categories'] as List<String>).add('all');
+    }
     notifyListeners();
   }
 

@@ -45,6 +45,7 @@ import 'package:share_learning/templates/utils/notification_service.dart';
 import 'firebase_options.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
+import 'templates/screens/order_request_details_screen.dart';
 import 'templates/screens/order_request_screen.dart';
 import 'templates/screens/orders_screen_new.dart';
 
@@ -171,6 +172,8 @@ class MyApp extends StatelessWidget {
                     UserProfileEditScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
                 OrderRequestScreen.routeName: (context) => OrderRequestScreen(),
+                OrderRequestDetailsScreen.routeName: (context) =>
+                    OrderRequestDetailsScreen(),
                 OrderScreen.routeName: (context) => OrderScreen(),
                 OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
                 OrderDetailsScreen.routeName: (context) => OrderDetailsScreen(),
@@ -228,6 +231,8 @@ class MyApp extends StatelessWidget {
                     CartScreen.routeName: (context) => CartScreen(),
                     OrderRequestScreen.routeName: (context) =>
                         OrderRequestScreen(),
+                    OrderRequestDetailsScreen.routeName: (context) =>
+                        OrderRequestDetailsScreen(),
                     OrderScreen.routeName: (context) => OrderScreen(),
                     OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
                     OrderDetailsScreen.routeName: (context) =>

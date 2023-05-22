@@ -234,6 +234,7 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                                     // activeColor: ColorManager.primary,
                                     activeColor: ColorManager.black,
                                     value: (filterOptions['categories']
+                                            // as List<dynamic>)
                                             as List<String>)
                                         .contains(_categories[index]
                                             .name

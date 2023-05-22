@@ -30,6 +30,7 @@ import '../../models/user.dart';
 import '../../providers/users.dart';
 import '../widgets/billing_info.dart';
 import '../widgets/custom_bottom_navbar.dart';
+import 'order_request_details_screen.dart';
 
 class OrderRequestScreen extends StatefulWidget {
   const OrderRequestScreen({Key? key}) : super(key: key);
@@ -647,168 +648,174 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       // --------------------------Expected Unit Price ends here-----------------------
 
                                       // --------------------------Change Request Price starts here-----------------------
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: AppPadding.p8,
-                                        ),
-                                        child: TextFormField(
-                                          keyboardType: TextInputType.number,
-                                          cursorColor:
-                                              Theme.of(context).primaryColor,
-                                          decoration: InputDecoration(
-                                            labelText: 'Change requst price',
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.redAccent,
-                                              ),
-                                            ),
-                                          ),
-                                          textInputAction: TextInputAction.done,
-                                          onChanged: (value) {
-                                            _newRequestPrice =
-                                                double.parse(value);
-                                            _shouldShowRequestButton();
-                                            _shouldShowOrderButton();
-                                          },
-                                          // onFieldSubmitted: (_) {
-                                          //   FocusScope.of(context).requestFocus(_authorFocusNode);
-                                          // },
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return 'Please provide the bookName';
-                                            }
-                                            return null;
-                                          },
-                                          onSaved: (value) {},
-                                        ),
-                                      ),
 
-                                      ValueListenableBuilder(
-                                        valueListenable: _showRequestButton,
-                                        builder: (BuildContext context,
-                                            bool showRequestButton,
-                                            Widget? child) {
-                                          return showRequestButton
-                                              ? ElevatedButton(
-                                                  onPressed: () =>
-                                                      _updateRequestPrice(
-                                                          requestedItem.id,
-                                                          _newRequestPrice),
-                                                  // child: Text('Update Request Price'),
-                                                  child: Text(
-                                                      'Request for this price'),
-                                                )
-                                              : Container();
-                                        },
-                                      ),
-                                      ValueListenableBuilder(
-                                        valueListenable: _showOrderButton,
-                                        builder: (BuildContext context,
-                                            bool showOrderButton,
-                                            Widget? child) {
-                                          return showOrderButton
-                                              ? ElevatedButton(
-                                                  onPressed: () async {
-                                                    Carts carts = Provider.of(
-                                                        context,
-                                                        listen: false);
-                                                    setState(() {
-                                                      _isLoading = true;
-                                                    });
-                                                    var tempCart = await carts
-                                                        .createTemporaryCart(
-                                                            Provider.of<SessionProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .session
-                                                                as Session);
-                                                    if (tempCart is CartError) {
-                                                      _showToastNotification(
-                                                          'Something went wrong');
-                                                    }
-                                                    if (tempCart is Cart) {
-                                                      CartItem edittedItem =
-                                                          new CartItem(
-                                                        id: 0,
-                                                        product: new Product(
-                                                          id: int.parse(
-                                                              requestedBook.id),
-                                                          bookName:
-                                                              requestedBook
-                                                                  .bookName,
-                                                          unitPrice:
-                                                              requestedBook
-                                                                  .price
-                                                                  .toString(),
-                                                        ),
-                                                        negotiatedPrice:
-                                                            _newRequestPrice,
-                                                        quantity: requestedItem
-                                                            .quantity,
-                                                        totalPrice: 0,
-                                                      );
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     top: AppPadding.p8,
+                                      //   ),
+                                      //   child: TextFormField(
+                                      //     keyboardType: TextInputType.number,
+                                      //     cursorColor:
+                                      //         Theme.of(context).primaryColor,
+                                      //     decoration: InputDecoration(
+                                      //       labelText: 'Change requst price',
+                                      //       focusedBorder: OutlineInputBorder(
+                                      //         borderSide: BorderSide(
+                                      //           color: Colors.redAccent,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //     textInputAction: TextInputAction.done,
+                                      //     onChanged: (value) {
+                                      //       _newRequestPrice =
+                                      //           double.parse(value);
+                                      //       _shouldShowRequestButton();
+                                      //       _shouldShowOrderButton();
+                                      //     },
+                                      //     // onFieldSubmitted: (_) {
+                                      //     //   FocusScope.of(context).requestFocus(_authorFocusNode);
+                                      //     // },
+                                      //     validator: (value) {
+                                      //       if (value!.isEmpty) {
+                                      //         return 'Please provide the bookName';
+                                      //       }
+                                      //       return null;
+                                      //     },
+                                      //     onSaved: (value) {},
+                                      //   ),
+                                      // ),
 
-                                                      if (await carts
-                                                          .addItemToTemporaryCart(
-                                                              tempCart,
-                                                              edittedItem)) {
-                                                        return showModalBottomSheet(
-                                                          barrierColor: ColorManager
-                                                              .blackWithLowOpacity,
-                                                          isScrollControlled:
-                                                              true,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .only(
-                                                              topLeft: Radius
-                                                                  .circular(
-                                                                      AppRadius
-                                                                          .r20),
-                                                              topRight: Radius
-                                                                  .circular(
-                                                                AppRadius.r20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          context: context,
-                                                          builder: (context) {
-                                                            return Container(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  0.9,
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                horizontal:
-                                                                    AppPadding
-                                                                        .p20,
-                                                              ),
-                                                              child: BillingInfo(
-                                                                  cartId:
-                                                                      tempCart
-                                                                          .id),
-                                                            );
-                                                          },
-                                                        );
-                                                      }
-                                                    } else {
-                                                      // print('here');
-                                                      _showToastNotification(
-                                                          'Something went wrong');
-                                                    }
-                                                  },
-                                                  child: Text(
-                                                      'Order this book now'),
-                                                )
-                                              : Container();
-                                        },
-                                      ),
+                                      // ValueListenableBuilder(
+                                      //   valueListenable: _showRequestButton,
+                                      //   builder: (BuildContext context,
+                                      //       bool showRequestButton,
+                                      //       Widget? child) {
+                                      //     return showRequestButton
+                                      //         ? ElevatedButton(
+                                      //             onPressed: () =>
+                                      //                 _updateRequestPrice(
+                                      //                     requestedItem.id,
+                                      //                     _newRequestPrice),
+                                      //             // child: Text('Update Request Price'),
+                                      //             child: Text(
+                                      //                 'Request for this price'),
+                                      //           )
+                                      //         : Container();
+                                      //   },
+                                      // ),
+                                      // ValueListenableBuilder(
+                                      //   valueListenable: _showOrderButton,
+                                      //   builder: (BuildContext context,
+                                      //       bool showOrderButton,
+                                      //       Widget? child) {
+                                      //     return showOrderButton
+                                      //         ? ElevatedButton(
+                                      //             onPressed: () async {
+                                      //               Carts carts = Provider.of(
+                                      //                   context,
+                                      //                   listen: false);
+                                      //               setState(() {
+                                      //                 _isLoading = true;
+                                      //               });
+                                      //               var tempCart = await carts
+                                      //                   .createTemporaryCart(
+                                      //                       Provider.of<SessionProvider>(
+                                      //                                   context,
+                                      //                                   listen:
+                                      //                                       false)
+                                      //                               .session
+                                      //                           as Session);
+                                      //               if (tempCart is CartError) {
+                                      //                 _showToastNotification(
+                                      //                     'Something went wrong');
+                                      //               }
+                                      //               if (tempCart is Cart) {
+                                      //                 CartItem edittedItem =
+                                      //                     new CartItem(
+                                      //                   id: 0,
+                                      //                   product: new Product(
+                                      //                     id: int.parse(
+                                      //                         requestedBook.id),
+                                      //                     bookName:
+                                      //                         requestedBook
+                                      //                             .bookName,
+                                      //                     unitPrice:
+                                      //                         requestedBook
+                                      //                             .price
+                                      //                             .toString(),
+                                      //                   ),
+                                      //                   negotiatedPrice:
+                                      //                       _newRequestPrice,
+                                      //                   quantity: requestedItem
+                                      //                       .quantity,
+                                      //                   totalPrice: 0,
+                                      //                 );
+                                      //                 if (await carts
+                                      //                     .addItemToTemporaryCart(
+                                      //                         tempCart,
+                                      //                         edittedItem)) {
+                                      //                   return showModalBottomSheet(
+                                      //                     barrierColor: ColorManager
+                                      //                         .blackWithLowOpacity,
+                                      //                     isScrollControlled:
+                                      //                         true,
+                                      //                     shape:
+                                      //                         RoundedRectangleBorder(
+                                      //                       borderRadius:
+                                      //                           BorderRadius
+                                      //                               .only(
+                                      //                         topLeft: Radius
+                                      //                             .circular(
+                                      //                                 AppRadius
+                                      //                                     .r20),
+                                      //                         topRight: Radius
+                                      //                             .circular(
+                                      //                           AppRadius.r20,
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                     context: context,
+                                      //                     builder: (context) {
+                                      //                       return Container(
+                                      //                         height: MediaQuery.of(
+                                      //                                     context)
+                                      //                                 .size
+                                      //                                 .height *
+                                      //                             0.9,
+                                      //                         padding: EdgeInsets
+                                      //                             .symmetric(
+                                      //                           horizontal:
+                                      //                               AppPadding
+                                      //                                   .p20,
+                                      //                         ),
+                                      //                         child: BillingInfo(
+                                      //                             cartId:
+                                      //                                 tempCart
+                                      //                                     .id),
+                                      //                       );
+                                      //                     },
+                                      //                   );
+                                      //                 }
+                                      //               } else {
+                                      //                 // print('here');
+                                      //                 _showToastNotification(
+                                      //                     'Something went wrong');
+                                      //               }
+                                      //             },
+                                      //             child: Text(
+                                      //                 'Order this book now'),
+                                      //           )
+                                      //         : Container();
+                                      //   },
+                                      // ),
 
                                       // --------------------------Change Request Price ends here-----------------------
+                                      ElevatedButton(
+                                          onPressed: () => Navigator.of(context)
+                                              .pushNamed(
+                                                  OrderRequestDetailsScreen
+                                                      .routeName),
+                                          child: Text('Show request details'))
                                     ],
                                   ),
                                 ),
