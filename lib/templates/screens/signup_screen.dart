@@ -274,114 +274,116 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(
             height: 10,
           ),
-          TextFormField(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (value) {
-              if (isEmail) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter your email address';
+          Container(
+            child: TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) {
+                if (isEmail) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter your email address';
+                  }
+                  // Check if the entered email has the right format
+                  if (!RegExp(
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                      .hasMatch(value)) {
+                    return 'Please enter a valid email address';
+                  }
+                  // Return null if the entered email is valid
+                  return null;
                 }
-                // Check if the entered email has the right format
-                if (!RegExp(
-                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                    .hasMatch(value)) {
-                  return 'Please enter a valid email address';
+                if (!isEmail && !isPassword) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'This field is required';
+                  }
+                  if (value.trim().length < 4) {
+                    return 'Username must be at least 4 characters in length';
+                  }
+                  // Return null if the entered username is valid
+                  return null;
                 }
-                // Return null if the entered email is valid
-                return null;
-              }
-              if (!isEmail && !isPassword) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'This field is required';
+                if (isPassword) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'This field is required';
+                  }
+                  if (value.trim().length < 8) {
+                    return 'Password must be at least 8 characters in length';
+                  }
+                  // Return null if the entered password is valid
+                  return null;
                 }
-                if (value.trim().length < 4) {
-                  return 'Username must be at least 4 characters in length';
-                }
-                // Return null if the entered username is valid
-                return null;
-              }
-              if (isPassword) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'This field is required';
-                }
-                if (value.trim().length < 8) {
-                  return 'Password must be at least 8 characters in length';
-                }
-                // Return null if the entered password is valid
-                return null;
-              }
-            },
-            // obscureText: isPassword,
-            obscureText: isPassword ? !visible : false,
-            focusNode: isPassword
-                ? _passwordFocusNode
-                : (isEmail ? _emailFocusNode : null),
-            textInputAction:
-                isPassword ? TextInputAction.done : TextInputAction.next,
-            keyboardType:
-                // isPassword ? TextInputType.number : TextInputType.text,
-                TextInputType.text,
-            decoration: new InputDecoration(
-              suffix: isPassword
-                  ? IconButton(
-                      icon: Icon(
-                          visible ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          visible = !visible;
-                        });
-                      })
-                  : null,
-              enabledBorder: const OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.black, width: 1.0),
+              },
+              // obscureText: isPassword,
+              obscureText: isPassword ? !visible : false,
+              focusNode: isPassword
+                  ? _passwordFocusNode
+                  : (isEmail ? _emailFocusNode : null),
+              textInputAction:
+                  isPassword ? TextInputAction.done : TextInputAction.next,
+              keyboardType:
+                  // isPassword ? TextInputType.number : TextInputType.text,
+                  TextInputType.text,
+              decoration: new InputDecoration(
+                suffix: isPassword
+                    ? IconButton(
+                        icon: Icon(
+                            visible ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            visible = !visible;
+                          });
+                        })
+                    : null,
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.black, width: 1.0),
+                ),
+                border: const OutlineInputBorder(),
+                labelStyle: new TextStyle(color: Colors.green),
               ),
-              border: const OutlineInputBorder(),
-              labelStyle: new TextStyle(color: Colors.green),
+              onFieldSubmitted: (_) {
+                if (isEmail)
+                  FocusScope.of(context).requestFocus(_passwordFocusNode);
+                if (isPassword)
+                  _saveForm();
+                else {
+                  // _saveForm();
+                  FocusScope.of(context).requestFocus(_emailFocusNode);
+                }
+              },
+              onSaved: (value) {
+                if (isPassword) {
+                  userpassword = value;
+                } else {
+                  // usernameOrEmail = value;
+                  isEmail
+                      ? _newUser = new User(
+                          id: _newUser.id,
+                          firstName: _newUser.firstName,
+                          lastName: _newUser.lastName,
+                          username: _newUser.username,
+                          email: value,
+                          phone: _newUser.phone,
+                          image: _newUser.image,
+                          description: _newUser.description,
+                          userClass: _newUser.userClass,
+                          followers: _newUser.followers,
+                          createdDate: _newUser.createdDate,
+                        )
+                      : _newUser = new User(
+                          id: _newUser.id,
+                          firstName: _newUser.firstName,
+                          lastName: _newUser.lastName,
+                          username: value,
+                          email: _newUser.email,
+                          phone: _newUser.phone,
+                          image: _newUser.image,
+                          description: _newUser.description,
+                          userClass: _newUser.userClass,
+                          followers: _newUser.followers,
+                          createdDate: _newUser.createdDate,
+                        );
+                }
+              },
             ),
-            onFieldSubmitted: (_) {
-              if (isEmail)
-                FocusScope.of(context).requestFocus(_passwordFocusNode);
-              if (isPassword)
-                _saveForm();
-              else {
-                // _saveForm();
-                FocusScope.of(context).requestFocus(_emailFocusNode);
-              }
-            },
-            onSaved: (value) {
-              if (isPassword) {
-                userpassword = value;
-              } else {
-                // usernameOrEmail = value;
-                isEmail
-                    ? _newUser = new User(
-                        id: _newUser.id,
-                        firstName: _newUser.firstName,
-                        lastName: _newUser.lastName,
-                        username: _newUser.username,
-                        email: value,
-                        phone: _newUser.phone,
-                        image: _newUser.image,
-                        description: _newUser.description,
-                        userClass: _newUser.userClass,
-                        followers: _newUser.followers,
-                        createdDate: _newUser.createdDate,
-                      )
-                    : _newUser = new User(
-                        id: _newUser.id,
-                        firstName: _newUser.firstName,
-                        lastName: _newUser.lastName,
-                        username: value,
-                        email: _newUser.email,
-                        phone: _newUser.phone,
-                        image: _newUser.image,
-                        description: _newUser.description,
-                        userClass: _newUser.userClass,
-                        followers: _newUser.followers,
-                        createdDate: _newUser.createdDate,
-                      );
-              }
-            },
           ),
         ],
       ),

@@ -389,80 +389,86 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   },
                 )
-              : TextFormField(
-                  obscureText: isPassword ? !visible : false,
-                  focusNode: isPassword ? _passwordFocusNode : null,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (isPassword) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'This field is required';
+              : Container(
+                  height: _form.currentState!.validate() ? 55 : 50,
+                  child: TextFormField(
+                    obscureText: isPassword ? !visible : false,
+                    focusNode: isPassword ? _passwordFocusNode : null,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (isPassword) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'This field is required';
+                        }
+                        if (value.trim().length < 8) {
+                          return 'Password must be at least 8 characters in length';
+                        }
+                        // Return null if the entered password is valid
+                        return null;
+                      } else {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your email address';
+                        }
+                        // Check if the entered email has the right format
+                        if (!RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value)) {
+                          return 'Please enter a valid email address';
+                        }
+                        // Return null if the entered email is valid
+                        return null;
                       }
-                      if (value.trim().length < 8) {
-                        return 'Password must be at least 8 characters in length';
-                      }
-                      // Return null if the entered password is valid
-                      return null;
-                    } else {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your email address';
-                      }
-                      // Check if the entered email has the right format
-                      if (!RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                          .hasMatch(value)) {
-                        return 'Please enter a valid email address';
-                      }
-                      // Return null if the entered email is valid
-                      return null;
-                    }
-                  },
-                  textInputAction:
-                      isPassword ? TextInputAction.done : TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  decoration: new InputDecoration(
-                    // contentPadding: EdgeInsets.symmetric(
-                    //   horizontal: AppPadding.p12,
-                    //   vertical: AppPadding.p2,
-                    // ),
-                    // contentPadding: EdgeInsets.only(
-                    //   top: 0,
-                    //   left: AppPadding.p12,
-                    //   bottom: AppPadding.p12,
-                    // ),
-                    suffix: isPassword
-                        ? IconButton(
-                            padding: EdgeInsets.zero,
-                            icon: Icon(
-                              visible ? Icons.visibility : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                visible = !visible;
-                              });
-                            })
-                        : null,
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.black, width: 1.0),
+                    },
+                    textInputAction: isPassword
+                        ? TextInputAction.done
+                        : TextInputAction.next,
+                    keyboardType: TextInputType.text,
+                    decoration: new InputDecoration(
+                      // contentPadding: EdgeInsets.symmetric(
+                      //   horizontal: AppPadding.p12,
+                      //   vertical: AppPadding.p2,
+                      // ),
+                      // contentPadding: EdgeInsets.only(
+                      //   top: 0,
+                      //   left: AppPadding.p12,
+                      //   bottom: AppPadding.p12,
+                      // ),
+                      suffix: isPassword
+                          ? IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                visible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  visible = !visible;
+                                });
+                              })
+                          : null,
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.black, width: 1.0),
+                      ),
+                      border: const OutlineInputBorder(),
+                      labelStyle: new TextStyle(color: Colors.green),
                     ),
-                    border: const OutlineInputBorder(),
-                    labelStyle: new TextStyle(color: Colors.green),
+                    onFieldSubmitted: (_) {
+                      if (!isPassword)
+                        FocusScope.of(context).requestFocus(_passwordFocusNode);
+                      else {
+                        _saveForm();
+                      }
+                    },
+                    onSaved: (value) {
+                      if (isPassword) {
+                        userpassword = value;
+                      } else {
+                        usernameOrEmail = value;
+                      }
+                    },
                   ),
-                  onFieldSubmitted: (_) {
-                    if (!isPassword)
-                      FocusScope.of(context).requestFocus(_passwordFocusNode);
-                    else {
-                      _saveForm();
-                    }
-                  },
-                  onSaved: (value) {
-                    if (isPassword) {
-                      userpassword = value;
-                    } else {
-                      usernameOrEmail = value;
-                    }
-                  },
                 ),
         ],
       ),
@@ -827,65 +833,68 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           )
-        : Scaffold(
-            body: Container(
-              height: height,
-              child: Stack(
-                children: <Widget>[
-                  Positioned(
-                      top: -height * .15,
-                      right: -MediaQuery.of(context).size.width * .4,
-                      child: BezierContainer()),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(height: height * .2),
-                          _title(),
-                          // _emailPasswordWidget(),
-                          Form(
-                            key: _form,
-                            child: _emailPasswordWidget(),
-                          ),
-                          SizedBox(height: 20),
-                          showSpinner
-                              ? Padding(
-                                  padding: const EdgeInsets.only(bottom: 30.0),
-                                  child: CircularProgressIndicator(
-                                    color: ColorManager.primary,
-                                  ),
-                                )
-                              // : SizedBox(height: 1),
-                              : Container(),
-                          _submitButton(),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              'Forgot Password ?',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+        : SafeArea(
+            child: Scaffold(
+              body: Container(
+                height: height,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                        top: -height * .15,
+                        right: -MediaQuery.of(context).size.width * .4,
+                        child: BezierContainer()),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(height: height * .2),
+                            _title(),
+                            // _emailPasswordWidget(),
+                            Form(
+                              key: _form,
+                              child: _emailPasswordWidget(),
+                            ),
+                            SizedBox(height: 20),
+                            showSpinner
+                                ? Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 30.0),
+                                    child: CircularProgressIndicator(
+                                      color: ColorManager.primary,
+                                    ),
+                                  )
+                                // : SizedBox(height: 1),
+                                : Container(),
+                            _submitButton(),
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'Forgot Password ?',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                          _divider(),
-                          // _facebookButton(),
-                          // showSpinner
-                          //     ? CircularProgressIndicator()
-                          //     : _googleButton(),
-                          _googleButton(),
-                          SizedBox(height: height * .055),
-                          _createAccountLabel(),
-                        ],
+                            _divider(),
+                            // _facebookButton(),
+                            // showSpinner
+                            //     ? CircularProgressIndicator()
+                            //     : _googleButton(),
+                            _googleButton(),
+                            SizedBox(height: height * .055),
+                            _createAccountLabel(),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(top: 40, left: 0, child: _backButton()),
-                ],
+                    Positioned(top: 40, left: 0, child: _backButton()),
+                  ],
+                ),
               ),
             ),
           );
