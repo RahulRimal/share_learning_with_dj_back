@@ -68,12 +68,59 @@ class BookApi {
       // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        return Success(
-          code: response.statusCode,
-          response: booksFromJson(
-            json.encode(json.decode(response.body)),
+        return Success(code: response.statusCode, response: {
+          'books': booksFromJson(
+            json.encode((json.decode(response.body))['results']),
           ),
-        );
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      // print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //   code: ApiStatusCode.unknownError,
+      //   errorResponse: ApiStrings.unknownErrorString,
+      // );
+    }
+  }
+
+  static Future<Object> getMoreBooks(String nextPageUrl) async {
+    try {
+      // var url = Uri.parse(RemoteManager.BASE_URI + '/posts/');
+      var url = Uri.parse(nextPageUrl);
+
+      var response = await http.get(
+        url,
+        headers: {
+          // HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        },
+      );
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(code: response.statusCode, response: {
+          'books': booksFromJson(
+            json.encode((json.decode(response.body))['results']),
+          ),
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
       }
       return Failure(
         code: ApiStatusCode.invalidResponse,
@@ -165,7 +212,7 @@ class BookApi {
         return Success(
           code: response.statusCode,
           response: booksFromJson(
-            json.encode(json.decode(response.body)),
+            json.encode((json.decode(response.body))['results']),
           ),
         );
       }
@@ -208,12 +255,13 @@ class BookApi {
       // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        return Success(
-          code: response.statusCode,
-          response: booksFromJson(
-            json.encode(json.decode(response.body)),
+        return Success(code: response.statusCode, response: {
+          'books': booksFromJson(
+            json.encode((json.decode(response.body))['results']),
           ),
-        );
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
       }
       return Failure(
         code: ApiStatusCode.invalidResponse,
@@ -253,12 +301,13 @@ class BookApi {
       // print(response.body);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        return Success(
-          code: response.statusCode,
-          response: booksFromJson(
-            json.encode(json.decode(response.body)),
+        return Success(code: response.statusCode, response: {
+          'books': booksFromJson(
+            json.encode((json.decode(response.body))['results']),
           ),
-        );
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
       }
       return Failure(
         code: ApiStatusCode.invalidResponse,

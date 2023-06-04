@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
+import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:share_learning/templates/screens/order_request_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
 
@@ -34,6 +36,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       'route': UserProfileScreen.routeName,
     },
     {
+      'icon': Icons.send,
+      'label': 'Requests',
+      'route': OrderRequestScreen.routeName,
+    },
+    {
       'icon': Icons.shopping_cart,
       'label': 'Cart',
       'route': CartScreen.routeName,
@@ -55,11 +62,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         ],
       ),
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(
-              navItems.length,
-              (index) => _buildBottomNavigationBarItem(navItems[index]['icon'],
-                  navItems[index]['label'], navItems[index]['route'], index))),
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(
+          navItems.length,
+          (index) => _buildBottomNavigationBarItem(navItems[index]['icon'],
+              navItems[index]['label'], navItems[index]['route'], index),
+        ),
+      ),
     );
   }
 
@@ -75,7 +84,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         });
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppPadding.p12,
+          vertical: AppPadding.p8,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

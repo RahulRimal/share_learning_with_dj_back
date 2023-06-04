@@ -260,13 +260,26 @@ class BookImage {
 
   factory BookImage.fromJson(Map<String, dynamic> json) => BookImage(
         id: json["id"],
-        image: json["image"],
+        // image: json["image"],
+        image: _getImageUrlOnly(json["image"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "image": image,
       };
+
+  static _getImageUrlOnly(String? str) {
+    if (str == null) {
+      return 'https://cdn.pixabay.com/photo/2023/05/19/13/28/bird-8004544__340.jpg';
+    }
+    if (str.contains('i.gr-assets.com')) {
+      String stringToRemove = RemoteManager.BASE_URI + '/media/';
+      String temp = str.replaceAll(stringToRemove, '');
+      return temp.replaceAll('https%3A/', 'https://');
+    }
+    return str;
+  }
 }
 
 class BookCategory {

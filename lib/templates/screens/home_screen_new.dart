@@ -42,6 +42,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
   final _searchTextController = TextEditingController();
   final _searchFocusNode = FocusNode();
+  final _scrollController = ScrollController();
+  ValueNotifier<bool> _loadingMorePosts = ValueNotifier<bool>(false);
 
   // This flag will be used to render either send button or clear button on search bar. I need to use this because i can't clear the search bar if searchtext is not empty because the search will not work on text change but on button click. So the search might not have been completed even if the text is not empty
   bool _enableClearSearch = false;
@@ -90,9 +92,24 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   //   });
   // }
 
+  void _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+        _loadingMorePosts.value = true;
+      
+      await Provider.of<Books>(context, listen: false).getMoreBooks(Provider.of<Books>(context, listen: false).nextPageUrl as String).then((_)=>
+        _loadingMorePosts.value = false
+      );
+
+
+
+    }
+  }
+
   @override
   void initState() {
     _selectedCategoryIndex = 0;
+    _scrollController.addListener(_scrollListener);
     super.initState();
   }
 
@@ -114,6 +131,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   void dispose() {
     _searchTextController.dispose();
     _searchFocusNode.dispose();
+    // _scrollController.dispose();
     super.dispose();
   }
 
@@ -152,6 +170,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         appBar: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
+          // backgroundColor: ColorManager.lighterGrey,
           backgroundColor: ColorManager.lighterGrey,
           // backgroundColor: Colors.transparent,
           toolbarHeight: MediaQuery.of(context).size.height * 0.15,
@@ -386,6 +405,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         ),
 
         body: SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             padding: EdgeInsets.only(
               bottom: AppPadding.p12,
@@ -496,6 +516,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                           ),
                                         )
                                       : MasonryGridView.builder(
+                                          // controller: _scrollController,
                                           physics:
                                               NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
@@ -519,6 +540,16 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           }
                         },
                       ),
+                ValueListenableBuilder(valueListenable: _loadingMorePosts, builder: (BuildContext context, bool loadingMorePosts, Widget? child){
+                return loadingMorePosts ?
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppPadding.p18,),
+                    child: CircularProgressIndicator(
+                      color: Colors.red,
+                    ),
+                  ): Container();
+                }
+                ),
               ],
             ),
           ),

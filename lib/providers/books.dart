@@ -11,6 +11,8 @@ class Books with ChangeNotifier {
   List<Book> _myBooks = [];
   bool _loading = false;
   BookError? _bookError;
+  String? _nextPageUrl;
+  String? _previousPageUrl;
 
   // final Session authenticatedSession;
 
@@ -27,6 +29,9 @@ class Books with ChangeNotifier {
   }
 
   BookError? get bookError => _bookError;
+
+  String? get nextPageUrl => _nextPageUrl;
+  String? get previousPageUrl => _previousPageUrl;
 
   // factory Books.fromJson(Map<String, dynamic> parsedJson) {
   //   return Book(
@@ -54,6 +59,14 @@ class Books with ChangeNotifier {
 
   setBookError(BookError bookError) {
     _bookError = bookError;
+  }
+
+  setNextPageUrl(String? nextPageUrl) {
+    _nextPageUrl = nextPageUrl;
+  }
+
+  setPreviousPageUrl(String? previousPageUrl) {
+    _previousPageUrl = previousPageUrl;
   }
 
   double getMinPrice() {
@@ -102,7 +115,9 @@ class Books with ChangeNotifier {
     // print(response);
 
     if (response is Success) {
-      setBooks(response.response as List<Book>);
+      setBooks((response.response as Map)['books'] as List<Book>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
     }
     if (response is Failure) {
       BookError bookError = BookError(
@@ -116,6 +131,29 @@ class Books with ChangeNotifier {
 
   Book getBookById(String bookId) {
     return books.firstWhere((book) => book.id == bookId);
+  }
+
+  getMoreBooks(String nextPageUrl) async {
+    setLoading(true);
+    var response = await BookApi.getMoreBooks(nextPageUrl);
+    // print(response);
+
+    if (response is Success) {
+      // setBooks((response.response as Map)['books'] as List<Book>);
+      _myBooks.addAll((response.response as Map)['books'] as List<Book>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
+      notifyListeners();
+    }
+    if (response is Failure) {
+      BookError bookError = BookError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setBookError(bookError);
+    }
+    setLoading(false);
+    // notifyListeners();
   }
 
   Future<dynamic> getBookByIdFromServer(
@@ -163,7 +201,10 @@ class Books with ChangeNotifier {
     var response =
         await BookApi.getBooksBySearchTerm(loggedInSession, searchTerm);
     if (response is Success) {
-      setBooks(response.response as List<Book>);
+      setBooks((response.response as Map)['books'] as List<Book>);
+      // _myBooks.addAll((response.response as Map)['books'] as List<Book>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
     }
     if (response is Failure) {
       BookError error = new BookError(

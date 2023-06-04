@@ -194,7 +194,7 @@ class MyApp extends StatelessWidget {
                   navigatorObservers: [BotToastNavigatorObserver()],
                   debugShowCheckedModeBanner: false,
                   title: AppStrings.appTitle,
-                  theme: getApplicationTheme(),
+                  theme: getApplicationTheme(ThemeMode.light),
 
                   home: SplashScreen(),
                   // home: TempScreen(),

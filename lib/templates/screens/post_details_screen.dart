@@ -803,6 +803,17 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         //   loggedInUser: loggedInUser,
                         //   postId: post.id,
                         // ),
+                        SizedBox(height: 30,),
+                        Text(
+                                'Recommendations for you',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              Center(child:CircularProgressIndicator(
+                                color: Colors.red,
+                              )),
                       ],
                     ),
                   ),

@@ -11,8 +11,8 @@ class RemoteManager {
   // static const String BASE_URI = 'http://192.168.1.174:8000';
   // static const String BASE_URI = 'https://sharelearn.pythonanywhere.com';
   // static const String BASE_URI = 'https://share-learning-api-xhui.onrender.com';
-  static const String BASE_URI = 'http://192.168.1.9:8000';
-  // static const String BASE_URI = 'http://10.0.3.190:8000';
+  static const String BASE_URI = 'http://192.168.1.83:8000';
+  // static const String BASE_URI = 'http://10.0.15.183:8000';
   //static const String BASE_URI = 'http://192.168.1.108:8000';
 
   // static const String BASE_URI = 'http://10.0.0.2:8000';

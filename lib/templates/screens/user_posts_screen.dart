@@ -356,10 +356,9 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                                 .message
                                 .toString()),
                           );
-                        }
-                        // if (snapshot.data is List<Book>) {
-                        else {
-                          _userBooks = snapshot.data as List<Book>;
+                        } else {
+                          _userBooks =
+                              (snapshot.data as Map)['books'] as List<Book>;
                           return _userBooks.length <= 0
                               ? Center(
                                   child: Text(

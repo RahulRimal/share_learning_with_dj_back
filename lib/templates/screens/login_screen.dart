@@ -390,7 +390,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 )
               : Container(
-                  height: _form.currentState!.validate() ? 55 : 50,
+                  // height: _form.currentState!.validate() ? 55 : 50,
                   child: TextFormField(
                     obscureText: isPassword ? !visible : false,
                     focusNode: isPassword ? _passwordFocusNode : null,
