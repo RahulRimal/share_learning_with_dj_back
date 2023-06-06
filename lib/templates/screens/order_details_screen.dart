@@ -72,17 +72,23 @@ class OrderDetailsScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                orderedBook.bookName,
-                                // 'Product Name',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                              Flexible(
+                                flex: 3,
+                                child: Text(
+                                  orderedBook.bookName,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                              Text(
-                                '\Rs ${_orderItem.orderedPrice}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                              Flexible(
+                                flex: 1,
+                                child: Text(
+                                  '\Rs ${_orderItem.orderedPrice}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -91,6 +97,8 @@ class OrderDetailsScreen extends StatelessWidget {
                           Text(
                             // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
                             orderedBook.description,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),

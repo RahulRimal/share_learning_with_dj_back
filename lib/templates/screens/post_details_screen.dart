@@ -803,17 +803,20 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         //   loggedInUser: loggedInUser,
                         //   postId: post.id,
                         // ),
-                        SizedBox(height: 30,),
+                        SizedBox(
+                          height: 30,
+                        ),
                         Text(
-                                'Recommendations for you',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              Center(child:CircularProgressIndicator(
-                                color: Colors.red,
-                              )),
+                          'Recommendations for you',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Center(
+                            child: CircularProgressIndicator(
+                          color: Colors.red,
+                        )),
                       ],
                     ),
                   ),
@@ -1447,16 +1450,33 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                           : null,
                                                       icon: Icon(Icons.remove),
                                                     ),
-                                                    Text(
-                                                      _itemCount.toString(),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: getBoldStyle(
-                                                        color:
-                                                            ColorManager.black,
-                                                        fontSize: FontSize.s17,
-                                                      ),
-                                                    ),
+                                                    AnimatedSwitcher(
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    200),
+                                                        child: Text(
+                                                          _itemCount.toString(),
+                                                          key: ValueKey(
+                                                              _itemCount),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: getBoldStyle(
+                                                            color: ColorManager
+                                                                .black,
+                                                            fontSize:
+                                                                FontSize.s17,
+                                                          ),
+                                                        ),
+                                                        transitionBuilder:
+                                                            (Widget child,
+                                                                Animation<
+                                                                        double>
+                                                                    animation) {
+                                                          return ScaleTransition(
+                                                              scale: animation,
+                                                              child: child);
+                                                        }),
                                                     IconButton(
                                                       color: Colors.black,
                                                       padding: EdgeInsets.zero,

@@ -61,48 +61,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       followers: 'followers',
       createdDate: DateTime.now());
 
-  // List<PostCategory> _categories = [];
-
-  // ScrollController _scrollController = ScrollController();
-
-  // double _appBarHeight = 75.0;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _scrollController.addListener(_scrollListener);
-  // }
-
-  // @override
-  // void dispose() {
-  //   _scrollController.removeListener(_scrollListener);
-  //   _scrollController.dispose();
-  //   super.dispose();
-  // }
-
-  // void _scrollListener() {
-  //   setState(() {
-  //     if (_scrollController.offset > 0 && _scrollController.offset < 30) {
-  //       _appBarHeight = 75.0 - _scrollController.offset;
-  //     } else if (_scrollController.offset >= 30) {
-  //       _appBarHeight = 50.0;
-  //     } else {
-  //       _appBarHeight = 75.0;
-  //     }
-  //   });
-  // }
-
   void _scrollListener() async {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-        _loadingMorePosts.value = true;
-      
-      await Provider.of<Books>(context, listen: false).getMoreBooks(Provider.of<Books>(context, listen: false).nextPageUrl as String).then((_)=>
-        _loadingMorePosts.value = false
-      );
+      _loadingMorePosts.value = true;
 
-
-
+      await Provider.of<Books>(context, listen: false)
+          .getMoreBooks(
+              Provider.of<Books>(context, listen: false).nextPageUrl as String)
+          .then((_) => _loadingMorePosts.value = false);
     }
   }
 
@@ -131,7 +98,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   void dispose() {
     _searchTextController.dispose();
     _searchFocusNode.dispose();
-    // _scrollController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -300,12 +267,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                   focusNode: _searchFocusNode,
                                   cursorColor: ColorManager.primary,
                                   decoration: InputDecoration(
-                                    // border: OutlineInputBorder(
-                                    //   borderSide: BorderSide(
-                                    //     width: 4,
-                                    //     color: ColorManager.green,
-                                    //   ),
-                                    // ),
                                     prefixIcon: Icon(Icons.search),
                                     prefixIconColor: ColorManager.primary,
                                     suffixIcon: _enableClearSearch
@@ -361,37 +322,50 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               ),
                             ),
                           ),
-                          CircleAvatar(
-                            backgroundColor: ColorManager.black,
-                            radius: 20,
-                            child: IconButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  barrierColor:
-                                      ColorManager.blackWithLowOpacity,
-                                  isScrollControlled: true,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft:
-                                              Radius.circular(AppRadius.r20),
-                                          topRight:
-                                              Radius.circular(AppRadius.r20))),
-                                  context: context,
-                                  builder: (context) {
-                                    return Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.9,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppPadding.p20,
-                                      ),
-                                      child: BookFiltersWidget(),
-                                    );
-                                  },
-                                );
-                              },
-                              icon: Icon(Icons.settings),
-                              color: ColorManager.white,
+                          AnimatedContainer(
+                            duration: const Duration(
+                                milliseconds:
+                                    700), // Adjust the duration as needed
+                            curve:
+                                Curves.easeInOut, // Adjust the curve as desired
+                            width: _enableClearSearch
+                                ? AppHeight.h60
+                                : 0, // Define the desired height when visible or hidden
+                            child: CircleAvatar(
+                              backgroundColor: ColorManager.black,
+                              radius: 20,
+                              child: !_enableClearSearch
+                                  ? null
+                                  : IconButton(
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          barrierColor:
+                                              ColorManager.blackWithLowOpacity,
+                                          isScrollControlled: true,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(
+                                                      AppRadius.r20),
+                                                  topRight: Radius.circular(
+                                                      AppRadius.r20))),
+                                          context: context,
+                                          builder: (context) {
+                                            return Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.9,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: AppPadding.p20,
+                                              ),
+                                              child: BookFiltersWidget(),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: Icon(Icons.settings),
+                                      color: ColorManager.white,
+                                    ),
                             ),
                           ),
                         ],
@@ -540,16 +514,21 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           }
                         },
                       ),
-                ValueListenableBuilder(valueListenable: _loadingMorePosts, builder: (BuildContext context, bool loadingMorePosts, Widget? child){
-                return loadingMorePosts ?
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppPadding.p18,),
-                    child: CircularProgressIndicator(
-                      color: Colors.red,
-                    ),
-                  ): Container();
-                }
-                ),
+                ValueListenableBuilder(
+                    valueListenable: _loadingMorePosts,
+                    builder: (BuildContext context, bool loadingMorePosts,
+                        Widget? child) {
+                      return loadingMorePosts
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppPadding.p18,
+                              ),
+                              child: CircularProgressIndicator(
+                                color: Colors.red,
+                              ),
+                            )
+                          : Container();
+                    }),
               ],
             ),
           ),

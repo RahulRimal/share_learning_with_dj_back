@@ -11,6 +11,7 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'dart:math' as math;
 
 class CartItemWidget extends StatefulWidget {
   const CartItemWidget({Key? key, required this.cartItem}) : super(key: key);
@@ -22,31 +23,20 @@ class CartItemWidget extends StatefulWidget {
 }
 
 class _CartItemWidgetState extends State<CartItemWidget> {
-  // bool _cartItemChanged = false;
+  // with TickerProviderStateMixin {
   late ValueNotifier<bool> _cartItemChanged;
-  // late int _quantity;
   late ValueNotifier<int> _quantity;
-  // late bool _wishlisted;
   late CartItem _edittedItem;
+
+  // late AnimationController _controller;
+  // late Animation<double> _opacityAnimation;
 
   _ifCartItemChanged() {
     if (_quantity.value != widget.cartItem.quantity) {
-      // setState(() {
-      //   _cartItemChanged = true;
-      // });
       _cartItemChanged.value = true;
-
       return;
     }
-    // if (_wishlisted != widget.cartItem.wishlisted) {
-    //   setState(() {
-    //     _cartItemChanged = true;
-    //   });
-    //   return;
-    // }
-    // setState(() {
-    //   _cartItemChanged = false;
-    // });
+
     _cartItemChanged.value = false;
   }
 
@@ -55,8 +45,26 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     _edittedItem = widget.cartItem;
     _cartItemChanged = ValueNotifier<bool>(false);
     _quantity = ValueNotifier<int>(widget.cartItem.quantity);
-    // _wishlisted = widget.cartItem.wishlisted;
+
+    // _controller = AnimationController(
+    //   duration: const Duration(milliseconds: 300),
+    //   vsync: this,
+    // );
+    // if (_cartItemChanged.value) {
+    //   _controller.forward();
+    // } else {
+    //   _controller.reverse();
+    // }
+    // _opacityAnimation =
+    //     Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // _controller.dispose();
+    super.dispose();
   }
 
   Future<bool> _updateCartItem(Cart cart, CartItem edittedItem) async {
@@ -270,51 +278,75 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                             icon: Icon(Icons.delete),
                                             onPressed: () {
                                               bool userConfirmed = false;
-                                              showDialog(
+                                              showGeneralDialog(
+                                                barrierDismissible: true,
+                                                barrierLabel:
+                                                    'Delete cart item dilaog dismissed',
                                                 context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                  title: Text('Are you sure?'),
-                                                  content: Text(
-                                                    'This will remove the item from  your cart',
-                                                    style: getRegularStyle(
-                                                      fontSize: FontSize.s16,
-                                                      color: ColorManager.black,
-                                                    ),
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: Text(
-                                                        'Yes',
-                                                        style: getBoldStyle(
+                                                pageBuilder: (ctx, a1, a2) {
+                                                  return Container();
+                                                },
+                                                transitionDuration:
+                                                    const Duration(
+                                                        milliseconds: 300),
+                                                transitionBuilder:
+                                                    (ctx, a1, a2, child) {
+                                                  var curve = Curves.easeInOut
+                                                      .transform(a1.value);
+                                                  return Transform.scale(
+                                                    scale: curve,
+                                                    child: AlertDialog(
+                                                      title:
+                                                          Text('Are you sure?'),
+                                                      content: Text(
+                                                        'This will remove the item from  your cart',
+                                                        style: getRegularStyle(
                                                           fontSize:
                                                               FontSize.s16,
                                                           color: ColorManager
-                                                              .primary,
+                                                              .black,
                                                         ),
                                                       ),
-                                                      onPressed: () {
-                                                        userConfirmed = true;
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                    TextButton(
-                                                      child: Text(
-                                                        'No',
-                                                        style: getBoldStyle(
-                                                          fontSize:
-                                                              FontSize.s16,
-                                                          color: Colors.green,
+                                                      actions: [
+                                                        TextButton(
+                                                          child: Text(
+                                                            'Yes',
+                                                            style: getBoldStyle(
+                                                              fontSize:
+                                                                  FontSize.s16,
+                                                              color:
+                                                                  ColorManager
+                                                                      .primary,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            userConfirmed =
+                                                                true;
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
                                                         ),
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
+                                                        TextButton(
+                                                          child: Text(
+                                                            'No',
+                                                            style: getBoldStyle(
+                                                              fontSize:
+                                                                  FontSize.s16,
+                                                              color:
+                                                                  Colors.green,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  );
+                                                },
                                               ).then((_) {
                                                 if (userConfirmed) {
                                                   _deleteCartItem(
@@ -368,61 +400,85 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                       Container(
                                         child: ButtonBar(
                                           children: [
-                                            IconButton(
-                                              color: Colors.black,
-                                              // onPressed: _quantity.value > 1
-                                              //     ? () {
-                                              //         _quantity.value--;
-                                              //         _ifCartItemChanged();
-                                              //       }
-                                              //     : null,
-                                              onPressed: () {
-                                                if (_quantity.value > 1) {
-                                                  _quantity.value--;
-                                                  _ifCartItemChanged();
-                                                }
+                                            ValueListenableBuilder<int>(
+                                              valueListenable: _quantity,
+                                              builder: (BuildContext context,
+                                                  int value, Widget? child) {
+                                                return IconButton(
+                                                  color: Colors.black,
+                                                  onPressed: _quantity.value > 1
+                                                      ? () {
+                                                          _quantity.value--;
+                                                          _ifCartItemChanged();
+                                                        }
+                                                      : null,
+                                                  icon: Container(
+                                                    width: AppSize.s40,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      color: ColorManager.black,
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.remove,
+                                                      color: ColorManager.white,
+                                                    ),
+                                                  ),
+                                                );
                                               },
-
-                                              icon: Container(
-                                                width: AppSize.s40,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  color: ColorManager.black,
-                                                ),
-                                                child: Icon(
-                                                  Icons.remove,
-                                                  color: ColorManager.white,
-                                                ),
-                                              ),
                                             ),
                                             ValueListenableBuilder(
                                               valueListenable: _quantity,
                                               builder: (BuildContext context,
                                                   int quantity, Widget? child) {
-                                                return Text(
-                                                  quantity.toString(),
-                                                  style: getBoldStyle(
-                                                    color: ColorManager.primary,
-                                                    fontSize: FontSize.s20,
+                                                return AnimatedSwitcher(
+                                                    duration: const Duration(
+                                                        milliseconds: 200),
+                                                    child: Text(
+                                                      quantity.toString(),
+                                                      key: ValueKey(quantity),
+                                                      style: getBoldStyle(
+                                                        color: ColorManager
+                                                            .primary,
+                                                        fontSize: FontSize.s20,
+                                                      ),
+                                                    ),
+                                                    transitionBuilder:
+                                                        (Widget child,
+                                                            Animation<double>
+                                                                animation) {
+                                                      return ScaleTransition(
+                                                          scale: animation,
+                                                          child: child);
+                                                    });
+                                              },
+                                            ),
+                                            ValueListenableBuilder<int>(
+                                              valueListenable: _quantity,
+                                              builder: (BuildContext context,
+                                                  int value, Widget? child) {
+                                                return IconButton(
+                                                  color: ColorManager.white,
+                                                  onPressed:
+                                                      orderedBook.bookCount >
+                                                              _quantity.value
+                                                          ? () {
+                                                              _quantity.value++;
+                                                              // ValueNotifier(
+                                                              //     _quantity.value++);
+                                                              _ifCartItemChanged();
+                                                            }
+                                                          : null,
+                                                  icon: Container(
+                                                    width: AppSize.s40,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      color: ColorManager.black,
+                                                    ),
+                                                    child: Icon(Icons.add),
                                                   ),
                                                 );
                                               },
-                                            ),
-                                            IconButton(
-                                              color: ColorManager.white,
-                                              onPressed: () {
-                                                _quantity.value++;
-                                                _ifCartItemChanged();
-                                              },
-                                              icon: Container(
-                                                width: AppSize.s40,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  color: ColorManager.black,
-                                                ),
-                                                child: Icon(Icons.add),
-                                              ),
-                                            ),
+                                            )
                                           ],
                                         ),
                                       ),
@@ -438,25 +494,29 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         valueListenable: _cartItemChanged,
                         builder: (BuildContext context, bool itemChanged,
                             Widget? child) {
-                          return itemChanged
-                              ? ElevatedButton(
-                                  onPressed: () => _updateCartItem(
-                                      Provider.of<Carts>(context, listen: false)
-                                          .cart as Cart,
-                                      _edittedItem),
-                                  child: Text('Update Cart'))
-                              : Container();
+                          return AnimatedContainer(
+                            padding: EdgeInsets.only(
+                              bottom: AppPadding.p8,
+                            ),
+                            duration: const Duration(
+                                milliseconds:
+                                    200), // Adjust the duration as needed
+                            curve:
+                                Curves.easeInOut, // Adjust the curve as desired
+                            height: itemChanged
+                                ? AppHeight.h50
+                                : 0, // Define the desired height when visible or hidden
+                            child: ElevatedButton(
+                              onPressed: () => _updateCartItem(
+                                Provider.of<Carts>(context, listen: false).cart
+                                    as Cart,
+                                _edittedItem,
+                              ),
+                              child: Text('Update Cart'),
+                            ),
+                          );
                         },
                       ),
-                      // _cartItemChanged.value
-                      //     ? ElevatedButton(
-                      //         onPressed: () => _updateCartItem(
-                      //             // context.watch<Carts>().cart as Cart,
-                      //             Provider.of<Carts>(context, listen: false)
-                      //                 .cart as Cart,
-                      //             _edittedItem),
-                      //         child: Text('Update Cart'))
-                      //     : Container(),
                     ],
                   ),
                 );
