@@ -9,6 +9,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+
 import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
@@ -47,6 +49,8 @@ import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
 import 'templates/screens/order_request_details_screen.dart';
 import 'templates/screens/order_request_screen.dart';
+import 'templates/screens/order_requests_for_user_details_screen.dart';
+import 'templates/screens/order_requests_for_user_screen.dart';
 import 'templates/screens/orders_screen_new.dart';
 
 Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
@@ -185,68 +189,73 @@ class MyApp extends StatelessWidget {
               publicKey: 'test_public_key_78965ea539884431b8e9172178d08e91',
               enabledDebugging: true,
               builder: (context, navKey) {
-                return MaterialApp(
-                  navigatorKey: navKey,
-                  localizationsDelegates: const [
-                    KhaltiLocalizations.delegate,
-                  ],
-                  builder: BotToastInit(),
-                  navigatorObservers: [BotToastNavigatorObserver()],
-                  debugShowCheckedModeBanner: false,
-                  title: AppStrings.appTitle,
-                  theme: getApplicationTheme(ThemeMode.light),
+                return ResponsiveSizer(
+                    builder: (context, orientation, deviceType) {
+                  return MaterialApp(
+                    navigatorKey: navKey,
+                    localizationsDelegates: const [
+                      KhaltiLocalizations.delegate,
+                    ],
+                    builder: BotToastInit(),
+                    navigatorObservers: [BotToastNavigatorObserver()],
+                    debugShowCheckedModeBanner: false,
+                    title: AppStrings.appTitle,
+                    theme: getApplicationTheme(ThemeMode.light),
 
-                  home: SplashScreen(),
-                  // home: TempScreen(),
-                  // home: OrderScreenNew(),
-                  // home: SinglePostScreenNew(),
-                  // home: HomeScreenNew(),
-                  // home: OnBoardingScreen(),
-                  // home: AddPostScreen(),
-                  // home: LoginSignupScreen(),
-                  // home: LoginScreen(),
-                  // home: OrderListScreen(),
-                  // home: SignUpScreen(),
-                  routes: {
-                    SinglePostScreen.routeName: (context) => SinglePostScreen(),
-                    PostDetailsScreen.routeName: (context) =>
-                        PostDetailsScreen(),
-                    UserPostsScreen.routeName: (context) => UserPostsScreen(),
-                    AddPostScreen.routeName: (context) => AddPostScreen(),
-                    EditPostScreen.routeName: (context) => EditPostScreen(),
-                    WishlistedBooksScreen.routeName: (context) =>
-                        WishlistedBooksScreen(),
-                    HomeScreen.routeName: (context) => HomeScreen(),
-                    HomeScreenNew.routeName: (context) => HomeScreenNew(),
-                    SplashScreen.routeName: (context) => SplashScreen(),
-                    OnBoardingScreen.routeName: (context) => OnBoardingScreen(),
-                    LoginScreen.routeName: (context) => LoginScreen(),
-                    SignUpScreen.routeName: (context) => SignUpScreen(),
-                    LoginSignupScreen.routeName: (context) =>
-                        LoginSignupScreen(),
-                    UserProfileScreen.routeName: (context) =>
-                        UserProfileScreen(),
-                    UserProfileEditScreen.routeName: (context) =>
-                        UserProfileEditScreen(),
-                    CartScreen.routeName: (context) => CartScreen(),
-                    OrderRequestScreen.routeName: (context) =>
-                        OrderRequestScreen(),
-                    OrderRequestDetailsScreen.routeName: (context) =>
-                        OrderRequestDetailsScreen(),
-                    OrderScreen.routeName: (context) => OrderScreen(),
-                    OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
-                    OrderDetailsScreen.routeName: (context) =>
-                        OrderDetailsScreen(),
-                    UserInterestsScreen.routeName: (context) =>
-                        UserInterestsScreen(),
-                  },
-                );
+                    home: SplashScreen(),
+                    // home: TempScreen(),
+                    // home: OrderScreenNew(),
+                    // home: SinglePostScreenNew(),
+                    // home: HomeScreenNew(),
+                    // home: OnBoardingScreen(),
+                    // home: AddPostScreen(),
+                    // home: LoginSignupScreen(),
+                    // home: LoginScreen(),
+                    // home: OrderListScreen(),
+                    // home: SignUpScreen(),
+                    routes: {
+                      SinglePostScreen.routeName: (context) =>
+                          SinglePostScreen(),
+                      PostDetailsScreen.routeName: (context) =>
+                          PostDetailsScreen(),
+                      UserPostsScreen.routeName: (context) => UserPostsScreen(),
+                      AddPostScreen.routeName: (context) => AddPostScreen(),
+                      EditPostScreen.routeName: (context) => EditPostScreen(),
+                      WishlistedBooksScreen.routeName: (context) =>
+                          WishlistedBooksScreen(),
+                      HomeScreen.routeName: (context) => HomeScreen(),
+                      HomeScreenNew.routeName: (context) => HomeScreenNew(),
+                      SplashScreen.routeName: (context) => SplashScreen(),
+                      OnBoardingScreen.routeName: (context) =>
+                          OnBoardingScreen(),
+                      LoginScreen.routeName: (context) => LoginScreen(),
+                      SignUpScreen.routeName: (context) => SignUpScreen(),
+                      LoginSignupScreen.routeName: (context) =>
+                          LoginSignupScreen(),
+                      UserProfileScreen.routeName: (context) =>
+                          UserProfileScreen(),
+                      UserProfileEditScreen.routeName: (context) =>
+                          UserProfileEditScreen(),
+                      CartScreen.routeName: (context) => CartScreen(),
+                      OrderRequestScreen.routeName: (context) =>
+                          OrderRequestScreen(),
+                      OrderRequestsForUserScreen.routeName: (context) =>
+                          OrderRequestsForUserScreen(),
+                      OrderRequestDetailsScreen.routeName: (context) =>
+                          OrderRequestDetailsScreen(),
+                      OrderRequestForUserDetailsScreen.routeName: (context) =>
+                          OrderRequestForUserDetailsScreen(),
+                      OrderScreen.routeName: (context) => OrderScreen(),
+                      OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
+                      OrderDetailsScreen.routeName: (context) =>
+                          OrderDetailsScreen(),
+                      UserInterestsScreen.routeName: (context) =>
+                          UserInterestsScreen(),
+                    },
+                  );
+                });
               },
             ),
-      // child: MaterialApp(
-      //   debugShowCheckedModeBanner: false,
-      //   home: TempScreen(),
-      // ),
     );
   }
 }

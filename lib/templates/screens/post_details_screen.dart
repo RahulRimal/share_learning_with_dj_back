@@ -1062,7 +1062,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
         ),
       );
     }
-    if (orderRequests.orderRequestsContains(int.parse(selectedPost.id))) {
+    if (orderRequests.orderRequestsByUserContains(int.parse(selectedPost.id))) {
       return Padding(
         padding: const EdgeInsets.symmetric(
           vertical: AppPadding.p12,
@@ -1137,7 +1137,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                   ),
                 ],
               ),
-              orderRequests.orderRequests.firstWhereOrNull((orderRequest) =>
+              orderRequests.orderRequestsByUser.firstWhereOrNull((orderRequest) =>
                           orderRequest.product.id == _buyerExpectedBook.id) !=
                       null
                   ? ElevatedButton(

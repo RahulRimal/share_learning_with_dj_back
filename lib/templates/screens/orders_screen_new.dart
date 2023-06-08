@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -267,99 +268,202 @@ class OrderItemWidget extends StatelessWidget {
   OrderItemWidget({Key? key, required this.orderItem}) : super(key: key);
 
   final OrderItem orderItem;
-  late Book product;
+  late Book? product;
 
   @override
   Widget build(BuildContext context) {
-    Books booksProvider = Provider.of<Books>(context, listen: false);
-    product = booksProvider.books.firstWhere(
+    // Books booksProvider = Provider.of<Books>(
+    //   context,
+    // );
+    Books booksProvider = context.watch();
+    Session authSession =
+        Provider.of<SessionProvider>(context, listen: false).session as Session;
+    product = booksProvider.books.firstWhereOrNull(
       (book) => book.id == orderItem.productId.toString(),
-      orElse: () {
-        return booksProvider.getBookById(orderItem.productId.toString());
-      },
     );
-    return Container(
-      // margin: EdgeInsets.symmetric(
-      // vertical: AppMargin.m8,
-      // ),
-      decoration: BoxDecoration(
-        color: ColorManager.lighterGrey,
-        borderRadius: BorderRadius.circular(
-          AppRadius.r12,
+    if (product == null) {
+      return FutureBuilder(
+          future: booksProvider.getBookByIdFromServer(
+              authSession, orderItem.productId.toString()),
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: ColorManager.primary,
+                ),
+              );
+            } else {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error'),
+                );
+              } else {
+                product = snapshot.data as Book;
+                booksProvider.books.add(product as Book);
+                return Container(
+                  decoration: BoxDecoration(
+                    color: ColorManager.lighterGrey,
+                    borderRadius: BorderRadius.circular(
+                      AppRadius.r12,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(
+                          AppPadding.p4,
+                        ),
+                        margin: EdgeInsets.only(
+                          right: AppMargin.m14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorManager.grey,
+                          borderRadius: BorderRadius.circular(
+                            AppRadius.r12,
+                          ),
+                        ),
+                        // child: Image.asset(
+                        //   ImageAssets.noProfile,
+                        // ),
+                        child: product!.images != null
+                            ? Image.network(
+                                product!.images![0].image,
+                                height: AppHeight.h75,
+                              )
+                            : Image.asset(
+                                ImageAssets.noProfile,
+                              ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product!.bookName,
+                              softWrap: true,
+                              style: getBoldStyle(
+                                color: ColorManager.black,
+                                fontSize: FontSize.s16,
+                              ),
+                            ),
+                            SizedBox(
+                              height: AppHeight.h4,
+                            ),
+                            Text(
+                              'Unit price: Rs. ${product!.price.toString()}',
+                              style: getMediumStyle(
+                                color: ColorManager.grey,
+                                fontSize: FontSize.s14,
+                              ),
+                            ),
+                            Text(
+                              'Quantity: ${orderItem.quantity.toString()}',
+                              style: getMediumStyle(
+                                color: ColorManager.grey,
+                                fontSize: FontSize.s14,
+                              ),
+                            ),
+                            SizedBox(
+                              height: AppHeight.h4,
+                            ),
+                            Text(
+                              'Total: Rs. ${(product!.price * orderItem.quantity).toString()}',
+                              style: getMediumStyle(
+                                color: ColorManager.grey,
+                                fontSize: FontSize.s14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            }
+          });
+    } else {
+      return Container(
+        decoration: BoxDecoration(
+          color: ColorManager.lighterGrey,
+          borderRadius: BorderRadius.circular(
+            AppRadius.r12,
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(
-              AppPadding.p4,
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(
+                AppPadding.p4,
+              ),
+              margin: EdgeInsets.only(
+                right: AppMargin.m14,
+              ),
+              decoration: BoxDecoration(
+                color: ColorManager.grey,
+                borderRadius: BorderRadius.circular(
+                  AppRadius.r12,
+                ),
+              ),
+              // child: Image.asset(
+              //   ImageAssets.noProfile,
+              // ),
+              child: product!.images != null
+                  ? Image.network(
+                      product!.images![0].image,
+                      height: AppHeight.h75,
+                    )
+                  : Image.asset(
+                      ImageAssets.noProfile,
+                    ),
             ),
-            margin: EdgeInsets.only(
-              right: AppMargin.m14,
-            ),
-            decoration: BoxDecoration(
-              color: ColorManager.grey,
-              borderRadius: BorderRadius.circular(
-                AppRadius.r12,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product!.bookName,
+                    softWrap: true,
+                    style: getBoldStyle(
+                      color: ColorManager.black,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
+                  SizedBox(
+                    height: AppHeight.h4,
+                  ),
+                  Text(
+                    'Unit price: Rs. ${product!.price.toString()}',
+                    style: getMediumStyle(
+                      color: ColorManager.grey,
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
+                  Text(
+                    'Quantity: ${orderItem.quantity.toString()}',
+                    style: getMediumStyle(
+                      color: ColorManager.grey,
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
+                  SizedBox(
+                    height: AppHeight.h4,
+                  ),
+                  Text(
+                    'Total: Rs. ${(product!.price * orderItem.quantity).toString()}',
+                    style: getMediumStyle(
+                      color: ColorManager.grey,
+                      fontSize: FontSize.s14,
+                    ),
+                  ),
+                ],
               ),
             ),
-            // child: Image.asset(
-            //   ImageAssets.noProfile,
-            // ),
-            child: product.images != null
-                ? Image.network(
-                    product.images![0].image,
-                    height: AppHeight.h75,
-                  )
-                : Image.asset(
-                    ImageAssets.noProfile,
-                  ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.bookName,
-                  softWrap: true,
-                  style: getBoldStyle(
-                    color: ColorManager.black,
-                    fontSize: FontSize.s16,
-                  ),
-                ),
-                SizedBox(
-                  height: AppHeight.h4,
-                ),
-                Text(
-                  'Unit price: Rs. ${product.price.toString()}',
-                  style: getMediumStyle(
-                    color: ColorManager.grey,
-                    fontSize: FontSize.s14,
-                  ),
-                ),
-                Text(
-                  'Quantity: ${orderItem.quantity.toString()}',
-                  style: getMediumStyle(
-                    color: ColorManager.grey,
-                    fontSize: FontSize.s14,
-                  ),
-                ),
-                SizedBox(
-                  height: AppHeight.h4,
-                ),
-                Text(
-                  'Total: Rs. ${(product.price * orderItem.quantity).toString()}',
-                  style: getMediumStyle(
-                    color: ColorManager.grey,
-                    fontSize: FontSize.s14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }
+    ;
   }
 }
 

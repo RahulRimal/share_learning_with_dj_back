@@ -10,6 +10,7 @@ import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/categories.dart';
+import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -36,12 +37,12 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
   final _form = GlobalKey<FormState>();
 
-  final _authorFocusNode = FocusNode();
-  final _dateFocusNode = FocusNode();
-  final _priceFocusNode = FocusNode();
-  final _booksCountFocusNode = FocusNode();
-  final _descFocusNode = FocusNode();
-  final _cateFocusNode = FocusNode();
+  late FocusNode _authorFocusNode;
+  late FocusNode _dateFocusNode;
+  late FocusNode _priceFocusNode;
+  late FocusNode _booksCountFocusNode;
+  late FocusNode _descFocusNode;
+  late FocusNode _cateFocusNode;
 
   late PostCategory _selectedCategory;
 
@@ -80,9 +81,32 @@ class _EditPostScreenState extends State<EditPostScreen> {
   );
 
   @override
+  void initState() {
+    _authorFocusNode = FocusNode();
+    _dateFocusNode = FocusNode();
+    _priceFocusNode = FocusNode();
+    _booksCountFocusNode = FocusNode();
+    _descFocusNode = FocusNode();
+    _cateFocusNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _authorFocusNode.dispose();
+    _dateFocusNode.dispose();
+    _priceFocusNode.dispose();
+    _booksCountFocusNode.dispose();
+    _descFocusNode.dispose();
+    _cateFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     String bookId = args['bookId'];
+
     if (bookId.isNotEmpty) {
       _edittedBook =
           Provider.of<Books>(context, listen: false).getBookById(bookId);

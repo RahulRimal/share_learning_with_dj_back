@@ -11,18 +11,24 @@ import '../models/order_request.dart';
 import '../models/user.dart';
 
 class OrderRequests with ChangeNotifier {
-  List<OrderRequest> _orderRequests = [];
+  List<OrderRequest> _orderRequestsByUser = [];
+  List<OrderRequest> _orderRequestsForUser = [];
 
   bool _loading = false;
 
   OrderRequestError? _orderRequestError;
 
-  List<OrderRequest> get orderRequests => [..._orderRequests];
+  List<OrderRequest> get orderRequestsByUser => [..._orderRequestsByUser];
+  List<OrderRequest> get orderRequestsForUser => [..._orderRequestsForUser];
   bool get loading => _loading;
   OrderRequestError? get orderRequestError => _orderRequestError;
 
-  setOrderRequests(List<OrderRequest> orderRequests) {
-    _orderRequests = orderRequests;
+  setOrderRequestsByUser(List<OrderRequest> orderRequestsByUser) {
+    _orderRequestsByUser = orderRequestsByUser;
+  }
+
+  setOrderRequestsForUser(List<OrderRequest> orderRequestsForUser) {
+    _orderRequestsForUser = orderRequestsForUser;
   }
 
   setLoading(bool loading) {
@@ -63,7 +69,7 @@ class OrderRequests with ChangeNotifier {
         await OrderRequestApi.placeOrderRequest(loggedInSession, requestInfo);
     // print(response);
     if (response is Success) {
-      _orderRequests.add(response.response as OrderRequest);
+      _orderRequestsByUser.add(response.response as OrderRequest);
       setLoading(false);
       notifyListeners();
       return true;
@@ -82,9 +88,35 @@ class OrderRequests with ChangeNotifier {
     // print(response);
 
     if (response is Success) {
-      setOrderRequests(response.response as List<OrderRequest>);
+      setOrderRequestsByUser(response.response as List<OrderRequest>);
       // return response.response;
-      return _orderRequests;
+      return _orderRequestsByUser;
+    }
+    if (response is Failure) {
+      OrderRequestError orderRequestError = OrderRequestError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setOrderRequestError(orderRequestError);
+      return _orderRequestError as OrderRequestError;
+    }
+    OrderRequestError orderRequestError = OrderRequestError(
+      code: (response as Failure).code,
+      message: response.errorResponse,
+    );
+    setOrderRequestError(orderRequestError);
+    return _orderRequestError as OrderError;
+  }
+
+  Future<Object> getRequestsForUser(Session loggedInSession) async {
+    var response =
+        await OrderRequestApi.getOrderRequestsForUser(loggedInSession);
+    // print(response);
+
+    if (response is Success) {
+      setOrderRequestsForUser(response.response as List<OrderRequest>);
+
+      return _orderRequestsForUser;
     }
     if (response is Failure) {
       OrderRequestError orderRequestError = OrderRequestError(
@@ -131,13 +163,44 @@ class OrderRequests with ChangeNotifier {
       String requestId, double newRequestPrice) async {
     var response =
         await OrderRequestApi.updateRequestPrice(requestId, newRequestPrice);
+    // print(response);
 
     if (response is Success) {
       final postIndex =
-          _orderRequests.indexWhere((element) => element.id == requestId);
+          _orderRequestsByUser.indexWhere((element) => element.id == requestId);
 
       OrderRequest updatedRequest = response.response as OrderRequest;
-      _orderRequests[postIndex] = updatedRequest;
+      _orderRequestsByUser[postIndex] = updatedRequest;
+      notifyListeners();
+      return true;
+    }
+
+    if (response is Failure) {
+      OrderRequestError orderRequestError = OrderRequestError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setOrderRequestError(orderRequestError);
+      notifyListeners();
+      return false;
+    }
+
+    return false;
+  }
+
+  Future<bool> updateSellerOfferPrice(
+      String requestId, double newRequestPrice) async {
+    var response = await OrderRequestApi.updateSellerOfferPrice(
+        requestId, newRequestPrice);
+
+    // print(response);
+
+    if (response is Success) {
+      final postIndex = _orderRequestsForUser
+          .indexWhere((element) => element.id == requestId);
+
+      OrderRequest updatedRequest = response.response as OrderRequest;
+      _orderRequestsForUser[postIndex] = updatedRequest;
       notifyListeners();
       return true;
     }
@@ -227,7 +290,7 @@ class OrderRequests with ChangeNotifier {
   //   return false;
   // }
 
-  bool orderRequestsContains(int bookId) {
-    return _orderRequests.any((element) => element.product.id == bookId);
+  bool orderRequestsByUserContains(int bookId) {
+    return _orderRequestsByUser.any((element) => element.product.id == bookId);
   }
 }

@@ -144,7 +144,8 @@ class _PostNewState extends State<PostNew> {
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              // color: ColorManager.white,
+              color: ColorManager.lightestGrey,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),

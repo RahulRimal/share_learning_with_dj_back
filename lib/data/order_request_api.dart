@@ -158,15 +158,56 @@ class OrderRequestApi {
     }
   }
 
+  static Future<Object> getOrderRequestsForUser(Session userSession) async {
+    try {
+      var url = Uri.parse(
+          RemoteManager.BASE_URI + "/order_requests/requests_for_user/");
+      var response = await http.get(url, headers: {
+        HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
+      });
+      // print(response);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+            code: ApiStatusCode.responseSuccess,
+            response:
+                orderRequestsFromJson(json.encode(json.decode(response.body))));
+        // response: orderFromJson(json.encode(response.body)));
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      return Failure(
+        code: ApiStatusCode.unknownError,
+        errorResponse: ApiStrings.unknownErrorString,
+      );
+    }
+  }
+
   static Future<Object> getOrderRequestInfo(String orderRequestId) async {
     try {
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      SharedPreferences prefs = await _prefs;
+      String accessToken = prefs.getString('accessToken') as String;
       var url = Uri.parse(
           RemoteManager.BASE_URI + "/order_requests/" + orderRequestId + "/");
       var response = await http.get(
         url,
-        // headers: {
-        //   HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
-        // }
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + accessToken,
+        },
       );
       // print(response);
 
@@ -243,8 +284,12 @@ class OrderRequestApi {
   static Future<Object> updateRequestPrice(
       String orderRequestId, double newRequestPrice) async {
     try {
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      SharedPreferences prefs = await _prefs;
+      String accessToken = prefs.getString('accessToken') as String;
       Map<String, String> postBody = {
-        "requested_price": newRequestPrice.toString()
+        "requested_price": newRequestPrice.toString(),
+        "changed_by_seller": 'false'
       };
       var url = Uri.parse(
           RemoteManager.BASE_URI + '/order_requests/' + orderRequestId + '/');
@@ -253,6 +298,63 @@ class OrderRequestApi {
         url,
         headers: {
           // HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + accessToken,
+          "Accept": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+        body: json.encode(postBody),
+      );
+
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return await getOrderRequestInfo(orderRequestId);
+        // return Success(
+        //   code: response.statusCode,
+        //   response: cartFromJson(
+        //     json.encode(json.decode(response.body)['data']['carts']),
+        //   ),
+        // );
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
+  static Future<Object> updateSellerOfferPrice(
+      String orderRequestId, double newRequestPrice) async {
+    try {
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      SharedPreferences prefs = await _prefs;
+      String accessToken = prefs.getString('accessToken') as String;
+      Map<String, String> postBody = {
+        "seller_offer_price": newRequestPrice.toString(),
+        "changed_by_seller": 'true',
+      };
+      var url = Uri.parse(
+          RemoteManager.BASE_URI + '/order_requests/' + orderRequestId + '/');
+
+      var response = await http.patch(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + accessToken,
           "Accept": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin":
               "*", // Required for CORS support to work

@@ -26,10 +26,17 @@ class CategoryApi {
       // print(response);
 
       if (response.statusCode == ApiStatusCode.responseSuccess) {
-        return Success(
-            code: response.statusCode,
-            response:
-                categoriesFromJson(json.encode(json.decode(response.body))));
+        // return Success(
+        //     code: response.statusCode,
+        //     response:
+        //         categoriesFromJson(json.encode(json.decode(response.body))));
+        return Success(code: response.statusCode, response: {
+          'categories': categoriesFromJson(
+            json.encode((json.decode(response.body))['results']),
+          ),
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
       }
 
       return Failure(

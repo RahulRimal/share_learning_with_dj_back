@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
 import 'package:share_learning/data/book_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/post_category.dart';
+import 'package:share_learning/providers/sessions.dart';
 import '../models/book.dart';
 
 class Books with ChangeNotifier {
@@ -130,6 +132,11 @@ class Books with ChangeNotifier {
   }
 
   Book getBookById(String bookId) {
+    // Book? result = books.firstWhereOrNull((book) => book.id == bookId);
+    // if (result != null) {
+    //   return result;
+    // }
+    // return await getBookByIdFromServer(authSession, bookId) as Book;
     return books.firstWhere((book) => book.id == bookId);
   }
 

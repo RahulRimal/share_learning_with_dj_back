@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/order.dart';
+import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
 import '../../models/book.dart';
 import '../../models/order_item.dart';
+import '../../models/session.dart';
 import '../../providers/books.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
@@ -19,6 +21,8 @@ class OrderDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     Order order = args['order'];
+    Session authSession =
+        Provider.of<SessionProvider>(context).session as Session;
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Details'),
@@ -42,70 +46,78 @@ class OrderDetailsScreen extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: order.items.length,
                   itemBuilder: (context, index) {
-                    Books booksProvider =
-                        Provider.of<Books>(context, listen: false);
                     OrderItem _orderItem = order.items[index];
-                    Book orderedBook = booksProvider.books.firstWhere(
-                      (book) => book.id == _orderItem.productId.toString(),
-                      orElse: () {
-                        return booksProvider
-                            .getBookById(_orderItem.productId.toString());
-                      },
-                    );
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                flex: 3,
-                                child: Text(
-                                  orderedBook.bookName,
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+
+                    return FutureBuilder(
+                        future: Provider.of<Books>(context, listen: false)
+                            .getBookByIdFromServer(
+                                authSession, _orderItem.productId.toString()),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            Book orderedBook = snapshot.data as Book;
+
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
                                   ),
-                                ),
+                                ],
                               ),
-                              Flexible(
-                                flex: 1,
-                                child: Text(
-                                  '\Rs ${_orderItem.orderedPrice}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        flex: 3,
+                                        child: Text(
+                                          orderedBook.bookName,
+                                          softWrap: true,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: Text(
+                                          '\Rs ${_orderItem.orderedPrice}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
+                                  SizedBox(height: 8.0),
+                                  Text(
+                                    // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
+                                    orderedBook.description,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
-                            orderedBook.description,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                            );
+                          }
+                        });
                   }),
 
               // ------------------------------------------------------ Order items ends here ----------------------------------------------------

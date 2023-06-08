@@ -35,11 +35,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final _form = GlobalKey<FormState>();
   bool showSpinner = false;
 
-  final _authorFocusNode = FocusNode();
-  final _dateFocusNode = FocusNode();
-  final _priceFocusNode = FocusNode();
-  final _booksCountFocusNode = FocusNode();
-  final _descFocusNode = FocusNode();
+  late FocusNode _authorFocusNode;
+  late  FocusNode _dateFocusNode;
+  late  FocusNode _priceFocusNode;
+  late  FocusNode _booksCountFocusNode;
+  late  FocusNode _descFocusNode;
 
   List<bool> postTypeSelling = [true, false];
 
@@ -103,9 +103,29 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   final _datePickercontroller = TextEditingController(
     text:
-        // DateFormat('yyyy/MM/dd').format(picker.NepaliDateTime.now()).toString(),
         DateFormat('yyyy-MM-dd').format(picker.NepaliDateTime.now()).toString(),
   );
+
+  @override
+  void initState(){
+    _authorFocusNode = FocusNode();
+    _dateFocusNode = FocusNode();
+    _priceFocusNode = FocusNode();
+    _booksCountFocusNode = FocusNode();
+    _descFocusNode = FocusNode();
+    
+    super.initState();
+  }
+
+  @override
+  void dispose(){
+    _authorFocusNode.dispose();
+    _dateFocusNode.dispose();
+    _priceFocusNode.dispose();
+    _booksCountFocusNode.dispose();
+    _descFocusNode.dispose();
+    super.dispose();
+  }
 
   Future<void> _showPicker(BuildContext context) async {
     _boughtDate = await picker.showAdaptiveDatePicker(
@@ -113,15 +133,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
       initialDate: picker.NepaliDateTime.now(),
       firstDate: picker.NepaliDateTime(2070),
       lastDate: picker.NepaliDateTime.now(),
-      // ) as picker.NepaliDateTime;
     );
 
     _datePickercontroller.text =
         DateFormat('yyyy-MM-dd').format(_boughtDate as DateTime).toString();
-    // DateFormat('yyyy/MM/dd').format(_boughtDate as DateTime).toString();
   }
-
-  // Future<bool> _savePost(Session loggedInUser) async {
   _savePost(Session loggedInUser) async {
     final isValid = _form.currentState!.validate();
 

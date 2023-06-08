@@ -29,17 +29,24 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
   XFile? _addedImage;
   final _form = GlobalKey<FormState>();
 
-  final _firstNameFocusNode = FocusNode();
-  final _lastNameFocusNode = FocusNode();
-  final _descriptionFocusNode = FocusNode();
-  final _classFocusNode = FocusNode();
-  // final _booksCountFocusNode = FocusNode();
-  // final _descFocusNode = FocusNode();
+  late FocusNode _firstNameFocusNode ;
+  late FocusNode _lastNameFocusNode;
+  late FocusNode _descriptionFocusNode;
+  late FocusNode _classFocusNode;
 
   bool _showLoading = false;
   ImagePicker imagePicker = ImagePicker();
 
   bool _imageAdded = false;
+
+  @override
+  void initState() {
+    _firstNameFocusNode = FocusNode();
+    _lastNameFocusNode = FocusNode();
+    _descriptionFocusNode = FocusNode();
+    _classFocusNode = FocusNode();
+    super.initState();
+  }
 
   Future<void> _getPicture() async {
     final imageFiles = await imagePicker.pickImage(

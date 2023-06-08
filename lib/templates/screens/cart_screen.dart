@@ -149,7 +149,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(
-          index: 3,
+          index: 4,
         ),
         bottomSheet: context.watch<Carts>().cartItems.length > 0
             ? ElevatedButton(

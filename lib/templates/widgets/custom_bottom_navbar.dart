@@ -52,9 +52,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        // color: Colors.red,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
+            // color: ColorManager.lightestGrey,
             blurRadius: 10.0,
             spreadRadius: 1.0,
             offset: const Offset(0, -1),
@@ -78,10 +80,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, route);
         setState(() {
           widget.index = index;
         });
+        Navigator.pushNamed(context, route);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -93,7 +95,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           children: [
             Icon(
               iconData,
-              color: isSelected ? ColorManager.primary : Colors.grey,
+              color: isSelected ? ColorManager.primary : ColorManager.lightGrey,
               size: 30,
             ),
             SizedBox(height: 1),

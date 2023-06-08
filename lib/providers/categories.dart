@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:share_learning/data/category_api.dart';
 import 'package:share_learning/models/post_category.dart';
 
@@ -10,6 +11,8 @@ class Categories with ChangeNotifier {
   bool _loading = false;
 
   CategoryError? _categoryError;
+  String? _nextPageUrl;
+  String? _previousPageUrl;
 
   List<PostCategory> get categories {
     return [..._categories];
@@ -23,6 +26,9 @@ class Categories with ChangeNotifier {
     return _categoryError as CategoryError;
   }
 
+  String? get nextPageUrl => _nextPageUrl;
+  String? get previousPageUrl => _previousPageUrl;
+
   setCategories(categories) {
     _categories = categories;
   }
@@ -34,6 +40,15 @@ class Categories with ChangeNotifier {
 
   setCategoryError(categoryError) {
     _categoryError = categoryError;
+  }
+
+  
+  setNextPageUrl(String? nextPageUrl) {
+    _nextPageUrl = nextPageUrl;
+  }
+
+  setPreviousPageUrl(String? previousPageUrl) {
+    _previousPageUrl = previousPageUrl;
   }
 
   add(PostCategory category) {
@@ -52,7 +67,10 @@ class Categories with ChangeNotifier {
     // print(response);
 
     if (response is Success) {
-      setCategories(response.response);
+      // setCategories(response.response);
+      setCategories((response.response as Map)['categories'] as List<PostCategory>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
     }
     if (response is Failure) {
       CategoryError categoryError = CategoryError(

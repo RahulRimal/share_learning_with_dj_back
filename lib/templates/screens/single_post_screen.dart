@@ -170,7 +170,7 @@ class SinglePostScreen extends StatelessWidget {
     Book selectedPost = Provider.of<Books>(
       context,
       listen: false,
-    ).getBookById(bookId);
+    ).books.firstWhere((book) => book.id == bookId);
 
     // Comments comments = context.watch<Comments>();
 

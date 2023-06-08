@@ -31,16 +31,19 @@ import '../../providers/users.dart';
 import '../widgets/billing_info.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import 'order_request_details_screen.dart';
+import 'order_requests_for_user_details_screen.dart';
 
-class OrderRequestScreen extends StatefulWidget {
-  const OrderRequestScreen({Key? key}) : super(key: key);
-  static final routeName = '/order-request-list';
+class OrderRequestsForUserScreen extends StatefulWidget {
+  const OrderRequestsForUserScreen({Key? key}) : super(key: key);
+  static final routeName = '/order-requests-for-user-list';
 
   @override
-  State<OrderRequestScreen> createState() => _OrderRequestScreenState();
+  State<OrderRequestsForUserScreen> createState() =>
+      _OrderRequestsForUserScreenState();
 }
 
-class _OrderRequestScreenState extends State<OrderRequestScreen> {
+class _OrderRequestsForUserScreenState
+    extends State<OrderRequestsForUserScreen> {
   final _form = GlobalKey<FormState>();
   final _searchController = TextEditingController();
 
@@ -151,7 +154,7 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
               //             authendicatedSession: authendicatedSession),
               //       ),
               FutureBuilder(
-                future: orderRequests.getOrderRequests(authendicatedSession),
+                future: orderRequests.getRequestsForUser(authendicatedSession),
                 builder: (ctx, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(
@@ -224,11 +227,11 @@ class OrderRequestList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       // itemCount: context.watch<Carts>().cartItems.length,
-      itemCount: context.watch<OrderRequests>().orderRequestsByUser.length,
+      itemCount: context.watch<OrderRequests>().orderRequestsForUser.length,
       itemBuilder: (context, index) {
         return OrderRequestItemWidget(
           // cartItem: carts.cartItems[index],
-          requestedItem: orderRequests.orderRequestsByUser[index],
+          requestedItem: orderRequests.orderRequestsForUser[index],
         );
       },
     );
@@ -811,13 +814,16 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
 
                                       // --------------------------Change Request Price ends here-----------------------
                                       ElevatedButton(
-                                          onPressed: () => Navigator.of(context)
-                                              .pushNamed(
-                                                  OrderRequestDetailsScreen
-                                                      .routeName, arguments: {
-                                                        'requestItem': requestedItem,
-                                                        'requestedProduct': requestedBook
-                                                      }),
+                                          onPressed: () =>
+                                              Navigator.of(context).pushNamed(
+                                                OrderRequestForUserDetailsScreen
+                                                    .routeName,
+                                                arguments: {
+                                                  'requestItem': requestedItem,
+                                                  'requestedProduct':
+                                                      requestedBook
+                                                },
+                                              ),
                                           child: Text('Show request details'))
                                     ],
                                   ),

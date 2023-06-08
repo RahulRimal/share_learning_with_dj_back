@@ -7,6 +7,7 @@ import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/widgets/custom_image.dart';
 
+import '../../models/session.dart';
 import '../../providers/users.dart';
 import '../screens/edit_post_screen.dart';
 
@@ -32,7 +33,6 @@ class _ImageGalleryState extends State<ImageGallery> {
     Book? selectedPost = widget.bookId != null
         ? Provider.of<Books>(context).getBookById(widget.bookId!)
         : null;
-    // : Provider.of<Books>(context).getBookByIdFromServer(loggedInSession, bookId)
 
     return // Image Gallery Starts Here
         Container(
@@ -44,7 +44,7 @@ class _ImageGalleryState extends State<ImageGallery> {
         vertical: 10,
       ),
       child: selectedPost != null
-          ? selectedPost.images != null
+          ? selectedPost!.images != null
               ? Column(
                   children: [
                     Container(
@@ -53,7 +53,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                       child: ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: selectedPost.images!.length,
+                        itemCount: selectedPost!.images!.length,
                         itemBuilder: (context, index) =>
                             // Post Image Starts Here
                             Padding(
@@ -70,8 +70,8 @@ class _ImageGalleryState extends State<ImageGallery> {
                             ),
                             child: CustomImage(
                               image: widget.isNetwork
-                                  ? selectedPost.images![index]
-                                  : selectedPost.images![index].name,
+                                  ? selectedPost!.images![index]
+                                  : selectedPost!.images![index].name,
                               isNetwork: widget.isNetwork,
                               isErasable: widget.isErasable,
                               eraseImage: this.widget.eraseImage,
@@ -82,7 +82,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                       ),
                     ),
                     // Edit images starts here
-                    (selectedPost.userId ==
+                    (selectedPost!.userId ==
                             Provider.of<Users>(context, listen: false).user!.id)
                         ? Container(
                             height: 50,
@@ -101,12 +101,17 @@ class _ImageGalleryState extends State<ImageGallery> {
                                       child: Text('Add or remove images'),
                                       style: ButtonStyle(),
                                       onPressed: () {
-                      Navigator.of(context).pushNamed(EditPostScreen.routeName,
-                          arguments: {
-                            'bookId': widget.bookId,
-                            'loggedInUserSession': Provider.of<SessionProvider>(context, listen: false).session,
-                          });
-                    },
+                                        Navigator.of(context).pushNamed(
+                                            EditPostScreen.routeName,
+                                            arguments: {
+                                              'bookId': widget.bookId,
+                                              'loggedInUserSession':
+                                                  Provider.of<SessionProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .session,
+                                            });
+                                      },
                                     ),
                                     SizedBox(
                                       width: 10,
@@ -158,10 +163,9 @@ class _ImageGalleryState extends State<ImageGallery> {
                         ),
                       ),
                       child: CustomImage(
-                        
                         // image: widget.images![index] is BookImage
                         //     ? widget.images![index]
-                            // : widget.images![index],
+                        // : widget.images![index],
                         image: widget.images![index],
                         isNetwork: widget.isNetwork,
                         isErasable: widget.isErasable,
