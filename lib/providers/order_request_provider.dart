@@ -83,7 +83,7 @@ class OrderRequests with ChangeNotifier {
     return false;
   }
 
-  Future<Object> getOrderRequests(Session loggedInSession) async {
+  Future<Object> getOrderRequestsByUser(Session loggedInSession) async {
     var response = await OrderRequestApi.getUserOrderRequests(loggedInSession);
     // print(response);
 
@@ -215,6 +215,27 @@ class OrderRequests with ChangeNotifier {
       return false;
     }
 
+    return false;
+  }
+
+  Future<bool> deleteOrderRequest(
+      Session loggedInSession, String orderRequestId) async {
+    setLoading(true);
+    var response = await OrderRequestApi.deleteOrderRequest(
+        loggedInSession, orderRequestId);
+    // print(response);
+    if (response is Success) {
+      // _orderRequestsByUser.add(response.response as OrderRequest);
+      // setLoading(false);
+      // notifyListeners();
+      return true;
+    } else if (response is Failure) {
+      OrderRequestError orderRequestError = OrderRequestError(
+          code: response.code, message: response.errorResponse);
+      setOrderRequestError(orderRequestError);
+      setLoading(false);
+      notifyListeners();
+    }
     return false;
   }
 

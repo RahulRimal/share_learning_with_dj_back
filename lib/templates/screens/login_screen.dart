@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           wishlists.getWishlistedBooks(userSession.session as Session);
           categories.getCategories(userSession.session as Session);
-          orderRequests.getOrderRequests(userSession.session as Session);
+          orderRequests.getOrderRequestsByUser(userSession.session as Session);
 
           if (prefs.containsKey('isFirstTime') &&
               prefs.getBool('isFirstTime') == false) {

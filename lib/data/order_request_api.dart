@@ -123,7 +123,8 @@ class OrderRequestApi {
 
   static Future<Object> getUserOrderRequests(Session userSession) async {
     try {
-      var url = Uri.parse(RemoteManager.BASE_URI + "/order_requests/");
+      var url = Uri.parse(
+          RemoteManager.BASE_URI + "/order_requests/requests_by_user/");
       var response = await http.get(url, headers: {
         HttpHeaders.authorizationHeader: "SL " + userSession.accessToken,
       });
@@ -565,6 +566,50 @@ class OrderRequestApi {
           //   ),
           // ),
         );
+      }
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidResponseString);
+    } on HttpException {
+      return Failure(
+          code: ApiStatusCode.httpError,
+          errorResponse: ApiStrings.noInternetString);
+    } on FormatException {
+      return Failure(
+          code: ApiStatusCode.invalidResponse,
+          errorResponse: ApiStrings.invalidFormatString);
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+          code: ApiStatusCode.unknownError,
+          errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
+  static Future<Object> deleteOrderRequest(
+      Session currentSession, String orderRequestId) async {
+    try {
+      var url = Uri.parse(
+          RemoteManager.BASE_URI + '/order_requests/' + orderRequestId + '/');
+
+      var response = await http.delete(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: "SL " + currentSession.accessToken,
+          "Accept": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin":
+              "*", // Required for CORS support to work
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          HttpHeaders.contentTypeHeader: "application/json",
+        },
+      );
+
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.noContent) {
+        return Success(
+            code: response.statusCode,
+            response: "Order request deleted successfully");
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,

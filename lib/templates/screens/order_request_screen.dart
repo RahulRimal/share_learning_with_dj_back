@@ -151,7 +151,8 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
               //             authendicatedSession: authendicatedSession),
               //       ),
               FutureBuilder(
-                future: orderRequests.getOrderRequests(authendicatedSession),
+                future:
+                    orderRequests.getOrderRequestsByUser(authendicatedSession),
                 builder: (ctx, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(
@@ -812,12 +813,15 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       // --------------------------Change Request Price ends here-----------------------
                                       ElevatedButton(
                                           onPressed: () => Navigator.of(context)
-                                              .pushNamed(
-                                                  OrderRequestDetailsScreen
-                                                      .routeName, arguments: {
-                                                        'requestItem': requestedItem,
-                                                        'requestedProduct': requestedBook
-                                                      }),
+                                                  .pushNamed(
+                                                      OrderRequestDetailsScreen
+                                                          .routeName,
+                                                      arguments: {
+                                                    'requestItem':
+                                                        requestedItem,
+                                                    'requestedProduct':
+                                                        requestedBook
+                                                  }),
                                           child: Text('Show request details'))
                                     ],
                                   ),

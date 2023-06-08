@@ -121,7 +121,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // Navigator.pushReplacementNamed(context, HomeScreen.routeName, arguments: {
       await wishlists.getWishlistedBooks(sessions.session as Session);
       await categories.getCategories(sessions.session as Session);
-      await orderRequests.getOrderRequests(sessions.session as Session);
+      await orderRequests.getOrderRequestsByUser(sessions.session as Session);
       Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
           arguments: {
             'authSession': sessions.session,

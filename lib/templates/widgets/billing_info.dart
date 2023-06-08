@@ -220,7 +220,7 @@ class _BillingInfoState extends State<BillingInfo> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ----------------------    Name section ends here -----------------------------------
+              // ----------------------    Name section starts here -----------------------------------
 
               Container(
                 padding: EdgeInsets.symmetric(
@@ -582,162 +582,163 @@ class _BillingInfoState extends State<BillingInfo> {
         ),
       ),
       bottomSheet: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: ColorManager.lighterGrey,
-                width: 1,
-              ),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: ColorManager.lighterGrey,
+              width: 1,
             ),
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: AppPadding.p12,
-            vertical: AppPadding.p8,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
-                      // bool _orderPlacedSuccessfully = false;
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPadding.p12,
+          vertical: AppPadding.p8,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                ),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                    // bool _orderPlacedSuccessfully = false;
 
-                      final _isValid = _form.currentState!.validate();
-                      if (!_isValid) {
+                    final _isValid = _form.currentState!.validate();
+                    if (!_isValid) {
+                      return;
+                    }
+                    _form.currentState!.save();
+
+                    String paymentStatus = 'P';
+
+                    if (_paymentMethod == PaymentMethod.Esewa) {
+                      if (_payWithEsewa() == false) {
+                        _showToastNotification(
+                            "Something went wrong during payment. Please try again");
                         return;
-                      }
-                      _form.currentState!.save();
+                      } else
+                        paymentStatus = "C";
+                    }
+                    if (_paymentMethod == PaymentMethod.Khalti) {
+                      if (await _payWithKhalti() == false) {
+                        _showToastNotification(
+                            "Something went wrong during the payment, please try again");
+                        return;
+                      } else
+                        paymentStatus = "C";
+                    }
+                    // if (widget.cartId != null) {
+                    //   if (await orders.placeOrder(
+                    //     loggedInSession: authSession,
+                    //     cartId: widget.cartId as String,
+                    //     billingInfo: _billingInfo,
+                    //     paymentMethod: _paymentMethod == PaymentMethod.Cash
+                    //         ? "C"
+                    //         : _paymentMethod == PaymentMethod.Esewa
+                    //             ? "E"
+                    //             : "K",
+                    //   )) {
+                    //     // _orderPlacedSuccessfully = true;
+                    //     print('here');
+                    //     if (_paymentMethod != PaymentMethod.Cash) {
+                    //       Order order = orders.orders.last;
+                    //       await orders.updatePaymentStatus(authSession,
+                    //           order.id.toString(), paymentStatus);
+                    //     }
+                    //   }
+                    // }
 
-                      String paymentStatus = 'P';
+                    // if (
+                    //     //   await orders.placeOrder(
+                    //     //   authSession,
+                    //     //   _billingInfo,
+                    //     //   _paymentMethod == PaymentMethod.Cash
+                    //     //       ? "C"
+                    //     //       : _paymentMethod == PaymentMethod.Esewa
+                    //     //           ? "E"
+                    //     //           : "K",
+                    //     // )
+                    //     //   await orderRequests.createOrderRequest(authSession)) {
+                    //     // if (_paymentMethod != PaymentMethod.Cash) {
+                    //     await carts.createCart(authSession)) {
+                    //   if (_paymentMethod != PaymentMethod.Cash) {
+                    //     Order order = orders.orders.last;
+                    //     await orders.updatePaymentStatus(
+                    //         authSession, order.id.toString(), paymentStatus);
+                    //   }
 
-                      if (_paymentMethod == PaymentMethod.Esewa) {
-                        if (_payWithEsewa() == false) {
-                          _showToastNotification(
-                              "Something went wrong during payment. Please try again");
-                          return;
-                        } else
-                          paymentStatus = "C";
-                      }
-                      if (_paymentMethod == PaymentMethod.Khalti) {
-                        if (await _payWithKhalti() == false) {
-                          _showToastNotification(
-                              "Something went wrong during the payment, please try again");
-                          return;
-                        } else
-                          paymentStatus = "C";
-                      }
-                      // if (widget.cartId != null) {
-                      //   if (await orders.placeOrder(
-                      //     loggedInSession: authSession,
-                      //     cartId: widget.cartId as String,
-                      //     billingInfo: _billingInfo,
-                      //     paymentMethod: _paymentMethod == PaymentMethod.Cash
-                      //         ? "C"
-                      //         : _paymentMethod == PaymentMethod.Esewa
-                      //             ? "E"
-                      //             : "K",
-                      //   )) {
-                      //     // _orderPlacedSuccessfully = true;
-                      //     print('here');
-                      //     if (_paymentMethod != PaymentMethod.Cash) {
-                      //       Order order = orders.orders.last;
-                      //       await orders.updatePaymentStatus(authSession,
-                      //           order.id.toString(), paymentStatus);
-                      //     }
-                      //   }
-                      // }
-
-                      // if (
-                      //     //   await orders.placeOrder(
-                      //     //   authSession,
-                      //     //   _billingInfo,
-                      //     //   _paymentMethod == PaymentMethod.Cash
-                      //     //       ? "C"
-                      //     //       : _paymentMethod == PaymentMethod.Esewa
-                      //     //           ? "E"
-                      //     //           : "K",
-                      //     // )
-                      //     //   await orderRequests.createOrderRequest(authSession)) {
-                      //     // if (_paymentMethod != PaymentMethod.Cash) {
-                      //     await carts.createCart(authSession)) {
-                      //   if (_paymentMethod != PaymentMethod.Cash) {
-                      //     Order order = orders.orders.last;
-                      //     await orders.updatePaymentStatus(
-                      //         authSession, order.id.toString(), paymentStatus);
-                      //   }
-
-                      //   await carts.createCart(authSession);
-                      //   carts.setCartItems([]);
-                      //   SharedPreferences prefs = await _prefs;
-                      //   prefs.remove('cartId');
-                      //   prefs.setString('cartId', carts.cart!.id);
-                      //   _showToastNotification(
-                      //       "Order request created successfully");
-                      //   Navigator.pushReplacementNamed(
-                      //       context, HomeScreenNew.routeName,
-                      //       arguments: {'authSession': authSession});
-                      // } else {
-                      //   _showToastNotification("Something went wrong");
-                      // }
+                    //   await carts.createCart(authSession);
+                    //   carts.setCartItems([]);
+                    //   SharedPreferences prefs = await _prefs;
+                    //   prefs.remove('cartId');
+                    //   prefs.setString('cartId', carts.cart!.id);
+                    //   _showToastNotification(
+                    //       "Order request created successfully");
+                    //   Navigator.pushReplacementNamed(
+                    //       context, HomeScreenNew.routeName,
+                    //       arguments: {'authSession': authSession});
+                    // } else {
+                    //   _showToastNotification("Something went wrong");
+                    // }
 
 // If cartid is provided, it will be passed to the function which will call direct order placement api function otherwise it will call  order placement api function which uses preexisting cart
-                      if (await orders.placeOrder(
-                        loggedInSession: authSession,
-                        cartId: widget.cartId,
-                        billingInfo: _billingInfo,
-                        paymentMethod: _paymentMethod == PaymentMethod.Cash
-                            ? "C"
-                            : _paymentMethod == PaymentMethod.Esewa
-                                ? "E"
-                                : "K",
-                      )) {
-                        if (_paymentMethod != PaymentMethod.Cash) {
-                          Order order = orders.orders.last;
-                          await orders.updatePaymentStatus(
-                              authSession, order.id.toString(), paymentStatus);
-                        }
-
-                        // Only recreate the cart and update it if the order is placed using the existing cart otherwise leave the cart as it is.
-                        if (widget.cartId == null) {
-                          await carts.createCart(authSession);
-                          carts.setCartItems([]);
-                          SharedPreferences prefs = await _prefs;
-                          prefs.remove('cartId');
-                          prefs.setString('cartId', carts.cart!.id);
-                        }
-
-                        _showToastNotification("Order placed successfully");
-                        Navigator.pushReplacementNamed(
-                          context, HomeScreenNew.routeName,
-                          // arguments: {'authSession': authSession}
-                        );
-                      } else {
-                        _showToastNotification("Something went wrong");
+                    if (await orders.placeOrder(
+                      loggedInSession: authSession,
+                      cartId: widget.cartId,
+                      billingInfo: _billingInfo,
+                      paymentMethod: _paymentMethod == PaymentMethod.Cash
+                          ? "C"
+                          : _paymentMethod == PaymentMethod.Esewa
+                              ? "E"
+                              : "K",
+                    )) {
+                      if (_paymentMethod != PaymentMethod.Cash) {
+                        Order order = orders.orders.last;
+                        await orders.updatePaymentStatus(
+                            authSession, order.id.toString(), paymentStatus);
                       }
-                    },
-                    child: Text(
-                      'Place an order',
-                      style: getBoldStyle(
-                        color: ColorManager.black,
-                        fontSize: FontSize.s18,
-                      ),
+
+                      // Only recreate the cart and update it if the order is placed using the existing cart otherwise leave the cart as it is.
+                      if (widget.cartId == null) {
+                        await carts.createCart(authSession);
+                        carts.setCartItems([]);
+                        SharedPreferences prefs = await _prefs;
+                        prefs.remove('cartId');
+                        prefs.setString('cartId', carts.cart!.id);
+                      }
+
+                      _showToastNotification("Order placed successfully");
+                      Navigator.pushReplacementNamed(
+                        context, HomeScreenNew.routeName,
+                        // arguments: {'authSession': authSession}
+                      );
+                    } else {
+                      _showToastNotification("Something went wrong");
+                    }
+                  },
+                  child: Text(
+                    'Place an order',
+                    style: getBoldStyle(
+                      color: ColorManager.black,
+                      fontSize: FontSize.s18,
                     ),
-                    style: ElevatedButton.styleFrom(
-                      primary: ColorManager.primary,
-                      padding: EdgeInsets.symmetric(
-                        vertical: AppPadding.p12,
-                      ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: ColorManager.primary,
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppPadding.p12,
                     ),
                   ),
                 ),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

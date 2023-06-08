@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/models/order_request.dart';
 import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
@@ -103,7 +106,6 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _form = GlobalKey<FormState>();
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     Session authenticatedSession;
     if (args['authSession'] != null) {
@@ -906,6 +908,7 @@ class CartBottomSheet extends StatefulWidget {
 }
 
 class _CartBottomSheetState extends State<CartBottomSheet> {
+  final _form = GlobalKey<FormState>();
   NepaliDateTime initDate = NepaliDateTime.now();
   bool _isRequestLoading = false;
   bool _isCartLoading = false;
@@ -914,6 +917,13 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   final _buyerDateFocusNode = FocusNode();
   final _buyerPriceFocusNode = FocusNode();
   final _buyerBooksCountFocusNode = FocusNode();
+
+  // These focus nodes are for order request billing info fields
+  final _firstNameFocusNode = FocusNode();
+  final _lastNameFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+  final _phoneNumberFocusNode = FocusNode();
+  final _sideNoteFocusNode = FocusNode();
 
   int _itemCount = 1;
   double _expectedUnitPrice = 0;
@@ -1137,8 +1147,10 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                   ),
                 ],
               ),
-              orderRequests.orderRequestsByUser.firstWhereOrNull((orderRequest) =>
-                          orderRequest.product.id == _buyerExpectedBook.id) !=
+              orderRequests.orderRequestsByUser.firstWhereOrNull(
+                          (orderRequest) =>
+                              orderRequest.product.id ==
+                              _buyerExpectedBook.id) !=
                       null
                   ? ElevatedButton(
                       onPressed: () {},
@@ -1604,18 +1616,20 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                               _expectedUnitPrice
                                                         };
 
-                                                        if (await orderRequests
-                                                            .createOrderRequest(
-                                                                authenticatedSession,
-                                                                requestInfo)) {
-                                                          Navigator.pop(
-                                                              context);
-                                                          _showToastNotification(
-                                                              'Request has been sent successfully');
-                                                        } else {
-                                                          _showToastNotification(
-                                                              'Something went wrong');
-                                                        }
+                                                        _createOrderRequest(
+                                                            requestInfo);
+                                                        // if (await orderRequests
+                                                        //     .createOrderRequest(
+                                                        //         authenticatedSession,
+                                                        //         requestInfo)) {
+                                                        //   Navigator.pop(
+                                                        //       context);
+                                                        //   _showToastNotification(
+                                                        //       'Request has been sent successfully');
+                                                        // } else {
+                                                        //   _showToastNotification(
+                                                        //       'Something went wrong');
+                                                        // }
                                                       },
                                               );
                                             }),
@@ -1936,6 +1950,387 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           ),
         ),
       ),
+    );
+  }
+
+  // Map _getBillingInfoForOrderRequest() {
+  _createOrderRequest(Map<String, dynamic> requestInfo) {
+    Map<String, String> _billingInfo = {};
+    List<String> _locationOptions = [
+      'Kathmandu',
+      'Bhaktapur',
+      'Lalitpur',
+      'Nepalgunj',
+    ];
+
+    User user = Provider.of<Users>(context, listen: false).user as User;
+
+    if (user.firstName!.isNotEmpty) {
+      _billingInfo["first_name"] = user.firstName!;
+    }
+    if (user.lastName!.isNotEmpty) {
+      _billingInfo["last_name"] = user.lastName!;
+    }
+    if (user.email!.isNotEmpty) {
+      _billingInfo["email"] = user.email!;
+    }
+    if (user.phone != null) {
+      if (user.phone!.isNotEmpty) {
+        _billingInfo["phone"] = user.phone!;
+      }
+    }
+
+    _billingInfo["convenient_location"] = _locationOptions[0];
+
+    showModalBottomSheet(
+      barrierColor: ColorManager.blackWithLowOpacity,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(AppRadius.r20),
+          topRight: Radius.circular(
+            AppRadius.r20,
+          ),
+        ),
+      ),
+      context: context,
+      builder: (context) {
+        return Container(
+          // height: MediaQuery.of(context).size.height * 0.9,
+          height: 60.h,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppPadding.p20,
+          ),
+          child: Column(
+            children: [
+              // ----------------------    Name section starts here -----------------------------------
+
+              Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: AppPadding.p12,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Billing Information',
+                      style: getBoldStyle(
+                        color: ColorManager.black,
+                        fontSize: FontSize.s18,
+                      ),
+                    ),
+                    SizedBox(
+                      height: AppHeight.h4,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          // border: Border.all(
+                          //   color: Colors.grey,
+                          //   width: 1.0,
+                          //   style: BorderStyle.solid,
+                          // ),
+                          ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Form(
+                            key: _form,
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                            // initialValue: _edittedUser.firstName,
+                                            initialValue: _billingInfo
+                                                    .containsKey('first_name')
+                                                ? _billingInfo['first_name']
+                                                : null,
+                                            cursorColor:
+                                                Theme.of(context).primaryColor,
+                                            focusNode: _firstNameFocusNode,
+                                            decoration: InputDecoration(
+                                              labelText: 'First Name',
+                                              focusColor: Colors.redAccent,
+                                            ),
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            autovalidateMode:
+                                                AutovalidateMode.always,
+                                            onFieldSubmitted: (_) {
+                                              FocusScope.of(context)
+                                                  .requestFocus(
+                                                      _lastNameFocusNode);
+                                            },
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return 'Please provide the first name';
+                                              }
+                                              return null;
+                                            },
+                                            onSaved: (value) {
+                                              _billingInfo['first_name'] =
+                                                  value.toString();
+                                            }),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          initialValue: _billingInfo
+                                                  .containsKey('last_name')
+                                              ? _billingInfo['last_name']
+                                              : null,
+                                          keyboardType: TextInputType.text,
+                                          cursorColor:
+                                              Theme.of(context).primaryColor,
+                                          focusNode: _lastNameFocusNode,
+                                          decoration: InputDecoration(
+                                            labelText: 'Last Name',
+                                          ),
+                                          textInputAction: TextInputAction.next,
+                                          autovalidateMode:
+                                              AutovalidateMode.always,
+                                          onFieldSubmitted: (_) {
+                                            FocusScope.of(context)
+                                                .requestFocus(_emailFocusNode);
+                                          },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please provide the last name';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (value) {
+                                            _billingInfo['last_name'] =
+                                                value.toString();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                      initialValue:
+                                          _billingInfo.containsKey('email')
+                                              ? _billingInfo['email']
+                                              : null,
+                                      focusNode: _emailFocusNode,
+                                      keyboardType: TextInputType.text,
+                                      cursorColor:
+                                          Theme.of(context).primaryColor,
+                                      decoration: InputDecoration(
+                                        labelText: 'Email Address',
+                                      ),
+                                      textInputAction: TextInputAction.next,
+                                      autovalidateMode: AutovalidateMode.always,
+                                      onFieldSubmitted: (_) {
+                                        FocusScope.of(context).requestFocus(
+                                            _phoneNumberFocusNode);
+                                      },
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please provide email to receive notifications';
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (value) {
+                                        _billingInfo['email'] =
+                                            value.toString();
+                                      }),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                      initialValue:
+                                          _billingInfo.containsKey('phone')
+                                              ? _billingInfo['phone']
+                                              : null,
+                                      focusNode: _phoneNumberFocusNode,
+                                      keyboardType: TextInputType.number,
+                                      cursorColor:
+                                          Theme.of(context).primaryColor,
+                                      decoration: InputDecoration(
+                                        labelText: 'Phone Number',
+                                      ),
+                                      textInputAction: TextInputAction.next,
+                                      autovalidateMode: AutovalidateMode.always,
+                                      onFieldSubmitted: (_) {
+                                        FocusScope.of(context)
+                                            .requestFocus(_sideNoteFocusNode);
+                                      },
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please provide the phone number to be contacted';
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (value) {
+                                        _billingInfo['phone'] =
+                                            value.toString();
+                                      }),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    // initialValue: _edittedUser.description,
+                                    focusNode: _sideNoteFocusNode,
+                                    keyboardType: TextInputType.multiline,
+                                    cursorColor: Theme.of(context).primaryColor,
+                                    decoration: InputDecoration(
+                                      labelText: 'Side Note',
+                                    ),
+                                    textInputAction: TextInputAction.newline,
+                                    autovalidateMode: AutovalidateMode.always,
+                                    minLines: 3,
+                                    maxLines: 7,
+                                    // onFieldSubmitted: (_) {
+                                    //   FocusScope.of(context)
+                                    //       .requestFocus(_classFocusNode);
+                                    // },
+                                    // validator: (value) {
+                                    //   if (value!.length < 15) {
+                                    //     return 'Please provide a big description';
+                                    //   }
+                                    //   return null;
+                                    // },
+                                    onSaved: (value) {
+                                      _billingInfo['side_note'] =
+                                          value.toString();
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // ----------------------    Name section ends here -----------------------------------
+              // ----------------------    Sort by locations section ends here -----------------------------------
+              Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: AppPadding.p12,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Location',
+                      style: getBoldStyle(
+                        color: ColorManager.black,
+                        fontSize: FontSize.s18,
+                      ),
+                    ),
+                    SizedBox(
+                      height: AppHeight.h4,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                        color: Colors.grey,
+                        width: 1.0,
+                        style: BorderStyle.solid,
+                      )),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                            isExpanded: true,
+                            style: getBoldStyle(color: ColorManager.black),
+                            value: _billingInfo['convenient_location'],
+                            // value: _locationOptions[0],
+                            items: _locationOptions
+                                .map((option) => DropdownMenuItem(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: AppPadding.p12,
+                                        ),
+                                        child: Text(
+                                          option,
+                                        ),
+                                      ),
+                                      value: option,
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _billingInfo['convenient_location'] =
+                                    value as String;
+                              });
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // ----------------------    Sort by location section ends here -----------------------------------
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                          // bool _orderPlacedSuccessfully = false;
+
+                          final _isValid = _form.currentState!.validate();
+                          if (!_isValid) {
+                            return;
+                          }
+                          _form.currentState!.save();
+
+                          requestInfo["billing_info"] =
+                              json.decode(json.encode(_billingInfo));
+
+                          if (await Provider.of<OrderRequests>(context,
+                                  listen: false)
+                              .createOrderRequest(
+                                  Provider.of<SessionProvider>(context,
+                                          listen: false)
+                                      .session as Session,
+                                  requestInfo)) {
+                            _showToastNotification(
+                                'Request has been sent successfully');
+                            Navigator.pop(context);
+                          } else {
+                            _showToastNotification('Something went wrong');
+                          }
+                        },
+                        child: Text(
+                          'Request Now',
+                          style: getBoldStyle(
+                            color: ColorManager.black,
+                            fontSize: FontSize.s18,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: ColorManager.primary,
+                          padding: EdgeInsets.symmetric(
+                            vertical: AppPadding.p12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

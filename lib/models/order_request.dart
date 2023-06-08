@@ -23,16 +23,19 @@ class OrderRequest {
   // String? and bool? because they can be null for the first time
   String? sellerOfferPrice;
   bool? priceChangedBySeller;
+  Map<String, dynamic> billingInfo;
 
-  OrderRequest(
-      {required this.id,
-      required this.requestingCustomer,
-      required this.requestedCustomer,
-      required this.product,
-      required this.quantity,
-      required this.requestedPrice,
-      required this.sellerOfferPrice,
-      required this.priceChangedBySeller});
+  OrderRequest({
+    required this.id,
+    required this.requestingCustomer,
+    required this.requestedCustomer,
+    required this.product,
+    required this.quantity,
+    required this.requestedPrice,
+    required this.sellerOfferPrice,
+    required this.priceChangedBySeller,
+    required this.billingInfo,
+  });
 
   factory OrderRequest.fromJson(Map<String, dynamic> json) => OrderRequest(
         id: json["id"],
@@ -43,6 +46,7 @@ class OrderRequest {
         requestedPrice: json["requested_price"],
         sellerOfferPrice: json["seller_offer_price"],
         priceChangedBySeller: json["changed_by_seller"],
+        billingInfo: jsonDecode(convertToJsonParsable(json["billing_info"])),
       );
 
   Map<String, dynamic> toJson() => {
@@ -54,7 +58,13 @@ class OrderRequest {
         "requested_price": requestedPrice,
         "seller_offer_price": sellerOfferPrice,
         "changed_by_seller": priceChangedBySeller,
+        "billing_info": billingInfo,
       };
+
+  // As billing info is stored in plain text in db, it can't be parsed properly because it contains single quote ' so converting ' to " so json can parse it properly
+  static String convertToJsonParsable(String str) {
+    return str.replaceAll("'", "\"");
+  }
 }
 
 class RequestedProduct {

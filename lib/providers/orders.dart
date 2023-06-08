@@ -81,6 +81,30 @@ class Orders with ChangeNotifier {
     return false;
   }
 
+  Future<bool> placeOrderForRequestingCustomer(
+      {required Session loggedInSession,
+      required String cartId,
+      required String userId,
+      required Map<String, dynamic> billingInfo,
+      required String paymentMethod}) async {
+    setLoading(true);
+    var response;
+    response = await OrderApi.placeOrderForRequestingCustomer(
+        loggedInSession, userId, cartId, billingInfo, paymentMethod);
+
+    // print(response);
+    if (response is Success) {
+      return true;
+    } else if (response is Failure) {
+      OrderItemError orderItemError =
+          OrderItemError(code: response.code, message: response.errorResponse);
+      setOrderItemError(orderItemError);
+      setLoading(false);
+      notifyListeners();
+    }
+    return false;
+  }
+
   Future<Object> getOrderFromId(Session loggedInSession, int orderId) async {
     var response =
         await OrderApi.getOrderById(loggedInSession, orderId.toString());

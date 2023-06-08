@@ -84,12 +84,16 @@ class OrdersScreenNew extends StatelessWidget {
                               return Text(error.message as String);
                             } else {
                               User _user = snapshot.data as User;
-                              return CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    _user.image == null
-                                        ? RemoteManager.IMAGE_PLACEHOLDER
-                                        : UserHelper.userProfileImage(_user)),
-                              );
+                              return _user.image != null
+                                  ? CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          UserHelper.userProfileImage(_user)),
+                                    )
+                                  : CircleAvatar(
+                                      // radius: AppRadius.r24,
+                                      backgroundImage:
+                                          AssetImage(ImageAssets.noProfile),
+                                    );
                             }
                           }
                         }
