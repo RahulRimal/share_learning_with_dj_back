@@ -2,10 +2,15 @@ import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:share_learning/data/book_api.dart';
 import 'package:share_learning/templates/screens/order_requests_for_user_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../main.dart';
+import '../../models/api_status.dart';
 import '../../models/order_request.dart';
+import '../../models/session.dart';
+import '../screens/order_requests_for_user_details_screen.dart';
 
 class NotificationService {
   static Future<void> initializeNotification() async {
@@ -90,13 +95,26 @@ class NotificationService {
       // String requestItem = payload['request_item'];
       OrderRequest requestItem =
           orderRequestFromJson(convertToJsonParsable(payload['request_item']));
-      // OrderRequest.fromJson(convertToJsonParsable(payload['request_item']));
 
-      // print(requestItem);
-      MyApp.navigatorKey.currentState
-          ?.pushNamed(OrderRequestsForUserScreen.routeName);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String access = prefs.getString('accessToken') as String;
+      String refresh = prefs.getString('refreshToken') as String;
+
+      var response = await BookApi.getBookById(
+          Session(accessToken: access, refreshToken: refresh),
+          requestItem.product.id.toString());
+
+      // print(response);
+
+      if (response is Success) {
+        MyApp.navigatorKey.currentState
+            ?.pushNamed(OrderRequestForUserDetailsScreen.routeName, arguments: {
+          'requestItem': requestItem,
+          'requestedProduct': response.response,
+        });
+      }
     } else {
-      print('here');
+      // print('here');
     }
   }
 
@@ -110,9 +128,10 @@ class NotificationService {
     final String? summary,
     final Map<String, dynamic>? payload,
     final ActionType actionType = ActionType.Default,
-    final NotificationLayout notificationLayout = NotificationLayout.Default,
+    final NotificationLayout notificationLayout = NotificationLayout.BigPicture,
     final NotificationCategory? category,
     final String? bigPicture,
+    final String? largeIcon,
     final List<NotificationActionButton>? actionButtons,
     final bool scheduled = false,
     final int? interval,
@@ -131,6 +150,8 @@ class NotificationService {
         category: category,
         payload: payload != null ? payload.cast<String, String?>() : null,
         bigPicture: bigPicture,
+        wakeUpScreen: true,
+        largeIcon: largeIcon,
       ),
       actionButtons: actionButtons,
       schedule: scheduled

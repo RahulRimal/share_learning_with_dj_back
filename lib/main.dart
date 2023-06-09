@@ -62,6 +62,8 @@ Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
       title: message.notification!.title as String,
       body: message.notification!.body as String,
       bigPicture: message.notification!.android?.imageUrl,
+      largeIcon: message.notification!.android?.imageUrl,
+      
       payload: message.data,
     );
   }
@@ -98,6 +100,7 @@ Future<void> main() async {
         title: message.notification!.title as String,
         body: message.notification!.body as String,
         bigPicture: message.notification!.android?.imageUrl,
+        largeIcon: message.notification!.android?.imageUrl,
         payload: message.data,
       );
     }

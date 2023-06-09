@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:share_learning/data/order_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/order_request_api.dart';
 import '../models/book.dart';
@@ -196,6 +197,14 @@ class OrderRequests with ChangeNotifier {
     // print(response);
 
     if (response is Success) {
+      // If user updates the offer by using the route of notification, _orderRequestsForUser might be empty so i am populating orderRequestsForUser here
+      if (_orderRequestsForUser.isEmpty) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String access = prefs.getString('accessToken') as String;
+        String refresh = prefs.getString('refreshToken') as String;
+        await getRequestsForUser(
+            Session(accessToken: access, refreshToken: refresh));
+      }
       final postIndex = _orderRequestsForUser
           .indexWhere((element) => element.id == requestId);
 
