@@ -252,8 +252,7 @@ class _BillingInfoState extends State<BillingInfo> {
                         children: [
                           Form(
                             key: _form,
-                            child: ListView(
-                              shrinkWrap: true,
+                            child: Column(
                               children: [
                                 Row(
                                   children: [

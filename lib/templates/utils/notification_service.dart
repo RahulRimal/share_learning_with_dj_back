@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:share_learning/templates/screens/order_requests_for_user_screen.dart';
+
+import '../../main.dart';
+import '../../models/order_request.dart';
 
 class NotificationService {
   static Future<void> initializeNotification() async {
@@ -66,7 +72,7 @@ class NotificationService {
   /// Use this method to detect when the user taps on a notification or action button
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
-    debugPrint('onActionReceivedMethod');
+    // debugPrint('onActionReceivedMethod');
     // final payload = receivedAction.payload ?? {};
     // if (payload["navigate"] == "true") {
     //   MainApp.navigatorKey.currentState?.push(
@@ -75,13 +81,34 @@ class NotificationService {
     //     ),
     //   );
     // }
+    final Map<String, dynamic> payload = receivedAction.payload ?? {};
+
+    // print('here');
+
+    if (payload.containsKey('click_action') &&
+        payload['click_action'] == 'GO_TO_ORDER_REQUEST_FOR_USER_SCREEN') {
+      // String requestItem = payload['request_item'];
+      OrderRequest requestItem =
+          orderRequestFromJson(convertToJsonParsable(payload['request_item']));
+      // OrderRequest.fromJson(convertToJsonParsable(payload['request_item']));
+
+      // print(requestItem);
+      MyApp.navigatorKey.currentState
+          ?.pushNamed(OrderRequestsForUserScreen.routeName);
+    } else {
+      print('here');
+    }
+  }
+
+  static String convertToJsonParsable(String str) {
+    return str.replaceAll("'", "\"");
   }
 
   static Future<void> showNotification({
     required final String title,
     required final String body,
     final String? summary,
-    final Map<String, String>? payload,
+    final Map<String, dynamic>? payload,
     final ActionType actionType = ActionType.Default,
     final NotificationLayout notificationLayout = NotificationLayout.Default,
     final NotificationCategory? category,
@@ -102,7 +129,7 @@ class NotificationService {
         notificationLayout: notificationLayout,
         summary: summary,
         category: category,
-        payload: payload,
+        payload: payload != null ? payload.cast<String, String?>() : null,
         bigPicture: bigPicture,
       ),
       actionButtons: actionButtons,

@@ -46,7 +46,9 @@ class OrderRequest {
         requestedPrice: json["requested_price"],
         sellerOfferPrice: json["seller_offer_price"],
         priceChangedBySeller: json["changed_by_seller"],
-        billingInfo: jsonDecode(convertToJsonParsable(json["billing_info"])),
+        billingInfo: json["billing_info"].runtimeType == String
+            ? jsonDecode(convertToJsonParsable(json["billing_info"]))
+            : json["billing_info"],
       );
 
   Map<String, dynamic> toJson() => {

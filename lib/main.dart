@@ -61,6 +61,8 @@ Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
     NotificationService.showNotification(
       title: message.notification!.title as String,
       body: message.notification!.body as String,
+      bigPicture: message.notification!.android?.imageUrl,
+      payload: message.data,
     );
   }
 }
@@ -95,6 +97,8 @@ Future<void> main() async {
       NotificationService.showNotification(
         title: message.notification!.title as String,
         body: message.notification!.body as String,
+        bigPicture: message.notification!.android?.imageUrl,
+        payload: message.data,
       );
     }
   });
@@ -105,6 +109,8 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  // This key is defined for AwesomeNotification to navigate to particular route received from the data of notification
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -189,8 +195,9 @@ class MyApp extends StatelessWidget {
               publicKey: 'test_public_key_78965ea539884431b8e9172178d08e91',
               enabledDebugging: true,
               builder: (context, navKey) {
+                MyApp.navigatorKey = navKey;
                 return ResponsiveSizer(
-                    builder: (context, orientation, deviceType) {
+                    builder: (context, orientation, screenType) {
                   return MaterialApp(
                     navigatorKey: navKey,
                     localizationsDelegates: const [

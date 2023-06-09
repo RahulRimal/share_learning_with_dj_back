@@ -16,8 +16,10 @@ import '../../models/user.dart';
 import '../../providers/carts.dart';
 import '../../providers/order_request_provider.dart';
 import '../../providers/sessions.dart';
+import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../widgets/billing_info.dart';
+import 'home_screen_new.dart';
 
 class OrderRequestDetailsScreen extends StatefulWidget {
   static const routeName = 'order-request-details-screen';
@@ -578,7 +580,81 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  bool userConfirmed = false;
+                                  showGeneralDialog(
+                                    barrierDismissible: true,
+                                    barrierLabel:
+                                        'Delete cart item dilaog dismissed',
+                                    context: context,
+                                    pageBuilder: (ctx, a1, a2) {
+                                      return Container();
+                                    },
+                                    transitionDuration:
+                                        const Duration(milliseconds: 300),
+                                    transitionBuilder: (ctx, a1, a2, child) {
+                                      var curve =
+                                          Curves.easeInOut.transform(a1.value);
+                                      return Transform.scale(
+                                        scale: curve,
+                                        child: AlertDialog(
+                                          title: Text('Are you sure?'),
+                                          content: Text(
+                                            'This request will be deleted permanently!',
+                                            style: getRegularStyle(
+                                              fontSize: FontSize.s16,
+                                              color: ColorManager.black,
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              child: Text(
+                                                'Yes',
+                                                style: getBoldStyle(
+                                                  fontSize: FontSize.s16,
+                                                  color: ColorManager.primary,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                userConfirmed = true;
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text(
+                                                'No',
+                                                style: getBoldStyle(
+                                                  fontSize: FontSize.s16,
+                                                  color: Colors.green,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ).then(
+                                    (_) async {
+                                      if (userConfirmed) {
+                                        if (await Provider.of<OrderRequests>(
+                                                context,
+                                                listen: false)
+                                            .deleteOrderRequest(
+                                                authSession, requestItem.id)) {
+                                          _showToastNotification(
+                                              'Request deleted successfully');
+                                          // Navigator.pop(context);
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  HomeScreenNew.routeName);
+                                        }
+                                      }
+                                    },
+                                  );
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
                                 ),
@@ -613,7 +689,8 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                         unitPrice:
                                             requestedProduct.price.toString(),
                                       ),
-                                      negotiatedPrice: _newRequestPrice,
+                                      negotiatedPrice: double.parse(requestItem
+                                          .sellerOfferPrice as String),
                                       quantity: requestItem.quantity,
                                       totalPrice: 0,
                                     );

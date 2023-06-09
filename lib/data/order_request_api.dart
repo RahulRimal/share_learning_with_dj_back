@@ -605,7 +605,6 @@ class OrderRequestApi {
       );
 
       // print(response.body);
-
       if (response.statusCode == ApiStatusCode.noContent) {
         return Success(
             code: response.statusCode,

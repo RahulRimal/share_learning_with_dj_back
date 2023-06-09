@@ -1995,339 +1995,359 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
       ),
       context: context,
       builder: (context) {
-        return Container(
-          // height: MediaQuery.of(context).size.height * 0.9,
-          height: 60.h,
-          padding: EdgeInsets.symmetric(
-            horizontal: AppPadding.p20,
-          ),
-          child: Column(
-            children: [
-              // ----------------------    Name section starts here -----------------------------------
-
-              Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: AppPadding.p12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Billing Information',
-                      style: getBoldStyle(
-                        color: ColorManager.black,
-                        fontSize: FontSize.s18,
-                      ),
-                    ),
-                    SizedBox(
-                      height: AppHeight.h4,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          // border: Border.all(
-                          //   color: Colors.grey,
-                          //   width: 1.0,
-                          //   style: BorderStyle.solid,
-                          // ),
-                          ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Form(
-                            key: _form,
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                            // initialValue: _edittedUser.firstName,
-                                            initialValue: _billingInfo
-                                                    .containsKey('first_name')
-                                                ? _billingInfo['first_name']
-                                                : null,
-                                            cursorColor:
-                                                Theme.of(context).primaryColor,
-                                            focusNode: _firstNameFocusNode,
-                                            decoration: InputDecoration(
-                                              labelText: 'First Name',
-                                              focusColor: Colors.redAccent,
-                                            ),
-                                            textInputAction:
-                                                TextInputAction.next,
-                                            autovalidateMode:
-                                                AutovalidateMode.always,
-                                            onFieldSubmitted: (_) {
-                                              FocusScope.of(context)
-                                                  .requestFocus(
-                                                      _lastNameFocusNode);
-                                            },
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return 'Please provide the first name';
-                                              }
-                                              return null;
-                                            },
-                                            onSaved: (value) {
-                                              _billingInfo['first_name'] =
-                                                  value.toString();
-                                            }),
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          initialValue: _billingInfo
-                                                  .containsKey('last_name')
-                                              ? _billingInfo['last_name']
-                                              : null,
-                                          keyboardType: TextInputType.text,
-                                          cursorColor:
-                                              Theme.of(context).primaryColor,
-                                          focusNode: _lastNameFocusNode,
-                                          decoration: InputDecoration(
-                                            labelText: 'Last Name',
-                                          ),
-                                          textInputAction: TextInputAction.next,
-                                          autovalidateMode:
-                                              AutovalidateMode.always,
-                                          onFieldSubmitted: (_) {
-                                            FocusScope.of(context)
-                                                .requestFocus(_emailFocusNode);
-                                          },
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return 'Please provide the last name';
-                                            }
-                                            return null;
-                                          },
-                                          onSaved: (value) {
-                                            _billingInfo['last_name'] =
-                                                value.toString();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                      initialValue:
-                                          _billingInfo.containsKey('email')
-                                              ? _billingInfo['email']
-                                              : null,
-                                      focusNode: _emailFocusNode,
-                                      keyboardType: TextInputType.text,
-                                      cursorColor:
-                                          Theme.of(context).primaryColor,
-                                      decoration: InputDecoration(
-                                        labelText: 'Email Address',
-                                      ),
-                                      textInputAction: TextInputAction.next,
-                                      autovalidateMode: AutovalidateMode.always,
-                                      onFieldSubmitted: (_) {
-                                        FocusScope.of(context).requestFocus(
-                                            _phoneNumberFocusNode);
-                                      },
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please provide email to receive notifications';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (value) {
-                                        _billingInfo['email'] =
-                                            value.toString();
-                                      }),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                      initialValue:
-                                          _billingInfo.containsKey('phone')
-                                              ? _billingInfo['phone']
-                                              : null,
-                                      focusNode: _phoneNumberFocusNode,
-                                      keyboardType: TextInputType.number,
-                                      cursorColor:
-                                          Theme.of(context).primaryColor,
-                                      decoration: InputDecoration(
-                                        labelText: 'Phone Number',
-                                      ),
-                                      textInputAction: TextInputAction.next,
-                                      autovalidateMode: AutovalidateMode.always,
-                                      onFieldSubmitted: (_) {
-                                        FocusScope.of(context)
-                                            .requestFocus(_sideNoteFocusNode);
-                                      },
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please provide the phone number to be contacted';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (value) {
-                                        _billingInfo['phone'] =
-                                            value.toString();
-                                      }),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                    // initialValue: _edittedUser.description,
-                                    focusNode: _sideNoteFocusNode,
-                                    keyboardType: TextInputType.multiline,
-                                    cursorColor: Theme.of(context).primaryColor,
-                                    decoration: InputDecoration(
-                                      labelText: 'Side Note',
-                                    ),
-                                    textInputAction: TextInputAction.newline,
-                                    autovalidateMode: AutovalidateMode.always,
-                                    minLines: 3,
-                                    maxLines: 7,
-                                    // onFieldSubmitted: (_) {
-                                    //   FocusScope.of(context)
-                                    //       .requestFocus(_classFocusNode);
-                                    // },
-                                    // validator: (value) {
-                                    //   if (value!.length < 15) {
-                                    //     return 'Please provide a big description';
-                                    //   }
-                                    //   return null;
-                                    // },
-                                    onSaved: (value) {
-                                      _billingInfo['side_note'] =
-                                          value.toString();
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+        // double bottomPadding = ScreenUtil().bottomBarHeight;
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            // padding: EdgeInsets.only(bottom: bottomPadding),
+            child: Container(
+              // height: MediaQuery.of(context).size.height * 0.9,
+              // height: 60.h,
+              padding: EdgeInsets.only(
+                left: AppPadding.p20,
+                right: AppPadding.p20,
+                bottom: AppPadding.p12,
               ),
-              // ----------------------    Name section ends here -----------------------------------
-              // ----------------------    Sort by locations section ends here -----------------------------------
-              Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: AppPadding.p12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Location',
-                      style: getBoldStyle(
-                        color: ColorManager.black,
-                        fontSize: FontSize.s18,
-                      ),
-                    ),
-                    SizedBox(
-                      height: AppHeight.h4,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                        color: Colors.grey,
-                        width: 1.0,
-                        style: BorderStyle.solid,
-                      )),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton(
-                            isExpanded: true,
-                            style: getBoldStyle(color: ColorManager.black),
-                            value: _billingInfo['convenient_location'],
-                            // value: _locationOptions[0],
-                            items: _locationOptions
-                                .map((option) => DropdownMenuItem(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: AppPadding.p12,
-                                        ),
-                                        child: Text(
-                                          option,
-                                        ),
-                                      ),
-                                      value: option,
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _billingInfo['convenient_location'] =
-                                    value as String;
-                              });
-                            }),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // ----------------------    Sort by location section ends here -----------------------------------
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
-                          // bool _orderPlacedSuccessfully = false;
+                  // ----------------------    Name section starts here -----------------------------------
 
-                          final _isValid = _form.currentState!.validate();
-                          if (!_isValid) {
-                            return;
-                          }
-                          _form.currentState!.save();
-
-                          requestInfo["billing_info"] =
-                              json.decode(json.encode(_billingInfo));
-
-                          if (await Provider.of<OrderRequests>(context,
-                                  listen: false)
-                              .createOrderRequest(
-                                  Provider.of<SessionProvider>(context,
-                                          listen: false)
-                                      .session as Session,
-                                  requestInfo)) {
-                            _showToastNotification(
-                                'Request has been sent successfully');
-                            Navigator.pop(context);
-                          } else {
-                            _showToastNotification('Something went wrong');
-                          }
-                        },
-                        child: Text(
-                          'Request Now',
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppPadding.p12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Billing Information',
                           style: getBoldStyle(
                             color: ColorManager.black,
                             fontSize: FontSize.s18,
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          primary: ColorManager.primary,
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppPadding.p12,
+                        SizedBox(
+                          height: AppHeight.h4,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              // border: Border.all(
+                              //   color: Colors.grey,
+                              //   width: 1.0,
+                              //   style: BorderStyle.solid,
+                              // ),
+                              ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Form(
+                                key: _form,
+                                child: ListView(
+                                  shrinkWrap: true,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                                // initialValue: _edittedUser.firstName,
+                                                initialValue: _billingInfo
+                                                        .containsKey(
+                                                            'first_name')
+                                                    ? _billingInfo['first_name']
+                                                    : null,
+                                                cursorColor: Theme.of(context)
+                                                    .primaryColor,
+                                                focusNode: _firstNameFocusNode,
+                                                decoration: InputDecoration(
+                                                  labelText: 'First Name',
+                                                  focusColor: Colors.redAccent,
+                                                ),
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                autovalidateMode:
+                                                    AutovalidateMode.always,
+                                                onFieldSubmitted: (_) {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(
+                                                          _lastNameFocusNode);
+                                                },
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return 'Please provide the first name';
+                                                  }
+                                                  return null;
+                                                },
+                                                onSaved: (value) {
+                                                  _billingInfo['first_name'] =
+                                                      value.toString();
+                                                }),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              initialValue: _billingInfo
+                                                      .containsKey('last_name')
+                                                  ? _billingInfo['last_name']
+                                                  : null,
+                                              keyboardType: TextInputType.text,
+                                              cursorColor: Theme.of(context)
+                                                  .primaryColor,
+                                              focusNode: _lastNameFocusNode,
+                                              decoration: InputDecoration(
+                                                labelText: 'Last Name',
+                                              ),
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              autovalidateMode:
+                                                  AutovalidateMode.always,
+                                              onFieldSubmitted: (_) {
+                                                FocusScope.of(context)
+                                                    .requestFocus(
+                                                        _emailFocusNode);
+                                              },
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return 'Please provide the last name';
+                                                }
+                                                return null;
+                                              },
+                                              onSaved: (value) {
+                                                _billingInfo['last_name'] =
+                                                    value.toString();
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                          initialValue:
+                                              _billingInfo.containsKey('email')
+                                                  ? _billingInfo['email']
+                                                  : null,
+                                          focusNode: _emailFocusNode,
+                                          keyboardType: TextInputType.text,
+                                          cursorColor:
+                                              Theme.of(context).primaryColor,
+                                          decoration: InputDecoration(
+                                            labelText: 'Email Address',
+                                          ),
+                                          textInputAction: TextInputAction.next,
+                                          autovalidateMode:
+                                              AutovalidateMode.always,
+                                          onFieldSubmitted: (_) {
+                                            FocusScope.of(context).requestFocus(
+                                                _phoneNumberFocusNode);
+                                          },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please provide email to receive notifications';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (value) {
+                                            _billingInfo['email'] =
+                                                value.toString();
+                                          }),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                          initialValue:
+                                              _billingInfo.containsKey('phone')
+                                                  ? _billingInfo['phone']
+                                                  : null,
+                                          focusNode: _phoneNumberFocusNode,
+                                          keyboardType: TextInputType.number,
+                                          cursorColor:
+                                              Theme.of(context).primaryColor,
+                                          decoration: InputDecoration(
+                                            labelText: 'Phone Number',
+                                          ),
+                                          textInputAction: TextInputAction.next,
+                                          autovalidateMode:
+                                              AutovalidateMode.always,
+                                          onFieldSubmitted: (_) {
+                                            FocusScope.of(context).requestFocus(
+                                                _sideNoteFocusNode);
+                                          },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please provide the phone number to be contacted';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (value) {
+                                            _billingInfo['phone'] =
+                                                value.toString();
+                                          }),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                        // initialValue: _edittedUser.description,
+                                        focusNode: _sideNoteFocusNode,
+                                        keyboardType: TextInputType.multiline,
+                                        cursorColor:
+                                            Theme.of(context).primaryColor,
+                                        decoration: InputDecoration(
+                                          labelText: 'Side Note',
+                                        ),
+                                        textInputAction:
+                                            TextInputAction.newline,
+                                        autovalidateMode:
+                                            AutovalidateMode.always,
+                                        minLines: 3,
+                                        maxLines: 7,
+                                        // onFieldSubmitted: (_) {
+                                        //   FocusScope.of(context)
+                                        //       .requestFocus(_classFocusNode);
+                                        // },
+                                        // validator: (value) {
+                                        //   if (value!.length < 15) {
+                                        //     return 'Please provide a big description';
+                                        //   }
+                                        //   return null;
+                                        // },
+                                        onSaved: (value) {
+                                          _billingInfo['side_note'] =
+                                              value.toString();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // ----------------------    Name section ends here -----------------------------------
+                  // ----------------------    Sort by locations section ends here -----------------------------------
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppPadding.p12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Location',
+                          style: getBoldStyle(
+                            color: ColorManager.black,
+                            fontSize: FontSize.s18,
+                          ),
+                        ),
+                        SizedBox(
+                          height: AppHeight.h4,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                            color: Colors.grey,
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                          )),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                                isExpanded: true,
+                                style: getBoldStyle(color: ColorManager.black),
+                                value: _billingInfo['convenient_location'],
+                                // value: _locationOptions[0],
+                                items: _locationOptions
+                                    .map((option) => DropdownMenuItem(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: AppPadding.p12,
+                                            ),
+                                            child: Text(
+                                              option,
+                                            ),
+                                          ),
+                                          value: option,
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _billingInfo['convenient_location'] =
+                                        value as String;
+                                  });
+                                }),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // ----------------------    Sort by location section ends here -----------------------------------
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                              // bool _orderPlacedSuccessfully = false;
+
+                              final _isValid = _form.currentState!.validate();
+                              if (!_isValid) {
+                                return;
+                              }
+                              _form.currentState!.save();
+
+                              requestInfo["billing_info"] =
+                                  json.decode(json.encode(_billingInfo));
+
+                              if (await Provider.of<OrderRequests>(context,
+                                      listen: false)
+                                  .createOrderRequest(
+                                      Provider.of<SessionProvider>(context,
+                                              listen: false)
+                                          .session as Session,
+                                      requestInfo)) {
+                                _showToastNotification(
+                                    'Request has been sent successfully');
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                // Navigator.pop(context);
+                              } else {
+                                _showToastNotification('Something went wrong');
+                              }
+                            },
+                            child: Text(
+                              'Request Now',
+                              style: getBoldStyle(
+                                color: ColorManager.black,
+                                fontSize: FontSize.s18,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              primary: ColorManager.primary,
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppPadding.p12,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
