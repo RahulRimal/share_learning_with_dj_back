@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:share_learning/data/book_api.dart';
+import 'package:share_learning/templates/screens/order_details_screen.dart';
 import 'package:share_learning/templates/screens/order_requests_for_user_screen.dart';
+import 'package:share_learning/templates/screens/order_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../main.dart';
 import '../../models/api_status.dart';
+import '../../models/order.dart';
 import '../../models/order_request.dart';
 import '../../models/session.dart';
 import '../screens/order_requests_for_user_details_screen.dart';
@@ -88,11 +91,10 @@ class NotificationService {
     // }
     final Map<String, dynamic> payload = receivedAction.payload ?? {};
 
-    // print('here');
 
+  // ---------------------------------------- Handle notification for order request object starts here----------------------------------------------------------------
     if (payload.containsKey('click_action') &&
         payload['click_action'] == 'GO_TO_ORDER_REQUEST_FOR_USER_SCREEN') {
-      // String requestItem = payload['request_item'];
       OrderRequest requestItem =
           orderRequestFromJson(convertToJsonParsable(payload['request_item']));
 
@@ -104,8 +106,6 @@ class NotificationService {
           Session(accessToken: access, refreshToken: refresh),
           requestItem.product.id.toString());
 
-      // print(response);
-
       if (response is Success) {
         MyApp.navigatorKey.currentState
             ?.pushNamed(OrderRequestForUserDetailsScreen.routeName, arguments: {
@@ -113,9 +113,24 @@ class NotificationService {
           'requestedProduct': response.response,
         });
       }
-    } else {
-      // print('here');
     }
+
+    // ---------------------------------------- Handle notification for order request object ends here----------------------------------------------------------------
+
+    // ---------------------------------------- Handle notification for order object starts here----------------------------------------------------------------
+
+    if (payload.containsKey('click_action') &&
+        payload['click_action'] == 'GO_TO_ORDER_DETAILS_SCREEN') {
+          
+          Order order =
+          orderFromJson(convertToJsonParsable(payload['order']));
+          MyApp.navigatorKey.currentState
+            ?.pushNamed(OrderDetailsScreen.routeName, arguments: {
+          'order': order
+        });
+        }
+
+    // ---------------------------------------- Handle notification for order request object ends here----------------------------------------------------------------
   }
 
   static String convertToJsonParsable(String str) {
@@ -152,6 +167,7 @@ class NotificationService {
         bigPicture: bigPicture,
         wakeUpScreen: true,
         largeIcon: largeIcon,
+        
       ),
       actionButtons: actionButtons,
       schedule: scheduled
