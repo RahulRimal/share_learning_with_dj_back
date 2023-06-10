@@ -15,7 +15,6 @@ import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/post.dart';
 
-import '../../providers/orders.dart';
 import '../../providers/sessions.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -40,11 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
       userClass: 'userClass',
       followers: 'followers',
       createdDate: DateTime.now());
-
-  _setUserValue(User user) {
-    // this.user = user;
-    _user = user;
-  }
 
   // Future<User?> _getSessionUser(Users users, loggedInSession) async {
   //   await users.getUserByToken(loggedInSession.accessToken).then((value) {
@@ -83,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     Books _books = context.watch<Books>();
 
-    Orders _orders = context.watch<Orders>();
+    // Orders _orders = context.watch<Orders>();
     // _getSessionUser(_users, authenticatedSession);
 
     return Platform.isIOS

@@ -1,4 +1,3 @@
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -270,17 +269,13 @@ class OrderItemWidget extends StatelessWidget {
   OrderItemWidget({Key? key, required this.orderItem}) : super(key: key);
 
   final OrderItem orderItem;
-  late Book? product;
 
   @override
   Widget build(BuildContext context) {
-    // Books booksProvider = Provider.of<Books>(
-    //   context,
-    // );
     Books booksProvider = context.watch();
     Session authSession =
         Provider.of<SessionProvider>(context, listen: false).session as Session;
-    product = booksProvider.books.firstWhereOrNull(
+    Book? product = booksProvider.books.firstWhereOrNull(
       (book) => book.id == orderItem.productId.toString(),
     );
     if (product == null) {
@@ -410,9 +405,9 @@ class OrderItemWidget extends StatelessWidget {
               // child: Image.asset(
               //   ImageAssets.noProfile,
               // ),
-              child: product!.images != null
+              child: product.images != null
                   ? Image.network(
-                      product!.images![0].image,
+                      product.images![0].image,
                       height: AppHeight.h75,
                     )
                   : Image.asset(
@@ -424,7 +419,7 @@ class OrderItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product!.bookName,
+                    product.bookName,
                     softWrap: true,
                     style: getBoldStyle(
                       color: ColorManager.black,
@@ -435,7 +430,7 @@ class OrderItemWidget extends StatelessWidget {
                     height: AppHeight.h4,
                   ),
                   Text(
-                    'Unit price: Rs. ${product!.price.toString()}',
+                    'Unit price: Rs. ${product.price.toString()}',
                     style: getMediumStyle(
                       color: ColorManager.grey,
                       fontSize: FontSize.s14,
@@ -452,7 +447,7 @@ class OrderItemWidget extends StatelessWidget {
                     height: AppHeight.h4,
                   ),
                   Text(
-                    'Total: Rs. ${(product!.price * orderItem.quantity).toString()}',
+                    'Total: Rs. ${(product.price * orderItem.quantity).toString()}',
                     style: getMediumStyle(
                       color: ColorManager.grey,
                       fontSize: FontSize.s14,
@@ -465,7 +460,6 @@ class OrderItemWidget extends StatelessWidget {
         ),
       );
     }
-    ;
   }
 }
 
@@ -475,7 +469,7 @@ class OrdersWidget extends StatefulWidget {
   @override
   State<OrdersWidget> createState() => _OrdersWidgetState();
 
-  List<Order> orders;
+  final List<Order> orders;
 }
 
 class _OrdersWidgetState extends State<OrdersWidget> {
@@ -483,13 +477,13 @@ class _OrdersWidgetState extends State<OrdersWidget> {
 
   @override
   void initState() {
-    // List<Map<String, dynamic>> _orderInfo =
     _orderInfo = List.generate(widget.orders.length, (index) {
       return {
         'order': widget.orders[index],
         'isExpanded': false,
       };
     });
+    super.initState();
   }
 
   @override

@@ -19,29 +19,29 @@ class OrderItemWidget extends StatefulWidget {
 }
 
 class _OrderItemWidgetState extends State<OrderItemWidget> {
-  late bool _orderItemChanged;
-  late int _quantity;
+  // late bool _orderItemChanged;
+  // late int _quantity;
   late OrderItem _edittedItem;
 
-  _ifOrderItemChanged() {
-    if (_quantity != widget.orderItem.quantity) {
-      setState(() {
-        _orderItemChanged = true;
-      });
+  // _ifOrderItemChanged() {
+  //   if (_quantity != widget.orderItem.quantity) {
+  //     setState(() {
+  //       _orderItemChanged = true;
+  //     });
 
-      return;
-    }
+  //     return;
+  //   }
 
-    setState(() {
-      _orderItemChanged = false;
-    });
-  }
+  //   setState(() {
+  //     _orderItemChanged = false;
+  //   });
+  // }
 
   @override
   void initState() {
     _edittedItem = widget.orderItem;
-    _orderItemChanged = false;
-    _quantity = widget.orderItem.quantity;
+    // _orderItemChanged = false;
+    // _quantity = widget.orderItem.quantity;
 
     super.initState();
   }

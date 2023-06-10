@@ -18,7 +18,6 @@ import '../../models/book.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../providers/books.dart';
-import '../../providers/orders.dart';
 import '../../providers/sessions.dart';
 import '../../providers/users.dart';
 import '../managers/api_values_manager.dart';
@@ -35,7 +34,7 @@ class WishlistedBooksScreen extends StatefulWidget {
 
 class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
   final _form = GlobalKey<FormState>();
-  final _filterForm = GlobalKey<FormState>();
+  // final _filterForm = GlobalKey<FormState>();
   late int _selectedCategoryIndex;
 
   final _searchTextController = TextEditingController();
@@ -122,7 +121,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
     // Books _books = context.watch<Books>();
     Books _books = Provider.of<Books>(context, listen: false);
     Wishlists _wishlists = Provider.of<Wishlists>(context, listen: false);
-    Orders _orders = context.watch<Orders>();
+    // Orders _orders = context.watch<Orders>();
 
     Categories _categoryProvider =
         Provider.of<Categories>(context, listen: false);

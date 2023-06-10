@@ -64,11 +64,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     final imageFiles =
         await imagePicker.pickMultiImage(maxWidth: 770, imageQuality: 100);
 
-    if (imageFiles == null) return;
-
-    // setState(() {
-    //   _storedImages = imageFiles;
-    // });
+    // if (imageFiles == null) return;
 
     _storedImages = imageFiles;
 

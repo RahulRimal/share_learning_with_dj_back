@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
@@ -10,7 +9,6 @@ import '../../models/cart.dart';
 import '../../models/cart_item.dart';
 import '../../models/order_request.dart';
 import '../../models/session.dart';
-import '../../models/user.dart';
 import '../../providers/carts.dart';
 import '../../providers/order_request_provider.dart';
 import '../../providers/sessions.dart';
@@ -76,7 +74,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
     Book requestedProduct = args['requestedProduct'];
     Session authSession =
         Provider.of<SessionProvider>(context).session as Session;
-    User currentUser = Provider.of<Users>(context).user as User;
+    // User currentUser = Provider.of<Users>(context).user as User;
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Request'),

@@ -51,7 +51,8 @@ class Carts with ChangeNotifier {
   }
 
   CartItem getCartItemById(String cartItemId) {
-    return _cartItems.firstWhere((cartItem) => cartItem.id == cartItemId);
+    return _cartItems
+        .firstWhere((cartItem) => cartItem.id == int.parse(cartItemId));
   }
 
   Future<Object> getCartItemBook(Session loggedInSession, String bookId) async {
@@ -131,6 +132,8 @@ class Carts with ChangeNotifier {
         code: response.code,
         message: response.errorResponse,
       );
+      setCartError(cartError);
+      notifyListeners();
     }
     return false;
   }

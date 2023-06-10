@@ -21,7 +21,6 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../providers/books.dart';
-import '../../providers/orders.dart';
 import '../../providers/sessions.dart';
 import '../../providers/users.dart';
 import '../utils/user_helper.dart';
@@ -37,7 +36,7 @@ class HomeScreenNew extends StatefulWidget {
 
 class _HomeScreenNewState extends State<HomeScreenNew> {
   final _form = GlobalKey<FormState>();
-  final _filterForm = GlobalKey<FormState>();
+  // final _filterForm = GlobalKey<FormState>();
   late int _selectedCategoryIndex;
 
   final _searchTextController = TextEditingController();
@@ -122,7 +121,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     }
     // Books _books = context.watch<Books>();
     Books _books = Provider.of<Books>(context, listen: false);
-    Orders _orders = context.watch<Orders>();
+    // Orders _orders = context.watch<Orders>();
 
     Categories _categoryProvider =
         Provider.of<Categories>(context, listen: false);
@@ -192,7 +191,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 context, UserProfileScreen.routeName),
                             // icon: _user.id != "temp"
                             //     ?
-                                
+
                             //     _user.image == null
                             //         ? CircleAvatar(
                             //             // radius: AppRadius.r24,
@@ -204,49 +203,46 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             //                 UserHelper.userProfileImage(_user)),
                             //           )
                             //     : FutureBuilder(
-                              icon: FutureBuilder(
-                                    future: _users.getUserByToken(
-                                        authenticatedSession.accessToken),
-                                    builder: (ctx, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator(
-                                          color: ColorManager.secondary,
-                                        );
-                                      } else {
-                                        if (snapshot.hasError) {
-                                          return CircleAvatar(
-                                            backgroundImage: AssetImage(
-                                                ImageAssets.noProfile),
-                                          );
-                                        } else {
-                                          if (snapshot.data is UserError) {
-                                            UserError error =
-                                                snapshot.data as UserError;
-                                            return Text(
-                                                error.message as String);
-                                          } else {
-                                            _user = snapshot.data as User;
-                                            return _user.image == null
-                                                ? CircleAvatar(
-                                                    backgroundImage: AssetImage(
-                                                        ImageAssets.noProfile),
-                                                  )
-                                                : CircleAvatar(
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                            // _user.image == null
-                                                            //     ? RemoteManager.IMAGE_PLACEHOLDER
-                                                            //     :
-                                                            UserHelper
-                                                                .userProfileImage(
-                                                                    _user)),
-                                                  );
-                                          }
-                                        }
-                                      }
-                                    },
-                                  ),
+                            icon: FutureBuilder(
+                              future: _users.getUserByToken(
+                                  authenticatedSession.accessToken),
+                              builder: (ctx, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return CircularProgressIndicator(
+                                    color: ColorManager.secondary,
+                                  );
+                                } else {
+                                  if (snapshot.hasError) {
+                                    return CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(ImageAssets.noProfile),
+                                    );
+                                  } else {
+                                    if (snapshot.data is UserError) {
+                                      UserError error =
+                                          snapshot.data as UserError;
+                                      return Text(error.message as String);
+                                    } else {
+                                      _user = snapshot.data as User;
+                                      return _user.image == null
+                                          ? CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                  ImageAssets.noProfile),
+                                            )
+                                          : CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  // _user.image == null
+                                                  //     ? RemoteManager.IMAGE_PLACEHOLDER
+                                                  //     :
+                                                  UserHelper.userProfileImage(
+                                                      _user)),
+                                            );
+                                    }
+                                  }
+                                }
+                              },
+                            ),
                           ),
                         ],
                       ),

@@ -135,7 +135,11 @@ class UserApi {
         var getTokenToCreateCustomer =
             await SessionApi.postSession(user.email.toString(), password);
 
-        var userData = await getUserFromToken(
+        // var userData = await getUserFromToken(
+        //     ((getTokenToCreateCustomer as Success).response as Session)
+        //         .accessToken);
+
+        await getUserFromToken(
             ((getTokenToCreateCustomer as Success).response as Session)
                 .accessToken);
 
@@ -575,7 +579,7 @@ class UserApi {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
           await googleUser!.authentication;
-      final String accessToken = googleAuth.accessToken!;
+
       final String idToken = googleAuth.idToken!;
       // send the ID token to your Django backend
 

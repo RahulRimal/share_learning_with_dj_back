@@ -563,6 +563,7 @@ class BookApi {
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
+
       var responseBody = String.fromCharCodes(responseData);
 
       // print(responseBody);

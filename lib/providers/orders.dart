@@ -180,7 +180,8 @@ class Orders with ChangeNotifier {
     var response = await OrderApi.updateOrder(currentSession, orderId, status);
     // print(response);
     if (response is Success) {
-      final postIndex = _orders.indexWhere((element) => element.id == orderId);
+      final postIndex =
+          _orders.indexWhere((element) => element.id == int.parse(orderId));
 
       if (postIndex != -1) {
         _orders[postIndex] = response.response as Order;

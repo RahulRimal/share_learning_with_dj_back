@@ -29,7 +29,7 @@ class EditPostScreen extends StatefulWidget {
 
 class _EditPostScreenState extends State<EditPostScreen> {
   bool _first = true;
-  bool _presentInFile = true;
+  // bool _presentInFile = true;
   bool _showLoading = false;
 
   final _form = GlobalKey<FormState>();
@@ -136,17 +136,13 @@ class _EditPostScreenState extends State<EditPostScreen> {
     final imageFiles =
         await imagePicker.pickMultiImage(maxWidth: 770, imageQuality: 100);
 
-    if (imageFiles == null) return;
-
-    // _storedImages = imageFiles;
+    // if (imageFiles == null) return;
 
     if (_storedImages == null) {
       _storedImages = [];
     }
 
     _storedImages!.addAll(imageFiles);
-
-    List<String> imagesName = [];
 
     setState(() {
       for (int i = 0; i < _storedImages!.length; i++) {

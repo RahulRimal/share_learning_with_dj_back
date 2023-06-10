@@ -557,7 +557,7 @@ class _PostCommentsNewState extends State<PostCommentsNew> {
 
   TextEditingController commentController = new TextEditingController();
 
-  final _commentFocusNode = FocusNode();
+  late FocusNode _commentFocusNode;
 
   Comment _edittedComment = Comment(
     // id: '',
@@ -631,6 +631,19 @@ class _PostCommentsNewState extends State<PostCommentsNew> {
     AlertHelper.showToastAlert('Your reply has been deleted');
 
     return true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _commentFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _commentFocusNode.dispose();
   }
 
   @override

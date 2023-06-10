@@ -7,7 +7,6 @@ import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../providers/carts.dart';
-import '../../providers/order_request_provider.dart';
 import '../../providers/orders.dart';
 import '../../providers/sessions.dart';
 import '../../providers/users.dart';
@@ -32,7 +31,7 @@ class BillingInfo extends StatefulWidget {
 
   // If cart id is present then it is a direct order or else it will place an order using the existing cart information
   // bool placeDirectOrder;
-  String? cartId;
+  final String? cartId;
 }
 
 class _BillingInfoState extends State<BillingInfo> {
@@ -176,10 +175,10 @@ class _BillingInfoState extends State<BillingInfo> {
 
     User user = Provider.of<Users>(context).user as User;
     Orders orders = Provider.of<Orders>(context);
-    Users users = Provider.of<Users>(context);
+    // Users users = Provider.of<Users>(context);
     Carts carts = Provider.of<Carts>(context, listen: false);
-    OrderRequests orderRequests =
-        Provider.of<OrderRequests>(context, listen: false);
+    // OrderRequests orderRequests =
+    //     Provider.of<OrderRequests>(context, listen: false);
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
     Session authSession =

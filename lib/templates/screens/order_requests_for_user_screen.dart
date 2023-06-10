@@ -237,48 +237,48 @@ class OrderRequestItemWidget extends StatefulWidget {
 }
 
 class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
-  ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
-  ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
-  bool _isLoading = false;
+  // ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
+  // ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
+  // bool _isLoading = false;
 
-  double _newRequestPrice = 0;
+  // double _newRequestPrice = 0;
 
-  _shouldShowRequestButton() {
-    if (_newRequestPrice != double.parse(widget.requestedItem.requestedPrice) &&
-        _newRequestPrice !=
-            double.parse(widget.requestedItem.product.unitPrice)) {
-      _showRequestButton.value = true;
-      return;
-    }
-    _showRequestButton.value = false;
-  }
+  // _shouldShowRequestButton() {
+  //   if (_newRequestPrice != double.parse(widget.requestedItem.requestedPrice) &&
+  //       _newRequestPrice !=
+  //           double.parse(widget.requestedItem.product.unitPrice)) {
+  //     _showRequestButton.value = true;
+  //     return;
+  //   }
+  //   _showRequestButton.value = false;
+  // }
 
-  _shouldShowOrderButton() {
-    if (_newRequestPrice ==
-        double.parse(widget.requestedItem.product.unitPrice)) {
-      _showOrderButton.value = true;
-      return;
-    }
-    _showOrderButton.value = false;
-  }
+  // _shouldShowOrderButton() {
+  //   if (_newRequestPrice ==
+  //       double.parse(widget.requestedItem.product.unitPrice)) {
+  //     _showOrderButton.value = true;
+  //     return;
+  //   }
+  //   _showOrderButton.value = false;
+  // }
 
-  Future<bool> _updateRequestPrice(
-      String requestId, double newRequestPrice) async {
-    await Provider.of<OrderRequests>(context, listen: false)
-        .updateRequestPrice(widget.requestedItem.id, _newRequestPrice)
-        .then(
-      (value) {
-        if (value) {
-          AlertHelper.showToastAlert('Request price changed');
+  // Future<bool> _updateRequestPrice(
+  //     String requestId, double newRequestPrice) async {
+  //   await Provider.of<OrderRequests>(context, listen: false)
+  //       .updateRequestPrice(widget.requestedItem.id, _newRequestPrice)
+  //       .then(
+  //     (value) {
+  //       if (value) {
+  //         AlertHelper.showToastAlert('Request price changed');
 
-          _showRequestButton.value = false;
-        } else
-          AlertHelper.showToastAlert("Something went wrong, Please try again!");
-      },
-    );
+  //         _showRequestButton.value = false;
+  //       } else
+  //         AlertHelper.showToastAlert("Something went wrong, Please try again!");
+  //     },
+  //   );
 
-    return true;
-  }
+  //   return true;
+  // }
 
   _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
     bool value = await Provider.of<Carts>(context, listen: false)
@@ -324,7 +324,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
     Session authendicatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
-    Carts _carts = context.watch<Carts>();
+    // Carts _carts = context.watch<Carts>();
     OrderRequests _orderRequests = context.watch<OrderRequests>();
 
     return FutureBuilder(

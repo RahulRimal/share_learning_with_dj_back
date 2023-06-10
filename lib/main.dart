@@ -1,4 +1,3 @@
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -58,7 +57,6 @@ Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
       body: message.notification!.body as String,
       bigPicture: message.notification!.android?.imageUrl,
       largeIcon: message.notification!.android?.imageUrl,
-      
       payload: message.data,
     );
   }

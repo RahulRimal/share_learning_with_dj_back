@@ -535,7 +535,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _facebookButton() {
     return GestureDetector(
-      onTap: _googleSignIn,
+      // onTap: _googleSignIn,
       child: Container(
         height: 50,
         margin: EdgeInsets.symmetric(vertical: 20),
@@ -806,7 +806,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           _divider(),
-                          // _facebookButton(),
+                          _facebookButton(),
                           _googleButton(),
                           SizedBox(height: height * .055),
                           _createAccountLabel(),
@@ -867,10 +867,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             _divider(),
-                            // _facebookButton(),
-                            // showSpinner
-                            //     ? CircularProgressIndicator()
-                            //     : _googleButton(),
+                            _facebookButton(),
+
                             _googleButton(),
                             SizedBox(height: height * .055),
                             _createAccountLabel(),

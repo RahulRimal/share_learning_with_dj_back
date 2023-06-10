@@ -19,18 +19,14 @@ import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 import 'package:share_learning/templates/widgets/post_comments.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/cart_item.dart';
-import '../../providers/orders.dart';
 import 'edit_post_screen.dart';
 import 'user_posts_screen.dart';
 
 // ignore: must_be_immutable
 class SinglePostScreen extends StatelessWidget {
   static const routeName = '/post-details';
-
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   // final _form = GlobalKey<FormState>();
 
@@ -175,7 +171,7 @@ class SinglePostScreen extends StatelessWidget {
     // Carts carts = Provider.of<Carts>(context);
     Carts carts = Provider.of<Carts>(context, listen: false);
 
-    Orders orders = Provider.of<Orders>(context);
+    // Orders orders = Provider.of<Orders>(context);
 
     _getCartInfo(carts);
 
@@ -909,8 +905,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   );
 
   _checkBookInCart(Carts carts, Book selectedPost) {
-    var check = carts.cartItems
-        .indexWhere((element) => element.product.id == selectedPost.id);
+    var check = carts.cartItems.indexWhere(
+        (element) => element.product.id == int.parse(selectedPost.id));
     if (check == -1) return false;
     return true;
   }
@@ -980,7 +976,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                         ? ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorManager.primaryColorWithOpacity,
+                              backgroundColor:
+                                  ColorManager.primaryColorWithOpacity,
                               minimumSize: const Size.fromHeight(40), // NEW
                             ),
                             child: const Text(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/providers/sessions.dart';
-import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
@@ -12,7 +11,6 @@ import '../../models/cart.dart';
 import '../../models/cart_item.dart';
 import '../../models/order_request.dart';
 import '../../models/session.dart';
-import '../../models/user.dart';
 import '../../providers/carts.dart';
 import '../../providers/order_request_provider.dart';
 import '../../providers/orders.dart';
@@ -31,7 +29,7 @@ class OrderRequestForUserDetailsScreen extends StatefulWidget {
 class _OrderRequestForUserDetailsScreenState
     extends State<OrderRequestForUserDetailsScreen> {
   ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
-  ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
+  // ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
 
   double _newSellerOfferPrice = 0;
 
@@ -67,7 +65,7 @@ class _OrderRequestForUserDetailsScreenState
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     OrderRequest requestItem = args['requestItem'];
     Book requestedProduct = args['requestedProduct'];
-    User currentUser = Provider.of<Users>(context).user as User;
+    // User currentUser = Provider.of<Users>(context).user as User;
     Session authSession =
         Provider.of<SessionProvider>(context).session as Session;
     return Scaffold(

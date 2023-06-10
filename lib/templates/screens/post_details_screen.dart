@@ -7,7 +7,6 @@ import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/edit_post_screen.dart';
@@ -40,9 +39,9 @@ class PostDetailsScreen extends StatefulWidget {
 
 class _PostDetailsScreenState extends State<PostDetailsScreen> {
 // class SinglePostScreenNew extends StatelessWidget {
-  int _selectedImage = 0;
+  // int _selectedImage = 0;
 
-  NepaliDateTime? _buyerExpectedDeadline;
+  // NepaliDateTime? _buyerExpectedDeadline;
 
   Users users = new Users(
     null,
@@ -62,22 +61,22 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
     createdDate: DateTime(2050),
   );
 
-  Book _buyerExpectedBook = new Book(
-    id: '',
-    author: 'Unknown',
-    bookName: '',
-    userId: '1',
-    postType: 'B',
-    category: null,
-    boughtDate: DateTime.now().toNepaliDateTime(),
-    description: '',
-    // wishlisted: false,
-    price: 0,
-    bookCount: 1,
-    images: [],
-    postedOn: DateTime.now().toNepaliDateTime(),
-    postRating: 0.0,
-  );
+  // Book _buyerExpectedBook = new Book(
+  //   id: '',
+  //   author: 'Unknown',
+  //   bookName: '',
+  //   userId: '1',
+  //   postType: 'B',
+  //   category: null,
+  //   boughtDate: DateTime.now().toNepaliDateTime(),
+  //   description: '',
+  //   // wishlisted: false,
+  //   price: 0,
+  //   bookCount: 1,
+  //   images: [],
+  //   postedOn: DateTime.now().toNepaliDateTime(),
+  //   postRating: 0.0,
+  // );
 
   Future<void> _getSessionUser(String accessToken) async {
     await users.getUserByToken(accessToken);
@@ -856,9 +855,9 @@ class SinglePostCommenstSection extends StatefulWidget {
   @override
   State<SinglePostCommenstSection> createState() =>
       _SinglePostCommenstSectionState();
-  Session authenticatedSession;
-  User loggedInUser;
-  String postId;
+  final Session authenticatedSession;
+  final User loggedInUser;
+  final String postId;
 }
 
 class _SinglePostCommenstSectionState extends State<SinglePostCommenstSection> {
@@ -945,22 +944,22 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   );
 
   NepaliDateTime? _buyerExpectedDeadline;
-  Book _buyerExpectedBook = new Book(
-    id: '',
-    author: 'Unknown',
-    bookName: '',
-    userId: '1',
-    postType: 'B',
-    category: null,
-    boughtDate: DateTime.now().toNepaliDateTime(),
-    description: '',
-    // wishlisted: false,
-    price: 0,
-    bookCount: 1,
-    images: [],
-    postedOn: DateTime.now().toNepaliDateTime(),
-    postRating: 0.0,
-  );
+  // Book _buyerExpectedBook = new Book(
+  //   id: '',
+  //   author: 'Unknown',
+  //   bookName: '',
+  //   userId: '1',
+  //   postType: 'B',
+  //   category: null,
+  //   boughtDate: DateTime.now().toNepaliDateTime(),
+  //   description: '',
+  //   // wishlisted: false,
+  //   price: 0,
+  //   bookCount: 1,
+  //   images: [],
+  //   postedOn: DateTime.now().toNepaliDateTime(),
+  //   postRating: 0.0,
+  // );
 
   NepaliDateTime _getTomorrowDate() {
     NepaliDateTime initDate = NepaliDateTime.now();
@@ -989,15 +988,18 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    Session authenticatedSession =
-        Provider.of<SessionProvider>(context).session as Session;
+    // Session authenticatedSession =
+    //     Provider.of<SessionProvider>(context).session as Session;
     final _form = GlobalKey<FormState>();
     Book selectedPost = widget.selectedPost;
     Users users = context.watch<Users>();
 
     Carts carts = Provider.of<Carts>(context);
     OrderRequests orderRequests = Provider.of<OrderRequests>(context);
-    Orders orders = Provider.of<Orders>(context);
+    // Orders orders = Provider.of<Orders>(context);
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    Book _buyerExpectedBook = args['post'];
 
     User _loggedInUser;
     if (users.user != null) {
@@ -1144,7 +1146,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
               orderRequests.orderRequestsByUser.firstWhereOrNull(
                           (orderRequest) =>
                               orderRequest.product.id ==
-                              _buyerExpectedBook.id) !=
+                              int.parse(_buyerExpectedBook.id)) !=
                       null
                   ? ElevatedButton(
                       onPressed: () {},
@@ -1918,11 +1920,11 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                               },
                                                             );
 
-                                                            Navigator.pop(
-                                                                context);
-                                                            AlertHelper
-                                                                .showToastAlert(
-                                                                    'Order has been placed successfully');
+                                                            // Navigator.pop(
+                                                            //     context);
+                                                            // AlertHelper
+                                                            //     .showToastAlert(
+                                                            //         'Order has been placed successfully');
                                                           }
                                                         } else {
                                                           // print('here');
@@ -2366,7 +2368,7 @@ class DetailsPageImageGallery extends StatefulWidget {
   State<DetailsPageImageGallery> createState() =>
       _DetailsPageImageGalleryState();
 
-  Book selectedPost;
+  final Book selectedPost;
 }
 
 class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {

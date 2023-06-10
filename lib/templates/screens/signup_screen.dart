@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
@@ -27,7 +25,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final _form = GlobalKey<FormState>();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _emailFocusNode = FocusNode();
@@ -105,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       //     followers: '',
       //     createdDate: NepaliDateTime.now());
       // Users loggedInUser = Users();
-      SessionProvider userSession = new SessionProvider();
+      // SessionProvider userSession = new SessionProvider();
 
       Users users = Users(null);
       // Provider.of<Users>(context, listen: false)
@@ -117,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           if (mounted) {
             showSpinner = false;
           }
-          bool userConfirmed = false;
+          // bool userConfirmed = false;
           showDialog(
             context: context,
             builder: (context) => AlertDialog(

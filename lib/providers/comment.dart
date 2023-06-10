@@ -153,7 +153,9 @@ class Comments with ChangeNotifier {
     //   notifyListeners();
     // });
     // await CommentApi.getPostComments(postId);
-    return comments.where((comment) => comment.postId == postId).toList();
+    return comments
+        .where((comment) => comment.postId == int.parse(postId))
+        .toList();
   }
 
   getPostComments(String postId, Session loggedInUser) async {

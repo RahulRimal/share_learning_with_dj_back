@@ -6,7 +6,6 @@ import 'package:share_learning/templates/widgets/order_item_widget.dart';
 import '../../models/session.dart';
 import '../../providers/carts.dart';
 import '../../providers/orders.dart';
-import '../../providers/users.dart';
 import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
@@ -136,7 +135,7 @@ class OrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Users users = Provider.of<Users>(context, listen: false);
+    // Users users = Provider.of<Users>(context, listen: false);
     // return orders.orderItems.length > 0
 
     return orders.orders.length > 0

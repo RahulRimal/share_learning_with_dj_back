@@ -8,6 +8,7 @@ import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
 import '../screens/cart_screen.dart';
 import '../screens/home_screen_new.dart';
 
+// ignore: must_be_immutable
 class CustomBottomNavigationBar extends StatefulWidget {
   CustomBottomNavigationBar({Key? key, required this.index}) : super(key: key);
 

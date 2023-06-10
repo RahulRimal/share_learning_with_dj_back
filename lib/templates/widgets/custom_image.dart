@@ -6,7 +6,7 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 class CustomImage extends StatelessWidget {
   // final String image;
   final dynamic image;
-  bool isNetwork;
+  final bool isNetwork;
   final bool isErasable;
   final Function? eraseImage;
 
