@@ -6,9 +6,9 @@ import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/cart_provider.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -42,7 +42,7 @@ class SinglePostScreen extends StatelessWidget {
   //       NepaliDateTime.now().day + 1)),
   // );
 
-  Users users = new Users(
+  UserProvider users = new UserProvider(
     // Session(
     //   id: '0',
     //   userId: '0',
@@ -107,7 +107,7 @@ class SinglePostScreen extends StatelessWidget {
   //   await carts.getCartInfo(carts.cart!.id);
   //   }
   // }
-  _getCartInfo(Carts carts) async {
+  _getCartInfo(CartProvider carts) async {
     await carts.getCartInfo(carts.cart!.id);
   }
 
@@ -159,17 +159,17 @@ class SinglePostScreen extends StatelessWidget {
     // users.getUserByToken(loggedInUserSession.accessToken);
     _getSessionUser(loggedInUserSession.accessToken);
 
-    Book selectedPost = Provider.of<Books>(
+    Book selectedPost = Provider.of<BookProvider>(
       context,
       listen: false,
     ).books.firstWhere((book) => book.id == bookId);
 
     // Comments comments = context.watch<Comments>();
 
-    Books books = context.watch<Books>();
+    BookProvider books = context.watch<BookProvider>();
 
     // Carts carts = Provider.of<Carts>(context);
-    Carts carts = Provider.of<Carts>(context, listen: false);
+    CartProvider carts = Provider.of<CartProvider>(context, listen: false);
 
     // Orders orders = Provider.of<Orders>(context);
 
@@ -201,7 +201,7 @@ class SinglePostScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.all(0),
-            child: context.watch<Users>().user!.id == selectedPost.userId
+            child: context.watch<UserProvider>().user!.id == selectedPost.userId
                 ? IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () async {
@@ -229,7 +229,7 @@ class SinglePostScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(0),
             // child: loggedInUserSession.userId == selectedPost.userId
-            child: context.watch<Users>().user!.id == selectedPost.userId
+            child: context.watch<UserProvider>().user!.id == selectedPost.userId
                 ? IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
@@ -904,7 +904,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     postRating: 0.0,
   );
 
-  _checkBookInCart(Carts carts, Book selectedPost) {
+  _checkBookInCart(CartProvider carts, Book selectedPost) {
     var check = carts.cartItems.indexWhere(
         (element) => element.product.id == int.parse(selectedPost.id));
     if (check == -1) return false;
@@ -939,9 +939,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     Book selectedPost = widget.selectedPost;
     double _expectedUnitPrice = 0;
     // Book _buyerExpectedBook = widget.buyerExpectedBook;
-    Users users = context.watch<Users>();
+    UserProvider users = context.watch<UserProvider>();
 
-    Carts carts = Provider.of<Carts>(context);
+    CartProvider carts = Provider.of<CartProvider>(context);
     User _loggedInUser;
     if (users.user != null) {
       _loggedInUser = users.user as User;
@@ -953,7 +953,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     return _loggedInUser.id != selectedPost.userId
 
         // ? (carts.cartItems.length > 0 && _checkBookInCart(carts, selectedPost)
-        ? (context.watch<Carts>().cartItems.length > 0 &&
+        ? (context.watch<CartProvider>().cartItems.length > 0 &&
                 _checkBookInCart(carts, selectedPost)
             // ? (Provider.of<Carts>(context).cartItems.length > 0 && _checkBookInCart(carts, selectedPost)
             ? ElevatedButton(

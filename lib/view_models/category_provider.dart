@@ -6,7 +6,7 @@ import 'package:share_learning/models/post_category.dart';
 import '../models/api_status.dart';
 import '../models/session.dart';
 
-class Categories with ChangeNotifier {
+class CategoryProvider with ChangeNotifier {
   List<PostCategory> _categories = [];
   bool _loading = false;
 
@@ -42,7 +42,6 @@ class Categories with ChangeNotifier {
     _categoryError = categoryError;
   }
 
-  
   setNextPageUrl(String? nextPageUrl) {
     _nextPageUrl = nextPageUrl;
   }
@@ -68,7 +67,8 @@ class Categories with ChangeNotifier {
 
     if (response is Success) {
       // setCategories(response.response);
-      setCategories((response.response as Map)['categories'] as List<PostCategory>);
+      setCategories(
+          (response.response as Map)['categories'] as List<PostCategory>);
       setNextPageUrl((response.response as Map)['next']);
       setPreviousPageUrl((response.response as Map)['previous']);
     }

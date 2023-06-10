@@ -6,9 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/categories.dart';
-import 'package:share_learning/providers/sessions.dart';
-import 'package:share_learning/providers/wishlists.dart';
+import 'package:share_learning/view_models/category_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/wishlist_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
@@ -17,9 +17,9 @@ import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../providers/carts.dart';
-import '../../providers/order_request_provider.dart';
-import '../../providers/users.dart';
+import '../../view_models/cart_provider.dart';
+import '../../view_models/order_request_provider.dart';
+import '../../view_models/user_provider.dart';
 import '../managers/assets_manager.dart';
 import '../utils/alert_helper.dart';
 
@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       showSpinner = true;
     });
-    final users = Provider.of<Users>(context, listen: false);
+    final users = Provider.of<UserProvider>(context, listen: false);
     final sessions = Provider.of<SessionProvider>(context, listen: false);
     var response = await users.googleSignIn();
     // print(response);
@@ -83,10 +83,14 @@ class _LoginScreenState extends State<LoginScreen> {
       prefs.setString('refreshToken', sessions.session!.refreshToken);
 
       if (!prefs.containsKey('cartId')) {
-        if (await Provider.of<Carts>(context, listen: false)
+        if (await Provider.of<CartProvider>(context, listen: false)
             .createCart(sessions.session as Session)) {
-          prefs.setString('cartId',
-              Provider.of<Carts>(context, listen: false).cart!.id.toString());
+          prefs.setString(
+              'cartId',
+              Provider.of<CartProvider>(context, listen: false)
+                  .cart!
+                  .id
+                  .toString());
         } else {
           print('here');
         }
@@ -130,7 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
           });
           SharedPreferences prefs = await _prefs;
 
-          Users users = Provider.of<Users>(context, listen: false);
+          UserProvider users =
+              Provider.of<UserProvider>(context, listen: false);
 
           prefs.setString('accessToken', userSession.session!.accessToken);
           prefs.setString('refreshToken', userSession.session!.refreshToken);
@@ -138,32 +143,34 @@ class _LoginScreenState extends State<LoginScreen> {
           await users.getUserByToken(userSession.session!.accessToken);
 
           if (!prefs.containsKey('cartId')) {
-            if (await Provider.of<Carts>(context, listen: false)
+            if (await Provider.of<CartProvider>(context, listen: false)
                 .createCart(userSession.session as Session)) {
               prefs.setString(
                   'cartId',
-                  Provider.of<Carts>(context, listen: false)
+                  Provider.of<CartProvider>(context, listen: false)
                       .cart!
                       .id
                       .toString());
             } else {
               // print('here');
-              Provider.of<Carts>(context, listen: false)
+              Provider.of<CartProvider>(context, listen: false)
                   .getCartInfo(prefs.getString('cartId') as String);
             }
           } else {
-            if (Provider.of<Carts>(context, listen: false).cart == null) {
-              Provider.of<Carts>(context, listen: false)
+            if (Provider.of<CartProvider>(context, listen: false).cart ==
+                null) {
+              Provider.of<CartProvider>(context, listen: false)
                   .getCartInfo(prefs.getString('cartId') as String);
             }
             // print('here');
           }
 
-          Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);
-          Categories categories =
-              Provider.of<Categories>(context, listen: false);
-          OrderRequests orderRequests =
-              Provider.of<OrderRequests>(context, listen: false);
+          WishlistProvider wishlists =
+              Provider.of<WishlistProvider>(context, listen: false);
+          CategoryProvider categories =
+              Provider.of<CategoryProvider>(context, listen: false);
+          OrderRequestProvider orderRequests =
+              Provider.of<OrderRequestProvider>(context, listen: false);
 
           wishlists.getWishlistedBooks(userSession.session as Session);
           categories.getCategories(userSession.session as Session);

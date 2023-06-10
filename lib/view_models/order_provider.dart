@@ -6,7 +6,7 @@ import 'package:share_learning/models/session.dart';
 import '../models/order.dart';
 import '../models/order_item.dart';
 
-class Orders with ChangeNotifier {
+class OrderProvider with ChangeNotifier {
   // Order? _order;
   List<Order> _orders = [];
 

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/comment.dart';
+import 'package:share_learning/view_models/comment_provider.dart';
 import 'package:share_learning/templates/managers/api_values_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_learning/templates/managers/strings_manager.dart';

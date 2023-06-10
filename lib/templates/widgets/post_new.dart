@@ -7,7 +7,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/wishlist.dart';
-import 'package:share_learning/providers/wishlists.dart';
+import 'package:share_learning/view_models/wishlist_provider.dart';
 import 'package:share_learning/templates/screens/post_details_screen.dart';
 
 import '../../models/session.dart';
@@ -52,7 +52,7 @@ class _PostNewState extends State<PostNew> {
     Book post = widget.book;
     Session loggedInUserSession = widget.authSession;
 
-    Wishlists _wishlists = Provider.of<Wishlists>(context);
+    WishlistProvider _wishlists = Provider.of<WishlistProvider>(context);
     // if (_wishlists.wishlistedBooks.isEmpty) {
     //   _getWishlistedBooks(loggedInUserSession, _wishlists);
     // }

@@ -6,10 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../providers/carts.dart';
-import '../../providers/orders.dart';
-import '../../providers/sessions.dart';
-import '../../providers/users.dart';
+import '../../view_models/cart_provider.dart';
+import '../../view_models/order_provider.dart';
+import '../../view_models/session_provider.dart';
+import '../../view_models/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
@@ -173,10 +173,10 @@ class _BillingInfoState extends State<BillingInfo> {
     // BookFilters bookFilters = Provider.of<BookFilters>(context);
     // Map<String, dynamic> filterOptions = bookFilters.filterOptions;
 
-    User user = Provider.of<Users>(context).user as User;
-    Orders orders = Provider.of<Orders>(context);
+    User user = Provider.of<UserProvider>(context).user as User;
+    OrderProvider orders = Provider.of<OrderProvider>(context);
     // Users users = Provider.of<Users>(context);
-    Carts carts = Provider.of<Carts>(context, listen: false);
+    CartProvider carts = Provider.of<CartProvider>(context, listen: false);
     // OrderRequests orderRequests =
     //     Provider.of<OrderRequests>(context, listen: false);
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();

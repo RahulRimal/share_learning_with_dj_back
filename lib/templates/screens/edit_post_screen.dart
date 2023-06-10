@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/categories.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/category_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -17,7 +17,7 @@ import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../models/user.dart';
-import '../../providers/users.dart';
+import '../../view_models/user_provider.dart';
 import '../utils/alert_helper.dart';
 
 class EditPostScreen extends StatefulWidget {
@@ -106,7 +106,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
     if (bookId.isNotEmpty) {
       _edittedBook =
-          Provider.of<Books>(context, listen: false).getBookById(bookId);
+          Provider.of<BookProvider>(context, listen: false).getBookById(bookId);
 
       ispostType = _edittedBook.postType == 'S' ? true : false;
       postTypeSelling = [ispostType, !ispostType];
@@ -217,25 +217,25 @@ class _EditPostScreenState extends State<EditPostScreen> {
     _form.currentState!.save();
     _edittedBook.postType = ispostType ? 'S' : 'B';
 
-    if (await Provider.of<Books>(context, listen: false)
+    if (await Provider.of<BookProvider>(context, listen: false)
         .updatePost(loggedInUserSession, _edittedBook)) {
       if (_imagesToDelete.isNotEmpty) {
-        await Provider.of<Books>(context, listen: false).deletePictures(
+        await Provider.of<BookProvider>(context, listen: false).deletePictures(
             loggedInUserSession, _edittedBook.id, _imagesToDelete);
       }
       if (_storedImages != null) {
         if (_storedImages!.isNotEmpty) {
           _edittedBook.images = _storedImages;
-          if (await Provider.of<Books>(context, listen: false)
+          if (await Provider.of<BookProvider>(context, listen: false)
               .updatePictures(loggedInUserSession, _edittedBook)) {
             AlertHelper.showToastAlert('Post has been successfully updated');
           }
         }
       }
     }
-    if (Provider.of<Books>(context, listen: false).bookError != null) {
+    if (Provider.of<BookProvider>(context, listen: false).bookError != null) {
       AlertHelper.showToastAlert(
-        Provider.of<Books>(context, listen: false)
+        Provider.of<BookProvider>(context, listen: false)
             .bookError!
             .message
             .toString(),
@@ -257,10 +257,10 @@ class _EditPostScreenState extends State<EditPostScreen> {
     final Session loggedInUserSession = args['loggedInUserSession'] as Session;
 
     // Categories categoriesProvier =  Provider.of<Categories>(context, listen: false);
-    Categories categoriesProvier = Provider.of<Categories>(context);
+    CategoryProvider categoriesProvier = Provider.of<CategoryProvider>(context);
 
     List<PostCategory> _categories = categoriesProvier.categories;
-    User loggedInUser = Provider.of<Users>(context).user as User;
+    User loggedInUser = Provider.of<UserProvider>(context).user as User;
 
     // dynamic _selectedCategory = _getBookCategory(
     //     context, loggedInUserSession, _edittedBook.category!.id);
@@ -290,7 +290,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       AlertHelper.showLoading();
                     }
 
-                    if (await Provider.of<Books>(context, listen: false)
+                    if (await Provider.of<BookProvider>(context, listen: false)
                         .deletePost(loggedInUserSession, _edittedBook.id)) {
                       setState(() => _showLoading = false);
                       AlertHelper.showToastAlert(

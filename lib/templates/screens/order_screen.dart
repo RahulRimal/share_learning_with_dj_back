@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/templates/widgets/order_item_widget.dart';
 
 import '../../models/session.dart';
-import '../../providers/carts.dart';
-import '../../providers/orders.dart';
+import '../../view_models/cart_provider.dart';
+import '../../view_models/order_provider.dart';
 import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
@@ -32,7 +32,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
     // Carts carts = context.watch<Carts>();
     // Carts carts = Provider.of<Carts>(context, listen: false);
-    Orders orders = Provider.of<Orders>(context, listen: false);
+    OrderProvider orders = Provider.of<OrderProvider>(context, listen: false);
 
     return Scaffold(
       // appBar: AppBar(),
@@ -130,7 +130,7 @@ class OrderList extends StatelessWidget {
     required this.authendicatedSession,
   }) : super(key: key);
 
-  final Orders orders;
+  final OrderProvider orders;
   final Session authendicatedSession;
 
   @override
@@ -171,7 +171,7 @@ class OrderList extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Consumer<Carts>(
+                  return Consumer<CartProvider>(
                     builder: (ctx, cartItems, child) {
                       // return carts.cartItems.length <= 0
                       return orders.orders.length <= 0

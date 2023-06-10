@@ -6,7 +6,7 @@ import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/cart_item.dart';
 import 'package:share_learning/models/session.dart';
 
-class Carts with ChangeNotifier {
+class CartProvider with ChangeNotifier {
   Cart? _cart;
   List<CartItem> _cartItems = [];
 

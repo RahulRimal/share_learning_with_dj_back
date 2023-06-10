@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/models/order_request.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/order_request_provider.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/cart_provider.dart';
+import 'package:share_learning/view_models/order_request_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -44,8 +44,8 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
         Provider.of<SessionProvider>(context).session as Session;
 
     // Carts carts = Provider.of<Carts>(context, listen: false);
-    OrderRequests orderRequests =
-        Provider.of<OrderRequests>(context, listen: false);
+    OrderRequestProvider orderRequests =
+        Provider.of<OrderRequestProvider>(context, listen: false);
 
     return Scaffold(
       // appBar: AppBar(),
@@ -201,7 +201,7 @@ class OrderRequestList extends StatelessWidget {
     required this.authendicatedSession,
   }) : super(key: key);
 
-  final OrderRequests orderRequests;
+  final OrderRequestProvider orderRequests;
   final Session authendicatedSession;
 
   // _getCartId() async {
@@ -215,7 +215,8 @@ class OrderRequestList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       // itemCount: context.watch<Carts>().cartItems.length,
-      itemCount: context.watch<OrderRequests>().orderRequestsByUser.length,
+      itemCount:
+          context.watch<OrderRequestProvider>().orderRequestsByUser.length,
       itemBuilder: (context, index) {
         return OrderRequestItemWidget(
           // cartItem: carts.cartItems[index],
@@ -281,7 +282,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
   // }
 
   _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-    bool value = await Provider.of<Carts>(context, listen: false)
+    bool value = await Provider.of<CartProvider>(context, listen: false)
         .deleteCartItem(userSession, cartId, cartItemId);
     if (value) {
       AlertHelper.showToastAlert('Book deleted from the cart');
@@ -323,7 +324,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
         Provider.of<SessionProvider>(context).session as Session;
 
     // Carts _carts = context.watch<Carts>();
-    OrderRequests _orderRequests = context.watch<OrderRequests>();
+    OrderRequestProvider _orderRequests = context.watch<OrderRequestProvider>();
 
     return FutureBuilder(
         // future: _carts.getCartItemBook(
@@ -448,7 +449,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                           if (userConfirmed) {
                                             _deleteCartItem(
                                               authendicatedSession,
-                                              Provider.of<Carts>(context,
+                                              Provider.of<CartProvider>(context,
                                                       listen: false)
                                                   .cart!
                                                   .id,

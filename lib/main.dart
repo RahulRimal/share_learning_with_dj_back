@@ -6,46 +6,46 @@ import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 
-import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/categories.dart';
-import 'package:share_learning/providers/comment.dart';
-import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/filters.dart';
-import 'package:share_learning/providers/order_request_provider.dart';
-import 'package:share_learning/providers/orders.dart';
-import 'package:share_learning/providers/sessions.dart';
-import 'package:share_learning/providers/users.dart';
-import 'package:share_learning/providers/wishlists.dart';
-import 'package:share_learning/templates/managers/strings_manager.dart';
-import 'package:share_learning/templates/managers/theme_manager.dart';
-import 'package:share_learning/templates/screens/add_post_screen.dart';
-import 'package:share_learning/templates/screens/home_screen_new.dart';
-import 'package:share_learning/templates/screens/login_signup_screen.dart';
-import 'package:share_learning/templates/screens/onboarding_screen.dart';
-import 'package:share_learning/templates/screens/cart_screen.dart';
-import 'package:share_learning/templates/screens/order_screen.dart';
-import 'package:share_learning/templates/screens/signup_screen.dart';
-import 'package:share_learning/templates/screens/order_details_screen.dart';
-import 'package:share_learning/templates/screens/single_post_screen.dart';
-import 'package:share_learning/templates/screens/post_details_screen.dart';
-import 'package:share_learning/templates/screens/splash_screen.dart';
-import 'package:share_learning/templates/screens/login_screen.dart';
-import 'package:share_learning/templates/screens/user_interests_screen.dart';
-import 'package:share_learning/templates/screens/user_posts_screen.dart';
-import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
-import 'package:share_learning/templates/screens/user_profile_screen.dart';
-import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
-import 'package:share_learning/templates/utils/notification_service.dart';
 import 'firebase_options.dart';
+import 'models/session.dart';
+import 'templates/managers/strings_manager.dart';
+import 'templates/managers/theme_manager.dart';
+import 'templates/screens/add_post_screen.dart';
+import 'templates/screens/cart_screen.dart';
 import 'templates/screens/edit_post_screen.dart';
 import 'templates/screens/home_screen.dart';
+import 'templates/screens/home_screen_new.dart';
+import 'templates/screens/login_screen.dart';
+import 'templates/screens/login_signup_screen.dart';
+import 'templates/screens/onboarding_screen.dart';
+import 'templates/screens/order_details_screen.dart';
 import 'templates/screens/order_request_details_screen.dart';
 import 'templates/screens/order_request_screen.dart';
 import 'templates/screens/order_requests_for_user_details_screen.dart';
 import 'templates/screens/order_requests_for_user_screen.dart';
+import 'templates/screens/order_screen.dart';
 import 'templates/screens/orders_screen_new.dart';
+import 'templates/screens/post_details_screen.dart';
+import 'templates/screens/signup_screen.dart';
+import 'templates/screens/single_post_screen.dart';
+import 'templates/screens/splash_screen.dart';
+import 'templates/screens/user_interests_screen.dart';
+import 'templates/screens/user_posts_screen.dart';
+import 'templates/screens/user_profile_edit_screen.dart';
+import 'templates/screens/user_profile_screen.dart';
+import 'templates/screens/wishlisted_books_screen.dart';
+import 'templates/utils/notification_service.dart';
+import 'view_models/book_filters_provider.dart';
+import 'view_models/book_provider.dart';
+import 'view_models/cart_provider.dart';
+import 'view_models/category_provider.dart';
+import 'view_models/comment_provider.dart';
+import 'view_models/order_provider.dart';
+import 'view_models/order_request_provider.dart';
+import 'view_models/session_provider.dart';
+import 'view_models/wishlist_provider.dart';
 
 Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -121,8 +121,8 @@ class MyApp extends StatelessWidget {
         //   update: (ctx, session, previousSession) => Books(session.session),
         // ),
 
-        ChangeNotifierProxyProvider<SessionProvider, Users>(
-          create: (context) => Users(
+        ChangeNotifierProxyProvider<SessionProvider, UserProvider>(
+          create: (context) => UserProvider(
             Session(
               // id: '0',
               // userId: '0',
@@ -132,17 +132,18 @@ class MyApp extends StatelessWidget {
               // refreshTokenExpiry: DateTime(2050),
             ),
           ),
-          update: (context, session, previousUser) => Users(session.session),
+          update: (context, session, previousUser) =>
+              UserProvider(session.session),
         ),
 
-        ChangeNotifierProvider(create: (_) => Carts()),
-        ChangeNotifierProvider(create: (_) => OrderRequests()),
-        ChangeNotifierProvider(create: (_) => Books()),
-        ChangeNotifierProvider(create: (_) => Comments()),
-        ChangeNotifierProvider(create: (_) => Orders()),
-        ChangeNotifierProvider(create: (_) => Categories()),
-        ChangeNotifierProvider(create: (_) => BookFilters()),
-        ChangeNotifierProvider(create: (_) => Wishlists()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => OrderRequestProvider()),
+        ChangeNotifierProvider(create: (_) => BookProvider()),
+        ChangeNotifierProvider(create: (_) => CommentProvider()),
+        ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => BookFiltersProvider()),
+        ChangeNotifierProvider(create: (_) => WishlistProvider()),
       ],
       child: Theme.of(context).platform == TargetPlatform.iOS
           ? CupertinoApp(

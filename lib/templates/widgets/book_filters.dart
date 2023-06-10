@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/post_category.dart';
-import '../../providers/books.dart';
-import '../../providers/categories.dart';
-import '../../providers/filters.dart';
+import '../../view_models/book_provider.dart';
+import '../../view_models/category_provider.dart';
+import '../../view_models/book_filters_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
@@ -84,8 +84,9 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
 
   @override
   void initState() {
-    BookFilters bookFilters = Provider.of<BookFilters>(context, listen: false);
-    Books _books = Provider.of<Books>(context, listen: false);
+    BookFiltersProvider bookFilters =
+        Provider.of<BookFiltersProvider>(context, listen: false);
+    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
     _minPrice = _books.getMinPrice();
     _maxPrice = _books.getMaxPrice();
     bookFilters.setMinPrice(_minPrice);
@@ -95,12 +96,12 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Categories _categoryProvider =
-        Provider.of<Categories>(context, listen: false);
+    CategoryProvider _categoryProvider =
+        Provider.of<CategoryProvider>(context, listen: false);
 
-    BookFilters bookFilters = Provider.of<BookFilters>(context);
+    BookFiltersProvider bookFilters = Provider.of<BookFiltersProvider>(context);
     Map<String, dynamic> filterOptions = bookFilters.filterOptions;
-    Books _books = Provider.of<Books>(context, listen: false);
+    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
 
     List<PostCategory> _categories = _categoryProvider.categories;
     _categories.insert(
@@ -417,7 +418,8 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                                 });
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: filterOptions['reviews'] == _reviews[index]
+                                backgroundColor:
+                                    filterOptions['reviews'] == _reviews[index]
                                         // ? ColorManager.primary
                                         ? ColorManager.black
                                         : ColorManager.white,
@@ -514,7 +516,8 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                   child: ElevatedButton(
                     onPressed: () {
                       bookFilters.setAllBooks(
-                          Provider.of<Books>(context, listen: false).books);
+                          Provider.of<BookProvider>(context, listen: false)
+                              .books);
                       bookFilters.filterBooks(filterOptions);
                       Navigator.pop(context);
                     },

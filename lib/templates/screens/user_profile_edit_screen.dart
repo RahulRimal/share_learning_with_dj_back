@@ -4,8 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/sessions.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
@@ -98,10 +98,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
 
     changedValues['id'] = _edittedUser.id;
 
-    if (await Provider.of<Users>(context, listen: false)
+    if (await Provider.of<UserProvider>(context, listen: false)
         .updateUserInfo(loggedInUserSession, changedValues)) {
       if (_imageAdded) {
-        if (!await Provider.of<Users>(context, listen: false)
+        if (!await Provider.of<UserProvider>(context, listen: false)
             .updateProfilePicture(
                 loggedInUserSession, _edittedUser.id, _addedImage as XFile)) {
           AlertHelper.showToastAlert('Something went worng, please try again');
@@ -114,9 +114,9 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
       return true;
     }
 
-    if (Provider.of<Users>(context, listen: false).userError != null) {
+    if (Provider.of<UserProvider>(context, listen: false).userError != null) {
       AlertHelper.showToastAlert(
-        Provider.of<Users>(context, listen: false)
+        Provider.of<UserProvider>(context, listen: false)
             .userError!
             .message
             .toString(),
@@ -139,10 +139,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
     // Users _users = Provider.of<Users>(context);
     Session loggedInUserSession =
         Provider.of<SessionProvider>(context).session as Session;
-    User _user = Provider.of<Users>(context).user as User;
+    User _user = Provider.of<UserProvider>(context).user as User;
     _edittedUser = _user;
 
-    Users users = context.watch<Users>();
+    UserProvider users = context.watch<UserProvider>();
 
     return Scaffold(
       appBar: AppBar(

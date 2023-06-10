@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/order_item.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/orders.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/order_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -15,7 +15,7 @@ import '../../models/book.dart';
 import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../providers/users.dart';
+import '../../view_models/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/values_manager.dart';
 import '../utils/user_helper.dart';
@@ -32,7 +32,7 @@ class OrdersScreenNew extends StatelessWidget {
 
     // final Session authSession = args['loggedInUserSession'] as Session;
     Session authSession = context.watch<SessionProvider>().session as Session;
-    Users _users = context.watch<Users>();
+    UserProvider _users = context.watch<UserProvider>();
     // Session authSession =
     //     Provider.of<SessionProvider>(context).session as Session;
 
@@ -182,8 +182,8 @@ class OrdersScreenNew extends StatelessWidget {
                 ),
                 Container(
                   child: FutureBuilder(
-                    future:
-                        Provider.of<Orders>(context).getUserOrders(authSession),
+                    future: Provider.of<OrderProvider>(context)
+                        .getUserOrders(authSession),
                     builder: (ctx, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -197,7 +197,7 @@ class OrdersScreenNew extends StatelessWidget {
                             child: Text('Error'),
                           );
                         } else {
-                          return Consumer<Orders>(
+                          return Consumer<OrderProvider>(
                             builder: (ctx, orders, child) {
                               return orders.orders.length <= 0
                                   ? Center(
@@ -272,7 +272,7 @@ class OrderItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Books booksProvider = context.watch();
+    BookProvider booksProvider = context.watch();
     Session authSession =
         Provider.of<SessionProvider>(context, listen: false).session as Session;
     Book? product = booksProvider.books.firstWhereOrNull(

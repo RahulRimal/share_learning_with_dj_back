@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
@@ -104,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // Users loggedInUser = Users();
       // SessionProvider userSession = new SessionProvider();
 
-      Users users = Users(null);
+      UserProvider users = UserProvider(null);
       // Provider.of<Users>(context, listen: false)
       //     .createNewUser(_newUser, userpassword);
       // users.

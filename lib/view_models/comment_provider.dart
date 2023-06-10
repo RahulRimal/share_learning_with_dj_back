@@ -86,7 +86,7 @@ class CommentError {
   CommentError({required this.code, required this.message});
 }
 
-class Comments with ChangeNotifier {
+class CommentProvider with ChangeNotifier {
   // List<Comment> _comments = [
   //   Comment(
   //     // accessToken:

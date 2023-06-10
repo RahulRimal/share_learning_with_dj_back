@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../models/book.dart';
 
-class BookFilters with ChangeNotifier {
+class BookFiltersProvider with ChangeNotifier {
   // Map<String, dynamic> _initialState = {
   //   'filtered_products': [],
   //   'all_products': [],

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/api_values_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -15,7 +15,7 @@ import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/post.dart';
 
-import '../../providers/sessions.dart';
+import '../../view_models/session_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -69,13 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Provider.of<SessionProvider>(context).session as Session;
     }
 
-    Users _users = context.watch<Users>();
+    UserProvider _users = context.watch<UserProvider>();
     if (_users.user == null) {
       _users.getUserByToken(authenticatedSession.accessToken);
     } else {
       _user = _users.user as User;
     }
-    Books _books = context.watch<Books>();
+    BookProvider _books = context.watch<BookProvider>();
 
     // Orders _orders = context.watch<Orders>();
     // _getSessionUser(_users, authenticatedSession);
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text('Error'),
                         );
                       } else {
-                        return Consumer<Books>(
+                        return Consumer<BookProvider>(
                           builder: (ctx, books, child) {
                             return books.books.length <= 0
                                 ? Center(
@@ -254,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Text('Error'),
                               );
                             } else {
-                              return Consumer<Books>(
+                              return Consumer<BookProvider>(
                                 builder: (ctx, books, child) {
                                   return books.books.length <= 0
                                       ? Center(

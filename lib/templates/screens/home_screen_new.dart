@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/models/post_category.dart';
-import 'package:share_learning/providers/categories.dart';
-import 'package:share_learning/providers/filters.dart';
+import 'package:share_learning/view_models/category_provider.dart';
+import 'package:share_learning/view_models/book_filters_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -20,9 +20,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../providers/books.dart';
-import '../../providers/sessions.dart';
-import '../../providers/users.dart';
+import '../../view_models/book_provider.dart';
+import '../../view_models/session_provider.dart';
+import '../../view_models/user_provider.dart';
 import '../utils/user_helper.dart';
 
 class HomeScreenNew extends StatefulWidget {
@@ -63,12 +63,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   void _scrollListener() async {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      Books books = Provider.of<Books>(context, listen: false);
+      BookProvider books = Provider.of<BookProvider>(context, listen: false);
       if (books.nextPageUrl != null) {
         _loadingMorePosts.value = true;
         await books
-            .getMoreBooks(Provider.of<Books>(context, listen: false).nextPageUrl
-                as String)
+            .getMoreBooks(Provider.of<BookProvider>(context, listen: false)
+                .nextPageUrl as String)
             .then((_) => _loadingMorePosts.value = false);
       }
     }
@@ -113,18 +113,18 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     FCMDeviceHelper.registerDeviceToFCM(authenticatedSession);
     // Registering FMC Device ends here
 
-    Users _users = context.watch<Users>();
+    UserProvider _users = context.watch<UserProvider>();
     if (_users.user == null) {
       _users.getUserByToken(authenticatedSession.accessToken);
     } else {
       _user = _users.user as User;
     }
     // Books _books = context.watch<Books>();
-    Books _books = Provider.of<Books>(context, listen: false);
+    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
     // Orders _orders = context.watch<Orders>();
 
-    Categories _categoryProvider =
-        Provider.of<Categories>(context, listen: false);
+    CategoryProvider _categoryProvider =
+        Provider.of<CategoryProvider>(context, listen: false);
 
     List<PostCategory> _categories = _categoryProvider.categories;
     _categories.insert(
@@ -132,7 +132,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
     );
 
-    BookFilters _bookFilters = context.watch<BookFilters>();
+    BookFiltersProvider _bookFilters = context.watch<BookFiltersProvider>();
 
     return SafeArea(
       child: Scaffold(
@@ -420,7 +420,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         }),
                   ),
                   if (_bookFilters.showFilteredResult)
-                    Consumer<BookFilters>(
+                    Consumer<BookFiltersProvider>(
                       builder: (ctx, books, child) {
                         if (books.filteredBooks.length <= 0) {
                           return Center(
@@ -481,7 +481,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               child: Text('Error'),
                             );
                           } else {
-                            return Consumer<Books>(
+                            return Consumer<BookProvider>(
                               builder: (ctx, books, child) {
                                 return books.books.length <= 0
                                     ? Center(

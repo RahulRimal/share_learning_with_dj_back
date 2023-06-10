@@ -8,7 +8,7 @@ import '../models/book.dart';
 import '../models/order.dart';
 import '../models/order_request.dart';
 
-class OrderRequests with ChangeNotifier {
+class OrderRequestProvider with ChangeNotifier {
   List<OrderRequest> _orderRequestsByUser = [];
   List<OrderRequest> _orderRequestsForUser = [];
 

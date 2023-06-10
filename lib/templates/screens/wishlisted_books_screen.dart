@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/models/post_category.dart';
-import 'package:share_learning/providers/categories.dart';
-import 'package:share_learning/providers/wishlists.dart';
+import 'package:share_learning/view_models/category_provider.dart';
+import 'package:share_learning/view_models/wishlist_provider.dart';
 
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -17,9 +17,9 @@ import 'package:share_learning/templates/widgets/post_new.dart';
 import '../../models/book.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../providers/books.dart';
-import '../../providers/sessions.dart';
-import '../../providers/users.dart';
+import '../../view_models/book_provider.dart';
+import '../../view_models/session_provider.dart';
+import '../../view_models/user_provider.dart';
 import '../managers/api_values_manager.dart';
 import '../utils/user_helper.dart';
 
@@ -112,19 +112,20 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
     Session authenticatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
-    Users _users = context.watch<Users>();
+    UserProvider _users = context.watch<UserProvider>();
     if (_users.user == null) {
       _users.getUserByToken(authenticatedSession.accessToken);
     } else {
       _user = _users.user as User;
     }
     // Books _books = context.watch<Books>();
-    Books _books = Provider.of<Books>(context, listen: false);
-    Wishlists _wishlists = Provider.of<Wishlists>(context, listen: false);
+    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
+    WishlistProvider _wishlists =
+        Provider.of<WishlistProvider>(context, listen: false);
     // Orders _orders = context.watch<Orders>();
 
-    Categories _categoryProvider =
-        Provider.of<Categories>(context, listen: false);
+    CategoryProvider _categoryProvider =
+        Provider.of<CategoryProvider>(context, listen: false);
 
     List<PostCategory> _categories = _categoryProvider.categories;
     _categories.insert(
@@ -594,7 +595,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                           child: Text('Error'),
                         );
                       } else {
-                        return Consumer<Wishlists>(
+                        return Consumer<WishlistProvider>(
                           builder: (ctx, wishlists, child) {
                             return wishlists.wishlists.length <= 0
                                 ? Center(
@@ -618,7 +619,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                             crossAxisCount: 2),
                                     itemCount: _wishlists.wishlists.length,
                                     itemBuilder: (ctx, idx) => FutureBuilder(
-                                        future: Provider.of<Books>(context,
+                                        future: Provider.of<BookProvider>(
+                                                context,
                                                 listen: false)
                                             .getBookByIdFromServer(
                                                 authenticatedSession,

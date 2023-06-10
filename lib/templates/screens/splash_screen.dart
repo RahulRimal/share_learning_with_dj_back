@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/categories.dart';
-import 'package:share_learning/providers/sessions.dart';
-import 'package:share_learning/providers/wishlists.dart';
+import 'package:share_learning/view_models/cart_provider.dart';
+import 'package:share_learning/view_models/category_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/wishlist_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
@@ -17,8 +17,8 @@ import 'package:share_learning/templates/utils/internet_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
-import '../../providers/order_request_provider.dart';
-import '../../providers/users.dart';
+import '../../view_models/order_request_provider.dart';
+import '../../view_models/user_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -78,12 +78,14 @@ class _SplashScreenState extends State<SplashScreen> {
       String refreshToken = prefs.getString('refreshToken') as String;
       SessionProvider sessions =
           Provider.of<SessionProvider>(context, listen: false);
-      Carts carts = Provider.of<Carts>(context, listen: false);
-      Users users = Provider.of<Users>(context, listen: false);
-      Wishlists wishlists = Provider.of<Wishlists>(context, listen: false);
-      Categories categories = Provider.of<Categories>(context, listen: false);
-      OrderRequests orderRequests =
-          Provider.of<OrderRequests>(context, listen: false);
+      CartProvider carts = Provider.of<CartProvider>(context, listen: false);
+      UserProvider users = Provider.of<UserProvider>(context, listen: false);
+      WishlistProvider wishlists =
+          Provider.of<WishlistProvider>(context, listen: false);
+      CategoryProvider categories =
+          Provider.of<CategoryProvider>(context, listen: false);
+      OrderRequestProvider orderRequests =
+          Provider.of<OrderRequestProvider>(context, listen: false);
 
       sessions.setSession(
           new Session(accessToken: accessToken, refreshToken: refreshToken));
@@ -106,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // await Provider.of<Carts>(context)
         //     .getCartInfo(prefs.getString('cartId') as String);
       } else {
-        if (await Provider.of<Carts>(context, listen: false)
+        if (await Provider.of<CartProvider>(context, listen: false)
             .createCart(sessions.session as Session)) {
           prefs.setString('cartId', carts.cart!.id.toString());
           // print(Provider.of<Carts>(context, listen: false).cart!.id.toString());

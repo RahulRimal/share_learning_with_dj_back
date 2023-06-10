@@ -6,7 +6,7 @@ import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
 import '../models/book.dart';
 
-class Books with ChangeNotifier {
+class BookProvider with ChangeNotifier {
   List<Book> _myBooks = [];
   bool _loading = false;
   BookError? _bookError;

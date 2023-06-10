@@ -6,15 +6,15 @@ import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 
 // import 'package:path/path.dart' as path;
 // import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
-import '../../providers/users.dart';
+import '../../view_models/user_provider.dart';
 import '../utils/alert_helper.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -148,8 +148,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
     _edittedBook.postType = ispostType ? 'S' : 'B';
     // _edittedBook.pictures = _storedImages;
     _edittedBook.postRating = 0.0;
-    _edittedBook.userId = Provider.of<Users>(context, listen: false).user!.id;
-    Books books = Provider.of<Books>(context, listen: false);
+    _edittedBook.userId =
+        Provider.of<UserProvider>(context, listen: false).user!.id;
+    BookProvider books = Provider.of<BookProvider>(context, listen: false);
 
     if (await books.createPost(loggedInUser, _edittedBook)) {
       if (_storedImages != null) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
@@ -11,9 +11,9 @@ import '../../models/cart.dart';
 import '../../models/cart_item.dart';
 import '../../models/order_request.dart';
 import '../../models/session.dart';
-import '../../providers/carts.dart';
-import '../../providers/order_request_provider.dart';
-import '../../providers/orders.dart';
+import '../../view_models/cart_provider.dart';
+import '../../view_models/order_request_provider.dart';
+import '../../view_models/order_provider.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 
@@ -43,7 +43,7 @@ class _OrderRequestForUserDetailsScreenState
 
   Future<bool> _updateSellerOfferPrice(
       Session authSession, String requestId) async {
-    await Provider.of<OrderRequests>(context, listen: false)
+    await Provider.of<OrderRequestProvider>(context, listen: false)
         .updateSellerOfferPrice(requestId, _newSellerOfferPrice)
         .then(
       (value) {
@@ -485,7 +485,8 @@ class _OrderRequestForUserDetailsScreenState
                                   ).then(
                                     (_) async {
                                       if (userConfirmed) {
-                                        if (await Provider.of<OrderRequests>(
+                                        if (await Provider.of<
+                                                    OrderRequestProvider>(
                                                 context,
                                                 listen: false)
                                             .deleteOrderRequest(
@@ -514,7 +515,7 @@ class _OrderRequestForUserDetailsScreenState
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  Carts carts =
+                                  CartProvider carts =
                                       Provider.of(context, listen: false);
                                   // setState(() {
                                   //   _isLoading = true;
@@ -544,7 +545,8 @@ class _OrderRequestForUserDetailsScreenState
                                     );
                                     if (await carts.addItemToTemporaryCart(
                                         tempCart, edittedItem)) {
-                                      if (await Provider.of<Orders>(context,
+                                      if (await Provider.of<OrderProvider>(
+                                              context,
                                               listen: false)
                                           .placeOrderForRequestingCustomer(
                                               loggedInSession: authSession,
@@ -556,7 +558,8 @@ class _OrderRequestForUserDetailsScreenState
                                                   requestItem.billingInfo,
                                               paymentMethod: 'C')) {
                                         // Delete the order request when the order has been palced
-                                        if (await Provider.of<OrderRequests>(
+                                        if (await Provider.of<
+                                                    OrderRequestProvider>(
                                                 context,
                                                 listen: false)
                                             .deleteOrderRequest(

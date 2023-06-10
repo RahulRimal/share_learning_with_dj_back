@@ -7,7 +7,7 @@ import '../models/book.dart';
 import '../models/session.dart';
 import '../models/wishlist.dart';
 
-class Wishlists with ChangeNotifier {
+class WishlistProvider with ChangeNotifier {
   List<Wishlist> _wishlists = [];
   List<Book> _wishlistedBooks = [];
 
@@ -125,17 +125,13 @@ class Wishlists with ChangeNotifier {
     notifyListeners();
   }
 
-
-
   Future<dynamic> getWishlistsByBookCategory(
       Session loggedInSession, String categoryId) async {
     setLoading(true);
-    var response =
-        await WishlistApi.getWishlistsByBookCategory(loggedInSession, categoryId);
+    var response = await WishlistApi.getWishlistsByBookCategory(
+        loggedInSession, categoryId);
     // print(response);
     if (response is Success) {
-      
-
       setWishlists(response.response as List<Wishlist>);
     }
     if (response is Failure) {
@@ -148,6 +144,4 @@ class Wishlists with ChangeNotifier {
     setLoading(false);
     notifyListeners();
   }
-
-
 }

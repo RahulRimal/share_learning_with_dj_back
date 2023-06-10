@@ -19,10 +19,10 @@ import '../../models/cart.dart';
 import '../../models/cart_item.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../providers/carts.dart';
-import '../../providers/order_request_provider.dart';
-import '../../providers/sessions.dart';
-import '../../providers/users.dart';
+import '../../view_models/cart_provider.dart';
+import '../../view_models/order_request_provider.dart';
+import '../../view_models/session_provider.dart';
+import '../../view_models/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
@@ -43,7 +43,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
   // NepaliDateTime? _buyerExpectedDeadline;
 
-  Users users = new Users(
+  UserProvider users = new UserProvider(
     null,
   );
 
@@ -992,10 +992,11 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     //     Provider.of<SessionProvider>(context).session as Session;
     final _form = GlobalKey<FormState>();
     Book selectedPost = widget.selectedPost;
-    Users users = context.watch<Users>();
+    UserProvider users = context.watch<UserProvider>();
 
-    Carts carts = Provider.of<Carts>(context);
-    OrderRequests orderRequests = Provider.of<OrderRequests>(context);
+    CartProvider carts = Provider.of<CartProvider>(context);
+    OrderRequestProvider orderRequests =
+        Provider.of<OrderRequestProvider>(context);
     // Orders orders = Provider.of<Orders>(context);
 
     final args = ModalRoute.of(context)!.settings.arguments as Map;
@@ -1967,7 +1968,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
       'Nepalgunj',
     ];
 
-    User user = Provider.of<Users>(context, listen: false).user as User;
+    User user = Provider.of<UserProvider>(context, listen: false).user as User;
 
     if (user.firstName!.isNotEmpty) {
       _billingInfo["first_name"] = user.firstName!;
@@ -2315,7 +2316,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                               requestInfo["billing_info"] =
                                   json.decode(json.encode(_billingInfo));
 
-                              if (await Provider.of<OrderRequests>(context,
+                              if (await Provider.of<OrderRequestProvider>(
+                                      context,
                                       listen: false)
                                   .createOrderRequest(
                                       Provider.of<SessionProvider>(context,

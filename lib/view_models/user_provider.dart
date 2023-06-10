@@ -6,8 +6,8 @@ import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 
-class Users with ChangeNotifier {
-  Users(this._session);
+class UserProvider with ChangeNotifier {
+  UserProvider(this._session);
 
   List<User> _users = [];
 

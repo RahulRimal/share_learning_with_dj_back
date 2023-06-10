@@ -5,8 +5,8 @@ import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/cart_item.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/cart_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -72,7 +72,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     _edittedItem.quantity = _quantity.value;
     // _edittedItem.wishlisted = _wishlisted;
 
-    await Provider.of<Carts>(context, listen: false)
+    await Provider.of<CartProvider>(context, listen: false)
         .updateCartItem(cart.id, edittedItem)
         .then(
       (value) {
@@ -89,7 +89,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
   }
 
   _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-    bool value = await Provider.of<Carts>(context, listen: false)
+    bool value = await Provider.of<CartProvider>(context, listen: false)
         .deleteCartItem(userSession, cartId, cartItemId);
     if (value) {
       AlertHelper.showToastAlert('Book deleted from the cart');
@@ -133,7 +133,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     Session authendicatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
-    Carts _carts = context.watch<Carts>();
+    CartProvider _carts = context.watch<CartProvider>();
 
     return FutureBuilder(
         future: _carts.getCartItemBook(
@@ -295,7 +295,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                           if (userConfirmed) {
                                             _deleteCartItem(
                                               authendicatedSession,
-                                              Provider.of<Carts>(context,
+                                              Provider.of<CartProvider>(context,
                                                       listen: false)
                                                   .cart!
                                                   .id,
@@ -449,8 +449,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                 : 0, // Define the desired height when visible or hidden
                             child: ElevatedButton(
                               onPressed: () => _updateCartItem(
-                                Provider.of<Carts>(context, listen: false).cart
-                                    as Cart,
+                                Provider.of<CartProvider>(context,
+                                        listen: false)
+                                    .cart as Cart,
                                 _edittedItem,
                               ),
                               child: Text('Update Cart'),

@@ -135,14 +135,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../providers/users.dart';
+import '../../view_models/user_provider.dart';
 import '../utils/alert_helper.dart';
 
 class UserInterestsScreen extends StatefulWidget {
@@ -210,7 +210,7 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
     setState(() {
       _isLoading = true;
     });
-    Users users = Provider.of<Users>(context, listen: false);
+    UserProvider users = Provider.of<UserProvider>(context, listen: false);
     SharedPreferences prefs = await _prefs;
 
     Map<String, List<String>> userData = {

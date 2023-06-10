@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/comment.dart';
-import 'package:share_learning/providers/sessions.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/comment_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -38,17 +38,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   _logOut(Session session) async {
     SharedPreferences prefs = await _prefs;
-    Provider.of<Books>(context, listen: false).setBooks([]);
+    Provider.of<BookProvider>(context, listen: false).setBooks([]);
     // Provider.of<Users>(context, listen: false).logoutUser(session.id);
-    Provider.of<Users>(context, listen: false).logoutUser('1');
-    Provider.of<Comments>(context, listen: false).setComments([]);
+    Provider.of<UserProvider>(context, listen: false).logoutUser('1');
+    Provider.of<CommentProvider>(context, listen: false).setComments([]);
     prefs.remove('accessToken');
     prefs.remove('refreshToken');
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);
   }
 
   _deleteUserAccount(Session userSession, String password) async {
-    bool value = await Provider.of<Users>(context, listen: false)
+    bool value = await Provider.of<UserProvider>(context, listen: false)
         .deleteUserAccount(userSession, password);
     if (value) {
       AlertHelper.showToastAlert('Account deleted successfully');
@@ -673,7 +673,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     Session loggedInUserSession =
         Provider.of<SessionProvider>(context).session as Session;
 
-    User user = Provider.of<Users>(context, listen: false).user as User;
+    User user = Provider.of<UserProvider>(context, listen: false).user as User;
 
     SessionProvider userSession = (context).watch<SessionProvider>();
     userSession.setSession(loggedInUserSession);

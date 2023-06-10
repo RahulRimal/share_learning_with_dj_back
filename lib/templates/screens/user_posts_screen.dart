@@ -5,15 +5,15 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/sessions.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 
 import '../../models/post_category.dart';
-import '../../providers/categories.dart';
+import '../../view_models/category_provider.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
@@ -82,18 +82,18 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
       _selectedUserId = (args as Map)['userId'];
     }
 
-    Users users = Provider.of<Users>(context);
+    UserProvider users = Provider.of<UserProvider>(context);
     Session loggedInUserSession =
         Provider.of<SessionProvider>(context).session as Session;
 
     users.getUserByToken(loggedInUserSession.accessToken);
 
     List<Book> _allPosts =
-        Provider.of<Books>(context).postsByUser(users.user!.id);
+        Provider.of<BookProvider>(context).postsByUser(users.user!.id);
 
-    Books _books = Provider.of<Books>(context, listen: false);
-    Categories _categoryProvider =
-        Provider.of<Categories>(context, listen: false);
+    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
+    CategoryProvider _categoryProvider =
+        Provider.of<CategoryProvider>(context, listen: false);
 
     List<PostCategory> _categories = _categoryProvider.categories;
     _categories.insert(
@@ -525,7 +525,9 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                           'all'
                       ? _books.getUserBooks(_selectedUserId != null
                           ? _selectedUserId
-                          : Provider.of<Users>(context, listen: false).user!.id)
+                          : Provider.of<UserProvider>(context, listen: false)
+                              .user!
+                              .id)
                       : _books.getBooksByCategory(loggedInUserSession,
                           _categories[_selectedCategoryIndex].id.toString()),
                   builder: (ctx, snapshot) {

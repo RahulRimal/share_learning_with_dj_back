@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/orders.dart';
+import 'package:share_learning/view_models/order_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
-import '../../providers/books.dart';
+import '../../view_models/book_provider.dart';
 
 class OrderItemWidget extends StatefulWidget {
   const OrderItemWidget({Key? key, required this.orderItem}) : super(key: key);
@@ -115,8 +115,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
 
     final Session authendicatedSession = args['loggedInUserSession'] as Session;
 
-    Orders _orders = context.watch<Orders>();
-    Books _books = context.watch<Books>();
+    OrderProvider _orders = context.watch<OrderProvider>();
+    BookProvider _books = context.watch<BookProvider>();
 
     // return FutureBuilder(
     //     future: _orders.getOrderFromId(

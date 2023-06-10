@@ -9,9 +9,9 @@ import '../../models/cart.dart';
 import '../../models/cart_item.dart';
 import '../../models/order_request.dart';
 import '../../models/session.dart';
-import '../../providers/carts.dart';
-import '../../providers/order_request_provider.dart';
-import '../../providers/sessions.dart';
+import '../../view_models/cart_provider.dart';
+import '../../view_models/order_request_provider.dart';
+import '../../view_models/session_provider.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../widgets/billing_info.dart';
@@ -50,7 +50,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
   }
 
   Future<bool> _updateRequestPrice(String requestId) async {
-    await Provider.of<OrderRequests>(context, listen: false)
+    await Provider.of<OrderRequestProvider>(context, listen: false)
         .updateRequestPrice(requestId, _newRequestPrice)
         .then(
       (value) {
@@ -607,7 +607,8 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                   ).then(
                                     (_) async {
                                       if (userConfirmed) {
-                                        if (await Provider.of<OrderRequests>(
+                                        if (await Provider.of<
+                                                    OrderRequestProvider>(
                                                 context,
                                                 listen: false)
                                             .deleteOrderRequest(
@@ -636,7 +637,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  Carts carts =
+                                  CartProvider carts =
                                       Provider.of(context, listen: false);
 
                                   var tempCart =
@@ -665,7 +666,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                     if (await carts.addItemToTemporaryCart(
                                         tempCart, edittedItem)) {
                                       // Delete the order request when the order has been palced
-                                      Provider.of<OrderRequests>(context,
+                                      Provider.of<OrderRequestProvider>(context,
                                               listen: false)
                                           .deleteOrderRequest(
                                               authSession, requestItem.id);
@@ -804,7 +805,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                             return showOrderButton
                                 ? ElevatedButton(
                                     onPressed: () async {
-                                      Carts carts =
+                                      CartProvider carts =
                                           Provider.of(context, listen: false);
                                       // setState(() {
                                       //   _isLoading = true;
@@ -835,7 +836,8 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                         if (await carts.addItemToTemporaryCart(
                                             tempCart, edittedItem)) {
                                           // Delete the order request when the order has been palced
-                                          Provider.of<OrderRequests>(context,
+                                          Provider.of<OrderRequestProvider>(
+                                                  context,
                                                   listen: false)
                                               .deleteOrderRequest(
                                                   authSession, requestItem.id);

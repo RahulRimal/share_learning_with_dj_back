@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/cart_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -12,7 +12,6 @@ import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
 import 'package:share_learning/templates/widgets/cart_item_widget.dart';
-
 
 import '../widgets/billing_info.dart';
 import '../widgets/custom_bottom_navbar.dart';
@@ -39,7 +38,7 @@ class _CartScreenState extends State<CartScreen> {
     Session authendicatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
-    Carts carts = Provider.of<Carts>(context, listen: false);
+    CartProvider carts = Provider.of<CartProvider>(context, listen: false);
 
     return Scaffold(
         // appBar: AppBar(),
@@ -141,7 +140,7 @@ class _CartScreenState extends State<CartScreen> {
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 4,
         ),
-        bottomSheet: context.watch<Carts>().cartItems.length > 0
+        bottomSheet: context.watch<CartProvider>().cartItems.length > 0
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppPadding.p12),
                 child: ElevatedButton(
@@ -194,7 +193,7 @@ class CartList extends StatelessWidget {
     required this.authendicatedSession,
   }) : super(key: key);
 
-  final Carts carts;
+  final CartProvider carts;
   final Session authendicatedSession;
 
   // _getCartId() async {
@@ -207,7 +206,7 @@ class CartList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: context.watch<Carts>().cartItems.length,
+      itemCount: context.watch<CartProvider>().cartItems.length,
       itemBuilder: (context, index) {
         return CartItemWidget(
           cartItem: carts.cartItems[index],

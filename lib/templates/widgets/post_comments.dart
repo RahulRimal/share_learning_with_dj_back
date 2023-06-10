@@ -3,9 +3,9 @@ import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/comment.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/comment_provider.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -77,7 +77,7 @@ class _PostCommentsState extends State<PostComments> {
     _edittedComment.postId = int.parse(widget.bookId);
     _edittedComment.userId = int.parse(_commentUser.id);
 
-    Provider.of<Comments>(context, listen: false)
+    Provider.of<CommentProvider>(context, listen: false)
         .addComment(loggedInUserSession, _edittedComment);
 
     // Navigator.of(context, rootNavigator: true).pop();
@@ -96,7 +96,7 @@ class _PostCommentsState extends State<PostComments> {
     }
     _form.currentState!.save();
 
-    Provider.of<Comments>(context, listen: false)
+    Provider.of<CommentProvider>(context, listen: false)
         .updateComment(loggedInUserSession, _edittedComment);
 
     // Navigator.of(context, rootNavigator: true).pop();
@@ -117,7 +117,7 @@ class _PostCommentsState extends State<PostComments> {
 
     _edittedComment.postId = int.parse(widget.bookId);
 
-    Provider.of<Comments>(context, listen: false)
+    Provider.of<CommentProvider>(context, listen: false)
         .deleteComment(loggedInUserSession, _edittedComment);
 
     // Navigator.of(context, rootNavigator: true).pop();
@@ -129,10 +129,10 @@ class _PostCommentsState extends State<PostComments> {
 
   @override
   Widget build(BuildContext context) {
-    Users users = context.watch<Users>();
+    UserProvider users = context.watch<UserProvider>();
     // Users users = Provider.of<Users>(context, listen: false);
 
-    Comments comments = context.watch<Comments>();
+    CommentProvider comments = context.watch<CommentProvider>();
 
     if (users.user != null) {
       _commentUser = users.user!;
@@ -227,7 +227,8 @@ class _PostCommentsState extends State<PostComments> {
                                                   GestureDetector(
                                                     onTap: () {
                                                       // _commentUser = snapshot.data as User;
-                                                      if (Provider.of<Books>(
+                                                      if (Provider.of<
+                                                          BookProvider>(
                                                         context,
                                                         listen: false,
                                                       ).hasPostByUser(

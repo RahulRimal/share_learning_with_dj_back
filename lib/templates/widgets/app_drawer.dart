@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/comment.dart';
-import 'package:share_learning/providers/users.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/comment_provider.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
@@ -42,7 +42,7 @@ class AppDrawer extends StatelessWidget {
   //   return user;
   // }
 
-  final Users users = new Users(
+  final UserProvider users = new UserProvider(
     // Session(
     //   id: '0',
     //   userId: '0',
@@ -206,11 +206,11 @@ class AppDrawer extends StatelessWidget {
 
   _logOut(BuildContext context) async {
     SharedPreferences prefs = await _prefs;
-    Provider.of<Books>(context, listen: false).setBooks([]);
+    Provider.of<BookProvider>(context, listen: false).setBooks([]);
     // Provider.of<Users>(context, listen: false).setUser(null);
     // users.logoutUser('1');
 
-    Provider.of<Comments>(context, listen: false).setComments([]);
+    Provider.of<CommentProvider>(context, listen: false).setComments([]);
 
     prefs.remove('accessToken');
     prefs.remove('refreshToken');
@@ -223,7 +223,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final user = Provider.of<Users>(context, listen: false).getUserByToken(this.accessToken);
-    User loggedInUser = Provider.of<Users>(context).user as User;
+    User loggedInUser = Provider.of<UserProvider>(context).user as User;
     return SafeArea(
       child: Drawer(
         elevation: 100.0,

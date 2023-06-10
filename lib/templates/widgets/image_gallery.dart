@@ -1,12 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
-import 'package:share_learning/providers/books.dart';
-import 'package:share_learning/providers/sessions.dart';
+import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/widgets/custom_image.dart';
 
-import '../../providers/users.dart';
+import '../../view_models/user_provider.dart';
 import '../screens/edit_post_screen.dart';
 
 // ignore: must_be_immutable
@@ -29,7 +28,7 @@ class _ImageGalleryState extends State<ImageGallery> {
   @override
   Widget build(BuildContext context) {
     Book? selectedPost = widget.bookId != null
-        ? Provider.of<Books>(context).getBookById(widget.bookId!)
+        ? Provider.of<BookProvider>(context).getBookById(widget.bookId!)
         : null;
 
     return // Image Gallery Starts Here
@@ -81,7 +80,9 @@ class _ImageGalleryState extends State<ImageGallery> {
                     ),
                     // Edit images starts here
                     (selectedPost.userId ==
-                            Provider.of<Users>(context, listen: false).user!.id)
+                            Provider.of<UserProvider>(context, listen: false)
+                                .user!
+                                .id)
                         ? Container(
                             height: 50,
                             child: Column(
