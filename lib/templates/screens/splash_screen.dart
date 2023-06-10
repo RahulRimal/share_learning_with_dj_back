@@ -16,6 +16,7 @@ import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/login_signup_screen.dart';
 import 'package:share_learning/templates/screens/onboarding_screen.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/internet_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,29 +49,28 @@ class _SplashScreenState extends State<SplashScreen> {
       // if (true)
       Navigator.pushReplacementNamed(context, LoginScreen.routeName);
     else {
-      BotToast.showWidget(
-          toastBuilder: (c) => Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                // color: ColorManager.black,
-                color: ColorManager.blackWithOpacity,
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'No Internet',
-                      style: TextStyle(
-                        color: ColorManager.primary,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorManager.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ));
+      AlertHelper.showWidgetAlert(Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        // color: ColorManager.black,
+        color: ColorManager.blackWithOpacity,
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              'No Internet',
+              style: TextStyle(
+                color: ColorManager.primary,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: ColorManager.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ));
     }
   }
 

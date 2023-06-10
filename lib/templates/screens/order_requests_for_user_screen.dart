@@ -18,6 +18,7 @@ import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
 import 'package:share_learning/templates/screens/home_screen_new.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/cart_item_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -281,25 +282,11 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
         .then(
       (value) {
         if (value) {
-          BotToast.showSimpleNotification(
-            title: 'Request price changed',
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            // align: Alignment(0, 0),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
+          AlertHelper.showToastAlert('Request price changed');
+
           _showRequestButton.value = false;
         } else
-          BotToast.showSimpleNotification(
-            title: "Something went wrong, Please try again!",
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
+          AlertHelper.showToastAlert("Something went wrong, Please try again!");
       },
     );
 
@@ -310,23 +297,11 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
     bool value = await Provider.of<Carts>(context, listen: false)
         .deleteCartItem(userSession, cartId, cartItemId);
     if (value) {
-      BotToast.showSimpleNotification(
-        title: 'Book deleted from the cart',
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(-1, -1),
-        hideCloseButton: true,
+      AlertHelper.showToastAlert(
+        'Book deleted from the cart',
       );
     } else
-      BotToast.showSimpleNotification(
-        title: 'Something went wrong, Please try again!',
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(-1, -1),
-        hideCloseButton: true,
-      );
+      AlertHelper.showToastAlert('Something went wrong, Please try again!');
   }
 
   // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
@@ -355,21 +330,6 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
   //     },
   //   );
   // }
-
-  _showToastNotification(String msg) {
-    BotToast.showSimpleNotification(
-        title: msg,
-        // duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        // align: Alignment(1, 1),
-        align: Alignment(1, -1),
-        hideCloseButton: true,
-        dismissDirections: [
-          DismissDirection.horizontal,
-          DismissDirection.vertical,
-        ]);
-  }
 
   @override
   Widget build(BuildContext context) {

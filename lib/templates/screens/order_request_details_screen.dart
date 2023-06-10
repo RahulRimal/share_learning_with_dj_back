@@ -6,6 +6,7 @@ import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 
 import '../../models/book.dart';
 import '../../models/cart.dart';
@@ -59,44 +60,16 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
         .then(
       (value) {
         if (value) {
-          BotToast.showSimpleNotification(
-            title: 'Request price changed',
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
+          AlertHelper.showToastAlert('Request price changed');
+
           _showRequestButton.value = false;
           Navigator.of(context).pop();
         } else
-          BotToast.showSimpleNotification(
-            title: "Something went wrong, Please try again!",
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
+          AlertHelper.showToastAlert("Something went wrong, Please try again!");
       },
     );
 
     return true;
-  }
-
-  _showToastNotification(String msg) {
-    BotToast.showSimpleNotification(
-        title: msg,
-        // duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        // align: Alignment(1, 1),
-        align: Alignment(1, -1),
-        hideCloseButton: true,
-        dismissDirections: [
-          DismissDirection.horizontal,
-          DismissDirection.vertical,
-        ]);
   }
 
   @override
@@ -644,9 +617,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                                 listen: false)
                                             .deleteOrderRequest(
                                                 authSession, requestItem.id)) {
-                                          _showToastNotification(
+                                          AlertHelper.showToastAlert(
                                               'Request deleted successfully');
-                                          // Navigator.pop(context);
+
                                           Navigator.of(context)
                                               .pushReplacementNamed(
                                                   HomeScreenNew.routeName);
@@ -677,7 +650,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                                   listen: false)
                                               .session as Session);
                                   if (tempCart is CartError) {
-                                    _showToastNotification(
+                                    AlertHelper.showToastAlert(
                                         'Something went wrong');
                                   }
                                   if (tempCart is Cart) {
@@ -732,7 +705,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                     }
                                   } else {
                                     // print('here');
-                                    _showToastNotification(
+                                    AlertHelper.showToastAlert(
                                         'Something went wrong');
                                   }
                                 },
@@ -848,7 +821,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                                       listen: false)
                                                   .session as Session);
                                       if (tempCart is CartError) {
-                                        _showToastNotification(
+                                        AlertHelper.showToastAlert(
                                             'Something went wrong');
                                       }
                                       if (tempCart is Cart) {
@@ -902,7 +875,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                         }
                                       } else {
                                         // print('here');
-                                        _showToastNotification(
+                                        AlertHelper.showToastAlert(
                                             'Something went wrong');
                                       }
                                     },

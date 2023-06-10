@@ -3,6 +3,7 @@ import 'package:esewa_client/esewa_client.dart';
 import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/order.dart';
@@ -18,6 +19,7 @@ import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
 import '../screens/home_screen_new.dart';
+import '../utils/payment.dart';
 
 enum PaymentMethod {
   Esewa,
@@ -75,94 +77,94 @@ class _BillingInfoState extends State<BillingInfo> {
     // print(_billingInfo);
   }
 
-  _showToastNotification(String msg) {
-    BotToast.showSimpleNotification(
-      title: msg,
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
-  }
+  // _showToastNotification(String msg) {
+  //   BotToast.showSimpleNotification(
+  //     title: msg,
+  //     duration: Duration(seconds: 3),
+  //     backgroundColor: ColorManager.primary,
+  //     titleStyle: getBoldStyle(color: ColorManager.white),
+  //     align: Alignment(1, 1),
+  //   );
+  // }
 
-  _payWithKhalti() async {
-    bool paymentSuccess = false;
-    await KhaltiScope.of(context).pay(
-        config: PaymentConfig(
-          amount: 1000,
-          productIdentity: 'cart/product id',
-          productName: 'productName',
-        ),
-        preferences: [
-          PaymentPreference.khalti,
-          PaymentPreference.connectIPS,
-          PaymentPreference.eBanking,
-          PaymentPreference.mobileBanking,
-          PaymentPreference.sct,
-        ],
-        onSuccess: (PaymentSuccessModel success) {
-          paymentSuccess = true;
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Payment Successful'),
-                // actions: [
-                //   SimpleDialogOption(
-                //     child: Text('OK'),
-                //     onPressed: () {
-                //       Navigator.pop(context);
-                //     },
-                //   ),
-                // ],
-              );
-            },
-          );
-        },
-        onFailure: (PaymentFailureModel failure) {
-          print(failure.toString());
-          paymentSuccess = false;
-        },
-        onCancel: () {
-          print('Khalti Canceled');
-          paymentSuccess = false;
-        });
+  // _payWithKhalti() async {
+  //   bool paymentSuccess = false;
+  //   await KhaltiScope.of(context).pay(
+  //       config: PaymentConfig(
+  //         amount: 1000,
+  //         productIdentity: 'cart/product id',
+  //         productName: 'productName',
+  //       ),
+  //       preferences: [
+  //         PaymentPreference.khalti,
+  //         PaymentPreference.connectIPS,
+  //         PaymentPreference.eBanking,
+  //         PaymentPreference.mobileBanking,
+  //         PaymentPreference.sct,
+  //       ],
+  //       onSuccess: (PaymentSuccessModel success) {
+  //         paymentSuccess = true;
+  //         showDialog(
+  //           context: context,
+  //           builder: (context) {
+  //             return AlertDialog(
+  //               title: Text('Payment Successful'),
+  //               // actions: [
+  //               //   SimpleDialogOption(
+  //               //     child: Text('OK'),
+  //               //     onPressed: () {
+  //               //       Navigator.pop(context);
+  //               //     },
+  //               //   ),
+  //               // ],
+  //             );
+  //           },
+  //         );
+  //       },
+  //       onFailure: (PaymentFailureModel failure) {
+  //         print(failure.toString());
+  //         paymentSuccess = false;
+  //       },
+  //       onCancel: () {
+  //         print('Khalti Canceled');
+  //         paymentSuccess = false;
+  //       });
 
-    return paymentSuccess;
-  }
+  //   return paymentSuccess;
+  // }
 
-  _payWithEsewa() {
-    EsewaClient _esewaClient = EsewaClient.configure(
-      clientId: "JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R",
-      secretKey: "BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==",
-      environment: EsewaEnvironment.TEST,
-    );
+  // _payWithEsewa() {
+  //   EsewaClient _esewaClient = EsewaClient.configure(
+  //     clientId: "JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R",
+  //     secretKey: "BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==",
+  //     environment: EsewaEnvironment.TEST,
+  //   );
 
-    /*
-    * Enter your own callback url to receive response callback from esewa to your client server
-    * */
-    EsewaPayment payment = EsewaPayment(
-        productId: "test_id",
-        amount: "10",
-        name: "Test Product",
-        callbackUrl: "http://example.com/");
+  //   /*
+  //   * Enter your own callback url to receive response callback from esewa to your client server
+  //   * */
+  //   EsewaPayment payment = EsewaPayment(
+  //       productId: "test_id",
+  //       amount: "10",
+  //       name: "Test Product",
+  //       callbackUrl: "http://example.com/");
 
-    // start your payment procedure
-    _esewaClient.startPayment(
-        esewaPayment: payment,
-        onSuccess: (data) {
-          print("success");
-          return false;
-        },
-        onFailure: (data) {
-          print("failure");
-          return false;
-        },
-        onCancelled: (data) {
-          print("cancelled");
-          return false;
-        });
-  }
+  //   // start your payment procedure
+  //   _esewaClient.startPayment(
+  //       esewaPayment: payment,
+  //       onSuccess: (data) {
+  //         print("success");
+  //         return false;
+  //       },
+  //       onFailure: (data) {
+  //         print("failure");
+  //         return false;
+  //       },
+  //       onCancelled: (data) {
+  //         print("cancelled");
+  //         return false;
+  //       });
+  // }
 
   @override
   void initState() {
@@ -615,20 +617,29 @@ class _BillingInfoState extends State<BillingInfo> {
                     String paymentStatus = 'P';
 
                     if (_paymentMethod == PaymentMethod.Esewa) {
-                      if (_payWithEsewa() == false) {
-                        _showToastNotification(
+                      if (await PaymentHelper.payWithEsewa() == false) {
+                        AlertHelper.showToastAlert(
                             "Something went wrong during payment. Please try again");
                         return;
                       } else
                         paymentStatus = "C";
                     }
                     if (_paymentMethod == PaymentMethod.Khalti) {
-                      if (await _payWithKhalti() == false) {
-                        _showToastNotification(
+                      if (await PaymentHelper.payWithKhalti(context) == false) {
+                        AlertHelper.showToastAlert(
                             "Something went wrong during the payment, please try again");
                         return;
-                      } else
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Payment Successful'),
+                            );
+                          },
+                        );
                         paymentStatus = "C";
+                      }
                     }
                     // if (widget.cartId != null) {
                     //   if (await orders.placeOrder(
@@ -710,13 +721,13 @@ class _BillingInfoState extends State<BillingInfo> {
                         prefs.setString('cartId', carts.cart!.id);
                       }
 
-                      _showToastNotification("Order placed successfully");
+                      AlertHelper.showToastAlert("Order placed successfully");
                       Navigator.pushReplacementNamed(
                         context, HomeScreenNew.routeName,
                         // arguments: {'authSession': authSession}
                       );
                     } else {
-                      _showToastNotification("Something went wrong");
+                      AlertHelper.showToastAlert("Something went wrong");
                     }
                   },
                   child: Text(

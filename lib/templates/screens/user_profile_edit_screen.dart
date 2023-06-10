@@ -9,6 +9,7 @@ import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
@@ -29,7 +30,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
   XFile? _addedImage;
   final _form = GlobalKey<FormState>();
 
-  late FocusNode _firstNameFocusNode ;
+  late FocusNode _firstNameFocusNode;
   late FocusNode _lastNameFocusNode;
   late FocusNode _descriptionFocusNode;
   late FocusNode _classFocusNode;
@@ -106,44 +107,26 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
         if (!await Provider.of<Users>(context, listen: false)
             .updateProfilePicture(
                 loggedInUserSession, _edittedUser.id, _addedImage as XFile)) {
-          BotToast.showSimpleNotification(
-            title: 'Something went worng, please try again',
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(1, 1),
-          );
+          AlertHelper.showToastAlert('Something went worng, please try again');
         }
       }
-      BotToast.showSimpleNotification(
-        title: 'Profile has been successfully updated',
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(1, 1),
+      AlertHelper.showToastAlert(
+        'Profile has been successfully updated',
       );
+
       return true;
     }
 
     if (Provider.of<Users>(context, listen: false).userError != null) {
-      BotToast.showSimpleNotification(
-        title: Provider.of<Users>(context, listen: false)
+      AlertHelper.showToastAlert(
+        Provider.of<Users>(context, listen: false)
             .userError!
             .message
             .toString(),
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(1, 1),
       );
     }
-
-    BotToast.showSimpleNotification(
-      title: 'Something went wrong, please try again',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
+    AlertHelper.showToastAlert(
+      'Something went wrong, please try again',
     );
 
     return true;
@@ -374,26 +357,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                           setState(() => _showLoading = true);
 
                           if (_showLoading) {
-                            // BotToast.showLoading(
-
-                            // );
-                            BotToast.showCustomLoading(
-                              toastBuilder: (cancelFunc) => Container(
-                                width: 100,
-                                height: 100,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: Colors.black54,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    // Colors.white,
-                                    ColorManager.primary,
-                                  ),
-                                ),
-                              ),
-                            );
+                            AlertHelper.showLoading();
                           }
 
                           if (await _updateProfile(

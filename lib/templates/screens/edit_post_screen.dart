@@ -22,6 +22,7 @@ import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../models/user.dart';
 import '../../providers/users.dart';
+import '../utils/alert_helper.dart';
 
 class EditPostScreen extends StatefulWidget {
   static const routeName = '/edit-post';
@@ -253,37 +254,20 @@ class _EditPostScreenState extends State<EditPostScreen> {
           _edittedBook.images = _storedImages;
           if (await Provider.of<Books>(context, listen: false)
               .updatePictures(loggedInUserSession, _edittedBook)) {
-            BotToast.showSimpleNotification(
-              title: 'Post has been successfully updated',
-              duration: Duration(seconds: 3),
-              backgroundColor: ColorManager.primary,
-              titleStyle: getBoldStyle(color: ColorManager.white),
-              align: Alignment(1, 1),
-            );
+            AlertHelper.showToastAlert('Post has been successfully updated');
           }
         }
       }
     }
     if (Provider.of<Books>(context, listen: false).bookError != null) {
-      BotToast.showSimpleNotification(
-        title: Provider.of<Books>(context, listen: false)
+      AlertHelper.showToastAlert(
+        Provider.of<Books>(context, listen: false)
             .bookError!
             .message
             .toString(),
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(1, 1),
       );
     }
-
-    BotToast.showSimpleNotification(
-      title: 'Something went wrong, please try again',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+    AlertHelper.showToastAlert('Something went wrong, please try again');
 
     // Navigator.of(context).pop();
     // Navigator.of(context).pop();
@@ -329,45 +313,20 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     setState(() => _showLoading = true);
 
                     if (_showLoading) {
-                      BotToast.showCustomLoading(
-                        toastBuilder: (cancelFunc) => Container(
-                          width: 100,
-                          height: 100,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              // Colors.white,
-                              ColorManager.primary,
-                            ),
-                          ),
-                        ),
-                      );
+                      AlertHelper.showLoading();
                     }
+
                     if (await Provider.of<Books>(context, listen: false)
                         .deletePost(loggedInUserSession, _edittedBook.id)) {
                       setState(() => _showLoading = false);
-                      BotToast.showSimpleNotification(
-                        title: 'Post has been deleted successfully',
-                        duration: Duration(seconds: 3),
-                        backgroundColor: ColorManager.primary,
-                        titleStyle: getBoldStyle(color: ColorManager.white),
-                        align: Alignment(1, 1),
-                      );
+                      AlertHelper.showToastAlert(
+                          'Post has been deleted successfully');
+
                       Navigator.pushReplacementNamed(
                           context, HomeScreenNew.routeName);
-                      // Navigator.pop(context);
                     } else {
-                      BotToast.showSimpleNotification(
-                        title: 'Something went wrong',
-                        duration: Duration(seconds: 3),
-                        backgroundColor: ColorManager.primary,
-                        titleStyle: getBoldStyle(color: ColorManager.white),
-                        align: Alignment(1, 1),
-                      );
+                      AlertHelper.showToastAlert('Something went wrong');
+
                       setState(() => _showLoading = false);
                     }
                   },
@@ -764,38 +723,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       setState(() => _showLoading = true);
 
                       if (_showLoading) {
-                        // BotToast.showLoading(
-
-                        // );
-                        BotToast.showCustomLoading(
-                          toastBuilder: (cancelFunc) => Container(
-                            width: 100,
-                            height: 100,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                // Colors.white,
-                                ColorManager.primary,
-                              ),
-                            ),
-                          ),
-                        );
+                        AlertHelper.showLoading();
                       }
                       if (await _updatePost(
                           loggedInUserSession, _edittedBook)) {
                         setState(() => {_showLoading = false});
+                        AlertHelper.showToastAlert(
+                            'Posted Updated Successfully');
 
-                        BotToast.showSimpleNotification(
-                          title: 'Posted Updated Successfully',
-                          duration: Duration(seconds: 3),
-                          backgroundColor: ColorManager.primary,
-                          titleStyle: getBoldStyle(color: ColorManager.white),
-                          align: Alignment(1, 1),
-                        );
                         Navigator.pushReplacementNamed(
                           context,
                           HomeScreenNew.routeName,

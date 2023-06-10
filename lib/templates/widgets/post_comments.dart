@@ -13,6 +13,8 @@ import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
+import '../utils/alert_helper.dart';
+
 class PostComments extends StatefulWidget {
   final Session loggedInSession;
   final User loggedInUser;
@@ -81,14 +83,7 @@ class _PostCommentsState extends State<PostComments> {
 
     // Navigator.of(context, rootNavigator: true).pop();
     _commentFocusNode.unfocus();
-
-    BotToast.showSimpleNotification(
-      title: 'Replied to the post',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+    AlertHelper.showToastAlert('Replied to the post');
 
     return true;
   }
@@ -107,14 +102,7 @@ class _PostCommentsState extends State<PostComments> {
 
     // Navigator.of(context, rootNavigator: true).pop();
     _commentFocusNode.unfocus();
-
-    BotToast.showSimpleNotification(
-      title: 'Reply updated successfully',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+    AlertHelper.showToastAlert('Reply updated successfully');
 
     return true;
   }
@@ -135,14 +123,7 @@ class _PostCommentsState extends State<PostComments> {
 
     // Navigator.of(context, rootNavigator: true).pop();
     setState(() {});
-
-    BotToast.showSimpleNotification(
-      title: 'Your reply has been deleted',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+    AlertHelper.showToastAlert('Your reply has been deleted');
 
     return true;
   }

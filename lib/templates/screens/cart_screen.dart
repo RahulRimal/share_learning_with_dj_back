@@ -152,41 +152,44 @@ class _CartScreenState extends State<CartScreen> {
           index: 4,
         ),
         bottomSheet: context.watch<Carts>().cartItems.length > 0
-            ? ElevatedButton(
-                onPressed: () async {
-                  showModalBottomSheet(
-                    barrierColor: ColorManager.blackWithLowOpacity,
-                    isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(AppRadius.r20),
-                        topRight: Radius.circular(
-                          AppRadius.r20,
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppPadding.p12),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    showModalBottomSheet(
+                      barrierColor: ColorManager.blackWithLowOpacity,
+                      isScrollControlled: true,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(AppRadius.r20),
+                          topRight: Radius.circular(
+                            AppRadius.r20,
+                          ),
                         ),
                       ),
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.9,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppPadding.p20,
+                          ),
+                          child: BillingInfo(),
+                        );
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorManager.primary,
+                    minimumSize: const Size.fromHeight(40), // NEW
+                  ),
+                  child: const Text(
+                    "Order these items",
+                    style: TextStyle(
+                      fontSize: FontSize.s16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
                     ),
-                    context: context,
-                    builder: (context) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppPadding.p20,
-                        ),
-                        child: BillingInfo(),
-                      );
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: ColorManager.primary,
-                  minimumSize: const Size.fromHeight(40), // NEW
-                ),
-                child: const Text(
-                  "Order these items",
-                  style: TextStyle(
-                    fontSize: FontSize.s16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
                   ),
                 ),
               )

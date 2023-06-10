@@ -191,24 +191,21 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             iconSize: AppSize.s40,
                             onPressed: () => Navigator.pushNamed(
                                 context, UserProfileScreen.routeName),
-                            icon: _user.id != "temp"
-                                ?
-                                // CircleAvatar(
-                                //     backgroundImage: NetworkImage(
-                                //       (UserHelper.userProfileImage(_user)),
-                                //     ),
-                                //   )
-                                _user.image == null
-                                    ? CircleAvatar(
-                                        // radius: AppRadius.r24,
-                                        backgroundImage:
-                                            AssetImage(ImageAssets.noProfile),
-                                      )
-                                    : CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            UserHelper.userProfileImage(_user)),
-                                      )
-                                : FutureBuilder(
+                            // icon: _user.id != "temp"
+                            //     ?
+                                
+                            //     _user.image == null
+                            //         ? CircleAvatar(
+                            //             // radius: AppRadius.r24,
+                            //             backgroundImage:
+                            //                 AssetImage(ImageAssets.noProfile),
+                            //           )
+                            //         : CircleAvatar(
+                            //             backgroundImage: NetworkImage(
+                            //                 UserHelper.userProfileImage(_user)),
+                            //           )
+                            //     : FutureBuilder(
+                              icon: FutureBuilder(
                                     future: _users.getUserByToken(
                                         authenticatedSession.accessToken),
                                     builder: (ctx, snapshot) {

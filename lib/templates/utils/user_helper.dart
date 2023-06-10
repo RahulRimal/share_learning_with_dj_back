@@ -7,13 +7,16 @@ class UserHelper {
   }
 
   static String userProfileImage(User user) {
+    // print(user);
     // String data = user.image == null
-    return user.image == null
-        ? RemoteManager.IMAGE_PLACEHOLDER
-        : user.image!.contains('http://')
-            // : user.image!.contains('https://')
-            ? user.image as String
-            : RemoteManager.BASE_URI + user.image! as String;
+    if (user.image == null) {
+      return RemoteManager.IMAGE_PLACEHOLDER;
+    }
+    if (user.image!.contains('googleusercontent.com')) {
+      // : user.image!.contains('https://')
+      return (user.image as String).replaceAll('/media/https%3A/', 'https://');
+    }
+    return RemoteManager.BASE_URI + user.image! as String;
     // print(data);
     // return data;
   }

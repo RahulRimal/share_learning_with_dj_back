@@ -16,6 +16,7 @@ import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
 import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,23 +52,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     bool value = await Provider.of<Users>(context, listen: false)
         .deleteUserAccount(userSession, password);
     if (value) {
-      BotToast.showSimpleNotification(
-        title: 'Account deleted successfully',
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(-1, -1),
-        hideCloseButton: true,
-      );
+      AlertHelper.showToastAlert('Account deleted successfully');
     } else
-      BotToast.showSimpleNotification(
-        title: 'Something went wrong, Please try again!',
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(-1, -1),
-        hideCloseButton: true,
-      );
+      AlertHelper.showToastAlert('Something went wrong, Please try again!');
   }
 
   // Future<void> _logout(Session session) async {
@@ -155,11 +142,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             : CircleAvatar(
                                                 radius: AppRadius.r70,
                                                 backgroundImage: NetworkImage(
-                                                  user.image!.contains('http')
-                                                      ? user.image as String
-                                                      : UserHelper
-                                                          .userProfileImage(
-                                                              user),
+                                                  UserHelper.userProfileImage(
+                                                      user),
                                                 ),
                                               ),
                                       ),

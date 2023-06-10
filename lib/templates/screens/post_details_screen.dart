@@ -14,6 +14,7 @@ import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/edit_post_screen.dart';
 import 'package:share_learning/templates/screens/order_request_screen.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/post_comments_new.dart';
 
 import '../../models/book.dart';
@@ -627,44 +628,54 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Flexible(
-                                    flex: 3,
-                                    child: Container(
-                                      // width: MediaQuery.of(context).size.width *
-                                      //     0.7,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.9,
-                                      child: Text(
-                                        post.bookName,
-                                        softWrap: true,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                        ),
-                                        textAlign: TextAlign.start,
+                                  Container(
+                                    // width:
+                                    //     MediaQuery.of(context).size.width * 0.9,
+                                    width: 90.w,
+                                    child: Text(
+                                      post.bookName,
+                                      softWrap: true,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: 18,
                                       ),
+                                      textAlign: TextAlign.start,
                                     ),
                                   ),
-                                  Flexible(
-                                    flex: 1,
-                                    child: Container(
-                                      padding: EdgeInsets.only(top: 4),
-                                      child: Text(
-                                        post.author,
-                                        softWrap: true,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey,
-                                          fontSize: 14,
-                                        ),
-                                        textAlign: TextAlign.start,
+                                  Container(
+                                    // width: MediaQuery.of(context).size.width *
+                                    //     0.1,
+                                    width: 90.w,
+                                    child: Text(
+                                      post.author,
+                                      softWrap: true,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                        fontSize: 14,
                                       ),
+                                      textAlign: TextAlign.start,
                                     ),
                                   ),
+                                  // Flexible(
+                                  //   flex: 2,
+                                  //   child: Container(
+                                  //     padding: EdgeInsets.only(top: 4),
+                                  //     child: Text(
+                                  //       post.author,
+                                  //       softWrap: true,
+                                  //       style: TextStyle(
+                                  //         fontWeight: FontWeight.bold,
+                                  //         color: Colors.grey,
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //       textAlign: TextAlign.start,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
-
                               // Itemcount counter
                               // Container(
                               //   decoration: BoxDecoration(
@@ -976,21 +987,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           .format(_buyerExpectedDeadline as DateTime)
           .toString();
     }
-  }
-
-  _showToastNotification(String msg) {
-    BotToast.showSimpleNotification(
-        title: msg,
-        // duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        // align: Alignment(1, 1),
-        align: Alignment(1, -1),
-        hideCloseButton: true,
-        dismissDirections: [
-          DismissDirection.horizontal,
-          DismissDirection.vertical,
-        ]);
   }
 
   @override
@@ -1600,8 +1596,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             .currentState!
                                                             .validate();
                                                         if (!isValid) {
-                                                          _showToastNotification(
-                                                              'Something went wrong');
+                                                          AlertHelper
+                                                              .showToastAlert(
+                                                                  'Something went wrong');
                                                         }
                                                         _form.currentState!
                                                             .save();
@@ -1720,8 +1717,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                               .currentState!
                                                               .validate();
                                                           if (!isValid) {
-                                                            _showToastNotification(
-                                                                'Something went wrong');
+                                                            AlertHelper
+                                                                .showToastAlert(
+                                                                    'Something went wrong');
                                                           }
                                                           _form.currentState!
                                                               .save();
@@ -1762,12 +1760,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             });
                                                             Navigator.pop(
                                                                 context);
-                                                            _showToastNotification(
-                                                                'Book added to cart successfully');
+                                                            AlertHelper
+                                                                .showToastAlert(
+                                                                    'Book added to cart successfully');
                                                           }
                                                         } else {
-                                                          _showToastNotification(
-                                                              'Something went wrong');
+                                                          AlertHelper
+                                                              .showToastAlert(
+                                                                  'Something went wrong');
                                                         }
                                                       },
                                               );
@@ -1830,16 +1830,18 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                     .session as Session);
                                                         if (tempCart
                                                             is CartError) {
-                                                          _showToastNotification(
-                                                              'Something went wrong');
+                                                          AlertHelper
+                                                              .showToastAlert(
+                                                                  'Something went wrong');
                                                         }
                                                         if (tempCart is Cart) {
                                                           final isValid = _form
                                                               .currentState!
                                                               .validate();
                                                           if (!isValid) {
-                                                            _showToastNotification(
-                                                                'Something went wrong');
+                                                            AlertHelper
+                                                                .showToastAlert(
+                                                                    'Something went wrong');
                                                           }
                                                           _form.currentState!
                                                               .save();
@@ -1920,13 +1922,15 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
 
                                                             Navigator.pop(
                                                                 context);
-                                                            _showToastNotification(
-                                                                'Order has been placed successfully');
+                                                            AlertHelper
+                                                                .showToastAlert(
+                                                                    'Order has been placed successfully');
                                                           }
                                                         } else {
                                                           // print('here');
-                                                          _showToastNotification(
-                                                              'Something went wrong');
+                                                          AlertHelper
+                                                              .showToastAlert(
+                                                                  'Something went wrong');
                                                         }
                                                       },
                                               );
@@ -2318,13 +2322,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                               listen: false)
                                           .session as Session,
                                       requestInfo)) {
-                                _showToastNotification(
+                                AlertHelper.showToastAlert(
                                     'Request has been sent successfully');
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                                 // Navigator.pop(context);
                               } else {
-                                _showToastNotification('Something went wrong');
+                                AlertHelper.showToastAlert(
+                                    'Something went wrong');
                               }
                             },
                             child: Text(

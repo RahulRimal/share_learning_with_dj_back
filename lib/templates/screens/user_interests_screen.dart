@@ -145,6 +145,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
 import '../../providers/users.dart';
+import '../utils/alert_helper.dart';
 import 'home_screen.dart';
 
 class UserInterestsScreen extends StatefulWidget {
@@ -230,14 +231,7 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
       var response = await users.updateUserData(users.user!.id, key, value);
       // print(response);
       if (response is Success) {
-        BotToast.showSimpleNotification(
-          // title: (response as Map)['message'],
-          title: response.response.toString(),
-          duration: Duration(seconds: 3),
-          backgroundColor: ColorManager.primary,
-          titleStyle: getBoldStyle(color: ColorManager.white),
-          align: Alignment(1, -1),
-        );
+        AlertHelper.showToastAlert(response.response.toString());
 
         prefs.setBool('isFirstTime', false);
         if (mounted) {
@@ -259,15 +253,7 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
         setState(() {
           _isLoading = false;
         });
-        BotToast.showSimpleNotification(
-          // title: (response as Map)['message'],
-          title: response.errorResponse.toString(),
-          duration: Duration(seconds: 3),
-          backgroundColor: ColorManager.primary,
-          titleStyle: getBoldStyle(color: ColorManager.white),
-          align: Alignment(1, -1),
-        );
-        // return Future.value(false);
+        AlertHelper.showToastAlert(response.errorResponse.toString());
       }
     });
     // return Future.value(false);

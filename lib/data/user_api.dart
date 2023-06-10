@@ -235,7 +235,7 @@ class UserApi {
       var responseData = await response.stream.toBytes();
       var responseBody = String.fromCharCodes(responseData);
       // print(json.encode(json.decode(responseBody)['data']['user'][0]));
-      print(responseBody);
+      // print(responseBody);
       // if (response.statusCode == ApiStatusCode.responseCreated) {
       if (json.decode(responseBody)['statusCode'] ==
           ApiStatusCode.responseSuccess) {
@@ -601,7 +601,7 @@ class UserApi {
         Session userSession = Session.fromMap(respBody['tokens']);
 
         var userData = await getUserFromToken(respBody['tokens']['access']);
-        ((userData as Success).response as User).image = googleUser.photoUrl;
+        // ((userData as Success).response as User).image = googleUser.photoUrl;
 
         Map<String, dynamic> data = {
           "session": userSession,

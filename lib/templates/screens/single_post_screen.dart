@@ -18,6 +18,7 @@ import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 import 'package:share_learning/templates/widgets/post_comments.dart';
@@ -226,21 +227,9 @@ class SinglePostScreen extends StatelessWidget {
                             arguments: {
                               'authSession': loggedInUserSession,
                             });
-                        BotToast.showSimpleNotification(
-                          title: 'Post deleted successfully',
-                          duration: Duration(seconds: 3),
-                          backgroundColor: ColorManager.primary,
-                          titleStyle: getBoldStyle(color: ColorManager.white),
-                          align: Alignment(1, 1),
-                        );
+                        AlertHelper.showToastAlert('Post deleted successfully');
                       } else {
-                        BotToast.showSimpleNotification(
-                          title: 'Colubn\'t delete post!!',
-                          duration: Duration(seconds: 3),
-                          backgroundColor: ColorManager.primary,
-                          titleStyle: getBoldStyle(color: ColorManager.white),
-                          align: Alignment(1, 1),
-                        );
+                        AlertHelper.showToastAlert('Colubn\'t delete post!');
                       }
                     },
                   )
@@ -953,16 +942,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
         .toString();
   }
 
-  _showToastNotification(String msg) {
-    BotToast.showSimpleNotification(
-      title: msg,
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final _form = GlobalKey<FormState>();
@@ -1275,7 +1254,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         .currentState!
                                                         .validate();
                                                     if (!isValid) {
-                                                      _showToastNotification(
+                                                      AlertHelper.showToastAlert(
                                                           'Something went wrong');
                                                     }
                                                     _form.currentState!.save();
@@ -1304,12 +1283,13 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         .addItemToCart(
                                                             carts.cart as Cart,
                                                             edittedItem)) {
-                                                      _showToastNotification(
+                                                      AlertHelper.showToastAlert(
                                                           'Book added to cart successfully');
+
                                                       Navigator.pop(context);
                                                     }
                                                   } else {
-                                                    _showToastNotification(
+                                                    AlertHelper.showToastAlert(
                                                         'Something went wrong');
                                                   }
                                                 },

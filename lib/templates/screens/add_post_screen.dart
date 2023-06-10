@@ -19,6 +19,7 @@ import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../providers/users.dart';
+import '../utils/alert_helper.dart';
 
 class AddPostScreen extends StatefulWidget {
   static const routeName = '/add-post';
@@ -36,10 +37,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
   bool showSpinner = false;
 
   late FocusNode _authorFocusNode;
-  late  FocusNode _dateFocusNode;
-  late  FocusNode _priceFocusNode;
-  late  FocusNode _booksCountFocusNode;
-  late  FocusNode _descFocusNode;
+  late FocusNode _dateFocusNode;
+  late FocusNode _priceFocusNode;
+  late FocusNode _booksCountFocusNode;
+  late FocusNode _descFocusNode;
 
   List<bool> postTypeSelling = [true, false];
 
@@ -107,18 +108,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
   );
 
   @override
-  void initState(){
+  void initState() {
     _authorFocusNode = FocusNode();
     _dateFocusNode = FocusNode();
     _priceFocusNode = FocusNode();
     _booksCountFocusNode = FocusNode();
     _descFocusNode = FocusNode();
-    
+
     super.initState();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _authorFocusNode.dispose();
     _dateFocusNode.dispose();
     _priceFocusNode.dispose();
@@ -138,6 +139,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     _datePickercontroller.text =
         DateFormat('yyyy-MM-dd').format(_boughtDate as DateTime).toString();
   }
+
   _savePost(Session loggedInUser) async {
     final isValid = _form.currentState!.validate();
 
@@ -201,22 +203,25 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 //   ),
                 // );
                 // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                BotToast.showSimpleNotification(
-                  title: 'Your book has been posted!!',
-                  duration: Duration(seconds: 3),
-                  backgroundColor: ColorManager.primary,
-                  titleStyle: getBoldStyle(color: ColorManager.white),
-                  align: Alignment(1, 1),
-                );
+                AlertHelper.showToastAlert('Your book has been posted!');
+                // BotToast.showSimpleNotification(
+                //   title: 'Your book has been posted!!',
+                //   duration: Duration(seconds: 3),
+                //   backgroundColor: ColorManager.primary,
+                //   titleStyle: getBoldStyle(color: ColorManager.white),
+                //   align: Alignment(1, 1),
+                // );
               } else {
-                BotToast.showSimpleNotification(
-                  title: 'Couldn\'t post your book, plase try again!!',
-                  duration: Duration(seconds: 3),
-                  backgroundColor: ColorManager.primary,
-                  titleStyle: getBoldStyle(color: ColorManager.white),
-                  align: Alignment(1, 1),
-                  hideCloseButton: true,
-                );
+                // BotToast.showSimpleNotification(
+                //   title: 'Couldn\'t post your book, plase try again!!',
+                //   duration: Duration(seconds: 3),
+                //   backgroundColor: ColorManager.primary,
+                //   titleStyle: getBoldStyle(color: ColorManager.white),
+                //   align: Alignment(1, 1),
+                //   hideCloseButton: true,
+                // );
+                AlertHelper.showToastAlert(
+                    'Couldn\'t post your book, plase try again!');
                 // Navigator.pushReplacementNamed(context, HomeScreen.routeName,
                 //     arguments: {'authSession': loggedInUserSession});
                 Navigator.pushReplacementNamed(
@@ -652,43 +657,44 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       var result = await _savePost(loggedInUserSession);
                       // if (await _savePost(loggedInUserSession)) {
                       if (result == null) {
-                        BotToast.showSimpleNotification(
-                          title: 'Fields not valid',
-                          duration: Duration(seconds: 3),
-                          backgroundColor: ColorManager.primary,
-                          titleStyle: getBoldStyle(color: ColorManager.white),
-                          align: Alignment(1, 1),
-                          hideCloseButton: true,
-                        );
+                        AlertHelper.showToastAlert('Fields not valid');
+                        // BotToast.showSimpleNotification(
+                        //   title: 'Fields not valid',
+                        //   duration: Duration(seconds: 3),
+                        //   backgroundColor: ColorManager.primary,
+                        //   titleStyle: getBoldStyle(color: ColorManager.white),
+                        //   align: Alignment(1, 1),
+                        //   hideCloseButton: true,
+                        // );
                         return;
                       }
                       if (result) {
-                        BotToast.showSimpleNotification(
-                          title: 'Your book has been posted!!',
-                          duration: Duration(seconds: 3),
-                          backgroundColor: ColorManager.primary,
-                          titleStyle: getBoldStyle(color: ColorManager.white),
-                          align: Alignment(1, 1),
-                        );
-                        // Navigator.pushReplacementNamed(
-                        //     context, HomeScreen.routeName,
-                        //     arguments: {'authSession': loggedInUserSession});
+                        AlertHelper.showToastAlert(
+                            'Your book has been posted!');
+                        // BotToast.showSimpleNotification(
+                        //   title: 'Your book has been posted!!',
+                        //   duration: Duration(seconds: 3),
+                        //   backgroundColor: ColorManager.primary,
+                        //   titleStyle: getBoldStyle(color: ColorManager.white),
+                        //   align: Alignment(1, 1),
+                        // );
+
                         Navigator.pushReplacementNamed(
                           context,
                           HomeScreenNew.routeName,
                         );
                       } else {
-                        BotToast.showSimpleNotification(
-                          title: 'Couldn\'t post your book, please try again!!',
-                          duration: Duration(seconds: 3),
-                          backgroundColor: ColorManager.primary,
-                          titleStyle: getBoldStyle(color: ColorManager.white),
-                          align: Alignment(1, 1),
-                          hideCloseButton: true,
-                        );
-                        // Navigator.pushReplacementNamed(
-                        //     context, HomeScreen.routeName,
-                        //     arguments: {'authSession': loggedInUserSession});
+                        AlertHelper.showToastAlert(
+                            'Couldn\'t post your book, please try again!');
+                        // BotToast.showSimpleNotification(
+                        //   title: 'Couldn\'t post your book, please try again!!',
+                        //   duration: Duration(seconds: 3),
+                        //   backgroundColor: ColorManager.primary,
+                        //   titleStyle: getBoldStyle(color: ColorManager.white),
+                        //   align: Alignment(1, 1),
+                        //   hideCloseButton: true,
+                        // );
+
                         Navigator.pushReplacementNamed(
                           context,
                           HomeScreenNew.routeName,

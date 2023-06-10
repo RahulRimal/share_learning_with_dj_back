@@ -11,6 +11,7 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
 // class PostCommentsNew extends StatelessWidget {
@@ -586,14 +587,7 @@ class _PostCommentsNewState extends State<PostCommentsNew> {
     // Navigator.of(context, rootNavigator: true).pop();
     commentController.text = '';
     _commentFocusNode.unfocus();
-
-    BotToast.showSimpleNotification(
-      title: 'Replied to the post',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+    AlertHelper.showToastAlert('Replied to the post');
 
     return true;
   }
@@ -611,14 +605,7 @@ class _PostCommentsNewState extends State<PostCommentsNew> {
         .updateComment(loggedInUserSession, _edittedComment);
 
     // Navigator.of(context, rootNavigator: true).pop();
-
-    BotToast.showSimpleNotification(
-      title: 'Reply updated successfully',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+    AlertHelper.showToastAlert('Reply updated successfully');
 
     return true;
   }
@@ -642,14 +629,7 @@ class _PostCommentsNewState extends State<PostCommentsNew> {
     setState(() {
       // This setState is here to rebuild the widgets so the deleted comment gets removed from the screen.
     });
-
-    BotToast.showSimpleNotification(
-      title: 'Your reply has been deleted',
-      duration: Duration(seconds: 3),
-      backgroundColor: ColorManager.primary,
-      titleStyle: getBoldStyle(color: ColorManager.white),
-      align: Alignment(1, 1),
-    );
+    AlertHelper.showToastAlert('Your reply has been deleted');
 
     return true;
   }

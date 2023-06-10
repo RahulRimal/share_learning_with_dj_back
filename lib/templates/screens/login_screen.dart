@@ -24,6 +24,7 @@ import '../../providers/order_request_provider.dart';
 import '../../providers/users.dart';
 import '../managers/assets_manager.dart';
 import '../managers/values_manager.dart';
+import '../utils/alert_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.title}) : super(key: key);
@@ -224,13 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
           int delay = 0;
           for (String element in data) {
             Future.delayed(Duration(milliseconds: delay), () {
-              BotToast.showSimpleNotification(
-                title: element,
-                duration: Duration(seconds: 3),
-                backgroundColor: ColorManager.primary,
-                titleStyle: getBoldStyle(color: ColorManager.white),
-                align: Alignment(1, 1),
-              );
+              AlertHelper.showToastAlert(element);
               BotToast.showCustomNotification(
                 duration: Duration(seconds: 3),
                 toastBuilder: (cancelFunc) {
@@ -251,13 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
             delay += 1500; // increase delay for next notification
           }
         } else {
-          BotToast.showSimpleNotification(
-            title: "Something went wrong, please try again",
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(1, 1),
-          );
+          AlertHelper.showToastAlert("Something went wrong, please try again");
         }
       }
     }

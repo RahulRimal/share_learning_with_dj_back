@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/cart_item.dart';
@@ -12,6 +13,8 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'dart:math' as math;
+
+import 'package:share_learning/templates/utils/alert_helper.dart';
 
 class CartItemWidget extends StatefulWidget {
   const CartItemWidget({Key? key, required this.cartItem}) : super(key: key);
@@ -76,25 +79,11 @@ class _CartItemWidgetState extends State<CartItemWidget> {
         .then(
       (value) {
         if (value) {
-          BotToast.showSimpleNotification(
-            title: 'Cart Item updated',
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            // align: Alignment(0, 0),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
+          AlertHelper.showToastAlert('Cart Item updated');
+
           _cartItemChanged.value = false;
         } else
-          BotToast.showSimpleNotification(
-            title: "Something went wrong, Please try again!",
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(-1, -1),
-            hideCloseButton: true,
-          );
+          AlertHelper.showToastAlert("Something went wrong, Please try again!");
       },
     );
 
@@ -105,23 +94,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     bool value = await Provider.of<Carts>(context, listen: false)
         .deleteCartItem(userSession, cartId, cartItemId);
     if (value) {
-      BotToast.showSimpleNotification(
-        title: 'Book deleted from the cart',
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(-1, -1),
-        hideCloseButton: true,
-      );
+      AlertHelper.showToastAlert('Book deleted from the cart');
     } else
-      BotToast.showSimpleNotification(
-        title: 'Something went wrong, Please try again!',
-        duration: Duration(seconds: 3),
-        backgroundColor: ColorManager.primary,
-        titleStyle: getBoldStyle(color: ColorManager.white),
-        align: Alignment(-1, -1),
-        hideCloseButton: true,
-      );
+      AlertHelper.showToastAlert('Something went wrong, Please try again!');
   }
 
   // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
@@ -180,6 +155,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                 final Book orderedBook = snapshot.data as Book;
                 return Container(
                   margin: EdgeInsets.all(AppMargin.m8),
+                  padding: EdgeInsets.all(AppPadding.p8),
                   decoration: BoxDecoration(
                     color: ColorManager.white,
                     borderRadius: BorderRadius.circular(
@@ -194,197 +170,167 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     children: [
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(
-                              left: 16.00,
-                              top: 16.00,
-                              bottom: 16.00,
-                            ),
+                            padding:
+                                const EdgeInsets.only(right: AppPadding.p12),
                             child: Image.network(
-                              'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg',
-                              width: 100.0,
-                              height: 100.0,
+                              // 'https://cdn.pixabay.com/photo/2017/02/04/12/25/man-2037255_960_720.jpg',
+                              orderedBook.images![0].image,
+                              width: 20.w,
+
+                              // height: 100.0,
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: 12.00,
-                              top: 16.00,
-                              right: 16.00,
-                              bottom: 15.00,
-                            ),
+                          Expanded(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: 227.00,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Container(
-                                        width: 158.00,
-                                        child: Text(
-                                          orderedBook.bookName,
-                                          maxLines: null,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        orderedBook.bookName,
+                                        maxLines: null,
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          color: Colors.indigo,
+                                          fontSize: 12,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 0.50,
+                                        ),
+                                      ),
+                                    ),
+                                    // Padding(
+                                    //   padding: EdgeInsets.only(
+                                    //     bottom: 12.00,
+                                    //   ),
+                                    //   child: Container(
+                                    //     height: 24.00,
+                                    //     width: 24.00,
+                                    //     child: IconButton(
+                                    //       icon: Icon(
+                                    //         _wishlisted
+                                    //             ? Icons.favorite
+                                    //             : Icons.favorite_border,
+                                    //         color: ColorManager.primary,
+                                    //       ),
+                                    //       onPressed: () {
+                                    //         _wishlisted = !_wishlisted;
+                                    //         _ifCartItemChanged();
+                                    //         // _edittedItem.wishlisted =
+                                    //         //     _wishlisted;
+                                    //       },
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        bool userConfirmed = false;
+                                        showGeneralDialog(
+                                          barrierDismissible: true,
+                                          barrierLabel:
+                                              'Delete cart item dilaog dismissed',
+                                          context: context,
+                                          pageBuilder: (ctx, a1, a2) {
+                                            return Container();
+                                          },
+                                          transitionDuration:
+                                              const Duration(milliseconds: 300),
+                                          transitionBuilder:
+                                              (ctx, a1, a2, child) {
+                                            var curve = Curves.easeInOut
+                                                .transform(a1.value);
+                                            return Transform.scale(
+                                              scale: curve,
+                                              child: AlertDialog(
+                                                title: Text('Are you sure?'),
+                                                content: Text(
+                                                  'This will remove the item from  your cart',
+                                                  style: getRegularStyle(
+                                                    fontSize: FontSize.s16,
+                                                    color: ColorManager.black,
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text(
+                                                      'Yes',
+                                                      style: getBoldStyle(
+                                                        fontSize: FontSize.s16,
+                                                        color: ColorManager
+                                                            .primary,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      userConfirmed = true;
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text(
+                                                      'No',
+                                                      style: getBoldStyle(
+                                                        fontSize: FontSize.s16,
+                                                        color: Colors.green,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ).then((_) {
+                                          if (userConfirmed) {
+                                            _deleteCartItem(
+                                              authendicatedSession,
+                                              Provider.of<Carts>(context,
+                                                      listen: false)
+                                                  .cart!
+                                                  .id,
+                                              widget.cartItem.id.toString(),
+                                            );
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Unit Price",
+                                          overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 12,
+                                            color: ColorManager.black,
+                                            fontSize: FontSize.s12,
                                             fontFamily: 'Poppins',
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 0.50,
                                           ),
                                         ),
-                                      ),
-                                      // Padding(
-                                      //   padding: EdgeInsets.only(
-                                      //     bottom: 12.00,
-                                      //   ),
-                                      //   child: Container(
-                                      //     height: 24.00,
-                                      //     width: 24.00,
-                                      //     child: IconButton(
-                                      //       icon: Icon(
-                                      //         _wishlisted
-                                      //             ? Icons.favorite
-                                      //             : Icons.favorite_border,
-                                      //         color: ColorManager.primary,
-                                      //       ),
-                                      //       onPressed: () {
-                                      //         _wishlisted = !_wishlisted;
-                                      //         _ifCartItemChanged();
-                                      //         // _edittedItem.wishlisted =
-                                      //         //     _wishlisted;
-                                      //       },
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: 12.00,
-                                        ),
-                                        child: Container(
-                                          height: 24.00,
-                                          width: 24.00,
-                                          child: IconButton(
-                                            icon: Icon(Icons.delete),
-                                            onPressed: () {
-                                              bool userConfirmed = false;
-                                              showGeneralDialog(
-                                                barrierDismissible: true,
-                                                barrierLabel:
-                                                    'Delete cart item dilaog dismissed',
-                                                context: context,
-                                                pageBuilder: (ctx, a1, a2) {
-                                                  return Container();
-                                                },
-                                                transitionDuration:
-                                                    const Duration(
-                                                        milliseconds: 300),
-                                                transitionBuilder:
-                                                    (ctx, a1, a2, child) {
-                                                  var curve = Curves.easeInOut
-                                                      .transform(a1.value);
-                                                  return Transform.scale(
-                                                    scale: curve,
-                                                    child: AlertDialog(
-                                                      title:
-                                                          Text('Are you sure?'),
-                                                      content: Text(
-                                                        'This will remove the item from  your cart',
-                                                        style: getRegularStyle(
-                                                          fontSize:
-                                                              FontSize.s16,
-                                                          color: ColorManager
-                                                              .black,
-                                                        ),
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                          child: Text(
-                                                            'Yes',
-                                                            style: getBoldStyle(
-                                                              fontSize:
-                                                                  FontSize.s16,
-                                                              color:
-                                                                  ColorManager
-                                                                      .primary,
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            userConfirmed =
-                                                                true;
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                        TextButton(
-                                                          child: Text(
-                                                            'No',
-                                                            style: getBoldStyle(
-                                                              fontSize:
-                                                                  FontSize.s16,
-                                                              color:
-                                                                  Colors.green,
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ).then((_) {
-                                                if (userConfirmed) {
-                                                  _deleteCartItem(
-                                                    authendicatedSession,
-                                                    Provider.of<Carts>(context,
-                                                            listen: false)
-                                                        .cart!
-                                                        .id,
-                                                    widget.cartItem.id
-                                                        .toString(),
-                                                  );
-                                                }
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 227.00,
-                                  margin: EdgeInsets.only(
-                                    top: 17.00,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          top: 1.00,
-                                          bottom: 1.00,
-                                        ),
-                                        child: Text(
+                                        Text(
                                           "Rs. ${widget.cartItem.totalPrice}",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
@@ -396,94 +342,94 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                             letterSpacing: 0.50,
                                           ),
                                         ),
-                                      ),
-                                      Container(
-                                        child: ButtonBar(
-                                          children: [
-                                            ValueListenableBuilder<int>(
-                                              valueListenable: _quantity,
-                                              builder: (BuildContext context,
-                                                  int value, Widget? child) {
-                                                return IconButton(
-                                                  color: Colors.black,
-                                                  onPressed: _quantity.value > 1
-                                                      ? () {
-                                                          _quantity.value--;
-                                                          _ifCartItemChanged();
-                                                        }
-                                                      : null,
-                                                  icon: Container(
-                                                    width: AppSize.s40,
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                      color: ColorManager.black,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.remove,
-                                                      color: ColorManager.white,
+                                      ],
+                                    ),
+                                    Container(
+                                      child: ButtonBar(
+                                        children: [
+                                          ValueListenableBuilder<int>(
+                                            valueListenable: _quantity,
+                                            builder: (BuildContext context,
+                                                int value, Widget? child) {
+                                              return IconButton(
+                                                color: Colors.black,
+                                                onPressed: _quantity.value > 1
+                                                    ? () {
+                                                        _quantity.value--;
+                                                        _ifCartItemChanged();
+                                                      }
+                                                    : null,
+                                                icon: Container(
+                                                  // width: AppSize.s40,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: ColorManager.black,
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.remove,
+                                                    color: ColorManager.white,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          ValueListenableBuilder(
+                                            valueListenable: _quantity,
+                                            builder: (BuildContext context,
+                                                int quantity, Widget? child) {
+                                              return AnimatedSwitcher(
+                                                  duration: const Duration(
+                                                      milliseconds: 200),
+                                                  child: Text(
+                                                    quantity.toString(),
+                                                    key: ValueKey(quantity),
+                                                    style: getBoldStyle(
+                                                      color:
+                                                          ColorManager.primary,
+                                                      fontSize: FontSize.s20,
                                                     ),
                                                   ),
-                                                );
-                                              },
-                                            ),
-                                            ValueListenableBuilder(
-                                              valueListenable: _quantity,
-                                              builder: (BuildContext context,
-                                                  int quantity, Widget? child) {
-                                                return AnimatedSwitcher(
-                                                    duration: const Duration(
-                                                        milliseconds: 200),
-                                                    child: Text(
-                                                      quantity.toString(),
-                                                      key: ValueKey(quantity),
-                                                      style: getBoldStyle(
-                                                        color: ColorManager
-                                                            .primary,
-                                                        fontSize: FontSize.s20,
-                                                      ),
-                                                    ),
-                                                    transitionBuilder:
-                                                        (Widget child,
-                                                            Animation<double>
-                                                                animation) {
-                                                      return ScaleTransition(
-                                                          scale: animation,
-                                                          child: child);
-                                                    });
-                                              },
-                                            ),
-                                            ValueListenableBuilder<int>(
-                                              valueListenable: _quantity,
-                                              builder: (BuildContext context,
-                                                  int value, Widget? child) {
-                                                return IconButton(
-                                                  color: ColorManager.white,
-                                                  onPressed:
-                                                      orderedBook.bookCount >
-                                                              _quantity.value
-                                                          ? () {
-                                                              _quantity.value++;
-                                                              // ValueNotifier(
-                                                              //     _quantity.value++);
-                                                              _ifCartItemChanged();
-                                                            }
-                                                          : null,
-                                                  icon: Container(
-                                                    width: AppSize.s40,
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                      color: ColorManager.black,
-                                                    ),
-                                                    child: Icon(Icons.add),
+                                                  transitionBuilder:
+                                                      (Widget child,
+                                                          Animation<double>
+                                                              animation) {
+                                                    return ScaleTransition(
+                                                        scale: animation,
+                                                        child: child);
+                                                  });
+                                            },
+                                          ),
+                                          ValueListenableBuilder<int>(
+                                            valueListenable: _quantity,
+                                            builder: (BuildContext context,
+                                                int value, Widget? child) {
+                                              return IconButton(
+                                                color: ColorManager.white,
+                                                onPressed:
+                                                    orderedBook.bookCount >
+                                                            _quantity.value
+                                                        ? () {
+                                                            _quantity.value++;
+                                                            // ValueNotifier(
+                                                            //     _quantity.value++);
+                                                            _ifCartItemChanged();
+                                                          }
+                                                        : null,
+                                                icon: Container(
+                                                  // width: AppSize.s40,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: ColorManager.black,
                                                   ),
-                                                );
-                                              },
-                                            )
-                                          ],
-                                        ),
+                                                  child: Icon(Icons.add),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -495,16 +441,13 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         builder: (BuildContext context, bool itemChanged,
                             Widget? child) {
                           return AnimatedContainer(
-                            padding: EdgeInsets.only(
-                              bottom: AppPadding.p8,
-                            ),
                             duration: const Duration(
                                 milliseconds:
                                     200), // Adjust the duration as needed
                             curve:
                                 Curves.easeInOut, // Adjust the curve as desired
                             height: itemChanged
-                                ? AppHeight.h50
+                                ? AppHeight.h40
                                 : 0, // Define the desired height when visible or hidden
                             child: ElevatedButton(
                               onPressed: () => _updateCartItem(

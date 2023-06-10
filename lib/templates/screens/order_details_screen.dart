@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/models/order.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 
 import '../../models/book.dart';
 import '../../models/order_item.dart';
@@ -12,11 +13,23 @@ import '../../providers/books.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
+import '../utils/payment.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+enum PaymentMethod {
+  Esewa,
+  Khalti,
+  Cash,
+}
+
+class OrderDetailsScreen extends StatefulWidget {
   static const routeName = 'order-details-screen';
   const OrderDetailsScreen({Key? key}) : super(key: key);
 
+  @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
@@ -55,13 +68,21 @@ class OrderDetailsScreen extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return Center(
+                                child: Padding(
+                              padding: const EdgeInsets.all(AppPadding.p8),
+                              child: CircularProgressIndicator(
+                                color: ColorManager.primary,
+                              ),
+                            ));
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
                             Book orderedBook = snapshot.data as Book;
 
                             return Container(
+                              margin: EdgeInsets.only(bottom: AppMargin.m8),
+                              padding: EdgeInsets.all(AppPadding.p16),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8.0),
@@ -74,7 +95,6 @@ class OrderDetailsScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              padding: EdgeInsets.all(16.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -334,6 +354,76 @@ class OrderDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(height: 24.0),
+              // ------------------------------------------------------ Complete payment start here ----------------------------------------------------
+              if (order.paymentStatus == PaymentStatus.PENDING)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Complete payment',
+                      style: TextStyle(
+                        fontSize: FontSize.s20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorManager.green,
+                            fixedSize: Size.fromWidth(
+                              MediaQuery.of(context).size.width,
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (await PaymentHelper.payWithEsewa()) {
+                              setState(() {
+                                order.paymentStatus = PaymentStatus.COMPLETE;
+                              });
+                              AlertHelper.showToastAlert(
+                                  'Payment completed successfully');
+                            }
+                          },
+                          child: Text("Pay with e-Sewa"),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorManager.purple,
+                            fixedSize: Size.fromWidth(
+                              MediaQuery.of(context).size.width,
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (await PaymentHelper.payWithKhalti(context)) {
+                              setState(() {
+                                order.paymentStatus = PaymentStatus.COMPLETE;
+                              });
+                              AlertHelper.showToastAlert(
+                                  'Payment completed successfully');
+                            }
+                          },
+                          child: Text("Pay with Khalti"),
+                        ),
+                      ]),
+                    ),
+                  ],
+                ),
+              // ------------------------------------------------------ Complete payment ends here ----------------------------------------------------
             ],
           ),
         ),

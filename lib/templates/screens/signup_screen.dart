@@ -7,6 +7,7 @@ import 'package:share_learning/models/user.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
+import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -171,13 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           int delay = 0;
           for (String element in data) {
             Future.delayed(Duration(milliseconds: delay), () {
-              BotToast.showSimpleNotification(
-                title: element,
-                duration: Duration(seconds: 3),
-                backgroundColor: ColorManager.primary,
-                titleStyle: getBoldStyle(color: ColorManager.white),
-                align: Alignment(1, 1),
-              );
+              AlertHelper.showToastAlert(element);
               BotToast.showCustomNotification(
                 duration: Duration(seconds: 3),
                 toastBuilder: (cancelFunc) {
@@ -198,13 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             delay += 1500; // increase delay for next notification
           }
         } else {
-          BotToast.showSimpleNotification(
-            title: "Something went wrong, please try again",
-            duration: Duration(seconds: 3),
-            backgroundColor: ColorManager.primary,
-            titleStyle: getBoldStyle(color: ColorManager.white),
-            align: Alignment(1, 1),
-          );
+          AlertHelper.showToastAlert("Something went wrong, please try again");
         }
       }
     }
