@@ -2,7 +2,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
@@ -11,14 +10,10 @@ import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/api_status.dart';
-import '../../models/session.dart';
-import '../../providers/carts.dart';
 import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
-import 'home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key, this.title}) : super(key: key);
@@ -300,6 +295,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   // Return null if the entered password is valid
                   return null;
                 }
+                return null;
               },
               // obscureText: isPassword,
               obscureText: isPassword ? !visible : false,

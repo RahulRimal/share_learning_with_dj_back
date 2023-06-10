@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -10,14 +9,11 @@ import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/categories.dart';
-import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
-import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../models/user.dart';
@@ -174,31 +170,13 @@ class _EditPostScreenState extends State<EditPostScreen> {
       // print('here');
       setState(() {
         // if (_storedImages != null) {
-        if (actualImages != null) {
-          // print('here');
-          // XFile? imageToRemove;
-
-          // try {
-
-          //   imageToRemove = _storedImages!.firstWhere(
-          //     (element) => element.path == image,
-          //   );
-          // } on StateError {
-          //   imageToRemove = null;
-          // }
-          // if (imageToRemove != null) _storedImages?.remove(imageToRemove);
-          // List<BookImage>? imagesToRemove = [];
-
-          try {
-            _imagesToDelete.add(
-                actualImages.firstWhere((element) => element.id == image.id));
-            actualImages.remove(image);
-          } on StateError {
-            // imagesToRemove = null;
-            print('here');
-          }
-
-          // print(_imagesToDelete);
+        try {
+          _imagesToDelete.add(
+              actualImages.firstWhere((element) => element.id == image.id));
+          actualImages.remove(image);
+        } on StateError {
+          // imagesToRemove = null;
+          print('here');
         }
 
         // actualImages.remove(image);

@@ -22,7 +22,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../managers/assets_manager.dart';
 import '../screens/order_request_screen.dart';
 import '../screens/order_requests_for_user_screen.dart';
-import '../screens/order_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   // AppDrawer(this.loggedInSession, this.loggedInUser);

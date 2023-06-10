@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
-import 'package:path/path.dart';
 import 'package:share_learning/data/comment_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';

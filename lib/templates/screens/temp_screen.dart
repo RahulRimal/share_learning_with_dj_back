@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nepali_date_picker/nepali_date_picker.dart';
 
 import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';

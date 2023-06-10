@@ -11,14 +11,12 @@ import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
-import 'package:share_learning/templates/widgets/post.dart';
 
 import '../../models/post_category.dart';
 import '../../providers/categories.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
-import '../widgets/book_filters.dart';
 import '../widgets/post_new.dart';
 
 class UserPostsScreen extends StatefulWidget {

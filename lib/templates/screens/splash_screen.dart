@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -11,11 +10,8 @@ import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
-import 'package:share_learning/templates/screens/login_signup_screen.dart';
-import 'package:share_learning/templates/screens/onboarding_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/internet_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';

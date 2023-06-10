@@ -13,7 +13,6 @@ import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/session.dart';
-import '../models/user.dart';
 
 class OrderRequestApi {
   static Future<Object> getOrderById(Session loggedInUser, String id) async {

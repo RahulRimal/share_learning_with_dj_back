@@ -1,8 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +8,6 @@ import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/categories.dart';
@@ -37,7 +33,6 @@ import 'package:share_learning/templates/screens/single_post_screen.dart';
 import 'package:share_learning/templates/screens/post_details_screen.dart';
 import 'package:share_learning/templates/screens/splash_screen.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
-import 'package:share_learning/templates/screens/temp_screen.dart';
 import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';

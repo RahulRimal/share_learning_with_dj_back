@@ -4,12 +4,10 @@ import 'dart:io';
 import 'package:share_learning/models/wishlist.dart';
 
 import '../models/api_status.dart';
-import '../models/book.dart';
 import '../models/session.dart';
 import '../templates/managers/api_values_manager.dart';
 import '../templates/managers/strings_manager.dart';
 import '../templates/managers/values_manager.dart';
-import 'book_api.dart';
 import 'package:http/http.dart' as http;
 
 class WishlistApi {

@@ -1,12 +1,8 @@
-import 'package:bot_toast/bot_toast.dart';
-import 'package:esewa_client/esewa_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -15,15 +11,9 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
-import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/cart_item_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/order.dart';
-import '../../models/user.dart';
 
-import '../../providers/order_request_provider.dart';
-import '../../providers/users.dart';
 import '../widgets/billing_info.dart';
 import '../widgets/custom_bottom_navbar.dart';
 

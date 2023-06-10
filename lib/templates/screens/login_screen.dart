@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +11,6 @@ import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/wishlists.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
-import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/screens/signup_screen.dart';
 import 'package:share_learning/templates/screens/user_interests_screen.dart';
@@ -23,7 +21,6 @@ import '../../providers/carts.dart';
 import '../../providers/order_request_provider.dart';
 import '../../providers/users.dart';
 import '../managers/assets_manager.dart';
-import '../managers/values_manager.dart';
 import '../utils/alert_helper.dart';
 
 class LoginScreen extends StatefulWidget {

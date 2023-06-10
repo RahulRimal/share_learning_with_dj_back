@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -12,9 +11,6 @@ import 'package:share_learning/providers/sessions.dart';
 
 // import 'package:path/path.dart' as path;
 // import 'package:path_provider/path_provider.dart' as syspaths;
-import 'package:share_learning/templates/managers/color_manager.dart';
-import 'package:share_learning/templates/managers/style_manager.dart';
-import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 

@@ -1,8 +1,5 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/models/order.dart';
-import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';

@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/templates/widgets/order_item_widget.dart';
 
-import '../../models/cart_item.dart';
 import '../../models/session.dart';
-import '../../models/user.dart';
 import '../../providers/carts.dart';
 import '../../providers/orders.dart';
 import '../../providers/users.dart';

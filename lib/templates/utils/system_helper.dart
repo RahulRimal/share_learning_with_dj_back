@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:share_learning/templates/managers/api_values_manager.dart';
 
 import '../../data/session_api.dart';

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/book.dart';

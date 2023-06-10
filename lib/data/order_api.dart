@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:share_learning/models/api_status.dart';
-import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/order.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/templates/managers/api_values_manager.dart';
@@ -12,7 +11,6 @@ import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/session.dart';
-import '../models/user.dart';
 
 class OrderApi {
   static Future<Object> getOrderById(Session loggedInUser, String id) async {

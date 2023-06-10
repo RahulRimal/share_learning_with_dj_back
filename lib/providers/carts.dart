@@ -5,7 +5,6 @@ import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/cart_item.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/templates/widgets/cart_item_widget.dart';
 
 class Carts with ChangeNotifier {
   Cart? _cart;

@@ -1,7 +1,4 @@
-import 'package:bot_toast/bot_toast.dart';
-import 'package:esewa_client/esewa_client.dart';
 import 'package:flutter/material.dart';
-import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -508,7 +505,7 @@ class _BillingInfoState extends State<BillingInfo> {
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: _paymentMethod == PaymentMethod.Esewa
+                  backgroundColor: _paymentMethod == PaymentMethod.Esewa
                       ? ColorManager.green
                       : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
@@ -525,7 +522,7 @@ class _BillingInfoState extends State<BillingInfo> {
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: _paymentMethod == PaymentMethod.Khalti
+                  backgroundColor: _paymentMethod == PaymentMethod.Khalti
                       ? ColorManager.purple
                       : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
@@ -543,7 +540,7 @@ class _BillingInfoState extends State<BillingInfo> {
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: _paymentMethod == PaymentMethod.Cash
+                  backgroundColor: _paymentMethod == PaymentMethod.Cash
                       ? ColorManager.primary
                       : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
@@ -738,7 +735,7 @@ class _BillingInfoState extends State<BillingInfo> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: ColorManager.primary,
+                    backgroundColor: ColorManager.primary,
                     padding: EdgeInsets.symmetric(
                       vertical: AppPadding.p12,
                     ),

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +13,6 @@ import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
 import '../managers/assets_manager.dart';
-import '../managers/color_manager.dart';
-import '../managers/style_manager.dart';
 
 class UserProfileEditScreen extends StatefulWidget {
   const UserProfileEditScreen({Key? key}) : super(key: key);
@@ -143,7 +140,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
     Session loggedInUserSession =
         Provider.of<SessionProvider>(context).session as Session;
     User _user = Provider.of<Users>(context).user as User;
-    _edittedUser = _user as User;
+    _edittedUser = _user;
 
     Users users = context.watch<Users>();
 
@@ -175,7 +172,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                 child: CircleAvatar(
                     radius: 70,
                     backgroundImage: _imageAdded
-                        ? FileImage(File(_addedImage!.path)) as ImageProvider
+                        ? FileImage(File(_addedImage!.path))
                         // : NetworkImage(
                         //     UserHelper.userProfileImage(user),
                         //   ),

@@ -15,7 +15,6 @@ import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
-import 'custom_image.dart';
 
 class PostNew extends StatefulWidget {
   const PostNew({

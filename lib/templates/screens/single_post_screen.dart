@@ -1,22 +1,18 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
-import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/providers/books.dart';
 import 'package:share_learning/providers/carts.dart';
-import 'package:share_learning/providers/comment.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/cart_screen.dart';
 import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
@@ -26,7 +22,6 @@ import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/cart_item.dart';
-import '../../models/order.dart';
 import '../../providers/orders.dart';
 import 'edit_post_screen.dart';
 import 'user_posts_screen.dart';
@@ -967,7 +962,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
             // ? (Provider.of<Carts>(context).cartItems.length > 0 && _checkBookInCart(carts, selectedPost)
             ? ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: ColorManager.grey,
+                  backgroundColor: ColorManager.grey,
                   // primary: Colors.black,
                   minimumSize: const Size.fromHeight(50), // NEW
                 ),
@@ -985,7 +980,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                         ? ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
-                              primary: ColorManager.primaryColorWithOpacity,
+                              backgroundColor: ColorManager.primaryColorWithOpacity,
                               minimumSize: const Size.fromHeight(40), // NEW
                             ),
                             child: const Text(

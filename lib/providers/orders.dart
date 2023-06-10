@@ -5,7 +5,6 @@ import 'package:share_learning/models/session.dart';
 
 import '../models/order.dart';
 import '../models/order_item.dart';
-import '../models/user.dart';
 
 class Orders with ChangeNotifier {
   // Order? _order;

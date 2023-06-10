@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +17,6 @@ import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../providers/users.dart';
-import '../managers/api_values_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/values_manager.dart';
 import '../utils/user_helper.dart';
@@ -165,7 +163,7 @@ class OrdersScreenNew extends StatelessWidget {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: ColorManager.white,
+                          backgroundColor: ColorManager.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: AppPadding.p12,
                             vertical: AppPadding.p8,

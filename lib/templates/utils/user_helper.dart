@@ -16,7 +16,7 @@ class UserHelper {
       // : user.image!.contains('https://')
       return (user.image as String).replaceAll('/media/https%3A/', 'https://');
     }
-    return RemoteManager.BASE_URI + user.image! as String;
+    return RemoteManager.BASE_URI + user.image!;
     // print(data);
     // return data;
   }

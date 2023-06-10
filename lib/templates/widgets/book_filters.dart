@@ -172,7 +172,7 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                                 });
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: _selectedSortOption ==
+                                backgroundColor: _selectedSortOption ==
                                         sortByButtons[index]['value']
                                     // ? ColorManager.primary
                                     ? ColorManager.black
@@ -417,8 +417,7 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                                 });
                               },
                               style: ElevatedButton.styleFrom(
-                                primary:
-                                    filterOptions['reviews'] == _reviews[index]
+                                backgroundColor: filterOptions['reviews'] == _reviews[index]
                                         // ? ColorManager.primary
                                         ? ColorManager.black
                                         : ColorManager.white,
@@ -496,7 +495,7 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: ColorManager.white,
+                    backgroundColor: ColorManager.white,
                     padding: EdgeInsets.symmetric(
                       vertical: AppPadding.p12,
                       horizontal: AppPadding.p20,
@@ -527,7 +526,7 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      primary: ColorManager.primary,
+                      backgroundColor: ColorManager.primary,
                       padding: EdgeInsets.symmetric(
                         vertical: AppPadding.p12,
                       ),

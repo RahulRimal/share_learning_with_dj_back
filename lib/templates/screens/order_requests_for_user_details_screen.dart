@@ -1,8 +1,5 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/models/order.dart';
-import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/providers/sessions.dart';
 import 'package:share_learning/providers/users.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -21,7 +18,6 @@ import '../../providers/order_request_provider.dart';
 import '../../providers/orders.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
-import '../widgets/billing_info.dart';
 
 class OrderRequestForUserDetailsScreen extends StatefulWidget {
   static const routeName = 'order-request-for-user-details-screen';

@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
@@ -6,11 +5,8 @@ import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
-import 'package:share_learning/templates/managers/font_manager.dart';
-import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
-import '../../models/order.dart';
 import '../../providers/books.dart';
 
 class OrderItemWidget extends StatefulWidget {
@@ -25,7 +21,6 @@ class OrderItemWidget extends StatefulWidget {
 class _OrderItemWidgetState extends State<OrderItemWidget> {
   late bool _orderItemChanged;
   late int _quantity;
-  // late bool _wishlisted;
   late OrderItem _edittedItem;
 
   _ifOrderItemChanged() {

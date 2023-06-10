@@ -131,7 +131,6 @@
 //   }
 // }
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
@@ -143,10 +142,8 @@ import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/user.dart';
 import '../../providers/users.dart';
 import '../utils/alert_helper.dart';
-import 'home_screen.dart';
 
 class UserInterestsScreen extends StatefulWidget {
   @override

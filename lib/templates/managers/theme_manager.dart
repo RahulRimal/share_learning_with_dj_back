@@ -16,8 +16,6 @@ ThemeData getApplicationTheme(ThemeMode themeMode) {
       disabledColor: ColorManager.grey1,
       // ripple color
       splashColor: ColorManager.primaryOpacity70,
-      // will be used incase of disabled button for example
-      accentColor: ColorManager.grey,
       // card view theme
       cardTheme: CardTheme(
           color: ColorManager.white,
@@ -41,21 +39,20 @@ ThemeData getApplicationTheme(ThemeMode themeMode) {
       // elevated button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-              textStyle: getRegularStyle(color: ColorManager.white),
-              primary: ColorManager.primary,
+              textStyle: getRegularStyle(color: ColorManager.white), backgroundColor: ColorManager.primary,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSize.s12)))),
 
       // Text theme
       textTheme: TextTheme(
-          headline1: getSemiBoldStyle(
+          displayLarge: getSemiBoldStyle(
               color: ColorManager.darkGrey, fontSize: FontSize.s16),
-          subtitle1: getMediumStyle(
+          titleMedium: getMediumStyle(
               color: ColorManager.lightGrey, fontSize: FontSize.s14),
-          subtitle2: getMediumStyle(
+          titleSmall: getMediumStyle(
               color: ColorManager.primary, fontSize: FontSize.s14),
-          caption: getRegularStyle(color: ColorManager.grey1),
-          bodyText1: getRegularStyle(color: ColorManager.grey)),
+          bodySmall: getRegularStyle(color: ColorManager.grey1),
+          bodyLarge: getRegularStyle(color: ColorManager.grey)),
       // input decoration theme (text form field)
 
       inputDecorationTheme: InputDecorationTheme(
@@ -90,7 +87,7 @@ ThemeData getApplicationTheme(ThemeMode themeMode) {
             borderSide:
                 BorderSide(color: ColorManager.primary, width: AppSize.s1_5),
             borderRadius: BorderRadius.all(Radius.circular(AppSize.s8))),
-      ))
+      ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: ColorManager.grey))
     :ThemeData(
       brightness: Brightness.dark,
       primaryColor: ColorManager.primary,
@@ -99,8 +96,6 @@ ThemeData getApplicationTheme(ThemeMode themeMode) {
       disabledColor: ColorManager.grey1,
       // ripple color
       splashColor: ColorManager.primaryOpacity70,
-      // will be used incase of disabled button for example
-      accentColor: ColorManager.grey,
       // card view theme
       cardTheme: CardTheme(
           color: ColorManager.white,
@@ -124,21 +119,20 @@ ThemeData getApplicationTheme(ThemeMode themeMode) {
       // elevated button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-              textStyle: getRegularStyle(color: ColorManager.white),
-              primary: ColorManager.primary,
+              textStyle: getRegularStyle(color: ColorManager.white), backgroundColor: ColorManager.primary,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSize.s12)))),
 
       // Text theme
       textTheme: TextTheme(
-          headline1: getSemiBoldStyle(
+          displayLarge: getSemiBoldStyle(
               color: ColorManager.darkGrey, fontSize: FontSize.s16),
-          subtitle1: getMediumStyle(
+          titleMedium: getMediumStyle(
               color: ColorManager.lightGrey, fontSize: FontSize.s14),
-          subtitle2: getMediumStyle(
+          titleSmall: getMediumStyle(
               color: ColorManager.primary, fontSize: FontSize.s14),
-          caption: getRegularStyle(color: ColorManager.grey1),
-          bodyText1: getRegularStyle(color: ColorManager.grey)),
+          bodySmall: getRegularStyle(color: ColorManager.grey1),
+          bodyLarge: getRegularStyle(color: ColorManager.grey)),
       // input decoration theme (text form field)
 
       inputDecorationTheme: InputDecorationTheme(
@@ -173,7 +167,7 @@ ThemeData getApplicationTheme(ThemeMode themeMode) {
             borderSide:
                 BorderSide(color: ColorManager.primary, width: AppSize.s1_5),
             borderRadius: BorderRadius.all(Radius.circular(AppSize.s8))),
-      ));
+      ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: ColorManager.grey));
 
 }
 

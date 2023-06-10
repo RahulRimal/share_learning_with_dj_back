@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:share_learning/data/order_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,9 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/order_request_api.dart';
 import '../models/book.dart';
 import '../models/order.dart';
-import '../models/order_item.dart';
 import '../models/order_request.dart';
-import '../models/user.dart';
 
 class OrderRequests with ChangeNotifier {
   List<OrderRequest> _orderRequestsByUser = [];

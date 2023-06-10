@@ -24,7 +24,6 @@ import '../../providers/books.dart';
 import '../../providers/orders.dart';
 import '../../providers/sessions.dart';
 import '../../providers/users.dart';
-import '../managers/api_values_manager.dart';
 import '../utils/user_helper.dart';
 
 class HomeScreenNew extends StatefulWidget {

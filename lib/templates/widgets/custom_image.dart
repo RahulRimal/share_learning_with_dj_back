@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
-import 'package:share_learning/templates/managers/font_manager.dart';
 
 class CustomImage extends StatelessWidget {
   // final String image;

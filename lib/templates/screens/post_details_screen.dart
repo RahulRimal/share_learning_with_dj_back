@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +7,6 @@ import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:share_learning/models/order_request.dart';
 import 'package:share_learning/providers/orders.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/cart_screen.dart';
@@ -1053,7 +1051,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           },
           style: ElevatedButton.styleFrom(
             // primary: ColorManager.primaryColorWithOpacity,
-            primary: ColorManager.primary,
+            backgroundColor: ColorManager.primary,
             minimumSize: const Size.fromHeight(40), // NEW
           ),
           child: const Text(
@@ -1082,7 +1080,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
             );
           },
           style: ElevatedButton.styleFrom(
-            primary: ColorManager.primary,
+            backgroundColor: ColorManager.primary,
             minimumSize: const Size.fromHeight(40), // NEW
           ),
           child: const Text(
@@ -2340,7 +2338,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              primary: ColorManager.primary,
+                              backgroundColor: ColorManager.primary,
                               padding: EdgeInsets.symmetric(
                                 vertical: AppPadding.p12,
                               ),
