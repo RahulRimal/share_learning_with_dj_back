@@ -1,25 +1,27 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:share_learning/data/book_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:share_learning/view_models/user_provider.dart';
 import '../models/book.dart';
+import '../models/post_category.dart';
+import '../models/user.dart';
+import '../templates/utils/system_helper.dart';
+import 'book_filters_provider.dart';
+import 'category_provider.dart';
+import 'session_provider.dart';
 
-class BookProvider with ChangeNotifier {
+class BookProvider
+    with ChangeNotifier, BookProviderInputs, BookProviderOutputs {
   List<Book> _myBooks = [];
   bool _loading = false;
   BookError? _bookError;
   String? _nextPageUrl;
   String? _previousPageUrl;
-
-  // final Session authenticatedSession;
-
-  // Books(this.authenticatedSession);
-
-  // Books() {
-  //   getBooks();
-  // }
 
   bool get loading => _loading;
 
@@ -32,24 +34,9 @@ class BookProvider with ChangeNotifier {
   String? get nextPageUrl => _nextPageUrl;
   String? get previousPageUrl => _previousPageUrl;
 
-  // factory Books.fromJson(Map<String, dynamic> parsedJson) {
-  //   return Book(
-  //     id: parsedJson['id'].toString(),postm
-  //     userId: parsedJson['userId'].toString(),
-  //     bookName: parsedJson['bookName'].toString(),
-  //     description: parsedJson['description'].toString(),
-  //     author: parsedJson['author'].toString(),
-  //     boughtTime: NepaliDateTime.parse(parsedJson['boughtTime'].toString()),
-  //     price: parsedJson['price'],
-  //     bookCount: parsedJson['bookCount'],
-  //     isWishlisted: parsedJson['isWishlisted'],
-  //     selling: parsedJson['selling'],
-  //   );
-  // }
-
   setLoading(bool loading) async {
     _loading = loading;
-    // notifyListeners();
+    notifyListeners();
   }
 
   setBooks(List<Book> books) {
@@ -68,22 +55,22 @@ class BookProvider with ChangeNotifier {
     _previousPageUrl = previousPageUrl;
   }
 
-  double getMinPrice() {
-    List<Book> books = _myBooks;
+  setMinPrice(List<Book> books) {
+    // List<Book> books = _myBooks;
     double minPrice = books
         .reduce(
             (value, element) => value.price < element.price ? value : element)
         .price;
-    return minPrice;
+     this.minPrice = minPrice;
   }
 
-  double getMaxPrice() {
-    List<Book> books = _myBooks;
+  setMaxPrice(List<Book> books) {
+    // List<Book> books = _myBooks;
     double maxPrice = books
         .reduce(
             (value, element) => value.price > element.price ? value : element)
         .price;
-    return maxPrice;
+    this.maxPrice =  maxPrice;
   }
 
   // getBooks(String uId) async {
@@ -138,16 +125,20 @@ class BookProvider with ChangeNotifier {
   }
 
   getMoreBooks(String nextPageUrl) async {
-    setLoading(true);
+    // setLoading(true);
+    setLoadingMorePosts(true);
     var response = await BookApi.getMoreBooks(nextPageUrl);
     // print(response);
 
     if (response is Success) {
-      // setBooks((response.response as Map)['books'] as List<Book>);
-      _myBooks.addAll((response.response as Map)['books'] as List<Book>);
+      // If the search result books in not empty then, get more books is for search results so populate the search else populate the _myBooks list
+      if (searchResult.isNotEmpty)
+        searchResult.addAll((response.response as Map)['books'] as List<Book>);
+      else
+        _myBooks.addAll((response.response as Map)['books'] as List<Book>);
+
       setNextPageUrl((response.response as Map)['next']);
       setPreviousPageUrl((response.response as Map)['previous']);
-      notifyListeners();
     }
     if (response is Failure) {
       BookError bookError = BookError(
@@ -156,8 +147,8 @@ class BookProvider with ChangeNotifier {
       );
       setBookError(bookError);
     }
-    setLoading(false);
-    // notifyListeners();
+    // setLoading(false);
+    setLoadingMorePosts(false);
   }
 
   Future<dynamic> getBookByIdFromServer(
@@ -196,7 +187,6 @@ class BookProvider with ChangeNotifier {
       setBookError(error);
     }
     setLoading(false);
-    notifyListeners();
   }
 
   Future<dynamic> searchBooks(
@@ -205,10 +195,15 @@ class BookProvider with ChangeNotifier {
     var response =
         await BookApi.getBooksBySearchTerm(loggedInSession, searchTerm);
     if (response is Success) {
-      setBooks((response.response as Map)['books'] as List<Book>);
-      // _myBooks.addAll((response.response as Map)['books'] as List<Book>);
+      // setBooks((response.response as Map)['books'] as List<Book>);
+      searchResult = ((response.response as Map)['books'] as List<Book>);
       setNextPageUrl((response.response as Map)['next']);
       setPreviousPageUrl((response.response as Map)['previous']);
+
+      // Set new max and min price
+      setMaxPrice(searchResult);
+      setMinPrice(searchResult);
+
     }
     if (response is Failure) {
       BookError error = new BookError(
@@ -218,7 +213,6 @@ class BookProvider with ChangeNotifier {
       setBookError(error);
     }
     setLoading(false);
-    notifyListeners();
   }
 
   List<Book> postsByUser(String userId) {
@@ -250,7 +244,6 @@ class BookProvider with ChangeNotifier {
       setBookError(error);
     }
     setLoading(false);
-    notifyListeners();
   }
 
   void addPost(Book receivedInfo) {
@@ -270,26 +263,9 @@ class BookProvider with ChangeNotifier {
     // );
 
     _myBooks.add(receivedInfo);
-    // notifyListeners();
   }
 
   void addPosts(List<Book> receivedInfo) {
-    // for (Book book in receivedInfo) {
-    //   Book newBook = Book(
-    //     id: book.id,
-    //     userId: book.userId,
-    //     bookName: book.bookName,
-    //     author: book.author,
-    //     boughtTime: book.boughtTime,
-    //     description: book.description,
-    //     isWishlisted: book.isWishlisted,
-    //     price: book.price,
-    //     bookCount: book.bookCount,
-    //     selling: book.selling,
-    //   );
-    //   _myBooks.add(newBook);
-    // }
-
     _myBooks.addAll(receivedInfo);
     notifyListeners();
   }
@@ -300,7 +276,7 @@ class BookProvider with ChangeNotifier {
     if (response is Success) {
       addPost(response.response as Book);
       // addPost(response.response as Book);
-      // notifyListeners();
+
       return true;
     }
     if (response is Failure) {
@@ -309,7 +285,7 @@ class BookProvider with ChangeNotifier {
         message: response.errorResponse,
       );
       setBookError(bookError);
-      // notifyListeners();
+
       return false;
     }
     return false;
@@ -333,12 +309,10 @@ class BookProvider with ChangeNotifier {
       if (_myBooks.contains(response.response)) {
         // _myBooks.remove(response.response);
         setLoading(false);
-        notifyListeners();
         return true;
       }
       _myBooks.add(response.response as Book);
       setLoading(false);
-      notifyListeners();
       return true;
     }
     if (response is Failure) {
@@ -348,7 +322,6 @@ class BookProvider with ChangeNotifier {
       );
       setBookError(bookError);
       setLoading(false);
-      notifyListeners();
       return false;
     }
     return false;
@@ -371,7 +344,6 @@ class BookProvider with ChangeNotifier {
         );
         setBookError(bookError);
         setLoading(false);
-        notifyListeners();
         return false;
       }
     }
@@ -392,7 +364,6 @@ class BookProvider with ChangeNotifier {
         _myBooks.add(bookToUpdate);
 
         setLoading(false);
-        notifyListeners();
         return true;
       }
     });
@@ -401,6 +372,7 @@ class BookProvider with ChangeNotifier {
   }
 
   Future<bool> updatePost(Session currentSession, Book edittedPost) async {
+    setLoading(true);
     var response = await BookApi.updatePost(currentSession, edittedPost);
     // print(response);
     if (response is Success) {
@@ -410,8 +382,6 @@ class BookProvider with ChangeNotifier {
       if (postIndex != -1) {
         _myBooks[postIndex] = response.response as Book;
       }
-
-      notifyListeners();
       return true;
     }
 
@@ -421,10 +391,9 @@ class BookProvider with ChangeNotifier {
         message: response.errorResponse,
       );
       setBookError(bookError);
-      notifyListeners();
       return false;
     }
-
+    setLoading(false);
     return false;
   }
 
@@ -436,7 +405,7 @@ class BookProvider with ChangeNotifier {
     if (response is Success) {
       final postIndex = _myBooks.indexWhere((element) => element.id == postId);
       _myBooks.removeAt(postIndex);
-      notifyListeners();
+
       setLoading(true);
       return true;
     }
@@ -448,8 +417,171 @@ class BookProvider with ChangeNotifier {
       setBookError(bookError);
       // return false;
     }
-    notifyListeners();
+
     setLoading(false);
     return false;
   }
+
+// ================================== Implementations for the output functions start from here ===================================
+
+  @override
+  getSearchResult() async {
+    final _isValid = form.currentState!.validate();
+    if (!_isValid) {
+      return false;
+    }
+    form.currentState!.save();
+    searchFocusNode.unfocus();
+    selectedCategoryIndex = 0;
+    searchText = searchTextController.text;
+    setEnableClearSearch(true);
+    searchBooks(authSession, searchText);
+  }
+
+  @override
+  getScrollController() {
+    scrollController = ScrollController();
+    scrollController!.addListener(scrollListener);
+    return scrollController;
+    // return ScrollController();
+  }
+
+  @override
+  setEnableClearSearch(bool value) {
+    enableClearSearch = value;
+    notifyListeners();
+  }
+
+  // @override
+  // setSearchText(String value) {
+  //   searchTextController.text = value;
+  //   notifyListeners();
+  // }
+
+  // @override
+  // setUser(User user) {
+  //   user = user;
+  //   notifyListeners();
+  // }
+
+  // @override
+  // setSelectedCategoryIndex(int index) {
+  //   selectedCategoryIndex = index;
+  //   notifyListeners();
+  // }
+
+  @override
+  setLoadingMorePosts(bool value) {
+    // loadingMorePosts.value = value;
+    loadingMorePosts = value;
+    notifyListeners();
+  }
+
+  @override
+  scrollListener() async {
+    if (scrollController!.position.pixels ==
+        scrollController!.position.maxScrollExtent) {
+      if (nextPageUrl != null) {
+        await getMoreBooks(nextPageUrl as String);
+      }
+    }
+  }
+
+  @override
+  bind(BuildContext context) {
+    // searchText = '';
+    selectedCategoryIndex = 0;
+    searchFocusNode = FocusNode();
+    searchTextController = TextEditingController();
+    // scrollController = ScrollController();
+    // loadingMorePosts = ValueNotifier(false);
+    loadingMorePosts = false;
+
+    // scrollController.addListener(scrollListener);
+
+    authSession =
+        Provider.of<SessionProvider>(context, listen: false).session as Session;
+    userProvider = Provider.of(context, listen: false);
+    bookFiltersProvider =
+        Provider.of<BookFiltersProvider>(context, listen: false);
+    categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+
+    categories = categoryProvider.categories;
+    categories.insert(
+      0,
+      PostCategory(id: 0, name: 'All', postsCount: books.length),
+    );
+
+    // Registering FMC Device sarts here
+    FCMDeviceHelper.registerDeviceToFCM(authSession);
+    // Registering FMC Device ends here
+
+    if (userProvider.user == null) {
+      userProvider.getUserByToken(authSession.accessToken);
+    } else {
+      user = userProvider.user as User;
+    }
+
+    // getBooksAnnonimusly(authSession);
+  }
+
+  @override
+  unBind() {
+    searchFocusNode.dispose();
+    scrollController!.dispose();
+  }
+}
+
+abstract class BookProviderInputs {
+  final form = GlobalKey<FormState>();
+
+  // This flag will be used to render either send button or clear button on search bar. I need to use this because i can't clear the search bar if searchtext is not empty because the search will not work on text change but on button click. So the search might not have been completed even if the text is not empty
+  bool enableClearSearch = false;
+  double maxPrice = 0.0;
+  double minPrice = 0.0;
+
+  FocusNode searchFocusNode = FocusNode();
+  int selectedCategoryIndex = 0;
+
+  String searchText = '';
+  late TextEditingController searchTextController;
+  ScrollController? scrollController;
+  // final scrollController = ScrollController();
+  // late ValueNotifier<bool> loadingMorePosts;
+  late bool loadingMorePosts;
+
+  User user = new User(
+      id: "temp",
+      firstName: 'firstName',
+      lastName: 'lastName',
+      username: 'username',
+      email: 'email',
+      phone: 'phone',
+      image: null,
+      description: 'description',
+      userClass: 'userClass',
+      followers: 'followers',
+      createdDate: DateTime.now());
+
+  List<PostCategory> categories = [];
+  List<Book> searchResult = [];
+
+  late UserProvider userProvider;
+  late Session authSession;
+  late BookFiltersProvider bookFiltersProvider;
+  late CategoryProvider categoryProvider;
+}
+
+abstract class BookProviderOutputs {
+
+  setEnableClearSearch(bool value){}
+
+  getSearchResult() async {}
+
+  scrollListener() async {}
+
+  bind(BuildContext context) {}
+  unBind() {}
+  setLoadingMorePosts(bool value) {}
+  getScrollController() {}
 }

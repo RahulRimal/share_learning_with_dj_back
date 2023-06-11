@@ -87,8 +87,10 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
     BookFiltersProvider bookFilters =
         Provider.of<BookFiltersProvider>(context, listen: false);
     BookProvider _books = Provider.of<BookProvider>(context, listen: false);
-    _minPrice = _books.getMinPrice();
-    _maxPrice = _books.getMaxPrice();
+    // _minPrice = _books.getMinPrice();
+    // _maxPrice = _books.getMaxPrice();
+    _maxPrice = _books.maxPrice;
+    _minPrice = _books.minPrice;
     bookFilters.setMinPrice(_minPrice);
     bookFilters.setMaxPrice(_maxPrice);
     super.initState();
