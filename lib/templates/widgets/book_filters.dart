@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/book.dart';
 import '../../models/post_category.dart';
 import '../../view_models/book_provider.dart';
 import '../../view_models/category_provider.dart';
@@ -11,107 +12,41 @@ import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
 
 class BookFiltersWidget extends StatefulWidget {
-  const BookFiltersWidget({Key? key}) : super(key: key);
+  BookFiltersWidget({Key? key, required this.booksToFilter}) : super(key: key);
+
+  final List<Book> booksToFilter;
 
   @override
   State<BookFiltersWidget> createState() => _BookFiltersWidgetState();
 }
 
-class _BookFiltersWidgetState extends State<BookFiltersWidget> {
-  List<Map<String, String>> sortByButtons = [
-    {
-      'title': 'Price: Low to High',
-      'value': 'low_to_high',
-    },
-    {
-      'title': 'Price: High to Low',
-      'value': 'high_to_low',
-    },
-    {
-      'title': 'Customer review',
-      'value': 'customer_review',
-    },
-    {
-      'title': 'Sale',
-      'value': 'sale',
-    },
-  ];
-
-  // List<PostCategory> _categories = [
-  //   new PostCategory(
-  //     id: 1,
-  //     name: 'All',
-  //     postsCount: 1,
-  //     featuredPost: null,
-  //   ),
-  //   new PostCategory(
-  //     id: 1,
-  //     name: 'Adventure',
-  //     postsCount: 1,
-  //     featuredPost: null,
-  //   ),
-  //   new PostCategory(
-  //     id: 1,
-  //     name: 'History',
-  //     postsCount: 1,
-  //     featuredPost: null,
-  //   ),
-  //   new PostCategory(
-  //     id: 1,
-  //     name: 'Science',
-  //     postsCount: 1,
-  //     featuredPost: null,
-  //   ),
-  //   new PostCategory(
-  //     id: 1,
-  //     name: 'Drama',
-  //     postsCount: 1,
-  //     featuredPost: null,
-  //   ),
-  // ];
-
-  List<String> _locationOptions = [
-    'Kathmandu',
-    'Bhaktapur',
-    'Lalitpur',
-    'Nepalgunj',
-  ];
-
-  List<String> _reviews = ['1+', '2+', '3+', '4+'];
-
-  late double _minPrice;
-  late double _maxPrice;
-
+class _BookFiltersWidgetState extends State<BookFiltersWidget>
+    with WidgetsBindingObserver {
   @override
   void initState() {
-    BookFiltersProvider bookFilters =
-        Provider.of<BookFiltersProvider>(context, listen: false);
-    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
-    // _minPrice = _books.getMinPrice();
-    // _maxPrice = _books.getMaxPrice();
-    _maxPrice = _books.maxPrice;
-    _minPrice = _books.minPrice;
-    bookFilters.setMinPrice(_minPrice);
-    bookFilters.setMaxPrice(_maxPrice);
     super.initState();
+    BookFiltersProvider bookFiltersProvider =
+        Provider.of<BookFiltersProvider>(context, listen: false);
+    bookFiltersProvider.bind(context, widget.booksToFilter);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // bookFiltersProvider.setMinAndMaxPrice(
+      //     bookFiltersProvider.bookProvider.getMinPrice(widget.booksToFilter),
+      //     bookFiltersProvider.bookProvider.getMaxPrice(widget.booksToFilter));
+    });
+  }
+
+  @override
+  void dispose() {
+    // Provider.of<BookFiltersProvider>(context, listen: false).unBind();
+    // Unregister this object as an observer
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    CategoryProvider _categoryProvider =
-        Provider.of<CategoryProvider>(context, listen: false);
-
-    BookFiltersProvider bookFilters = Provider.of<BookFiltersProvider>(context);
-    Map<String, dynamic> filterOptions = bookFilters.filterOptions;
-    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
-
-    List<PostCategory> _categories = _categoryProvider.categories;
-    _categories.insert(
-      0,
-      PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
-    );
-
-    String _selectedSortOption = filterOptions['sort_by'];
+    BookFiltersProvider _bookFiltersProvider =
+        Provider.of<BookFiltersProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -162,32 +97,44 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                       Wrap(
                         spacing: AppMargin.m4,
                         children: List.generate(
-                          sortByButtons.length,
+                          _bookFiltersProvider.sortByButtons.length,
                           (index) => Padding(
                             padding: const EdgeInsets.all(
                               AppPadding.p4,
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                setState(() {
-                                  bookFilters.setSortBy(
-                                      sortByButtons[index]['value'].toString());
-                                });
+                                // setState(() {
+                                _bookFiltersProvider.setSortBy(
+                                    _bookFiltersProvider.sortByButtons[index]
+                                            ['value']
+                                        .toString());
+                                // });
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: _selectedSortOption ==
-                                        sortByButtons[index]['value']
-                                    // ? ColorManager.primary
-                                    ? ColorManager.black
-                                    : ColorManager.white,
+                                backgroundColor:
+                                    // selectedSortOption ==
+                                    _bookFiltersProvider
+                                                .filterOptions['sort_by'] ==
+                                            _bookFiltersProvider
+                                                .sortByButtons[index]['value']
+                                        // ? ColorManager.primary
+                                        ? ColorManager.black
+                                        : ColorManager.white,
                               ),
                               child: Text(
-                                sortByButtons[index]['title'].toString(),
+                                _bookFiltersProvider.sortByButtons[index]
+                                        ['title']
+                                    .toString(),
                                 style: getBoldStyle(
-                                  color: _selectedSortOption ==
-                                          sortByButtons[index]['value']
-                                      ? ColorManager.white
-                                      : ColorManager.black,
+                                  color:
+                                      // selectedSortOption ==
+                                      _bookFiltersProvider
+                                                  .filterOptions['sort_by'] ==
+                                              _bookFiltersProvider
+                                                  .sortByButtons[index]['value']
+                                          ? ColorManager.white
+                                          : ColorManager.black,
                                   fontSize: FontSize.s12,
                                 ),
                               ),
@@ -220,14 +167,14 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                           ),
                           Column(
                             children: List.generate(
-                              _categories.length,
+                              _bookFiltersProvider.categories.length,
                               (index) => Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     // 'All',
-                                    _categories[index].name,
+                                    _bookFiltersProvider.categories[index].name,
                                     style: getBoldStyle(
                                       color: ColorManager.black,
                                       fontSize: FontSize.s14,
@@ -236,24 +183,26 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                                   Checkbox(
                                     // activeColor: ColorManager.primary,
                                     activeColor: ColorManager.black,
-                                    value: (filterOptions['categories']
+                                    value: (_bookFiltersProvider
+                                                .filterOptions['categories']
                                             // as List<dynamic>)
                                             as List<String>)
-                                        .contains(_categories[index]
-                                            .name
+                                        .contains(_bookFiltersProvider
+                                            .categories[index].name
                                             .toLowerCase()),
                                     onChanged: (value) {
                                       if (value == true) {
-                                        bookFilters.addFilterToSortByCategories(
-                                            _categories[index]
-                                                .name
-                                                .toLowerCase());
+                                        _bookFiltersProvider
+                                            .addFilterToSortByCategories(
+                                                _bookFiltersProvider
+                                                    .categories[index].name
+                                                    .toLowerCase());
                                       }
                                       if (value == false) {
-                                        bookFilters
+                                        _bookFiltersProvider
                                             .removeFilterFromSortByCategories(
-                                                _categories[index]
-                                                    .name
+                                                _bookFiltersProvider
+                                                    .categories[index].name
                                                     .toLowerCase());
                                       }
                                     },
@@ -283,7 +232,7 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                             height: AppHeight.h4,
                           ),
                           Text(
-                            'Rs. ${filterOptions['min_price'].toString()} - Rs. ${filterOptions['max_price'].toString()}',
+                            'Rs. ${_bookFiltersProvider.filterOptions['min_price'].round().toString()} - Rs. ${_bookFiltersProvider.filterOptions['max_price'].round().toString()}',
                             style: getBoldStyle(
                               color: ColorManager.grey,
                               fontSize: FontSize.s14,
@@ -301,28 +250,44 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                               thumbColor: ColorManager.black,
                             ),
                             child: RangeSlider(
-                              divisions: 20,
+                              // min: _bookFiltersProvider
+                              //     .filterOptions['min_price']
+                              //     .toDouble(),
+                              // max: _bookFiltersProvider
+                              //     .filterOptions['max_price']
+                              //     .toDouble(),
+                              min: _bookFiltersProvider.rangeSliderStart,
+                              max: _bookFiltersProvider.rangeSliderEnd,
+
+                              divisions: 100,
                               labels: RangeLabels(
-                                filterOptions['min_price'].round().toString(),
-                                filterOptions['max_price'].round().toString(),
+                                _bookFiltersProvider.filterOptions['min_price']
+                                    .round()
+                                    .toString(),
+                                _bookFiltersProvider.filterOptions['max_price']
+                                    .round()
+                                    .toString(),
                               ),
                               values: RangeValues(
-                                double.parse(filterOptions['min_price']
+                                double.parse(_bookFiltersProvider
+                                    .filterOptions['min_price']
                                     .round()
                                     .toString()),
-                                double.parse(filterOptions['max_price']
+                                double.parse(_bookFiltersProvider
+                                    .filterOptions['max_price']
                                     .round()
                                     .toString()),
                               ),
-                              // min: filterOptions['min_price'],
-                              // max: filterOptions['max_price'],
-                              min: _minPrice,
-                              max: _maxPrice,
                               onChanged: (RangeValues values) {
-                                setState(() {
-                                  filterOptions['min_price'] = values.start;
-                                  filterOptions['max_price'] = values.end;
-                                });
+                                // setState(() {
+
+                                // _bookFiltersProvider.filterOptions['min_price'] = values.start;
+                                // _bookFiltersProvider.filterOptions['max_price'] = values.end;
+                                // _bookFiltersProvider.setMinPrice(values.start);
+                                // _bookFiltersProvider.setMaxPrice(values.end);
+                                _bookFiltersProvider.setMinAndMaxPrice(
+                                    values.start, values.end);
+                                // });
                               },
                             ),
                           ),
@@ -364,8 +329,9 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                         child: DropdownButton(
                             isExpanded: true,
                             style: getBoldStyle(color: ColorManager.black),
-                            value: filterOptions['location'],
-                            items: _locationOptions
+                            value:
+                                _bookFiltersProvider.filterOptions['location'],
+                            items: _bookFiltersProvider.locationOptions
                                 .map((option) => DropdownMenuItem(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -379,9 +345,9 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                                     ))
                                 .toList(),
                             onChanged: (value) {
-                              setState(() {
-                                bookFilters.setLocation(value as String);
-                              });
+                              // setState(() {
+                              _bookFiltersProvider.setLocation(value as String);
+                              // });
                             }),
                       ),
                     ),
@@ -408,36 +374,40 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                       Wrap(
                         spacing: AppMargin.m4,
                         children: List.generate(
-                          sortByButtons.length,
+                          _bookFiltersProvider.sortByButtons.length,
                           (index) => Padding(
                             padding: const EdgeInsets.all(
                               AppPadding.p4,
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                setState(() {
-                                  bookFilters.setReviews(_reviews[index]);
-                                });
+                                // setState(() {
+                                _bookFiltersProvider.setReviews(
+                                    _bookFiltersProvider.reviews[index]);
+                                // });
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    filterOptions['reviews'] == _reviews[index]
-                                        // ? ColorManager.primary
-                                        ? ColorManager.black
-                                        : ColorManager.white,
+                                backgroundColor: _bookFiltersProvider
+                                            .filterOptions['reviews'] ==
+                                        _bookFiltersProvider.reviews[index]
+                                    // ? ColorManager.primary
+                                    ? ColorManager.black
+                                    : ColorManager.white,
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ...List.generate(
                                     int.parse(
-                                      _reviews[index]
+                                      _bookFiltersProvider.reviews[index]
                                           .replaceAll(RegExp(r'[^\d]+'), ''),
                                     ),
                                     (idx) => Icon(
                                       Icons.star,
-                                      color: filterOptions['reviews'] ==
-                                              _reviews[index]
+                                      color: _bookFiltersProvider
+                                                  .filterOptions['reviews'] ==
+                                              _bookFiltersProvider
+                                                  .reviews[index]
                                           ? ColorManager.white
                                           : ColorManager.black,
                                     ),
@@ -445,8 +415,9 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                                   Icon(
                                     Icons.add,
                                     size: AppSize.s16,
-                                    color: filterOptions['reviews'] ==
-                                            _reviews[index]
+                                    color: _bookFiltersProvider
+                                                .filterOptions['reviews'] ==
+                                            _bookFiltersProvider.reviews[index]
                                         ? ColorManager.white
                                         : ColorManager.black,
                                   ),
@@ -488,7 +459,8 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                    bookFilters.clearFilters(_minPrice, _maxPrice, 'Kathmandu');
+                    // bookFilters.clearFilters(_minPrice, _maxPrice, 'Kathmandu');
+                    _bookFiltersProvider.clearFilters();
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -517,10 +489,14 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      bookFilters.setAllBooks(
-                          Provider.of<BookProvider>(context, listen: false)
-                              .books);
-                      bookFilters.filterBooks(filterOptions);
+                      // _bookFiltersProvider.setAllBooks(
+                      //     Provider.of<BookProvider>(context, listen: false)
+                      //         .books);
+                      // _bookFiltersProvider
+                      //     .filterBooks(_bookFiltersProvider.filterOptions);
+                      Provider.of<BookProvider>(context, listen: false)
+                          .getBooksWithFilters(
+                              _bookFiltersProvider.filterOptions, null);
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -544,3 +520,479 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget> {
     );
   }
 }
+
+
+
+
+
+// class BookFiltersWidget extends StatefulWidget {
+//   BookFiltersWidget({Key? key, required this.booksToFilter}) : super(key: key);
+
+//   final List<Book> booksToFilter;
+
+//   @override
+//   State<BookFiltersWidget> createState() => _BookFiltersWidgetState();
+// }
+
+// class _BookFiltersWidgetState extends State<BookFiltersWidget> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     Provider.of<BookFiltersProvider>(context, listen: false)
+//         .bind(context, widget.booksToFilter);
+//     // .bind(context);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     BookFiltersProvider _bookFiltersProvider =
+//         context.watch<BookFiltersProvider>();
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: ColorManager.white,
+//         leading: IconButton(
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//           icon: Icon(
+//             Icons.cancel,
+//             color: ColorManager.black,
+//           ),
+//         ),
+//         title: Center(
+//           child: Text(
+//             'Filters',
+//             style: getBoldStyle(
+//               color: ColorManager.black,
+//               fontSize: FontSize.s20,
+//             ),
+//           ),
+//         ),
+//       ),
+//       body: SingleChildScrollView(
+//         child: Container(
+//           padding: EdgeInsets.symmetric(
+//             vertical: AppPadding.p16,
+//             horizontal: AppPadding.p14,
+//           ),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // ----------------------    Sort by section starts here -----------------------------------
+//               Container(
+//                 padding: EdgeInsets.symmetric(
+//                   vertical: AppPadding.p14,
+//                 ),
+//                 child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(
+//                         'Sort By',
+//                         style: getBoldStyle(
+//                           color: ColorManager.black,
+//                           fontSize: FontSize.s18,
+//                         ),
+//                       ),
+//                       Wrap(
+//                         spacing: AppMargin.m4,
+//                         children: List.generate(
+//                           _bookFiltersProvider.sortByButtons.length,
+//                           (index) => Padding(
+//                             padding: const EdgeInsets.all(
+//                               AppPadding.p4,
+//                             ),
+//                             child: ElevatedButton(
+//                               onPressed: () {
+//                                 _bookFiltersProvider.setSortBy(
+//                                     _bookFiltersProvider.sortByButtons[index]
+//                                             ['value']
+//                                         .toString());
+//                               },
+//                               style: ElevatedButton.styleFrom(
+//                                 backgroundColor:
+//                                     _bookFiltersProvider.selectedSortOption ==
+//                                             _bookFiltersProvider
+//                                                 .sortByButtons[index]['value']
+//                                         // ? ColorManager.primary
+//                                         ? ColorManager.black
+//                                         : ColorManager.white,
+//                               ),
+//                               child: Text(
+//                                 _bookFiltersProvider.sortByButtons[index]
+//                                         ['title']
+//                                     .toString(),
+//                                 style: getBoldStyle(
+//                                   color:
+//                                       _bookFiltersProvider.selectedSortOption ==
+//                                               _bookFiltersProvider
+//                                                   .sortByButtons[index]['value']
+//                                           ? ColorManager.white
+//                                           : ColorManager.black,
+//                                   fontSize: FontSize.s12,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ]),
+//               ),
+
+//               // ----------------------    Sort by section ends here -----------------------------------
+//               // ----------------------    Sort by categories section starts here -----------------------------------
+
+//               Container(
+//                 padding: EdgeInsets.symmetric(
+//                   vertical: AppPadding.p4,
+//                 ),
+//                 child: Column(
+//                   children: [
+//                     Container(
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             'Categories',
+//                             style: getBoldStyle(
+//                               color: ColorManager.black,
+//                               fontSize: FontSize.s18,
+//                             ),
+//                           ),
+//                           Column(
+//                             children: List.generate(
+//                               _bookFiltersProvider.categories.length,
+//                               (index) => Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceBetween,
+//                                 children: [
+//                                   Text(
+//                                     // 'All',
+//                                     _bookFiltersProvider.categories[index].name,
+//                                     style: getBoldStyle(
+//                                       color: ColorManager.black,
+//                                       fontSize: FontSize.s14,
+//                                     ),
+//                                   ),
+//                                   Checkbox(
+//                                     // activeColor: ColorManager.primary,
+//                                     activeColor: ColorManager.black,
+//                                     value: (_bookFiltersProvider
+//                                                 .filterOptions['categories']
+//                                             // as List<dynamic>)
+//                                             as List<String>)
+//                                         .contains(_bookFiltersProvider
+//                                             .categories[index].name
+//                                             .toLowerCase()),
+//                                     onChanged: (value) {
+//                                       if (value == true) {
+//                                         _bookFiltersProvider
+//                                             .addFilterToSortByCategories(
+//                                                 _bookFiltersProvider
+//                                                     .categories[index].name
+//                                                     .toLowerCase());
+//                                       }
+//                                       if (value == false) {
+//                                         _bookFiltersProvider
+//                                             .removeFilterFromSortByCategories(
+//                                                 _bookFiltersProvider
+//                                                     .categories[index].name
+//                                                     .toLowerCase());
+//                                       }
+//                                     },
+//                                   )
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                     Container(
+//                       padding: EdgeInsets.symmetric(
+//                         vertical: AppPadding.p12,
+//                       ),
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             'Price Range',
+//                             style: getBoldStyle(
+//                               color: ColorManager.black,
+//                               fontSize: FontSize.s18,
+//                             ),
+//                           ),
+//                           SizedBox(
+//                             height: AppHeight.h4,
+//                           ),
+//                           Text(
+//                             'Rs. ${_bookFiltersProvider.filterOptions['min_price'].toString()} - Rs. ${_bookFiltersProvider.filterOptions['max_price'].toString()}',
+//                             style: getBoldStyle(
+//                               color: ColorManager.grey,
+//                               fontSize: FontSize.s14,
+//                             ),
+//                           ),
+//                           SliderTheme(
+//                             data: SliderThemeData(
+//                               activeTickMarkColor: ColorManager.transparent,
+//                               inactiveTickMarkColor: ColorManager.transparent,
+//                               // activeTrackColor: ColorManager.primary,
+//                               activeTrackColor: ColorManager.black,
+//                               inactiveTrackColor:
+//                                   ColorManager.primaryColorWithOpacity,
+//                               // thumbColor: ColorManager.primary,
+//                               thumbColor: ColorManager.black,
+//                             ),
+//                             child: RangeSlider(
+//                               divisions: 20,
+//                               labels: RangeLabels(
+//                                 _bookFiltersProvider.filterOptions['min_price']
+//                                     .round()
+//                                     .toString(),
+//                                 _bookFiltersProvider.filterOptions['max_price']
+//                                     .round()
+//                                     .toString(),
+//                               ),
+//                               values: RangeValues(
+//                                 double.parse(_bookFiltersProvider
+//                                     .filterOptions['min_price']
+//                                     .round()
+//                                     .toString()),
+//                                 double.parse(_bookFiltersProvider
+//                                     .filterOptions['max_price']
+//                                     .round()
+//                                     .toString()),
+//                               ),
+//                               min: _bookFiltersProvider.minPrice,
+//                               max: _bookFiltersProvider.maxPrice,
+//                               onChanged: (RangeValues values) {
+//                                 // _bookFiltersProvider.filterOptions['min_price'] = values.start;
+//                                 // _bookFiltersProvider.filterOptions['max_price'] = values.end;
+//                                 _bookFiltersProvider.setMinPrice(values.start);
+//                                 _bookFiltersProvider.setMaxPrice(values.end);
+//                               },
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+
+//               // ----------------------    Sort by categories section ends here -----------------------------------
+
+//               // ----------------------    Sort by locations section ends here -----------------------------------
+//               Container(
+//                 padding: EdgeInsets.symmetric(
+//                   vertical: AppPadding.p12,
+//                 ),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       'Location',
+//                       style: getBoldStyle(
+//                         color: ColorManager.black,
+//                         fontSize: FontSize.s18,
+//                       ),
+//                     ),
+//                     SizedBox(
+//                       height: AppHeight.h4,
+//                     ),
+//                     Container(
+//                       decoration: BoxDecoration(
+//                           border: Border.all(
+//                         color: Colors.grey,
+//                         width: 1.0,
+//                         style: BorderStyle.solid,
+//                       )),
+//                       child: DropdownButtonHideUnderline(
+//                         child: DropdownButton(
+//                             isExpanded: true,
+//                             style: getBoldStyle(color: ColorManager.black),
+//                             value:
+//                                 _bookFiltersProvider.filterOptions['location'],
+//                             items: _bookFiltersProvider.locationOptions
+//                                 .map((option) => DropdownMenuItem(
+//                                       child: Padding(
+//                                         padding: const EdgeInsets.only(
+//                                           left: AppPadding.p12,
+//                                         ),
+//                                         child: Text(
+//                                           option,
+//                                         ),
+//                                       ),
+//                                       value: option,
+//                                     ))
+//                                 .toList(),
+//                             onChanged: (value) {
+//                               _bookFiltersProvider.setLocation(value as String);
+//                             }),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               // ----------------------    Sort by location section ends here -----------------------------------
+
+//               // ----------------------    Sort by reviews section starts here -----------------------------------
+//               Container(
+//                 padding: EdgeInsets.only(
+//                   top: AppPadding.p2,
+//                 ),
+//                 child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(
+//                         'Reviews',
+//                         style: getBoldStyle(
+//                           color: ColorManager.black,
+//                           fontSize: FontSize.s18,
+//                         ),
+//                       ),
+//                       Wrap(
+//                         spacing: AppMargin.m4,
+//                         children: List.generate(
+//                           _bookFiltersProvider.sortByButtons.length,
+//                           (index) => Padding(
+//                             padding: const EdgeInsets.all(
+//                               AppPadding.p4,
+//                             ),
+//                             child: ElevatedButton(
+//                               onPressed: () {
+//                                 _bookFiltersProvider.setReviews(
+//                                     _bookFiltersProvider.reviews[index]);
+//                               },
+//                               style: ElevatedButton.styleFrom(
+//                                 backgroundColor: _bookFiltersProvider
+//                                             .filterOptions['reviews'] ==
+//                                         _bookFiltersProvider.reviews[index]
+//                                     // ? ColorManager.primary
+//                                     ? ColorManager.black
+//                                     : ColorManager.white,
+//                               ),
+//                               child: Row(
+//                                 mainAxisSize: MainAxisSize.min,
+//                                 children: [
+//                                   ...List.generate(
+//                                     int.parse(
+//                                       _bookFiltersProvider.reviews[index]
+//                                           .replaceAll(RegExp(r'[^\d]+'), ''),
+//                                     ),
+//                                     (idx) => Icon(
+//                                       Icons.star,
+//                                       color: _bookFiltersProvider
+//                                                   .filterOptions['reviews'] ==
+//                                               _bookFiltersProvider
+//                                                   .reviews[index]
+//                                           ? ColorManager.white
+//                                           : ColorManager.black,
+//                                     ),
+//                                   ),
+//                                   Icon(
+//                                     Icons.add,
+//                                     size: AppSize.s16,
+//                                     color: _bookFiltersProvider
+//                                                 .filterOptions['reviews'] ==
+//                                             _bookFiltersProvider.reviews[index]
+//                                         ? ColorManager.white
+//                                         : ColorManager.black,
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ]),
+//               ),
+//               // ----------------------    Sort by reviews section ends here ---------------
+//               SizedBox(
+//                 height: AppHeight.h50,
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//       bottomSheet: Container(
+//           decoration: BoxDecoration(
+//             border: Border(
+//               top: BorderSide(
+//                 color: ColorManager.lighterGrey,
+//                 width: 1,
+//               ),
+//             ),
+//           ),
+//           padding: EdgeInsets.symmetric(
+//             horizontal: AppPadding.p12,
+//             vertical: AppPadding.p8,
+//           ),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               Container(
+//                 decoration: BoxDecoration(
+//                   shape: BoxShape.rectangle,
+//                 ),
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     _bookFiltersProvider.clearFilters(
+//                         _bookFiltersProvider.minPrice,
+//                         _bookFiltersProvider.maxPrice,
+//                         'Kathmandu');
+//                     Navigator.pop(context);
+//                   },
+//                   child: Text(
+//                     'Clear Filters',
+//                     style: getBoldStyle(
+//                       color: ColorManager.black,
+//                       fontSize: FontSize.s16,
+//                     ),
+//                   ),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: ColorManager.white,
+//                     padding: EdgeInsets.symmetric(
+//                       vertical: AppPadding.p12,
+//                       horizontal: AppPadding.p20,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(
+//                 width: AppSize.s20,
+//               ),
+//               Expanded(
+//                 child: Container(
+//                   decoration: BoxDecoration(
+//                     shape: BoxShape.rectangle,
+//                   ),
+//                   child: ElevatedButton(
+//                     onPressed: () {
+//                       _bookFiltersProvider
+//                           .setAllBooks(_bookFiltersProvider.bookProvider.books);
+//                       _bookFiltersProvider
+//                           .filterBooks(_bookFiltersProvider.filterOptions);
+//                       Navigator.pop(context);
+//                     },
+//                     child: Text(
+//                       'Show results',
+//                       style: getBoldStyle(
+//                         color: ColorManager.black,
+//                         fontSize: FontSize.s18,
+//                       ),
+//                     ),
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: ColorManager.primary,
+//                       padding: EdgeInsets.symmetric(
+//                         vertical: AppPadding.p12,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           )),
+//     );
+//   }
+// }

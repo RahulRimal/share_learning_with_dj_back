@@ -286,6 +286,58 @@ class BookApi {
     }
   }
 
+  static Future<Object> getBooksWithFilters(
+      Map<String, dynamic> filters) async {
+    try {
+      String urlString = RemoteManager.BASE_URI + '/posts/?';
+      filters.forEach((key, value) {
+        urlString += key + '=' + value + '&';
+      });
+      var url =
+          // Uri.parse(RemoteManager.BASE_URI + '/posts/?search=' + searchTerm);
+          Uri.parse(urlString);
+
+      var response = await http.get(
+        url,
+        // headers: {
+        //   HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        // },
+      );
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(code: response.statusCode, response: {
+          'books': booksFromJson(
+            json.encode((json.decode(response.body))['results']),
+          ),
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //   code: ApiStatusCode.unknownError,
+      //   errorResponse: ApiStrings.unknownErrorString,
+      // );
+    }
+  }
+
   static Future<Object> getUserBooks(String userId) async {
     try {
       var url = Uri.parse(RemoteManager.BASE_URI + '/posts/?user=' + userId);
@@ -601,6 +653,55 @@ class BookApi {
       // return Failure(
       //     code: ApiStatusCode.unknownError,
       //     errorResponse: ApiStrings.unknownErrorString);
+    }
+  }
+
+  static Future<Object> getMinAndMaxPrice(String searchTerm) async {
+    try {
+      // If user tried to get min and max price after searching then show min and max prices for the searched books
+      var url = Uri.parse(RemoteManager.BASE_URI +
+          '/posts/get_min_and_max_price/?book_name=' +
+          searchTerm);
+
+      var response = await http.get(
+        url,
+        // headers: {
+        //   HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken
+        // },
+      );
+      // print(response);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(
+            code: response.statusCode,
+            // response: json
+            //     .decode(response.body)
+            //     .values
+            //     .map((value) => double.parse(value))
+            //     .toList());
+            response: json.decode(response.body));
+      }
+
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      // return Failure(code: 103, errorResponse: e.toString());
+      return Failure(
+        code: ApiStatusCode.unknownError,
+        errorResponse: ApiStrings.unknownErrorString,
+      );
     }
   }
 

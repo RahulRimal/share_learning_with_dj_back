@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +25,6 @@ class BookProvider
   BookError? _bookError;
   String? _nextPageUrl;
   String? _previousPageUrl;
-
   bool get loading => _loading;
 
   List<Book> get books {
@@ -55,22 +57,37 @@ class BookProvider
     _previousPageUrl = previousPageUrl;
   }
 
-  setMinPrice(List<Book> books) {
-    // List<Book> books = _myBooks;
-    double minPrice = books
-        .reduce(
-            (value, element) => value.price < element.price ? value : element)
-        .price;
-     this.minPrice = minPrice;
-  }
+  // getMinPrice(List<Book> books) {
 
-  setMaxPrice(List<Book> books) {
-    // List<Book> books = _myBooks;
-    double maxPrice = books
-        .reduce(
-            (value, element) => value.price > element.price ? value : element)
-        .price;
-    this.maxPrice =  maxPrice;
+  //   double minPrice = books
+  //       .reduce(
+  //           (value, element) => value.price < element.price ? value : element)
+  //       .price;
+  //   return minPrice;
+  // }
+
+  // getMaxPrice(List<Book> books) {
+
+  //   double maxPrice = books
+  //       .reduce(
+  //           (value, element) => value.price > element.price ? value : element)
+  //       .price;
+  //   return maxPrice;
+  // }
+  // Future<List<double>> getMinAndMaxPrice() async {
+  getMinAndMaxPrice() async {
+    // If user tried to get min and max price after searching then show min and max prices for the searched books
+    var response = await BookApi.getMinAndMaxPrice(searchTextController.text);
+    if (response is Success) {
+      List<double> result = (response.response as Map)
+          .values
+          .map((value) => double.parse(value))
+          .toList();
+      return result;
+    }
+    // if (response is Failure) {
+    //   print(response.errorResponse);
+    // }
   }
 
   // getBooks(String uId) async {
@@ -132,10 +149,10 @@ class BookProvider
 
     if (response is Success) {
       // If the search result books in not empty then, get more books is for search results so populate the search else populate the _myBooks list
-      if (searchResult.isNotEmpty)
-        searchResult.addAll((response.response as Map)['books'] as List<Book>);
-      else
-        _myBooks.addAll((response.response as Map)['books'] as List<Book>);
+      // if (searchResult.isNotEmpty)
+      //   searchResult.addAll((response.response as Map)['books'] as List<Book>);
+      // else
+      _myBooks.addAll((response.response as Map)['books'] as List<Book>);
 
       setNextPageUrl((response.response as Map)['next']);
       setPreviousPageUrl((response.response as Map)['previous']);
@@ -147,7 +164,10 @@ class BookProvider
       );
       setBookError(bookError);
     }
-    // setLoading(false);
+
+    // bookFiltersProvider.setMinAndMaxPrice(
+    //     getMinPrice(_myBooks), getMaxPrice(_myBooks));
+
     setLoadingMorePosts(false);
   }
 
@@ -195,15 +215,70 @@ class BookProvider
     var response =
         await BookApi.getBooksBySearchTerm(loggedInSession, searchTerm);
     if (response is Success) {
-      // setBooks((response.response as Map)['books'] as List<Book>);
-      searchResult = ((response.response as Map)['books'] as List<Book>);
+      setBooks((response.response as Map)['books'] as List<Book>);
       setNextPageUrl((response.response as Map)['next']);
       setPreviousPageUrl((response.response as Map)['previous']);
+    }
+    if (response is Failure) {
+      BookError error = new BookError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setBookError(error);
+    }
+    setEnableClearSearch(true);
+    setLoading(false);
+  }
 
-      // Set new max and min price
-      setMaxPrice(searchResult);
-      setMinPrice(searchResult);
+  getBooksWithFilters(Map<String, dynamic> filters, String? searchTerm) async {
+    setLoading(true);
+    Map<String, dynamic> newFilters = {};
+    // print(filters);
 
+    if (searchTerm != null) {
+      newFilters['search'] = searchTerm;
+    }
+
+    if (filters.containsKey('categories') &&
+        filters['categories'][0] != 'all') {
+      List<String> categoryIds = [];
+      filters['categories'].forEach((category) {
+        categoryProvider.categories.forEach((element) =>
+            element.name.toLowerCase() == category
+                ? categoryIds.add(element.id.toString())
+                : null);
+      });
+      String categories = categoryIds.join(',');
+      newFilters['category_in'] = categories;
+    }
+
+    if (filters.containsKey('sort_by') && filters['sort_by'] == 'low_to_high') {
+      newFilters['ordering'] = 'unit_price';
+    }
+
+    if (filters.containsKey('sort_by') && filters['sort_by'] == 'high_to_low') {
+      newFilters['ordering'] = '-unit_price';
+    }
+
+    if (filters.containsKey('min_price')) {
+      newFilters['unit_price__gt'] = filters['min_price'].round().toString();
+    }
+
+    if (filters.containsKey('max_price')) {
+      newFilters['unit_price__lt'] = filters['max_price'].round().toString();
+    }
+
+    // If user first searched then applied filters then we should apply search and filter
+    if (searchTextController.text.isNotEmpty) {
+      newFilters['search'] = searchTextController.text;
+    }
+
+    var response = await BookApi.getBooksWithFilters(newFilters);
+    // print(response);
+    if (response is Success) {
+      setBooks((response.response as Map)['books'] as List<Book>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
     }
     if (response is Failure) {
       BookError error = new BookError(
@@ -422,20 +497,20 @@ class BookProvider
     return false;
   }
 
-// ================================== Implementations for the output functions start from here ===================================
-
+// ================================== Implementations for the output of HomeScreenNew functions start from here ===================================
   @override
   getSearchResult() async {
-    final _isValid = form.currentState!.validate();
+    final _isValid = homeScreenNewSearchForm.currentState!.validate();
     if (!_isValid) {
       return false;
     }
-    form.currentState!.save();
+    homeScreenNewSearchForm.currentState!.save();
     searchFocusNode.unfocus();
     selectedCategoryIndex = 0;
-    searchText = searchTextController.text;
-    setEnableClearSearch(true);
-    searchBooks(authSession, searchText);
+    // setEnableClearSearch(true);
+    // Clear the filters while searchig
+    bookFiltersProvider.clearFilters();
+    searchBooks(authSession, searchTextController.text);
   }
 
   @override
@@ -452,23 +527,11 @@ class BookProvider
     notifyListeners();
   }
 
-  // @override
-  // setSearchText(String value) {
-  //   searchTextController.text = value;
-  //   notifyListeners();
-  // }
-
-  // @override
-  // setUser(User user) {
-  //   user = user;
-  //   notifyListeners();
-  // }
-
-  // @override
-  // setSelectedCategoryIndex(int index) {
-  //   selectedCategoryIndex = index;
-  //   notifyListeners();
-  // }
+  @override
+  setShowFiltersButton(bool value) {
+    showFilterButton = value;
+    notifyListeners();
+  }
 
   @override
   setLoadingMorePosts(bool value) {
@@ -488,16 +551,10 @@ class BookProvider
   }
 
   @override
-  bind(BuildContext context) {
-    // searchText = '';
+  bindHomeScreenNew(BuildContext context) {
     selectedCategoryIndex = 0;
     searchFocusNode = FocusNode();
     searchTextController = TextEditingController();
-    // scrollController = ScrollController();
-    // loadingMorePosts = ValueNotifier(false);
-    loadingMorePosts = false;
-
-    // scrollController.addListener(scrollListener);
 
     authSession =
         Provider.of<SessionProvider>(context, listen: false).session as Session;
@@ -522,34 +579,46 @@ class BookProvider
       user = userProvider.user as User;
     }
 
-    // getBooksAnnonimusly(authSession);
+    // This will show the filters icon after 3 seconds of homescreen being loaded
+    Timer(Duration(seconds: 3), () {
+      setShowFiltersButton(true);
+    });
   }
 
   @override
-  unBind() {
+  unBindHomeScreenNew() {
     searchFocusNode.dispose();
     scrollController!.dispose();
   }
+
+  // ================================== Implementations for the output of HomeScreenNew functions end from here ===================================
+
+  // ================================== Implementations for the output of BookFiltersWidget functions start from here ===================================
+
+  // @override
+  // bindBookFiltersWidget(){
+  //   bookFiltersProvider.setMinPrice(minPrice);
+  //   bookFiltersProvider.setMaxPrice(maxPrice);
+  // }
+
+  // @override
+  // unBindBookFiltersWidget(){}
+
+  // ================================== Implementations for the output of BookFiltersWidget functions ends from here ===================================
 }
 
 abstract class BookProviderInputs {
-  final form = GlobalKey<FormState>();
-
+  // ----------------------- Inputs for Home Screen New Starts here --------------------------------------------
+  final homeScreenNewSearchForm = GlobalKey<FormState>();
   // This flag will be used to render either send button or clear button on search bar. I need to use this because i can't clear the search bar if searchtext is not empty because the search will not work on text change but on button click. So the search might not have been completed even if the text is not empty
   bool enableClearSearch = false;
-  double maxPrice = 0.0;
-  double minPrice = 0.0;
+  bool showFilterButton = false;
 
   FocusNode searchFocusNode = FocusNode();
   int selectedCategoryIndex = 0;
-
-  String searchText = '';
   late TextEditingController searchTextController;
   ScrollController? scrollController;
-  // final scrollController = ScrollController();
-  // late ValueNotifier<bool> loadingMorePosts;
-  late bool loadingMorePosts;
-
+  bool loadingMorePosts = false;
   User user = new User(
       id: "temp",
       firstName: 'firstName',
@@ -562,26 +631,34 @@ abstract class BookProviderInputs {
       userClass: 'userClass',
       followers: 'followers',
       createdDate: DateTime.now());
-
   List<PostCategory> categories = [];
-  List<Book> searchResult = [];
 
   late UserProvider userProvider;
   late Session authSession;
   late BookFiltersProvider bookFiltersProvider;
   late CategoryProvider categoryProvider;
+  // ----------------------- Inputs for Home Screen New ends here --------------------------------------------
+
+  // ----------------------- Inputs for Book Filters Widget starts here --------------------------------------------
+
+  // ----------------------- Inputs for Book Filters Widget ends here --------------------------------------------
 }
 
 abstract class BookProviderOutputs {
+  // ----------------------- Outputs for Home Screen New Starts here --------------------------------------------
+  setEnableClearSearch(bool value);
+  getSearchResult();
+  scrollListener();
+  bindHomeScreenNew(BuildContext context);
+  unBindHomeScreenNew();
+  setLoadingMorePosts(bool value);
+  getScrollController();
+  // ----------------------- Outputs for Home Screen New ends here --------------------------------------------
 
-  setEnableClearSearch(bool value){}
+  // ----------------------- Outputs for Book Filters Widget starts here --------------------------------------------
 
-  getSearchResult() async {}
+  // bindBookFiltersWidget();
+  // unBindBookFiltersWidget();
 
-  scrollListener() async {}
-
-  bind(BuildContext context) {}
-  unBind() {}
-  setLoadingMorePosts(bool value) {}
-  getScrollController() {}
+  // ----------------------- Outputs for Book Filters Widget ends here --------------------------------------------
 }

@@ -529,7 +529,10 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                         padding: EdgeInsets.symmetric(
                                           horizontal: AppPadding.p20,
                                         ),
-                                        child: BookFiltersWidget(),
+                                        child: BookFiltersWidget(
+                                            booksToFilter:
+                                                _wishlists.wishlistedBooks),
+                                        // child: BookFiltersWidget(),
                                       );
                                     },
                                   );
