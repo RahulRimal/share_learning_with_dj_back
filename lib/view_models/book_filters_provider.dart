@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/book.dart';
 import '../models/post_category.dart';
-import 'book_provider.dart';
+import 'book_view_model/book_provider.dart';
 import 'category_provider.dart';
 
 class BookFiltersProvider

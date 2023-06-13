@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
-import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/book_view_model/book_provider.dart';
 import 'package:share_learning/view_models/session_provider.dart';
 import 'package:share_learning/templates/widgets/custom_image.dart';
 

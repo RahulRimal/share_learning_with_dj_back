@@ -22,7 +22,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/book_provider.dart';
+import '../../view_models/book_view_model/book_provider.dart';
 import '../../view_models/session_provider.dart';
 import '../../view_models/user_provider.dart';
 import '../utils/user_helper.dart';

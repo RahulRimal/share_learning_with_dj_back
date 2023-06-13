@@ -13,7 +13,7 @@ import 'package:share_learning/templates/screens/edit_post_screen.dart';
 import 'package:share_learning/templates/screens/order_request_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/post_comments_new.dart';
-import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/book_view_model/book_provider.dart';
 
 import '../../models/book.dart';
 import '../../models/cart.dart';

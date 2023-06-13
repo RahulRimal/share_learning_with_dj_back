@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/book_provider.dart';
+import '../../view_models/book_view_model/book_provider.dart';
 import '../../view_models/cart_provider.dart';
 import '../../view_models/order_provider.dart';
 import '../../view_models/session_provider.dart';

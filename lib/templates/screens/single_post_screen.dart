@@ -6,7 +6,7 @@ import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/book_view_model/book_provider.dart';
 import 'package:share_learning/view_models/cart_provider.dart';
 import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';

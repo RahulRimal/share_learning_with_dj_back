@@ -515,43 +515,43 @@ class BookProvider
 // ================================== Implementations for the output of BaseProvider functions start from here ===================================
 
   
-  @override
-  setBillingInfo() {
-    if (user.firstName!.isNotEmpty) {
-      billingInfo["first_name"] = user.firstName!;
-    }
-    if (user.lastName!.isNotEmpty) {
-      billingInfo["last_name"] = user.lastName!;
-    }
-    if (user.email!.isNotEmpty) {
-      billingInfo["email"] = user.email!;
-    }
-    if (user.phone != null) {
-      if (user.phone!.isNotEmpty) {
-        billingInfo["phone"] = user.phone!;
-      }
-    }
-    billingInfo["convenient_location"] = locationOptions[0];
-  }
+  // @override
+  // setBillingInfo() {
+  //   if (user.firstName!.isNotEmpty) {
+  //     billingInfo["first_name"] = user.firstName!;
+  //   }
+  //   if (user.lastName!.isNotEmpty) {
+  //     billingInfo["last_name"] = user.lastName!;
+  //   }
+  //   if (user.email!.isNotEmpty) {
+  //     billingInfo["email"] = user.email!;
+  //   }
+  //   if (user.phone != null) {
+  //     if (user.phone!.isNotEmpty) {
+  //       billingInfo["phone"] = user.phone!;
+  //     }
+  //   }
+  //   billingInfo["convenient_location"] = locationOptions[0];
+  // }
 
-  @override
-  setBillingInfoLocationData(String value) {
-    billingInfo["convenient_location"] = value;
-    notifyListeners();
-  }
+  // @override
+  // setBillingInfoLocationData(String value) {
+  //   billingInfo["convenient_location"] = value;
+  //   notifyListeners();
+  // }
 
 
-  @override
-  bindBaseProvider(BuildContext context){
-    authSession =
-        Provider.of<SessionProvider>(context, listen: false).session as Session;
-    userProvider = Provider.of(context, listen: false);
-    bookFiltersProvider =
-        Provider.of<BookFiltersProvider>(context, listen: false);
-    categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    orderRequestProvider = Provider.of<OrderRequestProvider>(context, listen: false);
-    orderProvider = Provider.of<OrderProvider>(context, listen: false);
-  }
+  // @override
+  // bindBaseProvider(BuildContext context){
+  //   authSession =
+  //       Provider.of<SessionProvider>(context, listen: false).session as Session;
+  //   userProvider = Provider.of(context, listen: false);
+  //   bookFiltersProvider =
+  //       Provider.of<BookFiltersProvider>(context, listen: false);
+  //   categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+  //   orderRequestProvider = Provider.of<OrderRequestProvider>(context, listen: false);
+  //   orderProvider = Provider.of<OrderProvider>(context, listen: false);
+  // }
 
 
 // ================================== Implementations for the output of BaseProvider functions ends from here ===================================
@@ -781,8 +781,15 @@ class BookProvider
   bindBillingInfoWidgetViewModel(BuildContext context) {
     bindBaseProvider(context);
     setBillingInfo();
-    setBillingInfoLocationData(locationOptions[0]);
+    // setBillingInfoLocationData(locationOptions[0]);
 
+  }
+
+
+  @override
+  setBillingInfoLocationData(String value) {
+    super.setBillingInfoLocationData(value);
+    notifyListeners();
   }
   
   
@@ -807,18 +814,18 @@ abstract class HomeScreenNewViewModel{
   late TextEditingController searchTextController;
   ScrollController? scrollController;
   bool loadingMorePosts = false;
-  User user = new User(
-      id: "temp",
-      firstName: 'firstName',
-      lastName: 'lastName',
-      username: 'username',
-      email: 'email',
-      phone: 'phone',
-      image: null,
-      description: 'description',
-      userClass: 'userClass',
-      followers: 'followers',
-      createdDate: DateTime.now());
+  // User user = new User(
+  //     id: "temp",
+  //     firstName: 'firstName',
+  //     lastName: 'lastName',
+  //     username: 'username',
+  //     email: 'email',
+  //     phone: 'phone',
+  //     image: null,
+  //     description: 'description',
+  //     userClass: 'userClass',
+  //     followers: 'followers',
+  //     createdDate: DateTime.now());
   List<PostCategory> categories = [];
 
   setEnableClearSearch(bool value);

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/book.dart';
 import '../../models/post_category.dart';
-import '../../view_models/book_provider.dart';
+import '../../view_models/book_view_model/book_provider.dart';
 import '../../view_models/category_provider.dart';
 import '../../view_models/book_filters_provider.dart';
 import '../managers/color_manager.dart';

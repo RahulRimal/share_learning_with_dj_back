@@ -38,7 +38,7 @@ import 'templates/screens/user_profile_screen.dart';
 import 'templates/screens/wishlisted_books_screen.dart';
 import 'templates/utils/notification_service.dart';
 import 'view_models/book_filters_provider.dart';
-import 'view_models/book_provider.dart';
+import 'view_models/book_view_model/book_provider.dart';
 import 'view_models/cart_provider.dart';
 import 'view_models/category_provider.dart';
 import 'view_models/comment_provider.dart';

@@ -11,7 +11,7 @@ import 'package:share_learning/view_models/wishlist_provider.dart';
 import 'package:share_learning/templates/screens/post_details_screen.dart';
 
 import '../../models/session.dart';
-import '../../view_models/book_provider.dart';
+import '../../view_models/book_view_model/book_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';

@@ -7,7 +7,7 @@ import 'package:share_learning/view_models/order_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
-import '../../view_models/book_provider.dart';
+import '../../view_models/book_view_model/book_provider.dart';
 
 class OrderItemWidget extends StatefulWidget {
   const OrderItemWidget({Key? key, required this.orderItem}) : super(key: key);

@@ -3,7 +3,7 @@ import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/view_models/book_provider.dart';
+import 'package:share_learning/view_models/book_view_model/book_provider.dart';
 import 'package:share_learning/view_models/comment_provider.dart';
 import 'package:share_learning/view_models/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
