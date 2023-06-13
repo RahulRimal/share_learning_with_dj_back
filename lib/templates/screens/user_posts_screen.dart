@@ -514,7 +514,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                   itemCount: filteredBooks!.length,
                   itemBuilder: (ctx, idx) => PostNew(
                     book: filteredBooks![idx],
-                    authSession: loggedInUserSession,
+                    // authSession: loggedInUserSession,
                   ),
                 )
               else
@@ -575,7 +575,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                                   itemCount: _userBooks.length,
                                   itemBuilder: (ctx, idx) => PostNew(
                                     book: _userBooks[idx],
-                                    authSession: loggedInUserSession,
+                                    // authSession: loggedInUserSession,
                                   ),
                                 );
                         }

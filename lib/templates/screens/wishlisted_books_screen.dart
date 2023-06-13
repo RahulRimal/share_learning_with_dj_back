@@ -649,7 +649,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                           } else {
                                             return PostNew(
                                               book: snapshot.data as Book,
-                                              authSession: authenticatedSession,
+                                              // authSession: authenticatedSession,
                                             );
                                           }
                                         }),

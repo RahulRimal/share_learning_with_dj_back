@@ -42,6 +42,15 @@ class WishlistProvider with ChangeNotifier {
     _wishlistError = error;
   }
 
+  isWishlisted(Book book) {
+    Wishlist? match = wishlists.firstWhereOrNull(
+        (Wishlist wishlist) => wishlist.post == int.parse(book.id));
+    if (match != null) {
+      return true;
+    }
+    return false;
+  }
+
   getWishlistedBooks(Session authSession) async {
     setLoading(true);
 

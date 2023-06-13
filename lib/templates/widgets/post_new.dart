@@ -11,6 +11,7 @@ import 'package:share_learning/view_models/wishlist_provider.dart';
 import 'package:share_learning/templates/screens/post_details_screen.dart';
 
 import '../../models/session.dart';
+import '../../view_models/book_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
@@ -18,44 +19,41 @@ import '../managers/values_manager.dart';
 
 class PostNew extends StatefulWidget {
   const PostNew({
-    Key? key,
     required this.book,
-    required this.authSession,
+    Key? key,
   }) : super(key: key);
 
   @override
   State<PostNew> createState() => _PostNewState();
 
   final Book book;
-  final Session authSession;
 }
 
 class _PostNewState extends State<PostNew> {
-  _isWishlisted(List<Wishlist> wishlists, Book book) {
-    Wishlist? match = wishlists.firstWhereOrNull(
-        (Wishlist wishlist) => wishlist.post == int.parse(book.id));
-    if (match != null) {
-      return true;
-    }
-    // if (wishlistBooks.contains(book)) {
-    //   return true;
-    // }
-    return false;
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<BookProvider>(context, listen: false)
+        .bindPostNewWidget(context);
   }
 
-  // _getWishlistedBooks(Session authSession, Wishlists wishlist) async {
-  //   await wishlist.getWishlistedBooks(authSession);
-  // }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Provider.of<BookProvider>(context, listen: false)
+        .didChangeDependencyPostNewWidget(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Provider.of<BookProvider>(context, listen: false).unBindPostNewWidget();
+  }
 
   @override
   Widget build(BuildContext context) {
     Book post = widget.book;
-    Session loggedInUserSession = widget.authSession;
-
-    WishlistProvider _wishlists = Provider.of<WishlistProvider>(context);
-    // if (_wishlists.wishlistedBooks.isEmpty) {
-    //   _getWishlistedBooks(loggedInUserSession, _wishlists);
-    // }
+    BookProvider _bookProvider = context.watch<BookProvider>();
 
     return Column(
       children: [
@@ -66,23 +64,11 @@ class _PostNewState extends State<PostNew> {
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
-                // child: post.images!.isEmpty
-                //     ? Container()
-                //     : post.images.runtimeType is List<XFile>
-                //         // ? Image.asset(post.images![0])
-                //         // ? FileImage(File(post.images![0].name))
-
-                //         : Image.network(
-                //             post.images![0].image,
-                //           ),
                 child: post.images!.isEmpty
                     ? Container()
                     : SizedBox(
                         height: AppHeight.h150,
-                        // width: 100,
                         child: PhotoView(
-                          // imageProvider: post.images.runtimeType is List<XFile>
-
                           imageProvider: post.images is List<XFile>
                               ? FileImage(File(post.images![0].path))
                               : NetworkImage(post.images![0].image)
@@ -109,20 +95,21 @@ class _PostNewState extends State<PostNew> {
                         left: -10,
                         child: IconButton(
                           onPressed: () {
-                            _wishlists.toggleWishlistBook(
-                                loggedInUserSession, post);
+                            _bookProvider.wishlistProvider.toggleWishlistBook(
+                                _bookProvider.authSession, post);
                           },
-                          icon: _isWishlisted(_wishlists.wishlists, post)
-                              ? Icon(
-                                  Icons.favorite,
-                                  size: 24,
-                                  color: ColorManager.primary,
-                                )
-                              : Icon(
-                                  Icons.favorite_border,
-                                  size: 24,
-                                  color: ColorManager.white,
-                                ),
+                          icon:
+                              _bookProvider.wishlistProvider.isWishlisted(post)
+                                  ? Icon(
+                                      Icons.favorite,
+                                      size: 24,
+                                      color: ColorManager.primary,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border,
+                                      size: 24,
+                                      color: ColorManager.white,
+                                    ),
                         ),
                       ),
                     ],
@@ -133,13 +120,14 @@ class _PostNewState extends State<PostNew> {
           ],
         ),
         GestureDetector(
-          onTap: () => Navigator.of(context).pushNamed(
-            PostDetailsScreen.routeName,
-            arguments: {
-              'post': post,
-              'authSession': loggedInUserSession,
-            },
-          ),
+          onTap: () {
+            _bookProvider.setSelectedBook(post);
+            Navigator.of(context).pushNamed(PostDetailsScreen.routeName
+                // arguments: {
+                //   'post': post,
+                // },
+                );
+          },
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(

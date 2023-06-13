@@ -4,22 +4,37 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:nepali_date_picker/nepali_date_picker.dart';
+import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 import 'package:provider/provider.dart';
 import 'package:share_learning/data/book_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:share_learning/models/wishlist.dart';
+import 'package:share_learning/view_models/cart_provider.dart';
 import 'package:share_learning/view_models/user_provider.dart';
-import '../models/book.dart';
-import '../models/post_category.dart';
-import '../models/user.dart';
-import '../templates/utils/system_helper.dart';
-import 'book_filters_provider.dart';
-import 'category_provider.dart';
-import 'session_provider.dart';
+import '../../models/book.dart';
+import '../../models/post_category.dart';
+import '../../models/user.dart';
+import '../../templates/utils/system_helper.dart';
+import '../book_filters_provider.dart';
+import '../category_provider.dart';
+import '../order_provider.dart';
+import '../order_request_provider.dart';
+import '../session_provider.dart';
+import '../wishlist_provider.dart';
+import 'base_book_view_model.dart';
 
 class BookProvider
-    with ChangeNotifier, BookProviderInputs, BookProviderOutputs {
+// mixin BookProvider
+    with
+        ChangeNotifier,
+        BaseBookViewModel,
+        PostNewWidgetViewModel,
+        HomeScreenNewViewModel,
+        PostDetailsViewModel {
   List<Book> _myBooks = [];
   bool _loading = false;
   BookError? _bookError;
@@ -497,14 +512,60 @@ class BookProvider
     return false;
   }
 
+// ================================== Implementations for the output of BaseProvider functions start from here ===================================
+
+  
+  @override
+  setBillingInfo() {
+    if (user.firstName!.isNotEmpty) {
+      billingInfo["first_name"] = user.firstName!;
+    }
+    if (user.lastName!.isNotEmpty) {
+      billingInfo["last_name"] = user.lastName!;
+    }
+    if (user.email!.isNotEmpty) {
+      billingInfo["email"] = user.email!;
+    }
+    if (user.phone != null) {
+      if (user.phone!.isNotEmpty) {
+        billingInfo["phone"] = user.phone!;
+      }
+    }
+    billingInfo["convenient_location"] = locationOptions[0];
+  }
+
+  @override
+  setBillingInfoLocationData(String value) {
+    billingInfo["convenient_location"] = value;
+    notifyListeners();
+  }
+
+
+  @override
+  bindBaseProvider(BuildContext context){
+    authSession =
+        Provider.of<SessionProvider>(context, listen: false).session as Session;
+    userProvider = Provider.of(context, listen: false);
+    bookFiltersProvider =
+        Provider.of<BookFiltersProvider>(context, listen: false);
+    categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+    orderRequestProvider = Provider.of<OrderRequestProvider>(context, listen: false);
+    orderProvider = Provider.of<OrderProvider>(context, listen: false);
+  }
+
+
+// ================================== Implementations for the output of BaseProvider functions ends from here ===================================
+
+
+
 // ================================== Implementations for the output of HomeScreenNew functions start from here ===================================
   @override
-  getSearchResult() async {
-    final _isValid = homeScreenNewSearchForm.currentState!.validate();
+  getSearchResult(GlobalKey<FormState> homeScreenNewSearchFormKey) async {
+    final _isValid = homeScreenNewSearchFormKey.currentState!.validate();
     if (!_isValid) {
       return false;
     }
-    homeScreenNewSearchForm.currentState!.save();
+    homeScreenNewSearchFormKey.currentState!.save();
     searchFocusNode.unfocus();
     selectedCategoryIndex = 0;
     // setEnableClearSearch(true);
@@ -552,16 +613,10 @@ class BookProvider
 
   @override
   bindHomeScreenNew(BuildContext context) {
+    bindBaseProvider(context);
     selectedCategoryIndex = 0;
     searchFocusNode = FocusNode();
     searchTextController = TextEditingController();
-
-    authSession =
-        Provider.of<SessionProvider>(context, listen: false).session as Session;
-    userProvider = Provider.of(context, listen: false);
-    bookFiltersProvider =
-        Provider.of<BookFiltersProvider>(context, listen: false);
-    categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
 
     categories = categoryProvider.categories;
     categories.insert(
@@ -589,27 +644,160 @@ class BookProvider
   unBindHomeScreenNew() {
     searchFocusNode.dispose();
     scrollController!.dispose();
+    // homeScreenNewSearchFormKey.currentState!.dispose();
   }
 
   // ================================== Implementations for the output of HomeScreenNew functions end from here ===================================
 
-  // ================================== Implementations for the output of BookFiltersWidget functions start from here ===================================
+  // ================================== Implementations for the output of PostDetailsScreen functions start from here ===================================
 
-  // @override
-  // bindBookFiltersWidget(){
-  //   bookFiltersProvider.setMinPrice(minPrice);
-  //   bookFiltersProvider.setMaxPrice(maxPrice);
-  // }
+  @override
+  setSelectedBook(Book book) {
+    selectedBook = book;
+  }
 
-  // @override
-  // unBindBookFiltersWidget(){}
+  @override
+  setMainImageIndex(int value){
+    mainImageIndex = value;
+    notifyListeners();
+  }
 
-  // ================================== Implementations for the output of BookFiltersWidget functions ends from here ===================================
+  @override
+  setEnableRequestButton(bool value) {
+    enableRequestButton = value;
+    notifyListeners();
+  }
+
+
+  @override
+  setExpectedUnitPrice(double value) {
+    expectedUnitPrice = value;
+    notifyListeners();
+  }
+
+  @override
+  setIsRequestLoading(bool value) {
+    isRequestLoading = value;
+    notifyListeners();
+  }
+  @override
+  setIsCartLoading(bool value) {
+    isCartLoading = value;
+    notifyListeners();
+  }
+  @override
+  setIsOrderPlacementLoading(bool value) {
+    isOrderPlacementLoading = value;
+    notifyListeners();
+  }
+
+  @override
+  setItemCount(int value) {
+    itemCount = value;
+    notifyListeners();
+  }
+
+
+  @override
+  getTomorrowDate() {
+    NepaliDateTime initDate = NepaliDateTime.now();
+    NepaliDateTime tomorrow =
+        NepaliDateTime(initDate.year, initDate.month, initDate.day + 1);
+    return tomorrow;
+  }
+
+  @override
+  showPicker(BuildContext context) async {
+    buyerExpectedDeadline = await picker.showAdaptiveDatePicker(
+      context: context,
+      initialDate: getTomorrowDate(),
+      firstDate: getTomorrowDate(),
+      lastDate: NepaliDateTime.now().add(
+        const Duration(
+          days: 365,
+        ),
+      ),
+    );
+    if (buyerExpectedDeadline != null) {
+      datePickercontroller.text = DateFormat('yyyy-MM-dd')
+          .format(buyerExpectedDeadline as DateTime)
+          .toString();
+    }
+  }
+
+  @override
+  bindPostDetailsScreen(BuildContext context) {
+    bindBaseProvider(context);
+    // cartProvider = Provider.of<CartProvider>(context, listen: false);
+    // orderRequestProvider =
+    //     Provider.of<OrderRequestProvider>(context, listen: false);
+
+    postDetailsPageCreateOrderRequestBototmSheetForm = GlobalKey<FormState>();
+    postDetailsPageBototmSheetForm = GlobalKey<FormState>();
+    setBillingInfo();
+    initDate = NepaliDateTime.now();
+    datePickercontroller = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(NepaliDateTime(
+          NepaliDateTime.now().year,
+          NepaliDateTime.now().month,
+          NepaliDateTime.now().day + 1)),
+    );
+
+    postDetailsPageCartBottomSheetBuyerDateFocusNode = FocusNode();
+    postDetailsPageCartBottomSheetBuyerPriceFocusNode = FocusNode();
+    postDetailsPageCartBottomSheetBuyerBooksCountFocusNode = FocusNode();
+    postDetailsPageCartBottomSheetFirstNameFocusNode = FocusNode();
+    postDetailsPageCartBottomSheetLastNameFocusNode = FocusNode();
+    postDetailsPageCartBottomSheetEmailFocusNode = FocusNode();
+    postDetailsPageCartBottomSheetPhoneNumberFocusNode = FocusNode();
+    postDetailsPageCartBottomSheetSideNoteFocusNode = FocusNode();
+  }
+
+  @override
+  unBindPostDetailsScreen() {}
+
+  // ================================== Implementations for the output of PostDetailsScreen functions ends from here ===================================
+  
+  // ================================== Implementations for the output of PostNewWidget functions ends from here ===================================
+  @override
+  bindPostNewWidget(BuildContext context) {
+    bindBaseProvider(context);
+  }
+
+  @override
+  didChangeDependencyPostNewWidget(BuildContext context) {
+    wishlistProvider = Provider.of<WishlistProvider>(context);
+  }
+
+  @override
+  unBindPostNewWidget() {}
+
+  // ================================== Implementations for the output of PostNewWidget functions ends from here ===================================
+  
+  
+  // ================================== Implementations for the output of BillingInfoWidgetViewModel functions starts from here ===================================
+  
+  @override
+  bindBillingInfoWidgetViewModel(BuildContext context) {
+    bindBaseProvider(context);
+    setBillingInfo();
+    setBillingInfoLocationData(locationOptions[0]);
+
+  }
+  
+  
+  // ================================== Implementations for the output of BillingInfoWidgetViewModel functions ends from here ===================================
+
+
+
+
 }
 
-abstract class BookProviderInputs {
-  // ----------------------- Inputs for Home Screen New Starts here --------------------------------------------
-  final homeScreenNewSearchForm = GlobalKey<FormState>();
+
+
+abstract class HomeScreenNewViewModel{
+  // final homeScreenNewSearchFormKey = GlobalKey<FormState>();
+
   // This flag will be used to render either send button or clear button on search bar. I need to use this because i can't clear the search bar if searchtext is not empty because the search will not work on text change but on button click. So the search might not have been completed even if the text is not empty
   bool enableClearSearch = false;
   bool showFilterButton = false;
@@ -633,32 +821,80 @@ abstract class BookProviderInputs {
       createdDate: DateTime.now());
   List<PostCategory> categories = [];
 
-  late UserProvider userProvider;
-  late Session authSession;
-  late BookFiltersProvider bookFiltersProvider;
-  late CategoryProvider categoryProvider;
-  // ----------------------- Inputs for Home Screen New ends here --------------------------------------------
-
-  // ----------------------- Inputs for Book Filters Widget starts here --------------------------------------------
-
-  // ----------------------- Inputs for Book Filters Widget ends here --------------------------------------------
-}
-
-abstract class BookProviderOutputs {
-  // ----------------------- Outputs for Home Screen New Starts here --------------------------------------------
   setEnableClearSearch(bool value);
-  getSearchResult();
+  getSearchResult(GlobalKey<FormState> formKey);
   scrollListener();
   bindHomeScreenNew(BuildContext context);
   unBindHomeScreenNew();
   setLoadingMorePosts(bool value);
   getScrollController();
-  // ----------------------- Outputs for Home Screen New ends here --------------------------------------------
+}
 
-  // ----------------------- Outputs for Book Filters Widget starts here --------------------------------------------
+abstract class PostDetailsViewModel {
+  
+  
+  int itemCount = 1;
+  double expectedUnitPrice = 0;
+  int mainImageIndex = 0;
 
-  // bindBookFiltersWidget();
-  // unBindBookFiltersWidget();
+  bool isRequestLoading = false;
+  bool isCartLoading = false;
+  bool isOrderPlacementLoading = false;
+  bool enableRequestButton = false;
 
-  // ----------------------- Outputs for Book Filters Widget ends here --------------------------------------------
+  late GlobalKey<FormState> postDetailsPageCreateOrderRequestBototmSheetForm;
+  late GlobalKey<FormState> postDetailsPageBototmSheetForm;
+  late Book selectedBook;
+  late NepaliDateTime initDate;
+  late NepaliDateTime? buyerExpectedDeadline;
+  late TextEditingController datePickercontroller;
+
+  late FocusNode postDetailsPageCartBottomSheetBuyerDateFocusNode;
+  late FocusNode postDetailsPageCartBottomSheetBuyerPriceFocusNode;
+  late FocusNode postDetailsPageCartBottomSheetBuyerBooksCountFocusNode;
+
+  // These focus nodes are for order request billing info fields
+  late FocusNode postDetailsPageCartBottomSheetFirstNameFocusNode;
+  late FocusNode postDetailsPageCartBottomSheetLastNameFocusNode;
+  late FocusNode postDetailsPageCartBottomSheetEmailFocusNode;
+  late FocusNode postDetailsPageCartBottomSheetPhoneNumberFocusNode;
+  late FocusNode postDetailsPageCartBottomSheetSideNoteFocusNode;
+
+  late CartProvider cartProvider;
+  late OrderRequestProvider orderRequestProvider;
+
+  bindPostDetailsScreen(BuildContext context);
+  unBindPostDetailsScreen();
+  setSelectedBook(Book selectedBook);
+  // setBillingInfo();
+  getTomorrowDate();
+
+  showPicker(BuildContext context);
+  setExpectedUnitPrice(double value);
+  setEnableRequestButton(bool value);
+  setIsRequestLoading(bool value);
+  setIsCartLoading(bool value);
+  setIsOrderPlacementLoading(bool value);
+  // setBillingInfoLocationData(String value);
+  setMainImageIndex(int value);
+  setItemCount(int value);
+}
+
+abstract class PostNewWidgetViewModel {
+  late WishlistProvider wishlistProvider;
+
+  bindPostNewWidget(BuildContext context);
+  didChangeDependencyPostNewWidget(BuildContext context);
+  unBindPostNewWidget();
+}
+
+
+
+abstract class BillingInfoWidgetViewModel {
+
+  
+
+  bindBillingInfoWidgetViewModel(BuildContext context);
+
+
 }

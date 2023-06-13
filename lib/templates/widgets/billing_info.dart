@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
+import '../../view_models/book_provider.dart';
 import '../../view_models/cart_provider.dart';
 import '../../view_models/order_provider.dart';
 import '../../view_models/session_provider.dart';
@@ -44,147 +45,29 @@ class _BillingInfoState extends State<BillingInfo> {
 
   final _sideNoteFocusNode = FocusNode();
 
-  Map<String, String> _billingInfo = {};
-
   PaymentMethod _paymentMethod = PaymentMethod.Khalti;
 
-  List<String> _locationOptions = [
-    'Kathmandu',
-    'Bhaktapur',
-    'Lalitpur',
-    'Nepalgunj',
-  ];
-
-  _setBillingInfo(User user) {
-    if (user.firstName!.isNotEmpty) {
-      _billingInfo['first_name'] = user.firstName!;
-    }
-    if (user.lastName!.isNotEmpty) {
-      _billingInfo['last_name'] = user.lastName!;
-    }
-    if (user.email!.isNotEmpty) {
-      _billingInfo['email'] = user.email!;
-    }
-    if (user.phone != null) {
-      if (user.phone!.isNotEmpty) {
-        _billingInfo['phone'] = user.phone!;
-      }
-    }
-    // print(_billingInfo);
-  }
-
-  // _showToastNotification(String msg) {
-  //   BotToast.showSimpleNotification(
-  //     title: msg,
-  //     duration: Duration(seconds: 3),
-  //     backgroundColor: ColorManager.primary,
-  //     titleStyle: getBoldStyle(color: ColorManager.white),
-  //     align: Alignment(1, 1),
-  //   );
-  // }
-
-  // _payWithKhalti() async {
-  //   bool paymentSuccess = false;
-  //   await KhaltiScope.of(context).pay(
-  //       config: PaymentConfig(
-  //         amount: 1000,
-  //         productIdentity: 'cart/product id',
-  //         productName: 'productName',
-  //       ),
-  //       preferences: [
-  //         PaymentPreference.khalti,
-  //         PaymentPreference.connectIPS,
-  //         PaymentPreference.eBanking,
-  //         PaymentPreference.mobileBanking,
-  //         PaymentPreference.sct,
-  //       ],
-  //       onSuccess: (PaymentSuccessModel success) {
-  //         paymentSuccess = true;
-  //         showDialog(
-  //           context: context,
-  //           builder: (context) {
-  //             return AlertDialog(
-  //               title: Text('Payment Successful'),
-  //               // actions: [
-  //               //   SimpleDialogOption(
-  //               //     child: Text('OK'),
-  //               //     onPressed: () {
-  //               //       Navigator.pop(context);
-  //               //     },
-  //               //   ),
-  //               // ],
-  //             );
-  //           },
-  //         );
-  //       },
-  //       onFailure: (PaymentFailureModel failure) {
-  //         print(failure.toString());
-  //         paymentSuccess = false;
-  //       },
-  //       onCancel: () {
-  //         print('Khalti Canceled');
-  //         paymentSuccess = false;
-  //       });
-
-  //   return paymentSuccess;
-  // }
-
-  // _payWithEsewa() {
-  //   EsewaClient _esewaClient = EsewaClient.configure(
-  //     clientId: "JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R",
-  //     secretKey: "BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==",
-  //     environment: EsewaEnvironment.TEST,
-  //   );
-
-  //   /*
-  //   * Enter your own callback url to receive response callback from esewa to your client server
-  //   * */
-  //   EsewaPayment payment = EsewaPayment(
-  //       productId: "test_id",
-  //       amount: "10",
-  //       name: "Test Product",
-  //       callbackUrl: "http://example.com/");
-
-  //   // start your payment procedure
-  //   _esewaClient.startPayment(
-  //       esewaPayment: payment,
-  //       onSuccess: (data) {
-  //         print("success");
-  //         return false;
-  //       },
-  //       onFailure: (data) {
-  //         print("failure");
-  //         return false;
-  //       },
-  //       onCancelled: (data) {
-  //         print("cancelled");
-  //         return false;
-  //       });
-  // }
 
   @override
   void initState() {
-    _billingInfo['convenient_location'] = _locationOptions[0];
+    Provider.of<BookProvider>(context, listen:false).bindBillingInfoWidgetViewModel(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // BookFilters bookFilters = Provider.of<BookFilters>(context);
-    // Map<String, dynamic> filterOptions = bookFilters.filterOptions;
+    
+    BookProvider _bookProvider = context.watch<BookProvider>();
 
-    User user = Provider.of<UserProvider>(context).user as User;
-    OrderProvider orders = Provider.of<OrderProvider>(context);
-    // Users users = Provider.of<Users>(context);
-    CartProvider carts = Provider.of<CartProvider>(context, listen: false);
+    // OrderProvider orders = Provider.of<OrderProvider>(context);
+    
+    // CartProvider carts = Provider.of<CartProvider>(context, listen: false);
     // OrderRequests orderRequests =
     //     Provider.of<OrderRequests>(context, listen: false);
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-    Session authSession =
-        Provider.of<SessionProvider>(context).session as Session;
-
-    _setBillingInfo(user);
+    // Session authSession =
+    //     Provider.of<SessionProvider>(context).session as Session;
 
     return Scaffold(
       appBar: AppBar(
@@ -259,9 +142,9 @@ class _BillingInfoState extends State<BillingInfo> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextFormField(
                                             // initialValue: _edittedUser.firstName,
-                                            initialValue: _billingInfo
+                                            initialValue: _bookProvider.billingInfo
                                                     .containsKey('first_name')
-                                                ? _billingInfo['first_name']
+                                                ? _bookProvider.billingInfo['first_name']
                                                 : null,
                                             cursorColor:
                                                 Theme.of(context).primaryColor,
@@ -286,7 +169,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                               return null;
                                             },
                                             onSaved: (value) {
-                                              _billingInfo['first_name'] =
+                                              _bookProvider.billingInfo['first_name'] =
                                                   value.toString();
                                             }),
                                       ),
@@ -295,9 +178,9 @@ class _BillingInfoState extends State<BillingInfo> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextFormField(
-                                          initialValue: _billingInfo
+                                          initialValue: _bookProvider.billingInfo
                                                   .containsKey('last_name')
-                                              ? _billingInfo['last_name']
+                                              ? _bookProvider.billingInfo['last_name']
                                               : null,
                                           keyboardType: TextInputType.text,
                                           cursorColor:
@@ -320,7 +203,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                             return null;
                                           },
                                           onSaved: (value) {
-                                            _billingInfo['last_name'] =
+                                            _bookProvider.billingInfo['last_name'] =
                                                 value.toString();
                                           },
                                         ),
@@ -332,8 +215,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
                                       initialValue:
-                                          _billingInfo.containsKey('email')
-                                              ? _billingInfo['email']
+                                          _bookProvider.billingInfo.containsKey('email')
+                                              ? _bookProvider.billingInfo['email']
                                               : null,
                                       focusNode: _emailFocusNode,
                                       keyboardType: TextInputType.text,
@@ -355,7 +238,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                         return null;
                                       },
                                       onSaved: (value) {
-                                        _billingInfo['email'] =
+                                        _bookProvider.billingInfo['email'] =
                                             value.toString();
                                       }),
                                 ),
@@ -363,8 +246,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
                                       initialValue:
-                                          _billingInfo.containsKey('phone')
-                                              ? _billingInfo['phone']
+                                          _bookProvider.billingInfo.containsKey('phone')
+                                              ? _bookProvider.billingInfo['phone']
                                               : null,
                                       focusNode: _phoneNumberFocusNode,
                                       keyboardType: TextInputType.number,
@@ -386,7 +269,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                         return null;
                                       },
                                       onSaved: (value) {
-                                        _billingInfo['phone'] =
+                                        _bookProvider.billingInfo['phone'] =
                                             value.toString();
                                       }),
                                 ),
@@ -415,7 +298,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                     //   return null;
                                     // },
                                     onSaved: (value) {
-                                      _billingInfo['side_note'] =
+                                      _bookProvider.billingInfo['side_note'] =
                                           value.toString();
                                     },
                                   ),
@@ -459,9 +342,9 @@ class _BillingInfoState extends State<BillingInfo> {
                         child: DropdownButton(
                             isExpanded: true,
                             style: getBoldStyle(color: ColorManager.black),
-                            value: _billingInfo['convenient_location'],
+                            value: _bookProvider.billingInfo['convenient_location'],
                             // value: _locationOptions[0],
-                            items: _locationOptions
+                            items: _bookProvider.locationOptions
                                 .map((option) => DropdownMenuItem(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -476,7 +359,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                 .toList(),
                             onChanged: (value) {
                               setState(() {
-                                _billingInfo['convenient_location'] =
+                                _bookProvider.billingInfo['convenient_location'] =
                                     value as String;
                               });
                             }),
@@ -692,10 +575,10 @@ class _BillingInfoState extends State<BillingInfo> {
                     // }
 
 // If cartid is provided, it will be passed to the function which will call direct order placement api function otherwise it will call  order placement api function which uses preexisting cart
-                    if (await orders.placeOrder(
-                      loggedInSession: authSession,
+                    if (await _bookProvider.orderProvider .placeOrder(
+                      loggedInSession: _bookProvider.authSession,
                       cartId: widget.cartId,
-                      billingInfo: _billingInfo,
+                      billingInfo: _bookProvider.billingInfo,
                       paymentMethod: _paymentMethod == PaymentMethod.Cash
                           ? "C"
                           : _paymentMethod == PaymentMethod.Esewa
@@ -703,18 +586,18 @@ class _BillingInfoState extends State<BillingInfo> {
                               : "K",
                     )) {
                       if (_paymentMethod != PaymentMethod.Cash) {
-                        Order order = orders.orders.last;
-                        await orders.updatePaymentStatus(
-                            authSession, order.id.toString(), paymentStatus);
+                        Order order = _bookProvider.orderProvider.orders.last;
+                        await _bookProvider.orderProvider.updatePaymentStatus(
+                            _bookProvider.authSession, order.id.toString(), paymentStatus);
                       }
 
                       // Only recreate the cart and update it if the order is placed using the existing cart otherwise leave the cart as it is.
                       if (widget.cartId == null) {
-                        await carts.createCart(authSession);
-                        carts.setCartItems([]);
+                        await _bookProvider.cartProvider.createCart(_bookProvider.authSession);
+                        _bookProvider.cartProvider.setCartItems([]);
                         SharedPreferences prefs = await _prefs;
                         prefs.remove('cartId');
-                        prefs.setString('cartId', carts.cart!.id);
+                        prefs.setString('cartId', _bookProvider.cartProvider.cart!.id);
                       }
 
                       AlertHelper.showToastAlert("Order placed successfully");

@@ -38,6 +38,9 @@ class HomeScreenNew extends StatefulWidget {
 
 class _HomeScreenNewState extends State<HomeScreenNew>
     with WidgetsBindingObserver {
+
+      final homeScreenNewSearchFormKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -58,17 +61,18 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
   @override
   void dispose() {
+    super.dispose();
+    // Form.of(context).removeWhere((state) => state == formKey.currentState);
+    // Provider.of<BookProvider>(context, listen: false).homeScreenNewSearchFormKey.currentState?.reset();
     Provider.of<BookProvider>(context, listen: false).unBindHomeScreenNew();
     // Unregister this object as an observer
     WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     BookProvider _bookProvider = context.watch<BookProvider>();
-    // BookFiltersProvider _bookFiltesProvider =
-    //     context.watch<BookFiltersProvider>();
+    
 
     return SafeArea(
       child: Scaffold(
@@ -182,7 +186,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                     Row(
                       children: [
                         Form(
-                          key: _bookProvider.homeScreenNewSearchForm,
+                          // key: _bookProvider.homeScreenNewSearchFormKey,
+                          key: homeScreenNewSearchFormKey,
                           child: Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(right: 12),
@@ -215,7 +220,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                       : IconButton(
                                           icon: Icon(Icons.send),
                                           onPressed: () {
-                                            _bookProvider.getSearchResult();
+                                            _bookProvider.getSearchResult(homeScreenNewSearchFormKey);
                                           },
                                         ),
                                   suffixIconColor: ColorManager.primary,
@@ -250,7 +255,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                   return null;
                                 },
                                 onFieldSubmitted: (_) {
-                                  _bookProvider.getSearchResult();
+                                  _bookProvider.getSearchResult(homeScreenNewSearchFormKey);
                                 },
                               ),
                             ),
@@ -359,7 +364,28 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                       _bookProvider.selectedCategoryIndex ==
                                           index,
                                   onSelected: (bool isSelected) async {
-                                    _bookProvider.selectedCategoryIndex = index;
+                                    if (_bookProvider.selectedCategoryIndex !=
+                                        index) {
+                                      _bookProvider.selectedCategoryIndex =
+                                          index;
+                                      if (_bookProvider
+                                              .categories[_bookProvider
+                                                  .selectedCategoryIndex]
+                                              .name
+                                              .toLowerCase() !=
+                                          'all') {
+                                        _bookProvider.getBooksByCategory(
+                                            _bookProvider.authSession,
+                                            _bookProvider
+                                                .categoryProvider
+                                                .categories[_bookProvider
+                                                    .selectedCategoryIndex]
+                                                .id
+                                                .toString());
+                                      } else
+                                        _bookProvider.getBooksAnnonimusly(
+                                            _bookProvider.authSession);
+                                    }
                                   },
                                 ),
                               );
@@ -393,7 +419,6 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                 itemCount: books.filteredBooks.length,
                                 itemBuilder: (ctx, idx) => PostNew(
                                   book: books.filteredBooks[idx],
-                                  authSession: _bookProvider.authSession,
                                 ),
                               );
                             }
@@ -410,64 +435,65 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                 color: ColorManager.primary),
                           ),
                         )
-                      else if (_bookProvider
-                              .categories[_bookProvider.selectedCategoryIndex]
-                              .name
-                              .toLowerCase() !=
-                          'all')
-                        FutureBuilder(
-                          future: _bookProvider.getBooksByCategory(
-                              _bookProvider.authSession,
-                              _bookProvider
-                                  .categories[
-                                      _bookProvider.selectedCategoryIndex]
-                                  .id
-                                  .toString()),
-                          builder: (ctx, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  color: ColorManager.primary,
-                                ),
-                              );
-                            } else {
-                              if (snapshot.hasError) {
-                                return Center(
-                                  child: Text('Error'),
-                                );
-                              } else {
-                                return _bookProvider.books.length <= 0
-                                    ? Center(
-                                        child: Text(
-                                          'No books found',
-                                          style: getBoldStyle(
-                                              fontSize: FontSize.s20,
-                                              color: ColorManager.primary),
-                                        ),
-                                      )
-                                    : MasonryGridView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        crossAxisSpacing: 12,
-                                        mainAxisSpacing: 12,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: AppPadding.p8,
-                                        ),
-                                        gridDelegate:
-                                            SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                                crossAxisCount: 2),
-                                        itemCount: _bookProvider.books.length,
-                                        itemBuilder: (ctx, idx) => PostNew(
-                                          book: _bookProvider.books[idx],
-                                          authSession:
-                                              _bookProvider.authSession,
-                                        ),
-                                      );
-                              }
-                            }
-                          },
-                        )
+                      // else if (_bookProvider
+                      //         .categories[_bookProvider.selectedCategoryIndex]
+                      //         .name
+                      //         .toLowerCase() !=
+                      //     'all')
+                      // FutureBuilder(
+                      //   future: _bookProvider.getBooksByCategory(
+                      //       _bookProvider.authSession,
+                      //       _bookProvider
+                      //           .categories[
+                      //               _bookProvider.selectedCategoryIndex]
+                      //           .id
+                      //           .toString()),
+                      //   builder: (ctx, snapshot) {
+                      //     if (snapshot.connectionState ==
+                      //         ConnectionState.waiting) {
+                      //       return Center(
+                      //         child: CircularProgressIndicator(
+                      //           color: ColorManager.primary,
+                      //         ),
+                      //       );
+                      //     } else {
+                      //       if (snapshot.hasError) {
+                      //         return Center(
+                      //           child: Text('Error'),
+                      //         );
+                      //       } else {
+                      //         return _bookProvider.books.length <= 0
+                      //             ? Center(
+                      //                 child: Text(
+                      //                   'No books found',
+                      //                   style: getBoldStyle(
+                      //                       fontSize: FontSize.s20,
+                      //                       color: ColorManager.primary),
+                      //                 ),
+                      //               )
+                      //             : MasonryGridView.builder(
+                      //                 physics: NeverScrollableScrollPhysics(),
+                      //                 shrinkWrap: true,
+                      //                 crossAxisSpacing: 12,
+                      //                 mainAxisSpacing: 12,
+                      //                 padding: EdgeInsets.symmetric(
+                      //                   horizontal: AppPadding.p8,
+                      //                 ),
+                      //                 gridDelegate:
+                      //                     SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                      //                         crossAxisCount: 2),
+                      //                 itemCount: _bookProvider.books.length,
+                      //                 itemBuilder: (ctx, idx) => PostNew(
+                      //                   book: _bookProvider.books[idx],
+                      //                   authSession:
+                      //                       _bookProvider.authSession,
+                      //                 ),
+                      //               );
+                      //       }
+                      //     }
+                      //   },
+                      // )
+
                       else if (_bookProvider.books.isNotEmpty)
                         MasonryGridView.builder(
                           physics: NeverScrollableScrollPhysics(),
@@ -483,7 +509,6 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           itemCount: _bookProvider.books.length,
                           itemBuilder: (ctx, idx) => PostNew(
                             book: _bookProvider.books[idx],
-                            authSession: _bookProvider.authSession,
                           ),
                         )
                       else
