@@ -6,15 +6,15 @@ import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/view_models/book_view_model/book_provider.dart';
-import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/providers/book_provider.dart';
+import 'package:share_learning/view_models/providers/session_provider.dart';
 
 // import 'package:path/path.dart' as path;
 // import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
-import '../../view_models/user_provider.dart';
+import '../../view_models/providers/user_provider.dart';
 import '../utils/alert_helper.dart';
 
 class AddPostScreen extends StatefulWidget {

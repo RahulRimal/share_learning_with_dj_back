@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/order.dart';
-import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 
 import '../../models/book.dart';
 import '../../models/order_item.dart';
 import '../../models/session.dart';
-import '../../view_models/book_view_model/book_provider.dart';
+import '../../view_models/providers/book_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';

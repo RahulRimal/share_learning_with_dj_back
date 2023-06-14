@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/models/post_category.dart';
-import 'package:share_learning/view_models/category_provider.dart';
-import 'package:share_learning/view_models/wishlist_provider.dart';
+import 'package:share_learning/view_models/providers/category_provider.dart';
+import 'package:share_learning/view_models/providers/wishlist_provider.dart';
 
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -17,9 +17,9 @@ import 'package:share_learning/templates/widgets/post_new.dart';
 import '../../models/book.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/book_view_model/book_provider.dart';
-import '../../view_models/session_provider.dart';
-import '../../view_models/user_provider.dart';
+import '../../view_models/providers/book_provider.dart';
+import '../../view_models/providers/session_provider.dart';
+import '../../view_models/providers/user_provider.dart';
 import '../managers/api_values_manager.dart';
 import '../utils/user_helper.dart';
 

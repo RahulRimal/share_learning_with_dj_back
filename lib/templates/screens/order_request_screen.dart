@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/models/order_request.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/view_models/cart_provider.dart';
-import 'package:share_learning/view_models/order_request_provider.dart';
-import 'package:share_learning/view_models/session_provider.dart';
+import 'package:share_learning/view_models/providers/cart_provider.dart';
+import 'package:share_learning/view_models/providers/order_request_provider.dart';
+import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -281,41 +281,22 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
   //   return true;
   // }
 
-  _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-    bool value = await Provider.of<CartProvider>(context, listen: false)
-        .deleteCartItem(userSession, cartId, cartItemId);
+  // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
+  //   bool value = await Provider.of<CartProvider>(context, listen: false)
+  //       .deleteCartItem(userSession, cartId, cartItemId);
+  //   if (value) {
+  //     AlertHelper.showToastAlert('Book deleted from the cart');
+  //   } else
+  //     AlertHelper.showToastAlert('Something went wrong, Please try again!');
+  // }
+  _deleteOrderRequest(Session userSession, String orderRequestId) async {
+    bool value = await Provider.of<OrderRequestProvider>(context, listen: false)
+        .deleteOrderRequest(userSession, orderRequestId,);
     if (value) {
       AlertHelper.showToastAlert('Book deleted from the cart');
     } else
       AlertHelper.showToastAlert('Something went wrong, Please try again!');
   }
-
-  // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-  //   await Provider.of<Carts>(context, listen: false)
-  //       .deleteCartItem(userSession, cartId, cartItemId)
-  //       .then(
-  //     (value) {
-  //       if (value) {
-  //         BotToast.showSimpleNotification(
-  //           title: 'Book deleted from the cart',
-  //           duration: Duration(seconds: 3),
-  //           backgroundColor: ColorManager.primary,
-  //           titleStyle: getBoldStyle(color: ColorManager.white),
-  //           align: Alignment(-1, -1),
-  //           hideCloseButton: true,
-  //         );
-  //       } else
-  //         BotToast.showSimpleNotification(
-  //           title: 'Something went wrong, Please try again!',
-  //           duration: Duration(seconds: 3),
-  //           backgroundColor: ColorManager.primary,
-  //           titleStyle: getBoldStyle(color: ColorManager.white),
-  //           align: Alignment(-1, -1),
-  //           hideCloseButton: true,
-  //         );
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -447,12 +428,8 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                           ),
                                         ).then((_) {
                                           if (userConfirmed) {
-                                            _deleteCartItem(
+                                            _deleteOrderRequest(
                                               authendicatedSession,
-                                              Provider.of<CartProvider>(context,
-                                                      listen: false)
-                                                  .cart!
-                                                  .id,
                                               widget.requestedItem.id
                                                   .toString(),
                                             );

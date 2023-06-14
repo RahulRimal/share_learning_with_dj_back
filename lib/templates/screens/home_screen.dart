@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/view_models/book_view_model/book_provider.dart';
-import 'package:share_learning/view_models/user_provider.dart';
+import 'package:share_learning/view_models/providers/book_provider.dart';
+import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/managers/api_values_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -15,7 +15,7 @@ import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/post.dart';
 
-import '../../view_models/session_provider.dart';
+import '../../view_models/providers/session_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';

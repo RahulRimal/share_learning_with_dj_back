@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/view_models/comment_provider.dart';
+import 'package:share_learning/view_models/providers/comment_provider.dart';
 import 'package:share_learning/templates/managers/api_values_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_learning/templates/managers/strings_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
+
+import '../models/comment.dart';
 
 class CommentApi {
   static Future<Object> getPostComments(
@@ -206,12 +208,10 @@ class CommentApi {
 
       // print(response);
 
-      if (response.statusCode == ApiStatusCode.responseSuccess) {
+      if (response.statusCode == ApiStatusCode.noContent) {
         return Success(
             code: response.statusCode,
-            response: json.encode(json.decode(response.body)['message']));
-        // response: commentFromJson(
-        //     json.encode(json.decode(response.body)['data']['replies'])));
+            response: "Comment deleted successfully");
       }
       return Failure(
           code: ApiStatusCode.invalidResponse,

@@ -6,9 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/view_models/category_provider.dart';
-import 'package:share_learning/view_models/session_provider.dart';
-import 'package:share_learning/view_models/wishlist_provider.dart';
+import 'package:share_learning/view_models/providers/category_provider.dart';
+import 'package:share_learning/view_models/providers/session_provider.dart';
+import 'package:share_learning/view_models/providers/wishlist_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/screens/home_screen_new.dart';
@@ -17,9 +17,9 @@ import 'package:share_learning/templates/screens/user_interests_screen.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../view_models/cart_provider.dart';
-import '../../view_models/order_request_provider.dart';
-import '../../view_models/user_provider.dart';
+import '../../view_models/providers/cart_provider.dart';
+import '../../view_models/providers/order_request_provider.dart';
+import '../../view_models/providers/user_provider.dart';
 import '../managers/assets_manager.dart';
 import '../utils/alert_helper.dart';
 

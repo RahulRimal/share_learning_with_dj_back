@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:share_learning/view_models/user_provider.dart';
+import 'package:share_learning/view_models/providers/user_provider.dart';
 
 import 'firebase_options.dart';
 import 'models/session.dart';
@@ -37,15 +37,15 @@ import 'templates/screens/user_profile_edit_screen.dart';
 import 'templates/screens/user_profile_screen.dart';
 import 'templates/screens/wishlisted_books_screen.dart';
 import 'templates/utils/notification_service.dart';
-import 'view_models/book_filters_provider.dart';
-import 'view_models/book_view_model/book_provider.dart';
-import 'view_models/cart_provider.dart';
-import 'view_models/category_provider.dart';
-import 'view_models/comment_provider.dart';
-import 'view_models/order_provider.dart';
-import 'view_models/order_request_provider.dart';
-import 'view_models/session_provider.dart';
-import 'view_models/wishlist_provider.dart';
+import 'view_models/providers/book_filters_provider.dart';
+import 'view_models/providers/book_provider.dart';
+import 'view_models/providers/cart_provider.dart';
+import 'view_models/providers/category_provider.dart';
+import 'view_models/providers/comment_provider.dart';
+import 'view_models/providers/order_provider.dart';
+import 'view_models/providers/order_request_provider.dart';
+import 'view_models/providers/session_provider.dart';
+import 'view_models/providers/wishlist_provider.dart';
 
 Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();

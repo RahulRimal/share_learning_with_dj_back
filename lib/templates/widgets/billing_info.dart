@@ -6,11 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/book_view_model/book_provider.dart';
-import '../../view_models/cart_provider.dart';
-import '../../view_models/order_provider.dart';
-import '../../view_models/session_provider.dart';
-import '../../view_models/user_provider.dart';
+import '../../view_models/providers/book_provider.dart';
+import '../../view_models/providers/cart_provider.dart';
+import '../../view_models/providers/order_provider.dart';
+import '../../view_models/providers/session_provider.dart';
+import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
@@ -576,7 +576,7 @@ class _BillingInfoState extends State<BillingInfo> {
 
 // If cartid is provided, it will be passed to the function which will call direct order placement api function otherwise it will call  order placement api function which uses preexisting cart
                     if (await _bookProvider.orderProvider .placeOrder(
-                      loggedInSession: _bookProvider.authSession,
+                      loggedInSession: _bookProvider.sessionProvider.session as Session,
                       cartId: widget.cartId,
                       billingInfo: _bookProvider.billingInfo,
                       paymentMethod: _paymentMethod == PaymentMethod.Cash
@@ -588,12 +588,12 @@ class _BillingInfoState extends State<BillingInfo> {
                       if (_paymentMethod != PaymentMethod.Cash) {
                         Order order = _bookProvider.orderProvider.orders.last;
                         await _bookProvider.orderProvider.updatePaymentStatus(
-                            _bookProvider.authSession, order.id.toString(), paymentStatus);
+                            _bookProvider.sessionProvider.session as Session, order.id.toString(), paymentStatus);
                       }
 
                       // Only recreate the cart and update it if the order is placed using the existing cart otherwise leave the cart as it is.
                       if (widget.cartId == null) {
-                        await _bookProvider.cartProvider.createCart(_bookProvider.authSession);
+                        await _bookProvider.cartProvider.createCart(_bookProvider.sessionProvider.session as Session);
                         _bookProvider.cartProvider.setCartItems([]);
                         SharedPreferences prefs = await _prefs;
                         prefs.remove('cartId');

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
@@ -13,17 +14,17 @@ import 'package:share_learning/templates/screens/edit_post_screen.dart';
 import 'package:share_learning/templates/screens/order_request_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/post_comments_new.dart';
-import 'package:share_learning/view_models/book_view_model/book_provider.dart';
+import 'package:share_learning/view_models/providers/book_provider.dart';
 
 import '../../models/book.dart';
 import '../../models/cart.dart';
 import '../../models/cart_item.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/cart_provider.dart';
-import '../../view_models/order_request_provider.dart';
-import '../../view_models/session_provider.dart';
-import '../../view_models/user_provider.dart';
+import '../../view_models/providers/cart_provider.dart';
+import '../../view_models/providers/order_request_provider.dart';
+import '../../view_models/providers/session_provider.dart';
+import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
@@ -49,7 +50,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   @override
   void dispose() {
     super.dispose();
-    Provider.of<BookProvider>(context, listen: false).unBindPostDetailsScreen();
+    // Provider.of<BookProvider>(context, listen: false).unBindPostDetailsScreen();
   }
 
   @override
@@ -258,11 +259,12 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           ),
                         ),
 
-                        PostCommentsNew(
-                          _bookProvider.authSession,
-                          _bookProvider.user,
-                          _bookProvider.selectedBook.id,
-                        ),
+                        // PostCommentsNew(
+                        //   _bookProvider.sessionProvider,
+                        //   _bookProvider.user,
+                        //   _bookProvider.selectedBook.id,
+                        // ),
+                        PostCommentsNew(),
 
                         SizedBox(
                           height: 30,
@@ -339,12 +341,14 @@ class _SinglePostCommenstSectionState extends State<SinglePostCommenstSection> {
             ],
           ),
         ),
-        // PostComments(loggedInUserSession, comments, this.bookId),
-        PostCommentsNew(
-            // widget.authenticatedSession, widget.loggedInUser, widget.postId),
-            _bookProvider.authSession,
-            _bookProvider.user,
-            _bookProvider.selectedBook.id),
+
+        // PostCommentsNew(
+
+        //     _bookProvider.sessionProvider.session as Session,
+        //     _bookProvider.user,
+        //     _bookProvider.selectedBook.id,
+        //     ),
+        PostCommentsNew(),
       ],
     );
   }
@@ -387,7 +391,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
             Navigator.of(context)
                 .pushNamed(EditPostScreen.routeName, arguments: {
               'bookId': _bookProvider.selectedBook.id,
-              'loggedInUserSession': _bookProvider.authSession,
+              'loggedInUserSession': _bookProvider.sessionProvider,
             });
           },
         ),
@@ -637,21 +641,23 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                   return null;
                                                 },
                                                 onChanged: (value) {
+                                                  _bookProvider
+                                                      .setExpectedUnitPrice(
+                                                          double.parse(value));
+                                                  if (_bookProvider
+                                                          .expectedUnitPrice ==
+                                                      _bookProvider
+                                                          .selectedBook.price) {
                                                     _bookProvider
-                                                         .setExpectedUnitPrice(double.parse(value));
-                                                    if (_bookProvider
-                                                            .expectedUnitPrice ==
-                                                        _bookProvider
-                                                            .selectedBook
-                                                            .price) {
-                                                          _bookProvider.setEnableRequestButton(false);
-                                                    } else {
-                                                      
-                                                          _bookProvider.setEnableRequestButton(true);
-                                                    }
+                                                        .setEnableRequestButton(
+                                                            false);
+                                                  } else {
+                                                    _bookProvider
+                                                        .setEnableRequestButton(
+                                                            true);
+                                                  }
                                                   // });
                                                 },
-                                                
                                               ),
                                             ),
                                           ),
@@ -659,95 +665,116 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: AppPadding.p12,
                                             ),
-                                            
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 color: Colors.grey[200],
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               ),
-                                              
-                                              child: StatefulBuilder(builder:
-                                                  (BuildContext context,
-                                                      StateSetter setState) {
-                                                return Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    IconButton(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Consumer<BookProvider>(
+                                                    builder: (context,
+                                                            bookProvider,
+                                                            child) =>
+                                                        IconButton(
                                                       color: Colors.black,
                                                       padding: EdgeInsets.zero,
                                                       disabledColor:
                                                           Colors.grey,
                                                       splashRadius:
                                                           AppRadius.r12,
-                                                      onPressed: _bookProvider
+                                                      onPressed: bookProvider
                                                                   .itemCount >
                                                               1
                                                           ? () {
-                                                              setState(() {
-                                                                _bookProvider
-                                                                    .itemCount--;
-                                                              });
+                                                              // setState(() {
+                                                              bookProvider
+                                                                  .setItemCount(
+                                                                      bookProvider
+                                                                              .itemCount -
+                                                                          1);
+
+                                                              // });
                                                             }
                                                           : null,
                                                       icon: Icon(Icons.remove),
                                                     ),
-                                                    AnimatedSwitcher(
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    200),
-                                                        child: Text(
-                                                          _bookProvider
-                                                              .itemCount
-                                                              .toString(),
-                                                          key: ValueKey(
-                                                              _bookProvider
-                                                                  .itemCount),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: getBoldStyle(
-                                                            color: ColorManager
-                                                                .black,
-                                                            fontSize:
-                                                                FontSize.s17,
-                                                          ),
-                                                        ),
-                                                        transitionBuilder:
-                                                            (Widget child,
+                                                  ),
+                                                  Consumer<BookProvider>(
+                                                    builder: (context,
+                                                            bookProvider,
+                                                            child) =>
+                                                        AnimatedSwitcher(
+                                                            duration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            child: Text(
+                                                              bookProvider
+                                                                  .itemCount
+                                                                  .toString(),
+                                                              key: ValueKey(
+                                                                  bookProvider
+                                                                      .itemCount),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style:
+                                                                  getBoldStyle(
+                                                                color:
+                                                                    ColorManager
+                                                                        .black,
+                                                                fontSize:
+                                                                    FontSize
+                                                                        .s17,
+                                                              ),
+                                                            ),
+                                                            transitionBuilder: (Widget
+                                                                    child,
                                                                 Animation<
                                                                         double>
                                                                     animation) {
-                                                          return ScaleTransition(
-                                                              scale: animation,
-                                                              child: child);
-                                                        }),
-                                                    IconButton(
+                                                              return ScaleTransition(
+                                                                  scale:
+                                                                      animation,
+                                                                  child: child);
+                                                            }),
+                                                  ),
+                                                  Consumer<BookProvider>(
+                                                    builder: (context,
+                                                            bookProvider,
+                                                            child) =>
+                                                        IconButton(
                                                       color: Colors.black,
                                                       padding: EdgeInsets.zero,
                                                       disabledColor:
                                                           Colors.grey,
                                                       splashRadius:
                                                           AppRadius.r12,
-                                                      onPressed: _bookProvider
+                                                      onPressed: bookProvider
                                                                   .selectedBook
                                                                   .bookCount >
-                                                              _bookProvider
+                                                              bookProvider
                                                                   .itemCount
                                                           ? () {
                                                               // setState(() {
-                                                                    _bookProvider.setItemCount(_bookProvider
-                                                                    .itemCount++);
+                                                              bookProvider
+                                                                  .setItemCount(
+                                                                      bookProvider
+                                                                              .itemCount +
+                                                                          1);
                                                               // });
                                                             }
                                                           : null,
                                                       icon: Icon(Icons.add),
                                                     ),
-                                                  ],
-                                                );
-                                              }),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -760,427 +787,406 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                       children: [
                                         // Using consumer here because context.watch() only works for build and not for the callback functions, since i have used provider property value to enable or disable the callback, so i have wrpped the widget containing callback with consumer
                                         Consumer<BookProvider>(
-                                          builder: (context, bookProvider, child)=>
-                                           ElevatedButton.icon(
-                                                  // icon: _bookProvider
-                                                  icon: bookProvider
-                                                          .isRequestLoading
-                                                      ? SizedBox(
-                                                          height: AppHeight.h20,
-                                                          width: AppHeight.h20,
-                                                          child:
-                                                              CircularProgressIndicator
-                                                                  .adaptive(
-                                                            strokeWidth: 3,
-                                                            valueColor:
-                                                                AlwaysStoppedAnimation<
-                                                                        Color>(
-                                                                    Colors.white),
-                                                            backgroundColor:
-                                                                ColorManager
-                                                                    .primary,
-                                                          ),
-                                                        )
-                                                      : Container(),
-                                                  label: Text(
-                                                    'Request for this price',
-                                                    style: getBoldStyle(
-                                                      color: ColorManager.white,
-                                                      fontSize: FontSize.s14,
+                                          builder:
+                                              (context, bookProvider, child) =>
+                                                  ElevatedButton.icon(
+                                            // icon: _bookProvider
+                                            icon: bookProvider
+                                                    .isRequestOnProcess
+                                                ? SizedBox(
+                                                    height: AppHeight.h20,
+                                                    width: AppHeight.h20,
+                                                    child:
+                                                        CircularProgressIndicator
+                                                            .adaptive(
+                                                      strokeWidth: 3,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              Colors.white),
+                                                      backgroundColor:
+                                                          ColorManager.primary,
                                                     ),
-                                                  ),
-                                                  // onPressed: !_bookProvider.enableRequestButton
-                                                  onPressed: !bookProvider.enableRequestButton
-                                                      ? null
-                                                      : () async {
-                                                          // setState(() {
-                                                            _bookProvider.setIsRequestLoading(true);
-                                                          // });
-                                        
-                                                          final isValid =
-                                                              _bookProvider
-                                                                  .postDetailsPageBototmSheetForm
-                                                                  .currentState!
-                                                                  .validate();
-                                                          if (!isValid) {
-                                                            AlertHelper
-                                                                .showToastAlert(
-                                                                    'Something went wrong');
-                                                          }
+                                                  )
+                                                : Container(),
+                                            label: Text(
+                                              'Request for this price',
+                                              style: getBoldStyle(
+                                                color: ColorManager.white,
+                                                fontSize: FontSize.s14,
+                                              ),
+                                            ),
+                                            // onPressed: !_bookProvider.enableRequestButton
+                                            onPressed: !bookProvider
+                                                    .enableRequestButton
+                                                ? null
+                                                : () async {
+                                                    // _bookProvider.setIsRequestOnProcess(true);
+
+                                                    final isValid = _bookProvider
+                                                        .postDetailsPageBototmSheetForm
+                                                        .currentState!
+                                                        .validate();
+                                                    if (!isValid) {
+                                                      AlertHelper.showToastAlert(
+                                                          'Something went wrong');
+                                                    }
+                                                    _bookProvider
+                                                        .postDetailsPageBototmSheetForm
+                                                        .currentState!
+                                                        .save();
+                                                    Map<String, dynamic>
+                                                        requestInfo = {
+                                                      'product_id':
                                                           _bookProvider
-                                                              .postDetailsPageBototmSheetForm
-                                                              .currentState!
-                                                              .save();
-                                                          Map<String, dynamic>
-                                                              requestInfo = {
-                                                            'product_id':
-                                                                _bookProvider
-                                                                    .selectedBook
-                                                                    .id,
-                                                            'quantity':
-                                                                _bookProvider
-                                                                    .itemCount,
-                                                            'requested_price':
-                                                                _bookProvider
-                                                                    .expectedUnitPrice
-                                                          };
-                                        
-                                                          _createOrderRequest(
-                                                              _bookProvider,
-                                                              requestInfo);
-                                                          // if (await orderRequests
-                                                          //     .createOrderRequest(
-                                                          //         authenticatedSession,
-                                                          //         requestInfo)) {
-                                                          //   Navigator.pop(
-                                                          //       context);
-                                                          //   _showToastNotification(
-                                                          //       'Request has been sent successfully');
-                                                          // } else {
-                                                          //   _showToastNotification(
-                                                          //       'Something went wrong');
-                                                          // }
-                                                        },
-                                                ),
+                                                              .selectedBook.id,
+                                                      'quantity': _bookProvider
+                                                          .itemCount,
+                                                      'requested_price':
+                                                          _bookProvider
+                                                              .expectedUnitPrice
+                                                    };
+
+                                                    _createOrderRequest(
+                                                        _bookProvider,
+                                                        requestInfo);
+                                                    // if (await orderRequests
+                                                    //     .createOrderRequest(
+                                                    //         authenticatedSession,
+                                                    //         requestInfo)) {
+                                                    //   Navigator.pop(
+                                                    //       context);
+                                                    //   _showToastNotification(
+                                                    //       'Request has been sent successfully');
+                                                    // } else {
+                                                    //   _showToastNotification(
+                                                    //       'Something went wrong');
+                                                    // }
+                                                  },
+                                          ),
                                         ),
-                                            
+
                                         // Using consumer here because context.watch() only works for build and not for the callback functions, since i have used provider property value to enable or disable the callback, so i have wrpped the widget containing callback with consumer
-                                        Consumer<BookProvider>(
-                                            builder: (BuildContext context,
-                                                bookProvider,
+                                        Consumer<BookProvider>(builder:
+                                            (BuildContext context, bookProvider,
                                                 Widget? child) {
-                                              return ElevatedButton.icon(
-                                                icon: bookProvider
-                                                        .isCartLoading
-                                                    ? SizedBox(
-                                                        height: AppHeight.h20,
-                                                        width: AppHeight.h20,
-                                                        child:
-                                                            CircularProgressIndicator
-                                                                .adaptive(
-                                                          strokeWidth: 3,
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation<
-                                                                      Color>(
-                                                                  Colors.white),
-                                                          backgroundColor:
-                                                              ColorManager
-                                                                  .primary,
-                                                        ),
-                                                      )
-                                                    : Container(),
-                                                label: Text(
-                                                  'Add book to cart',
-                                                  style: getBoldStyle(
-                                                    color: ColorManager.white,
-                                                    fontSize: FontSize.s14,
-                                                  ),
-                                                ),
-                                                // If request button is enabled, or if the add to cart process is loading then disable cart button other enable it
-                                                onPressed: bookProvider.enableRequestButton || bookProvider
-                                                                  .isCartLoading
-                                                    ? null
-                                                    : () async {
-                                                        // ----------------------Order without cart starts here ----------------------
-                                                        // if (await orders.getUserOrder(
-                                                        //     loggedInUserSession,
-                                                        //     users.user as User)) {
-                                                        //   final isValid = _form
-                                                        //       .currentState!
-                                                        //       .validate();
-                                                        //   if (!isValid) {
-                                                        //     _showToastNotification(
-                                                        //         'Something went wrong');
-                                                        //   }
-                                                        //   _form.currentState!.save();
-                                                        //   OrderItem item =
-                                                        //       new OrderItem(
-                                                        //           id: 0,
-                                                        //           productId: int.parse(
-                                                        //               selectedPost.id),
-                                                        //           quantity:
-                                                        //               _buyerExpectedBook
-                                                        //                   .bookCount);
-                                                        //   if (await orders.addOrderItem(
-                                                        //       item,
-                                                        //       orders.order as Order)) {
-                                                        //     Navigator.pop(context);
-                                                        //     _showToastNotification(
-                                                        //         'Book has been ordered successfully');
-                                                        //   }
-                                                        // } else {
-                                                        //   _showToastNotification(
-                                                        //       'Something went wrong');
-                                                        // }
-                                                        // ----------------------Order without cart ends here ----------------------
+                                          return ElevatedButton.icon(
+                                            icon: bookProvider.isCartOnProcess
+                                                ? SizedBox(
+                                                    height: AppHeight.h20,
+                                                    width: AppHeight.h20,
+                                                    child:
+                                                        CircularProgressIndicator
+                                                            .adaptive(
+                                                      strokeWidth: 3,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              Colors.white),
+                                                      backgroundColor:
+                                                          ColorManager.primary,
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            label: Text(
+                                              bookProvider.isCartOnProcess
+                                                  ? "Adding ..."
+                                                  : 'Add book to cart',
+                                              style: getBoldStyle(
+                                                color: ColorManager.white,
+                                                fontSize: FontSize.s14,
+                                              ),
+                                            ),
+                                            // If request button is enabled, or if the add to cart process is loading then disable cart button other enable it
+                                            onPressed: bookProvider
+                                                        .enableRequestButton ||
+                                                    bookProvider.isCartOnProcess
+                                                ? null
+                                                : () async {
+                                                    // ----------------------Order without cart starts here ----------------------
+                                                    // if (await orders.getUserOrder(
+                                                    //     loggedInUserSession,
+                                                    //     users.user as User)) {
+                                                    //   final isValid = _form
+                                                    //       .currentState!
+                                                    //       .validate();
+                                                    //   if (!isValid) {
+                                                    //     _showToastNotification(
+                                                    //         'Something went wrong');
+                                                    //   }
+                                                    //   _form.currentState!.save();
+                                                    //   OrderItem item =
+                                                    //       new OrderItem(
+                                                    //           id: 0,
+                                                    //           productId: int.parse(
+                                                    //               selectedPost.id),
+                                                    //           quantity:
+                                                    //               _buyerExpectedBook
+                                                    //                   .bookCount);
+                                                    //   if (await orders.addOrderItem(
+                                                    //       item,
+                                                    //       orders.order as Order)) {
+                                                    //     Navigator.pop(context);
+                                                    //     _showToastNotification(
+                                                    //         'Book has been ordered successfully');
+                                                    //   }
+                                                    // } else {
+                                                    //   _showToastNotification(
+                                                    //       'Something went wrong');
+                                                    // }
+                                                    // ----------------------Order without cart ends here ----------------------
 
-                                                        
-                                                          _bookProvider
-                                                                  .setIsCartLoading
-                                                              (true);
+                                                    _bookProvider
+                                                        .setIsCartOnProcess(
+                                                            true);
 
-
-                                                        
-
-                                                        if (_bookProvider
-                                                                .cartProvider
-                                                                .cart ==
-                                                            null) {
-                                                          await _bookProvider
-                                                              .cartProvider
-                                                              .createCart(Provider.of<
-                                                                          SessionProvider>(
+                                                    if (_bookProvider
+                                                            .cartProvider
+                                                            .cart ==
+                                                        null) {
+                                                      await _bookProvider
+                                                          .cartProvider
+                                                          .createCart(Provider
+                                                                  .of<SessionProvider>(
                                                                       context,
                                                                       listen:
                                                                           false)
-                                                                  .session as Session);
-                                                        }
-                                                        if (_bookProvider
-                                                                .cartProvider
-                                                                .cart !=
-                                                            null) {
-                                                          final isValid =
-                                                              _bookProvider
-                                                                  .postDetailsPageBototmSheetForm
-                                                                  .currentState!
-                                                                  .validate();
-                                                          if (!isValid) {
-                                                            AlertHelper
-                                                                .showToastAlert(
-                                                                    'Something went wrong');
-                                                          }
-                                                          _bookProvider
-                                                              .postDetailsPageBototmSheetForm
-                                                              .currentState!
-                                                              .save();
-
-                                                          CartItem edittedItem =
-                                                              new CartItem(
-                                                            id: 0,
-                                                            product:
-                                                                new Product(
-                                                              id: int.parse(
-                                                                  _bookProvider
-                                                                      .selectedBook
-                                                                      .id),
-                                                              bookName:
-                                                                  _bookProvider
-                                                                      .selectedBook
-                                                                      .bookName,
-                                                              unitPrice:
-                                                                  _bookProvider
-                                                                      .selectedBook
-                                                                      .price
-                                                                      .toString(),
-                                                            ),
-                                                            negotiatedPrice:
-                                                                _bookProvider
-                                                                    .selectedBook
-                                                                    .price,
-                                                            quantity:
-                                                                _bookProvider
-                                                                    .itemCount,
-                                                            totalPrice: 0,
-                                                          );
-
-                                                          if (await _bookProvider
-                                                              .cartProvider
-                                                              .addItemToCart(
-                                                                  _bookProvider
-                                                                      .cartProvider
-                                                                      .cart as Cart,
-                                                                  edittedItem)) {
-                                                            
-                                                            
-                                                              _bookProvider.setIsCartLoading(false);
-
-                                                            
-                                                            Navigator.pop(
-                                                                context);
-                                                            AlertHelper
-                                                                .showToastAlert(
-                                                                    'Book added to cart successfully');
-                                                          }
-                                                        } else {
-                                                          AlertHelper
-                                                              .showToastAlert(
-                                                                  'Something went wrong');
-                                                        }
-                                                        // Hide order placement loading indicator
-                                                        _bookProvider.setIsCartLoading(false);
-
-                                                      },
-                                              );
-                                            }),
-                                            // Using consumer here because context.watch() only works for build and not for the callback functions, since i have used provider property value to enable or disable the callback, so i have wrpped the widget containing callback with consumer
-                                        Consumer<BookProvider>(
-                                            builder: (BuildContext context,
-                                                bookProvider,
-                                                Widget? child) {
-                                              return ElevatedButton.icon(
-                                                style: ElevatedButton.styleFrom(
-                                                  minimumSize:
-                                                      const Size.fromHeight(
-                                                          AppHeight.h36),
-                                                ),
-                                                icon: bookProvider
-                                                        .isOrderPlacementLoading
-                                                    ? SizedBox(
-                                                        height: AppHeight.h20,
-                                                        width: AppHeight.h20,
-                                                        child:
-                                                            CircularProgressIndicator
-                                                                .adaptive(
-                                                          strokeWidth: 3,
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation<
-                                                                      Color>(
-                                                                  Colors.white),
-                                                          backgroundColor:
-                                                              ColorManager
-                                                                  .primary,
-                                                        ),
-                                                      )
-                                                    : Container(),
-                                                label: Text(
-                                                  'Place direct order',
-                                                  style: getBoldStyle(
-                                                    color: ColorManager.white,
-                                                    fontSize: FontSize.s14,
-                                                  ),
-                                                ),
-                                                // If request button is enabled, or if the add to direct order placement process is loading then disable place direct order button other enable it
-                                                onPressed: bookProvider.enableRequestButton || bookProvider.isOrderPlacementLoading
-                                                    ? null
-                                                    :
-                                                    
-                                                    () async {
-                                                          _bookProvider.setIsOrderPlacementLoading(true);
-                                                          
-                                                        var tempCart = await _bookProvider
+                                                              .session as Session);
+                                                    }
+                                                    if (_bookProvider
                                                             .cartProvider
-                                                            .createTemporaryCart(
-                                                                Provider.of<SessionProvider>(
+                                                            .cart !=
+                                                        null) {
+                                                      final isValid = _bookProvider
+                                                          .postDetailsPageBototmSheetForm
+                                                          .currentState!
+                                                          .validate();
+                                                      if (!isValid) {
+                                                        AlertHelper.showToastAlert(
+                                                            'Something went wrong');
+                                                      }
+                                                      _bookProvider
+                                                          .postDetailsPageBototmSheetForm
+                                                          .currentState!
+                                                          .save();
+
+                                                      CartItem edittedItem =
+                                                          new CartItem(
+                                                        id: 0,
+                                                        product: new Product(
+                                                          id: int.parse(
+                                                              _bookProvider
+                                                                  .selectedBook
+                                                                  .id),
+                                                          bookName:
+                                                              _bookProvider
+                                                                  .selectedBook
+                                                                  .bookName,
+                                                          unitPrice:
+                                                              _bookProvider
+                                                                  .selectedBook
+                                                                  .price
+                                                                  .toString(),
+                                                        ),
+                                                        negotiatedPrice:
+                                                            _bookProvider
+                                                                .selectedBook
+                                                                .price,
+                                                        quantity: _bookProvider
+                                                            .itemCount,
+                                                        totalPrice: 0,
+                                                      );
+
+                                                      if (await _bookProvider
+                                                          .cartProvider
+                                                          .addItemToCart(
+                                                              _bookProvider
+                                                                  .cartProvider
+                                                                  .cart as Cart,
+                                                              edittedItem)) {
+                                                        _bookProvider
+                                                            .setIsCartOnProcess(
+                                                                false);
+
+                                                        Navigator.pop(context);
+                                                        AlertHelper.showToastAlert(
+                                                            'Book added to cart successfully');
+                                                      }
+                                                    } else {
+                                                      AlertHelper.showToastAlert(
+                                                          'Something went wrong');
+                                                    }
+                                                    // Hide order placement loading indicator
+                                                    _bookProvider
+                                                        .setIsCartOnProcess(
+                                                            false);
+                                                  },
+                                          );
+                                        }),
+                                        // Using consumer here because context.watch() only works for build and not for the callback functions, since i have used provider property value to enable or disable the callback, so i have wrpped the widget containing callback with consumer
+                                        Consumer<BookProvider>(builder:
+                                            (BuildContext context, bookProvider,
+                                                Widget? child) {
+                                          return ElevatedButton.icon(
+                                            style: ElevatedButton.styleFrom(
+                                              minimumSize:
+                                                  const Size.fromHeight(
+                                                      AppHeight.h36),
+                                            ),
+                                            icon: bookProvider
+                                                    .isOrderPlacementOnProcess
+                                                ? SizedBox(
+                                                    height: AppHeight.h20,
+                                                    width: AppHeight.h20,
+                                                    child:
+                                                        CircularProgressIndicator
+                                                            .adaptive(
+                                                      strokeWidth: 3,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              Colors.white),
+                                                      backgroundColor:
+                                                          ColorManager.primary,
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            label: Text(
+                                              bookProvider
+                                                      .isOrderPlacementOnProcess
+                                                  ? 'Ordering book ...'
+                                                  : 'Place direct order',
+                                              style: getBoldStyle(
+                                                color: ColorManager.white,
+                                                fontSize: FontSize.s14,
+                                              ),
+                                            ),
+                                            // If request button is enabled, or if the add to direct order placement process is loading then disable place direct order button other enable it
+                                            onPressed: bookProvider
+                                                        .enableRequestButton ||
+                                                    bookProvider
+                                                        .isOrderPlacementOnProcess
+                                                ? null
+                                                : () async {
+                                                    _bookProvider
+                                                        .setIsOrderPlacementOnProcess(
+                                                            true);
+
+                                                    var tempCart = await _bookProvider
+                                                        .cartProvider
+                                                        .createTemporaryCart(
+                                                            Provider.of<SessionProvider>(
                                                                         context,
                                                                         listen:
                                                                             false)
-                                                                    .session as Session);
-                                                        if (tempCart
-                                                            is CartError) {
-                                                          AlertHelper
-                                                              .showToastAlert(
-                                                                  'Something went wrong');
-                                                        }
-                                                        if (tempCart is Cart) {
-                                                          final isValid =
+                                                                    .session
+                                                                as Session);
+                                                    if (tempCart is CartError) {
+                                                      AlertHelper.showToastAlert(
+                                                          'Something went wrong');
+                                                    }
+                                                    if (tempCart is Cart) {
+                                                      final isValid = _bookProvider
+                                                          .postDetailsPageBototmSheetForm
+                                                          .currentState!
+                                                          .validate();
+                                                      if (!isValid) {
+                                                        AlertHelper.showToastAlert(
+                                                            'Something went wrong');
+                                                      }
+                                                      _bookProvider
+                                                          .postDetailsPageBototmSheetForm
+                                                          .currentState!
+                                                          .save();
+
+                                                      CartItem edittedItem =
+                                                          new CartItem(
+                                                        id: 0,
+                                                        product: new Product(
+                                                          id: int.parse(
                                                               _bookProvider
-                                                                  .postDetailsPageBototmSheetForm
-                                                                  .currentState!
-                                                                  .validate();
-                                                          if (!isValid) {
-                                                            AlertHelper
-                                                                .showToastAlert(
-                                                                    'Something went wrong');
-                                                          }
-                                                          _bookProvider
-                                                              .postDetailsPageBototmSheetForm
-                                                              .currentState!
-                                                              .save();
+                                                                  .selectedBook
+                                                                  .id),
+                                                          bookName:
+                                                              _bookProvider
+                                                                  .selectedBook
+                                                                  .bookName,
+                                                          unitPrice:
+                                                              _bookProvider
+                                                                  .selectedBook
+                                                                  .price
+                                                                  .toString(),
+                                                        ),
+                                                        quantity: _bookProvider
+                                                            .itemCount,
+                                                        negotiatedPrice:
+                                                            _bookProvider
+                                                                .selectedBook
+                                                                .price,
+                                                        totalPrice: 0,
+                                                      );
 
-                                                          CartItem edittedItem =
-                                                              new CartItem(
-                                                            id: 0,
-                                                            product:
-                                                                new Product(
-                                                              id: int.parse(
-                                                                  _bookProvider
-                                                                      .selectedBook
-                                                                      .id),
-                                                              bookName:
-                                                                  _bookProvider
-                                                                      .selectedBook
-                                                                      .bookName,
-                                                              unitPrice:
-                                                                  _bookProvider
-                                                                      .selectedBook
-                                                                      .price
-                                                                      .toString(),
-                                                            ),
-                                                            quantity:
-                                                                _bookProvider
-                                                                    .itemCount,
-                                                            negotiatedPrice:
-                                                                _bookProvider
-                                                                    .selectedBook
-                                                                    .price,
-                                                            totalPrice: 0,
-                                                          );
-
-                                                          if (await _bookProvider
-                                                              .cartProvider
-                                                              .addItemToTemporaryCart(
-                                                                  tempCart,
-                                                                  edittedItem)) {
-                                                                    _bookProvider.setIsOrderPlacementLoading(false);
-                                                            return showModalBottomSheet(
-                                                              barrierColor:
-                                                                  ColorManager
-                                                                      .blackWithLowOpacity,
-                                                              isScrollControlled:
-                                                                  true,
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          AppRadius
-                                                                              .r20),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                    AppRadius
-                                                                        .r20,
-                                                                  ),
-                                                                ),
+                                                      if (await _bookProvider
+                                                          .cartProvider
+                                                          .addItemToTemporaryCart(
+                                                              tempCart,
+                                                              edittedItem)) {
+                                                        _bookProvider
+                                                            .setIsOrderPlacementOnProcess(
+                                                                false);
+                                                        return showModalBottomSheet(
+                                                          barrierColor: ColorManager
+                                                              .blackWithLowOpacity,
+                                                          isScrollControlled:
+                                                              true,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(
+                                                                      AppRadius
+                                                                          .r20),
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                AppRadius.r20,
                                                               ),
-                                                              context: context,
-                                                              builder:
-                                                                  (context) {
-                                                                return Container(
-                                                                  height: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height *
-                                                                      0.9,
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .symmetric(
-                                                                    horizontal:
-                                                                        AppPadding
-                                                                            .p20,
-                                                                  ),
-                                                                  child: BillingInfo(
-                                                                      cartId:
-                                                                          tempCart
-                                                                              .id),
-                                                                );
-                                                              },
+                                                            ),
+                                                          ),
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return Container(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.9,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                horizontal:
+                                                                    AppPadding
+                                                                        .p20,
+                                                              ),
+                                                              child: BillingInfo(
+                                                                  cartId:
+                                                                      tempCart
+                                                                          .id),
                                                             );
-
-                                                            
-                                                          }
-                                                        } else {
-                                                          
-                                                          AlertHelper
-                                                              .showToastAlert(
-                                                                  'Something went wrong');
-                                                        }
-                                                        // Hide order placement loading indicator
-                                                        _bookProvider.setIsOrderPlacementLoading(false);
-                                                      },
-                                              );
-                                            }),
+                                                          },
+                                                        );
+                                                      }
+                                                    } else {
+                                                      AlertHelper.showToastAlert(
+                                                          'Something went wrong');
+                                                    }
+                                                    // Hide order placement loading indicator
+                                                    _bookProvider
+                                                        .setIsOrderPlacementOnProcess(
+                                                            false);
+                                                  },
+                                          );
+                                        }),
                                       ],
                                     ),
                                   ],
@@ -1521,8 +1527,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                     .toList(),
                                 onChanged: (value) {
                                   // setState(() {
-                                    
-                                        _bookProvider.setBillingInfoLocationData(value as String);
+
+                                  _bookProvider.setBillingInfoLocationData(
+                                      value as String);
                                   // });
                                 }),
                           ),
@@ -1540,55 +1547,85 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                           decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
                           ),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
-                              // bool _orderPlacedSuccessfully = false;
+                          child: Consumer<BookProvider>(
+                            builder: (context, bookProvider, child) =>
+                                ElevatedButton.icon(
+                              icon: bookProvider.isRequestOnProcess
+                                  ? SizedBox(
+                                      height: AppHeight.h20,
+                                      width: AppHeight.h20,
+                                      child: CircularProgressIndicator.adaptive(
+                                        strokeWidth: 3,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                        backgroundColor: ColorManager.primary,
+                                      ),
+                                    )
+                                  : Container(),
+                              onPressed: bookProvider.isRequestOnProcess
+                                  ? null
+                                  : () async {
+                                      bookProvider.setIsRequestOnProcess(true);
+                                      Timer(Duration(seconds: 10), () async {
+                                        // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                                        // bool _orderPlacedSuccessfully = false;
 
-                              final _isValid = _bookProvider
-                                  .postDetailsPageCreateOrderRequestBototmSheetForm
-                                  .currentState!
-                                  .validate();
-                              if (!_isValid) {
-                                return;
-                              }
-                              _bookProvider
-                                  .postDetailsPageCreateOrderRequestBototmSheetForm
-                                  .currentState!
-                                  .save();
+                                        final _isValid = _bookProvider
+                                            .postDetailsPageCreateOrderRequestBototmSheetForm
+                                            .currentState!
+                                            .validate();
+                                        if (!_isValid) {
+                                          return;
+                                        }
+                                        _bookProvider
+                                            .postDetailsPageCreateOrderRequestBototmSheetForm
+                                            .currentState!
+                                            .save();
 
-                              requestInfo["billing_info"] = json.decode(
-                                  json.encode(_bookProvider.billingInfo));
+                                        requestInfo["billing_info"] =
+                                            json.decode(json.encode(
+                                                _bookProvider.billingInfo));
 
-                              if (await Provider.of<OrderRequestProvider>(
-                                      context,
-                                      listen: false)
-                                  .createOrderRequest(
-                                      Provider.of<SessionProvider>(context,
-                                              listen: false)
-                                          .session as Session,
-                                      requestInfo)) {
-                                AlertHelper.showToastAlert(
-                                    'Request has been sent successfully');
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                                // Navigator.pop(context);
-                              } else {
-                                AlertHelper.showToastAlert(
-                                    'Something went wrong');
-                              }
-                            },
-                            child: Text(
-                              'Request Now',
-                              style: getBoldStyle(
-                                color: ColorManager.black,
-                                fontSize: FontSize.s18,
+                                        if (await Provider.of<
+                                                    OrderRequestProvider>(
+                                                context,
+                                                listen: false)
+                                            .createOrderRequest(
+                                                Provider.of<SessionProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .session as Session,
+                                                requestInfo)) {
+                                          bookProvider
+                                              .setIsRequestOnProcess(false);
+                                          AlertHelper.showToastAlert(
+                                              'Request has been sent successfully');
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                          // Navigator.pop(context);
+                                        } else {
+                                          AlertHelper.showToastAlert(
+                                              'Something went wrong');
+                                        }
+                                        bookProvider
+                                            .setIsRequestOnProcess(false);
+                                      });
+                                    },
+                              label: Text(
+                                bookProvider.isRequestOnProcess
+                                    ? 'Requesting ...'
+                                    : 'Request Now',
+                                style: getBoldStyle(
+                                  color: ColorManager.black,
+                                  fontSize: FontSize.s18,
+                                ),
                               ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorManager.primary,
-                              padding: EdgeInsets.symmetric(
-                                vertical: AppPadding.p12,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorManager.primary,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: AppPadding.p12,
+                                ),
                               ),
                             ),
                           ),
@@ -1607,8 +1644,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
 }
 
 class DetailsPageImageGallery extends StatefulWidget {
-  DetailsPageImageGallery({Key? key, })
-      : super(key: key);
+  DetailsPageImageGallery({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<DetailsPageImageGallery> createState() =>
@@ -1616,7 +1654,6 @@ class DetailsPageImageGallery extends StatefulWidget {
 }
 
 class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
-
   @override
   Widget build(BuildContext context) {
     BookProvider _bookProvider = context.watch<BookProvider>();
@@ -1635,7 +1672,8 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
                     ? Container()
                     : Image.network(
                         // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                        _bookProvider.selectedBook.images![_bookProvider.mainImageIndex].image,
+                        _bookProvider.selectedBook
+                            .images![_bookProvider.mainImageIndex].image,
                         fit: BoxFit.cover,
                         height: MediaQuery.of(context).size.height * 0.4,
                       ),
@@ -1664,29 +1702,31 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
                           return GestureDetector(
                             onTap: (() {
                               // setState(() {
-                                // _bookProvider.mainImageIndex = index;
-                                _bookProvider.setMainImageIndex(0);
+                              // _bookProvider.mainImageIndex = index;
+                              _bookProvider.setMainImageIndex(0);
                               // });
                             }),
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 2),
                               child: Container(
                                 padding: EdgeInsets.all(0),
-                                decoration: _bookProvider.mainImageIndex == index
-                                    ? BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.red,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                            AppRadius.r12),
-                                      )
-                                    : null,
+                                decoration:
+                                    _bookProvider.mainImageIndex == index
+                                        ? BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.red,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                                AppRadius.r12),
+                                          )
+                                        : null,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(
                                     // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                                    _bookProvider.selectedBook.images![index].image,
+                                    _bookProvider
+                                        .selectedBook.images![index].image,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -1707,73 +1747,71 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
   }
 }
 
-class ItemCounter extends StatefulWidget {
-  ItemCounter({
-    Key? key,
-  }) : super(key: key);
+// class ItemCounter extends StatefulWidget {
+//   ItemCounter({
+//     Key? key,
+//   }) : super(key: key);
 
-  @override
-  State<ItemCounter> createState() => _ItemCounterState();
+//   @override
+//   State<ItemCounter> createState() => _ItemCounterState();
+// }
 
-  
-}
+// class _ItemCounterState extends State<ItemCounter> {
+//   @override
+//   Widget build(BuildContext context) {
+//     BookProvider _bookProvider = context.watch<BookProvider>();
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.grey[200],
+//         borderRadius: BorderRadius.circular(20),
+//       ),
+//       child: ButtonBar(
+//         buttonPadding: EdgeInsets.zero,
+//         children: [
+//           SizedBox(
+//             width: 40,
+//             child: IconButton(
+//               color: Colors.black,
+//               padding: EdgeInsets.zero,
+//               disabledColor: Colors.grey,
+//               onPressed: _bookProvider.itemCount > 1
+//                   ? () {
+//                       // setState(() {
 
-class _ItemCounterState extends State<ItemCounter> {
-  @override
-  Widget build(BuildContext context) {
-    BookProvider _bookProvider = context.watch<BookProvider>();
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: ButtonBar(
-        buttonPadding: EdgeInsets.zero,
-        children: [
-          SizedBox(
-            width: 40,
-            child: IconButton(
-              color: Colors.black,
-              padding: EdgeInsets.zero,
-              disabledColor: Colors.grey,
-              onPressed: _bookProvider.itemCount > 1
-                  ? () {
-                      // setState(() {
-                        
-                        _bookProvider.setItemCount(_bookProvider.itemCount--);
-                      // });
-                    }
-                  : null,
-              icon: Icon(Icons.remove),
-            ),
-          ),
-          Text(
-            // '1',
-            _bookProvider.itemCount.toString(),
-            textAlign: TextAlign.center,
-            style: getBoldStyle(
-              color: ColorManager.black,
-              fontSize: FontSize.s17,
-            ),
-          ),
-          SizedBox(
-            width: AppSize.s40,
-            // height: AppSize.s20,
-            child: IconButton(
-              color: Colors.black,
-              // padding: EdgeInsets.all(2.0),
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                // setState(() {
-                  
-                  _bookProvider.setItemCount(_bookProvider.itemCount++);
-                // });
-              },
-              icon: Icon(Icons.add),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//                       _bookProvider.setItemCount(_bookProvider.itemCount--);
+//                       // });
+//                     }
+//                   : null,
+//               icon: Icon(Icons.remove),
+//             ),
+//           ),
+//           Text(
+//             // '1',
+//             _bookProvider.itemCount.toString(),
+//             textAlign: TextAlign.center,
+//             style: getBoldStyle(
+//               color: ColorManager.black,
+//               fontSize: FontSize.s17,
+//             ),
+//           ),
+//           SizedBox(
+//             width: AppSize.s40,
+//             // height: AppSize.s20,
+//             child: IconButton(
+//               color: Colors.black,
+//               // padding: EdgeInsets.all(2.0),
+//               padding: EdgeInsets.zero,
+//               onPressed: () {
+//                 // setState(() {
+
+//                 _bookProvider.setItemCount(_bookProvider.itemCount++);
+//                 // });
+//               },
+//               icon: Icon(Icons.add),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

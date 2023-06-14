@@ -3,8 +3,8 @@ import 'package:share_learning/data/order_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 
-import '../models/order.dart';
-import '../models/order_item.dart';
+import '../../models/order.dart';
+import '../../models/order_item.dart';
 
 class OrderProvider with ChangeNotifier {
   // Order? _order;

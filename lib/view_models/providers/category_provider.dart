@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:share_learning/data/category_api.dart';
 import 'package:share_learning/models/post_category.dart';
 
-import '../models/api_status.dart';
-import '../models/session.dart';
+import '../../models/api_status.dart';
+import '../../models/session.dart';
 
 class CategoryProvider with ChangeNotifier {
   List<PostCategory> _categories = [];

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/models/post_category.dart';
-import 'package:share_learning/view_models/category_provider.dart';
-import 'package:share_learning/view_models/book_filters_provider.dart';
+import 'package:share_learning/view_models/providers/category_provider.dart';
+import 'package:share_learning/view_models/providers/book_filters_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -22,9 +22,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/book_view_model/book_provider.dart';
-import '../../view_models/session_provider.dart';
-import '../../view_models/user_provider.dart';
+import '../../view_models/providers/book_provider.dart';
+import '../../view_models/providers/session_provider.dart';
+import '../../view_models/providers/user_provider.dart';
 import '../utils/user_helper.dart';
 
 class HomeScreenNew extends StatefulWidget {
@@ -38,8 +38,7 @@ class HomeScreenNew extends StatefulWidget {
 
 class _HomeScreenNewState extends State<HomeScreenNew>
     with WidgetsBindingObserver {
-
-      final homeScreenNewSearchFormKey = GlobalKey<FormState>();
+  final homeScreenNewSearchFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -72,7 +71,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
   @override
   Widget build(BuildContext context) {
     BookProvider _bookProvider = context.watch<BookProvider>();
-    
+
+    _bookProvider.setBillingInfo();
 
     return SafeArea(
       child: Scaffold(
@@ -127,46 +127,6 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           iconSize: AppSize.s40,
                           onPressed: () => Navigator.pushNamed(
                               context, UserProfileScreen.routeName),
-                          // icon: FutureBuilder(
-                          //   future: _bookProvider.userProvider.getUserByToken(
-                          //       _bookProvider.authSession.accessToken),
-                          //   builder: (ctx, snapshot) {
-                          //     if (snapshot.connectionState ==
-                          //         ConnectionState.waiting) {
-                          //       return CircularProgressIndicator(
-                          //         color: ColorManager.secondary,
-                          //       );
-                          //     } else {
-                          //       if (snapshot.hasError) {
-                          //         return CircleAvatar(
-                          //           backgroundImage:
-                          //               AssetImage(ImageAssets.noProfile),
-                          //         );
-                          //       } else {
-                          //         if (snapshot.data is UserError) {
-                          //           UserError error =
-                          //               snapshot.data as UserError;
-                          //           return Text(error.message as String);
-                          //         } else {
-                          //           _bookProvider.user = snapshot.data as User;
-                          //           return _bookProvider.user.image == null
-                          //               ? CircleAvatar(
-                          //                   backgroundImage: AssetImage(
-                          //                       ImageAssets.noProfile),
-                          //                 )
-                          //               : CircleAvatar(
-                          //                   backgroundImage: NetworkImage(
-                          //                       // _user.image == null
-                          //                       //     ? RemoteManager.IMAGE_PLACEHOLDER
-                          //                       //     :
-                          //                       UserHelper.userProfileImage(
-                          //                           _bookProvider.user)),
-                          //                 );
-                          //         }
-                          //       }
-                          //     }
-                          //   },
-                          // ),
                           icon: _bookProvider.user.image == null
                               ? CircleAvatar(
                                   backgroundImage:
@@ -214,13 +174,15 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
                                             // Call get Post to reload the view and also to set the next url to generic next url rather than next url of search query
                                             _bookProvider.getBooksAnnonimusly(
-                                                _bookProvider.authSession);
+                                                _bookProvider.sessionProvider
+                                                    .session as Session);
                                           },
                                         )
                                       : IconButton(
                                           icon: Icon(Icons.send),
                                           onPressed: () {
-                                            _bookProvider.getSearchResult(homeScreenNewSearchFormKey);
+                                            _bookProvider.getSearchResult(
+                                                homeScreenNewSearchFormKey);
                                           },
                                         ),
                                   suffixIconColor: ColorManager.primary,
@@ -255,7 +217,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                   return null;
                                 },
                                 onFieldSubmitted: (_) {
-                                  _bookProvider.getSearchResult(homeScreenNewSearchFormKey);
+                                  _bookProvider.getSearchResult(
+                                      homeScreenNewSearchFormKey);
                                 },
                               ),
                             ),
@@ -321,6 +284,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
             ],
           ),
         ),
+
         body: _bookProvider.loading == true
             ? Center(
                 child: CircularProgressIndicator(),
@@ -375,7 +339,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                               .toLowerCase() !=
                                           'all') {
                                         _bookProvider.getBooksByCategory(
-                                            _bookProvider.authSession,
+                                            _bookProvider.sessionProvider
+                                                .session as Session,
                                             _bookProvider
                                                 .categoryProvider
                                                 .categories[_bookProvider
@@ -384,7 +349,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                 .toString());
                                       } else
                                         _bookProvider.getBooksAnnonimusly(
-                                            _bookProvider.authSession);
+                                            _bookProvider.sessionProvider
+                                                .session as Session);
                                     }
                                   },
                                 ),
@@ -435,65 +401,6 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                 color: ColorManager.primary),
                           ),
                         )
-                      // else if (_bookProvider
-                      //         .categories[_bookProvider.selectedCategoryIndex]
-                      //         .name
-                      //         .toLowerCase() !=
-                      //     'all')
-                      // FutureBuilder(
-                      //   future: _bookProvider.getBooksByCategory(
-                      //       _bookProvider.authSession,
-                      //       _bookProvider
-                      //           .categories[
-                      //               _bookProvider.selectedCategoryIndex]
-                      //           .id
-                      //           .toString()),
-                      //   builder: (ctx, snapshot) {
-                      //     if (snapshot.connectionState ==
-                      //         ConnectionState.waiting) {
-                      //       return Center(
-                      //         child: CircularProgressIndicator(
-                      //           color: ColorManager.primary,
-                      //         ),
-                      //       );
-                      //     } else {
-                      //       if (snapshot.hasError) {
-                      //         return Center(
-                      //           child: Text('Error'),
-                      //         );
-                      //       } else {
-                      //         return _bookProvider.books.length <= 0
-                      //             ? Center(
-                      //                 child: Text(
-                      //                   'No books found',
-                      //                   style: getBoldStyle(
-                      //                       fontSize: FontSize.s20,
-                      //                       color: ColorManager.primary),
-                      //                 ),
-                      //               )
-                      //             : MasonryGridView.builder(
-                      //                 physics: NeverScrollableScrollPhysics(),
-                      //                 shrinkWrap: true,
-                      //                 crossAxisSpacing: 12,
-                      //                 mainAxisSpacing: 12,
-                      //                 padding: EdgeInsets.symmetric(
-                      //                   horizontal: AppPadding.p8,
-                      //                 ),
-                      //                 gridDelegate:
-                      //                     SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                      //                         crossAxisCount: 2),
-                      //                 itemCount: _bookProvider.books.length,
-                      //                 itemBuilder: (ctx, idx) => PostNew(
-                      //                   book: _bookProvider.books[idx],
-                      //                   authSession:
-                      //                       _bookProvider.authSession,
-                      //                 ),
-                      //               );
-                      //       }
-                      //     }
-                      //   },
-                      // )
-
                       else if (_bookProvider.books.isNotEmpty)
                         MasonryGridView.builder(
                           physics: NeverScrollableScrollPhysics(),
@@ -520,21 +427,6 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                 color: ColorManager.primary),
                           ),
                         ),
-                      // ValueListenableBuilder(
-                      //     valueListenable: _bookProvider.loadingMorePosts,
-                      //     builder: (BuildContext context, bool loadingMorePosts,
-                      //         Widget? child) {
-                      //       return loadingMorePosts
-                      //           ? Padding(
-                      //               padding: const EdgeInsets.symmetric(
-                      //                 vertical: AppPadding.p18,
-                      //               ),
-                      //               child: CircularProgressIndicator(
-                      //                 color: Colors.red,
-                      //               ),
-                      //             )
-                      //           : Container();
-                      //     }),
                       _bookProvider.loadingMorePosts
                           ? Padding(
                               padding: const EdgeInsets.symmetric(
@@ -550,7 +442,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                 ),
               ),
         // drawer: AppDrawer(authenticatedSession, null),
-        drawer: AppDrawer(_bookProvider.authSession),
+        drawer: AppDrawer(_bookProvider.sessionProvider.session as Session),
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 0,
         ),

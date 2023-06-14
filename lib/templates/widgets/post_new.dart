@@ -7,11 +7,11 @@ import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/wishlist.dart';
-import 'package:share_learning/view_models/wishlist_provider.dart';
+import 'package:share_learning/view_models/providers/wishlist_provider.dart';
 import 'package:share_learning/templates/screens/post_details_screen.dart';
 
 import '../../models/session.dart';
-import '../../view_models/book_view_model/book_provider.dart';
+import '../../view_models/providers/book_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
@@ -37,12 +37,12 @@ class _PostNewState extends State<PostNew> {
         .bindPostNewWidget(context);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Provider.of<BookProvider>(context, listen: false)
-        .didChangeDependencyPostNewWidget(context);
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   Provider.of<BookProvider>(context, listen: false)
+  //       .didChangeDependencyPostNewWidget(context);
+  // }
 
   @override
   void dispose() {
@@ -96,7 +96,7 @@ class _PostNewState extends State<PostNew> {
                         child: IconButton(
                           onPressed: () {
                             _bookProvider.wishlistProvider.toggleWishlistBook(
-                                _bookProvider.authSession, post);
+                                _bookProvider.sessionProvider.session as Session, post);
                           },
                           icon:
                               _bookProvider.wishlistProvider.isWishlisted(post)
