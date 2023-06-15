@@ -7,14 +7,15 @@ import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 
 import '../base_view_model.dart';
-import '../user_profile_screen_view_model.dart';
+import '../user_view_model.dart';
 
 class UserProvider
     with
         ChangeNotifier,
         BaseViewModel,
         UserProfileScreenViewModel,
-        UserProfileEditScreenViewModel {
+        UserProfileEditScreenViewModel,
+        LoginScreenViewModel {
   UserProvider(this._session);
 
   List<User> _users = [];

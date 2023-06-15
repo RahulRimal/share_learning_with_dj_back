@@ -127,8 +127,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           iconSize: AppSize.s40,
                           onPressed: () => Navigator.pushNamed(
                               context, UserProfileScreen.routeName),
-                          icon:
-                              (_bookProvider.userProvider.user as User).image ==
+                          icon: _bookProvider.userProvider.user != null
+                              ? (_bookProvider.userProvider.user as User)
+                                          .image ==
                                       null
                                   ? CircleAvatar(
                                       backgroundImage:
@@ -139,7 +140,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                           UserHelper.userProfileImage(
                                               _bookProvider.userProvider.user
                                                   as User)),
-                                    ),
+                                    )
+                              : Container(),
                         ),
                       ],
                     ),

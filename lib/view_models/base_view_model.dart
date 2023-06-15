@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/session.dart';
 import '../models/user.dart';
@@ -26,6 +27,8 @@ mixin BaseViewModel on ChangeNotifier {
   late OrderRequestProvider orderRequestProvider;
   late WishlistProvider wishlistProvider;
   late CommentProvider commentProvider;
+
+  Future<SharedPreferences> prefences = SharedPreferences.getInstance();
 
   Map<String, String> billingInfo = {};
   List<String> locationOptions = [
@@ -64,21 +67,23 @@ mixin BaseViewModel on ChangeNotifier {
   }
 
   setBillingInfo() {
-    if (userProvider.user!.firstName!.isNotEmpty) {
-      billingInfo["first_name"] = userProvider.user!.firstName!;
-    }
-    if (userProvider.user!.lastName!.isNotEmpty) {
-      billingInfo["last_name"] = userProvider.user!.lastName!;
-    }
-    if (userProvider.user!.email!.isNotEmpty) {
-      billingInfo["email"] = userProvider.user!.email!;
-    }
-    if (userProvider.user!.phone != null) {
-      if (userProvider.user!.phone!.isNotEmpty) {
-        billingInfo["phone"] = userProvider.user!.phone!;
+    if (userProvider.user != null) {
+      if (userProvider.user!.firstName!.isNotEmpty) {
+        billingInfo["first_name"] = userProvider.user!.firstName!;
       }
+      if (userProvider.user!.lastName!.isNotEmpty) {
+        billingInfo["last_name"] = userProvider.user!.lastName!;
+      }
+      if (userProvider.user!.email!.isNotEmpty) {
+        billingInfo["email"] = userProvider.user!.email!;
+      }
+      if (userProvider.user!.phone != null) {
+        if (userProvider.user!.phone!.isNotEmpty) {
+          billingInfo["phone"] = userProvider.user!.phone!;
+        }
+      }
+      billingInfo["convenient_location"] = locationOptions[0];
     }
-    billingInfo["convenient_location"] = locationOptions[0];
   }
 
   setBillingInfoLocationData(String value) {

@@ -106,8 +106,7 @@ mixin PostDetailsViewModel on BaseViewModel {
 
   postDetailsScreenBindPostDetailsScreen(BuildContext context) {
     bindBaseViewModal(context);
-
-    setBillingInfo();
+    if (userProvider.user != null) setBillingInfo();
     postDetailsScreenInitDate = NepaliDateTime.now();
     // postDetailsScreenDatePickercontroller = TextEditingController(
     //   text: DateFormat('yyyy-MM-dd').format(NepaliDateTime(

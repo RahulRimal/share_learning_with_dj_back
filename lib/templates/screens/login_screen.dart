@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:share_learning/view_models/providers/book_provider.dart';
 import 'package:share_learning/view_models/providers/category_provider.dart';
 import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/view_models/providers/wishlist_provider.dart';
@@ -35,225 +36,26 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // SharedPrefrencesHelper _sharedPrefrencesHelper = SharedPrefrencesHelper();
-
   final _form = GlobalKey<FormState>();
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  late UserProvider userProvider;
 
-  FocusNode _passwordFocusNode = FocusNode();
+  @override
+  void initState() {
+    super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.bindLoginScreenViewModel(context);
+  }
 
-  // var _user = User(
-  //     id: '',
-  //     firstName: '',
-  //     lastName: '',
-  //     userName: '',
-  //     password: '',
-  //     image: '');
-
-  var usernameOrEmail;
-  var userpassword;
-  bool visible = false;
-  var showSpinner = false;
-
-  String _loginErrorText = '';
+  @override
+  didChangeDependencies() {
+    super.didChangeDependencies();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+  }
 
   @override
   void dispose() {
-    _passwordFocusNode.dispose();
     super.dispose();
-  }
-
-  _googleSignIn() async {
-    setState(() {
-      showSpinner = true;
-    });
-    final users = Provider.of<UserProvider>(context, listen: false);
-    final sessions = Provider.of<SessionProvider>(context, listen: false);
-    var response = await users.googleSignIn();
-    // print(response);
-    if (response is Success) {
-      sessions.setSession((response.response as Map)['session']);
-
-      SharedPreferences prefs = await _prefs;
-
-      // Users users = Provider.of<Users>(context, listen: false);
-      // users.getUserByToken(sessions.session!.accessToken);
-
-      prefs.setString('accessToken', sessions.session!.accessToken);
-      prefs.setString('refreshToken', sessions.session!.refreshToken);
-
-      if (!prefs.containsKey('cartId')) {
-        if (await Provider.of<CartProvider>(context, listen: false)
-            .createCart(sessions.session as Session)) {
-          prefs.setString(
-              'cartId',
-              Provider.of<CartProvider>(context, listen: false)
-                  .cart!
-                  .id
-                  .toString());
-        } else {
-          print('here');
-        }
-      } else {
-        print('here');
-      }
-
-      setState(() {
-        showSpinner = false;
-      });
-      if (await users.haveProvidedData(users.user!.id)) {
-        // if (prefs.containsKey('isFirstTime') &&
-        //     prefs.getBool('isFirstTime') == false) {
-        Navigator.of(context)
-            .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
-          'authSession': sessions.session,
-        });
-      } else {
-        Navigator.of(context)
-            .pushReplacementNamed(UserInterestsScreen.routeName);
-      }
-    }
-  }
-
-  void _saveForm() async {
-    final isValid = _form.currentState!.validate();
-
-    if (isValid) {
-      setState(() {
-        showSpinner = true;
-      });
-
-      // showSpinner = true;
-      _form.currentState!.save();
-      // SessionProvider userSession = new SessionProvider();
-      SessionProvider userSession = Provider.of(context, listen: false);
-      if (await userSession.createSession(usernameOrEmail, userpassword)) {
-        if (mounted) {
-          setState(() {
-            showSpinner = false;
-          });
-          SharedPreferences prefs = await _prefs;
-
-          UserProvider users =
-              Provider.of<UserProvider>(context, listen: false);
-
-          prefs.setString('accessToken', userSession.session!.accessToken);
-          prefs.setString('refreshToken', userSession.session!.refreshToken);
-
-          await users.getUserByToken(userSession.session!.accessToken);
-
-          if (!prefs.containsKey('cartId')) {
-            if (await Provider.of<CartProvider>(context, listen: false)
-                .createCart(userSession.session as Session)) {
-              prefs.setString(
-                  'cartId',
-                  Provider.of<CartProvider>(context, listen: false)
-                      .cart!
-                      .id
-                      .toString());
-            } else {
-              // print('here');
-              Provider.of<CartProvider>(context, listen: false)
-                  .getCartInfo(prefs.getString('cartId') as String);
-            }
-          } else {
-            if (Provider.of<CartProvider>(context, listen: false).cart ==
-                null) {
-              Provider.of<CartProvider>(context, listen: false)
-                  .getCartInfo(prefs.getString('cartId') as String);
-            }
-            // print('here');
-          }
-
-          WishlistProvider wishlists =
-              Provider.of<WishlistProvider>(context, listen: false);
-          CategoryProvider categories =
-              Provider.of<CategoryProvider>(context, listen: false);
-          OrderRequestProvider orderRequests =
-              Provider.of<OrderRequestProvider>(context, listen: false);
-
-          wishlists.getWishlistedBooks(userSession.session as Session);
-          categories.getCategories(userSession.session as Session);
-          orderRequests.getOrderRequestsByUser(userSession.session as Session);
-
-          if (prefs.containsKey('isFirstTime') &&
-              prefs.getBool('isFirstTime') == false) {
-            Navigator.of(context)
-                // .pushReplacementNamed(HomeScreen.routeName, arguments: {
-                .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
-              'authSession': userSession.session,
-            });
-          } else {
-            if (await users.haveProvidedData(users.user!.id)) {
-              prefs.setBool('isFirstTime', false);
-              Navigator.of(context)
-                  // .pushReplacementNamed(HomeScreen.routeName, arguments: {
-                  .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
-                'authSession': userSession.session,
-              });
-            } else {
-              Navigator.of(context).pushReplacementNamed(
-                  UserInterestsScreen.routeName,
-                  arguments: {
-                    'authSession': userSession.session,
-                  });
-            }
-          }
-
-          // Navigator.of(context)
-          //     .pushReplacementNamed(HomeScreen.routeName, arguments: {
-          //   'authSession': userSession.session,
-          // });
-        }
-      } else {
-        setState(() {
-          showSpinner = false;
-        });
-        if (userSession.sessionError != null) {
-          List<String> data = [];
-          if (userSession.sessionError!.message is String) {
-            data.add(userSession.sessionError!.message.toString());
-          } else {
-            (userSession.sessionError!.message as Map).forEach((key, value) {
-              if (value is List) {
-                value.forEach((item) => {data.add(item.toString())});
-              } else {
-                data.add(value.toString());
-              }
-            });
-          }
-
-          // print(data);
-
-          // Show notifications one by one with a delay
-          int delay = 0;
-          for (String element in data) {
-            Future.delayed(Duration(milliseconds: delay), () {
-              AlertHelper.showToastAlert(element);
-              BotToast.showCustomNotification(
-                duration: Duration(seconds: 3),
-                toastBuilder: (cancelFunc) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: ColorManager.primary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Text(
-                      element,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                },
-              );
-            });
-            delay += 1500; // increase delay for next notification
-          }
-        } else {
-          AlertHelper.showToastAlert("Something went wrong, please try again");
-        }
-      }
-    }
+    userProvider.unbindLoginScreenViewModel();
   }
 
   Widget _backButton() {
@@ -299,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _entryField(String title, {bool isPassword = false}) {
+    UserProvider _userProvider = context.watch<UserProvider>();
     return Container(
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -314,36 +117,28 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Platform.isIOS
               ? CupertinoTextField(
-                  obscureText: isPassword ? !visible : false,
-                  focusNode: isPassword ? _passwordFocusNode : null,
+                  obscureText:
+                      isPassword ? !_userProvider.loginScreenVisible : false,
+                  focusNode: isPassword
+                      ? _userProvider.loginScreenPasswordFocusNode
+                      : null,
                   textInputAction:
                       isPassword ? TextInputAction.done : TextInputAction.next,
                   keyboardType:
                       isPassword ? TextInputType.number : TextInputType.text,
-                  // suffix: isPassword
-                  //     ? IconButton(
-                  //         icon: Icon(visible
-                  //             ? Icons.visibility
-                  //             : Icons.visibility_off),
-                  //         onPressed: () {
-                  //           setState(() {
-                  //             visible = !visible;
-                  //           });
-                  //         })
-                  //     : null,
                   suffix: isPassword
                       ? CupertinoButton(
-                          child: Icon(visible
+                          child: Icon(_userProvider.loginScreenVisible
                               ? CupertinoIcons.eye
                               : CupertinoIcons.eye_slash),
                           onPressed: () {
                             setState(() {
-                              visible = !visible;
+                              _userProvider.loginScreenVisible =
+                                  !_userProvider.loginScreenVisible;
                             });
                           },
                         )
                       : null,
-
                   decoration: BoxDecoration(
                     border: Border(
                       top: BorderSide(
@@ -366,18 +161,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   onEditingComplete: () {
                     if (isPassword) {
-                      FocusScope.of(context).requestFocus(_passwordFocusNode);
+                      FocusScope.of(context).requestFocus(
+                          _userProvider.loginScreenPasswordFocusNode);
                     } else
-                      _saveForm();
+                      _userProvider.loginScreenSaveForm(
+                          context, _form, mounted);
                   },
                   onChanged: (value) {
                     if (isPassword) {
                       setState(() {
-                        userpassword = value;
+                        _userProvider.loginScreenUserpassword = value;
                       });
                     } else {
                       setState(() {
-                        usernameOrEmail = value;
+                        _userProvider.loginScreenUsernameOrEmail = value;
                       });
                     }
                   },
@@ -385,8 +182,11 @@ class _LoginScreenState extends State<LoginScreen> {
               : Container(
                   // height: _form.currentState!.validate() ? 55 : 50,
                   child: TextFormField(
-                    obscureText: isPassword ? !visible : false,
-                    focusNode: isPassword ? _passwordFocusNode : null,
+                    obscureText:
+                        isPassword ? !_userProvider.loginScreenVisible : false,
+                    focusNode: isPassword
+                        ? _userProvider.loginScreenPasswordFocusNode
+                        : null,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (isPassword) {
@@ -430,13 +230,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? IconButton(
                               padding: EdgeInsets.zero,
                               icon: Icon(
-                                visible
+                                _userProvider.loginScreenVisible
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  visible = !visible;
+                                  _userProvider.loginScreenVisible =
+                                      !_userProvider.loginScreenVisible;
                                 });
                               })
                           : null,
@@ -449,16 +250,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onFieldSubmitted: (_) {
                       if (!isPassword)
-                        FocusScope.of(context).requestFocus(_passwordFocusNode);
+                        FocusScope.of(context).requestFocus(
+                            _userProvider.loginScreenPasswordFocusNode);
                       else {
-                        _saveForm();
+                        _userProvider.loginScreenSaveForm(
+                            context, _form, mounted);
                       }
                     },
                     onSaved: (value) {
                       if (isPassword) {
-                        userpassword = value;
+                        _userProvider.loginScreenUserpassword = value;
                       } else {
-                        usernameOrEmail = value;
+                        _userProvider.loginScreenUsernameOrEmail = value;
                       }
                     },
                   ),
@@ -469,8 +272,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _submitButton() {
+    UserProvider _userProvider = context.watch<UserProvider>();
     return GestureDetector(
-      onTap: _saveForm,
+      onTap: () => _userProvider.loginScreenSaveForm(context, _form, mounted),
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 15),
@@ -592,8 +396,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _googleButton() {
+    UserProvider _userProvider = context.watch<UserProvider>();
     return ElevatedButton(
-      onPressed: _googleSignIn,
+      onPressed: () => _userProvider.loginScreenGoogleSignIn(context),
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -761,6 +566,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+    UserProvider _userProvider = context.watch<UserProvider>();
+
     return Platform.isIOS
         ? CupertinoPageScaffold(
             child: Container(
@@ -786,7 +593,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: _emailPasswordWidget(),
                           ),
                           SizedBox(height: 20),
-                          showSpinner
+                          _userProvider.loginScreenShowSpinner
                               ? Padding(
                                   padding: const EdgeInsets.only(bottom: 30.0),
                                   child: CircularProgressIndicator(
@@ -797,7 +604,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               : Container(),
                           Text(
                             // '$_loginErrorText',
-                            _loginErrorText,
+                            _userProvider.loginScreenLoginErrorText,
                             style: getBoldStyle(color: ColorManager.primary),
                           ),
                           _submitButton(),
@@ -851,7 +658,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: _emailPasswordWidget(),
                             ),
                             SizedBox(height: 20),
-                            showSpinner
+                            _userProvider.loginScreenShowSpinner
                                 ? Padding(
                                     padding:
                                         const EdgeInsets.only(bottom: 30.0),
