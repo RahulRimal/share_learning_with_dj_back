@@ -19,22 +19,49 @@ import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/values_manager.dart';
 import '../utils/user_helper.dart';
+import '../widgets/order_item_widget.dart';
 
-class OrdersScreenNew extends StatelessWidget {
+class OrdersScreenNew extends StatefulWidget {
   static const routeName = '/orders-list-new';
   OrdersScreenNew({Key? key}) : super(key: key);
+
+  @override
+  State<OrdersScreenNew> createState() => _OrdersScreenNewState();
+}
+
+class _OrdersScreenNewState extends State<OrdersScreenNew>
+    with WidgetsBindingObserver {
   final _filterForm = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context) {
-    // Provider.of<Orders>(context).or
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
+  void initState() {
+    super.initState();
+    OrderProvider orderProvider =
+        Provider.of<OrderProvider>(context, listen: false);
 
-    // final Session authSession = args['loggedInUserSession'] as Session;
-    Session authSession = context.watch<SessionProvider>().session as Session;
-    UserProvider _users = context.watch<UserProvider>();
-    // Session authSession =
-    //     Provider.of<SessionProvider>(context).session as Session;
+    orderProvider.bindOrdersScreenNewViewModel(context);
+
+    // Register this object as an observer
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      orderProvider
+          .getUserOrders(orderProvider.sessionProvider.session as Session);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    Provider.of<OrderProvider>(context, listen: false)
+        .unBindOrdersScreenNewViewModel();
+    // Unregister this object as an observer
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    OrderProvider _orderProvider = context.watch<OrderProvider>();
 
     return SafeArea(
       child: Scaffold(
@@ -56,12 +83,10 @@ class OrdersScreenNew extends StatelessWidget {
                         fontSize: FontSize.s24,
                       ),
                     ),
-                    // CircleAvatar(
-                    //   child: Image.asset(
-                    //     ImageAssets.noProfile,
-                    //   ),
                     FutureBuilder(
-                      future: _users.getUserByToken(authSession.accessToken),
+                      future: _orderProvider.userProvider.getUserByToken(
+                          (_orderProvider.sessionProvider.session as Session)
+                              .accessToken),
                       builder: (ctx, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -180,82 +205,67 @@ class OrdersScreenNew extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  child: FutureBuilder(
-                    future: Provider.of<OrderProvider>(context)
-                        .getUserOrders(authSession),
-                    builder: (ctx, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: ColorManager.primary,
+                if (_orderProvider.loading)
+                  CircularProgressIndicator(color: ColorManager.primary)
+                else
+                  Container(
+                    child: _orderProvider.orders.length <= 0
+                        ? Center(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(top: AppPadding.p12),
+                              child: Text(
+                                'No orders found',
+                                style: getBoldStyle(
+                                    fontSize: FontSize.s20,
+                                    color: ColorManager.primary),
+                              ),
+                            ),
+                          )
+                        : OrdersWidget(
+                            orders: _orderProvider.orders.reversed.toList(),
                           ),
-                        );
-                      } else {
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Error'),
-                          );
-                        } else {
-                          return Consumer<OrderProvider>(
-                            builder: (ctx, orders, child) {
-                              return orders.orders.length <= 0
-                                  ? Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: AppPadding.p12),
-                                        child: Text(
-                                          'No orders found',
-                                          style: getBoldStyle(
-                                              fontSize: FontSize.s20,
-                                              color: ColorManager.primary),
-                                        ),
-                                      ),
-                                    )
-                                  // : ListView.builder(
-                                  //     shrinkWrap: true,
-                                  //     itemCount: orders.orders.length,
-                                  //     itemBuilder: (ctx, index) {
-                                  //       return ListView.builder(
-                                  //           shrinkWrap: true,
-                                  //           itemCount: orders
-                                  //               .orders[index].items.length,
-                                  //           itemBuilder: (ctx, idx) {
-                                  //             return OrderItemWidget(
-                                  //               orderItem: orders
-                                  //                   .orders[index].items[idx],
-                                  //             );
-                                  //           });
-                                  //     },
-                                  //   );
-                                  // : ListView.builder(
-                                  //     shrinkWrap: true,
-                                  //     itemCount: orders.orders.length,
-                                  //     itemBuilder: (ctx, index) {
-                                  //       return OrderWidget(
-                                  //           order: orders.orders[index]);
-                                  //       // return ListView.builder(
-                                  //       //     shrinkWrap: true,
-                                  //       //     itemCount: orders
-                                  //       //         .orders[index].items.length,
-                                  //       //     itemBuilder: (ctx, idx) {
-                                  //       //       return OrderItemWidget(
-                                  //       //         orderItem: orders
-                                  //       //             .orders[index].items[idx],
-                                  //       //       );
-                                  //       //     });
-                                  //     },
-                                  //   );
-                                  : OrdersWidget(
-                                      orders: orders.orders.reversed.toList(),
-                                    );
-                            },
-                          );
-                        }
-                      }
-                    },
+                    // child: FutureBuilder(
+                    //   future: Provider.of<OrderProvider>(context).getUserOrders(
+                    //       _orderProvider.sessionProvider.session as Session),
+                    //   builder: (ctx, snapshot) {
+                    //     if (snapshot.connectionState == ConnectionState.waiting) {
+                    //       return Center(
+                    //         child: CircularProgressIndicator(
+                    //           color: ColorManager.primary,
+                    //         ),
+                    //       );
+                    //     } else {
+                    //       if (snapshot.hasError) {
+                    //         return Center(
+                    //           child: Text('Error'),
+                    //         );
+                    //       } else {
+                    //         return Consumer<OrderProvider>(
+                    //           builder: (ctx, orders, child) {
+                    //             return orders.orders.length <= 0
+                    //                 ? Center(
+                    //                     child: Padding(
+                    //                       padding: const EdgeInsets.only(
+                    //                           top: AppPadding.p12),
+                    //                       child: Text(
+                    //                         'No orders found',
+                    //                         style: getBoldStyle(
+                    //                             fontSize: FontSize.s20,
+                    //                             color: ColorManager.primary),
+                    //                       ),
+                    //                     ),
+                    //                   )
+                    //                 : OrdersWidget(
+                    //                     orders: orders.orders.reversed.toList(),
+                    //                   );
+                    //           },
+                    //         );
+                    //       }
+                    //     }
+                    //   },
+                    // ),
                   ),
-                ),
               ],
             ),
           ),
@@ -265,23 +275,52 @@ class OrdersScreenNew extends StatelessWidget {
   }
 }
 
-class OrderItemWidget extends StatelessWidget {
+class OrderItemWidget extends StatefulWidget {
   OrderItemWidget({Key? key, required this.orderItem}) : super(key: key);
-
   final OrderItem orderItem;
 
   @override
+  State<OrderItemWidget> createState() => _OrderItemWidgetState();
+}
+
+class _OrderItemWidgetState extends State<OrderItemWidget>
+    with WidgetsBindingObserver {
+  Book? orderItemBook;
+
+  @override
+  void initState() {
+    super.initState();
+    OrderProvider orderProvider =
+        Provider.of<OrderProvider>(context, listen: false);
+
+    orderProvider.bindOrdersItemWidgetViewModel(context, widget.orderItem);
+
+    // Register this object as an observer
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      orderItemBook = await orderProvider.orderItemWidgetGetOrdersItemBook(
+          widget.orderItem.productId.toString()) as Book;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    Provider.of<OrderProvider>(context, listen: false)
+        .unbindOrdersItemWidgetViewModel();
+    // Unregister this object as an observer
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    BookProvider booksProvider = context.watch();
-    Session authSession =
-        Provider.of<SessionProvider>(context, listen: false).session as Session;
-    Book? product = booksProvider.books.firstWhereOrNull(
-      (book) => book.id == orderItem.productId.toString(),
-    );
-    if (product == null) {
+    OrderProvider _orderProvider = context.watch<OrderProvider>();
+
+    if (orderItemBook == null) {
       return FutureBuilder(
-          future: booksProvider.getBookByIdFromServer(
-              authSession, orderItem.productId.toString()),
+          future: _orderProvider.orderItemWidgetGetOrdersItemBook(
+              widget.orderItem.productId.toString()),
           builder: (ctx, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -295,8 +334,8 @@ class OrderItemWidget extends StatelessWidget {
                   child: Text('Error'),
                 );
               } else {
-                product = snapshot.data as Book;
-                booksProvider.books.add(product as Book);
+                Book product = snapshot.data as Book;
+
                 return Container(
                   decoration: BoxDecoration(
                     color: ColorManager.lighterGrey,
@@ -319,12 +358,9 @@ class OrderItemWidget extends StatelessWidget {
                             AppRadius.r12,
                           ),
                         ),
-                        // child: Image.asset(
-                        //   ImageAssets.noProfile,
-                        // ),
-                        child: product!.images != null
+                        child: product.images != null
                             ? Image.network(
-                                product!.images![0].image,
+                                product.images![0].image,
                                 height: AppHeight.h75,
                               )
                             : Image.asset(
@@ -336,7 +372,7 @@ class OrderItemWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              product!.bookName,
+                              product.bookName,
                               softWrap: true,
                               style: getBoldStyle(
                                 color: ColorManager.black,
@@ -347,14 +383,14 @@ class OrderItemWidget extends StatelessWidget {
                               height: AppHeight.h4,
                             ),
                             Text(
-                              'Unit price: Rs. ${product!.price.toString()}',
+                              'Unit price: Rs. ${product.price.toString()}',
                               style: getMediumStyle(
                                 color: ColorManager.grey,
                                 fontSize: FontSize.s14,
                               ),
                             ),
                             Text(
-                              'Quantity: ${orderItem.quantity.toString()}',
+                              'Quantity: ${widget.orderItem.quantity.toString()}',
                               style: getMediumStyle(
                                 color: ColorManager.grey,
                                 fontSize: FontSize.s14,
@@ -364,7 +400,7 @@ class OrderItemWidget extends StatelessWidget {
                               height: AppHeight.h4,
                             ),
                             Text(
-                              'Total: Rs. ${(product!.price * orderItem.quantity).toString()}',
+                              'Total: Rs. ${(product.price * widget.orderItem.quantity).toString()}',
                               style: getMediumStyle(
                                 color: ColorManager.grey,
                                 fontSize: FontSize.s14,
@@ -402,12 +438,9 @@ class OrderItemWidget extends StatelessWidget {
                   AppRadius.r12,
                 ),
               ),
-              // child: Image.asset(
-              //   ImageAssets.noProfile,
-              // ),
-              child: product.images != null
+              child: orderItemBook!.images != null
                   ? Image.network(
-                      product.images![0].image,
+                      orderItemBook!.images![0].image,
                       height: AppHeight.h75,
                     )
                   : Image.asset(
@@ -419,7 +452,7 @@ class OrderItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.bookName,
+                    orderItemBook!.bookName,
                     softWrap: true,
                     style: getBoldStyle(
                       color: ColorManager.black,
@@ -430,14 +463,15 @@ class OrderItemWidget extends StatelessWidget {
                     height: AppHeight.h4,
                   ),
                   Text(
-                    'Unit price: Rs. ${product.price.toString()}',
+                    'Unit price: Rs. ${orderItemBook!.price.toString()}',
                     style: getMediumStyle(
                       color: ColorManager.grey,
                       fontSize: FontSize.s14,
                     ),
                   ),
                   Text(
-                    'Quantity: ${orderItem.quantity.toString()}',
+                    // 'Quantity: ${_orderProvider.ordersItemWidgetOrderItemBook.quantity.toString()}',
+                    'Quantity: ${orderItemBook!.bookCount.toString()}',
                     style: getMediumStyle(
                       color: ColorManager.grey,
                       fontSize: FontSize.s14,
@@ -447,7 +481,7 @@ class OrderItemWidget extends StatelessWidget {
                     height: AppHeight.h4,
                   ),
                   Text(
-                    'Total: Rs. ${(product.price * orderItem.quantity).toString()}',
+                    'Total: Rs. ${(orderItemBook!.price * orderItemBook!.bookCount).toString()}',
                     style: getMediumStyle(
                       color: ColorManager.grey,
                       fontSize: FontSize.s14,

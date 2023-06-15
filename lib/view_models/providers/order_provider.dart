@@ -3,10 +3,20 @@ import 'package:share_learning/data/order_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 
+import '../../data/book_api.dart';
+import '../../models/book.dart';
 import '../../models/order.dart';
 import '../../models/order_item.dart';
+import '../base_view_model.dart';
+import '../order_view_model.dart';
 
-class OrderProvider with ChangeNotifier {
+class OrderProvider
+    with
+        ChangeNotifier,
+        BaseViewModel,
+        OrdersScreenViewModel,
+        OrdersScreenNewViewModel,
+        OrdersItemWidgetViewModel {
   // Order? _order;
   List<Order> _orders = [];
 
@@ -18,28 +28,24 @@ class OrderProvider with ChangeNotifier {
 
   OrderItemError? _orderItemError;
 
-  // Order? get order => _order;
   List<Order> get orders => [..._orders];
-  // List<OrderItem> get orderItems => [..._orderItems];
   bool get loading => _loading;
   OrderError? get orderError => _orderError;
   OrderItemError? get orderItemError => _orderItemError;
-
-  // setOrder(Order order) {
-  //   _order = order;
-  // }
 
   setOrders(List<Order> orders) {
     _orders = orders;
   }
 
-  // setOrderItems(List<OrderItem> orderItems) {
-  //   _orderItems = orderItems;
-  // }
-
   setLoading(bool loading) {
     _loading = loading;
+    notifyListeners();
   }
+
+  // set loading(value){
+  //   _loading = value;
+  //   notifyListeners();
+  // }
 
   setOrderError(OrderError orderError) {
     _orderError = orderError;
@@ -55,7 +61,6 @@ class OrderProvider with ChangeNotifier {
       String? cartId,
       required Map<String, dynamic> billingInfo,
       required String paymentMethod}) async {
-    setLoading(true);
     var response;
     if (cartId != null) {
       response = await OrderApi.placeDirectOrder(
@@ -131,6 +136,24 @@ class OrderProvider with ChangeNotifier {
     return _orderError as OrderError;
   }
 
+  Future<dynamic> getOrderItemBookByIdFromServer(
+      Session loggedInSession, String bookId) async {
+    // setLoading(true);
+    var response = await BookApi.getBookById(loggedInSession, bookId);
+    // print(response);
+    if (response is Success) {
+      bookProvider.books.add(response.response as Book);
+      // setLoading(false);
+      return response.response as Book;
+    }
+    if (response is Failure) {
+      OrderItemError error = new OrderItemError(
+          code: response.code, message: response.errorResponse);
+      // setLoading(false);
+      return error;
+    }
+  }
+
   // OrderItem getOrderItemById(int id) {
   //   return _orderItems.firstWhere((element) => element.id == id);
   // }
@@ -152,7 +175,6 @@ class OrderProvider with ChangeNotifier {
       setOrderError(orderError);
     }
     setLoading(false);
-    // notifyListeners();
   }
 
   Future<bool> addOrderItem(OrderItem item, Order order) async {

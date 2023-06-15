@@ -21,12 +21,10 @@ mixin CartScreenViewModel on BaseViewModel {
 
 
 // mixin CartItemWidgetViewModel on BaseViewModel {
-
 //   late CartItem cartItem;
 //   late ValueNotifier<bool> cartItemChanged;
 //   late ValueNotifier<int> quantity;
 //   late CartItem edittedItem;
-
 //   bindCartItemWidgetViewModel(BuildContext context, CartItem cartItem)
 //   {
 //     bindBaseViewModal(context);
@@ -35,17 +33,13 @@ mixin CartScreenViewModel on BaseViewModel {
 //     cartItemChanged = ValueNotifier<bool>(false);
 //     quantity = ValueNotifier<int>(cartItem.quantity);
 //   }
-
 //   unbindCartItemWidgetViewModel(){
 //   }
-  
-
 //   // ifCartItemChanged(CartItem cartItem) {
 //   //   if (quantity.value != cartItem.quantity) {
 //   //     cartItemChanged.value = true;
 //   //     return;
 //   //   }
-
 //   //   cartItemChanged.value = false;
 //   // }
 //   ifCartItemChanged() {
@@ -53,30 +47,23 @@ mixin CartScreenViewModel on BaseViewModel {
 //       cartItemChanged.value = true;
 //       return;
 //     }
-
 //     cartItemChanged.value = false;
 //   }
-
-
 //   Future<bool> updateItemOnTheCart() async {
 //     edittedItem.quantity = quantity.value;
-
 //     await cartProvider
 //         .updateCartItem(cartProvider.cart!.id, edittedItem)
 //         .then(
 //       (value) {
 //         if (value) {
 //           AlertHelper.showToastAlert('Cart Item updated');
-
 //           cartItemChanged.value = false;
 //         } else
 //           AlertHelper.showToastAlert("Something went wrong, Please try again!");
 //       },
 //     );
-
 //     return true;
 //   }
-
 //   // removeItemFromCart(CartItem cartItem) async {
 //   //   bool value = await cartProvider
 //   //       .deleteCartItem(sessionProvider.session as Session, cartProvider.cart!.id, cartItem.id.toString());
@@ -93,6 +80,4 @@ mixin CartScreenViewModel on BaseViewModel {
 //     } else
 //       AlertHelper.showToastAlert('Something went wrong, Please try again!');
 //   }
-
-
 // }
