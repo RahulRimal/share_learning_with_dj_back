@@ -7,22 +7,26 @@ import 'package:share_learning/view_models/base_view_model.dart';
 import '../models/book.dart';
 
 mixin PostDetailsViewModel on BaseViewModel {
-  // int itemCount = 1;
-  late int itemCount;
-  double expectedUnitPrice = 0;
-  int mainImageIndex = 0;
+  late int postDetailsScreenItemCount;
+  double postDetailsScreenExpectedUnitPrice = 0;
+  int postDetailsScreenMainImageIndex = 0;
 
-  bool isRequestOnProcess = false;
-  bool isCartOnProcess = false;
-  bool isOrderPlacementOnProcess = false;
-  bool enableRequestButton = false;
+  bool postDetailsScreenIsRequestOnProcess = false;
+  bool postDetailsScreenIsCartOnProcess = false;
+  bool postDetailsScreenIsOrderPlacementOnProcess = false;
+  bool postDetailsScreenEnableRequestButton = false;
 
-  // late GlobalKey<FormState> postDetailsPageCreateOrderRequestBototmSheetForm;
-  // late GlobalKey<FormState> postDetailsPageBototmSheetForm;
-  late Book selectedBook;
-  late NepaliDateTime initDate;
-  late NepaliDateTime? buyerExpectedDeadline;
-  late TextEditingController datePickercontroller;
+  late Book postDetailsScreenSelectedBook;
+  late NepaliDateTime postDetailsScreenInitDate;
+  late NepaliDateTime? postDetailsScreenBuyerExpectedDeadline;
+  // late TextEditingController postDetailsScreenDatePickercontroller;
+  TextEditingController postDetailsScreenDatePickercontroller =
+      TextEditingController(
+    text: DateFormat('yyyy-MM-dd').format(NepaliDateTime(
+        NepaliDateTime.now().year,
+        NepaliDateTime.now().month,
+        NepaliDateTime.now().day + 1)),
+  );
 
   late FocusNode postDetailsPageCartBottomSheetBuyerDateFocusNode;
   late FocusNode postDetailsPageCartBottomSheetBuyerPriceFocusNode;
@@ -35,83 +39,83 @@ mixin PostDetailsViewModel on BaseViewModel {
   late FocusNode postDetailsPageCartBottomSheetPhoneNumberFocusNode;
   late FocusNode postDetailsPageCartBottomSheetSideNoteFocusNode;
 
-  setSelectedBook(Book book) {
-    selectedBook = book;
+  postDetailsScreenSetSelectedBook(Book book) {
+    postDetailsScreenSelectedBook = book;
   }
 
-  setMainImageIndex(int value) {
-    mainImageIndex = value;
-    // notifyListeners();
+  postDetailsScreenSetMainImageIndex(int value) {
+    postDetailsScreenMainImageIndex = value;
+    notifyListeners();
   }
 
-  setEnableRequestButton(bool value) {
-    enableRequestButton = value;
-    // notifyListeners();
+  postDetailsScreenSetEnableRequestButton(bool value) {
+    postDetailsScreenEnableRequestButton = value;
+    notifyListeners();
   }
 
-  setExpectedUnitPrice(double value) {
-    expectedUnitPrice = value;
-    // notifyListeners();
+  postDetailsScreenSetExpectedUnitPrice(double value) {
+    postDetailsScreenExpectedUnitPrice = value;
+    notifyListeners();
   }
 
-  setIsRequestOnProcess(bool value) {
-    isRequestOnProcess = value;
-    // notifyListeners();
+  postDetailsScreenSetIsRequestOnProcess(bool value) {
+    postDetailsScreenIsRequestOnProcess = value;
+    notifyListeners();
   }
 
-  setIsCartOnProcess(bool value) {
-    isCartOnProcess = value;
-    // notifyListeners();
+  postDetailsScreenSetIsCartOnProcess(bool value) {
+    postDetailsScreenIsCartOnProcess = value;
+    notifyListeners();
   }
 
-  setIsOrderPlacementOnProcess(bool value) {
-    isOrderPlacementOnProcess = value;
-    // notifyListeners();
+  postDetailsScreenSetIsOrderPlacementOnProcess(bool value) {
+    postDetailsScreenIsOrderPlacementOnProcess = value;
+    notifyListeners();
   }
 
-  setItemCount(int value) {
-    itemCount = value;
+  postDetailsScreenSetItemCount(int value) {
+    postDetailsScreenItemCount = value;
+    notifyListeners();
   }
 
-  getTomorrowDate() {
+  postDetailsScreenGetTomorrowDate() {
     NepaliDateTime initDate = NepaliDateTime.now();
     NepaliDateTime tomorrow =
         NepaliDateTime(initDate.year, initDate.month, initDate.day + 1);
     return tomorrow;
   }
 
-  showPicker(BuildContext context) async {
-    buyerExpectedDeadline = await picker.showAdaptiveDatePicker(
+  postDetailsScreenShowPicker(BuildContext context) async {
+    postDetailsScreenBuyerExpectedDeadline =
+        await picker.showAdaptiveDatePicker(
       context: context,
-      initialDate: getTomorrowDate(),
-      firstDate: getTomorrowDate(),
+      initialDate: postDetailsScreenGetTomorrowDate(),
+      firstDate: postDetailsScreenGetTomorrowDate(),
       lastDate: NepaliDateTime.now().add(
         const Duration(
           days: 365,
         ),
       ),
     );
-    if (buyerExpectedDeadline != null) {
-      datePickercontroller.text = DateFormat('yyyy-MM-dd')
-          .format(buyerExpectedDeadline as DateTime)
+    if (postDetailsScreenBuyerExpectedDeadline != null) {
+      postDetailsScreenDatePickercontroller.text = DateFormat('yyyy-MM-dd')
+          .format(postDetailsScreenBuyerExpectedDeadline as DateTime)
           .toString();
     }
   }
 
-  bindPostDetailsScreen(BuildContext context) {
+  postDetailsScreenBindPostDetailsScreen(BuildContext context) {
     bindBaseViewModal(context);
 
-    // postDetailsPageCreateOrderRequestBototmSheetForm = GlobalKey<FormState>();
-    // postDetailsPageBototmSheetForm = GlobalKey<FormState>();
     setBillingInfo();
-    initDate = NepaliDateTime.now();
-    datePickercontroller = TextEditingController(
-      text: DateFormat('yyyy-MM-dd').format(NepaliDateTime(
-          NepaliDateTime.now().year,
-          NepaliDateTime.now().month,
-          NepaliDateTime.now().day + 1)),
-    );
-    itemCount = 1;
+    postDetailsScreenInitDate = NepaliDateTime.now();
+    // postDetailsScreenDatePickercontroller = TextEditingController(
+    //   text: DateFormat('yyyy-MM-dd').format(NepaliDateTime(
+    //       NepaliDateTime.now().year,
+    //       NepaliDateTime.now().month,
+    //       NepaliDateTime.now().day + 1)),
+    // );
+    postDetailsScreenItemCount = 1;
 
     postDetailsPageCartBottomSheetBuyerDateFocusNode = FocusNode();
     postDetailsPageCartBottomSheetBuyerPriceFocusNode = FocusNode();

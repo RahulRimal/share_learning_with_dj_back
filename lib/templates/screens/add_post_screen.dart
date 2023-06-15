@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +17,10 @@ import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../view_models/providers/user_provider.dart';
+import '../managers/color_manager.dart';
+import '../managers/values_manager.dart';
 import '../utils/alert_helper.dart';
+import '../utils/loading_helper.dart';
 
 class AddPostScreen extends StatefulWidget {
   static const routeName = '/add-post';
@@ -25,157 +30,33 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
-  List<XFile>? _storedImages;
-  List<BookImage> actualImages = [];
-  ImagePicker imagePicker = ImagePicker();
-
   final _form = GlobalKey<FormState>();
-  bool showSpinner = false;
-
-  late FocusNode _authorFocusNode;
-  late FocusNode _dateFocusNode;
-  late FocusNode _priceFocusNode;
-  late FocusNode _booksCountFocusNode;
-  late FocusNode _descFocusNode;
-
-  List<bool> postTypeSelling = [true, false];
-
-  bool ispostType = true;
-
-  picker.NepaliDateTime? _boughtDate;
-
-  eraseImage(dynamic image) {
-    if (image is XFile) {
-      setState(() {
-        _storedImages?.remove(image);
-        actualImages.remove(image.path);
-      });
-    } else {
-      setState(() {
-        XFile imageToRemove =
-            _storedImages!.firstWhere((element) => element.path == image.image);
-        _storedImages?.remove(imageToRemove);
-        actualImages.remove(image);
-      });
-    }
-  }
-
-  Future<void> _getPicture() async {
-    final imageFiles =
-        await imagePicker.pickMultiImage(maxWidth: 770, imageQuality: 100);
-
-    // if (imageFiles == null) return;
-
-    _storedImages = imageFiles;
-
-    // final appDir = await syspaths.getApplicationDocumentsDirectory();
-
-    setState(() {
-      for (int i = 0; i < _storedImages!.length; i++) {
-        actualImages.add(BookImage(id: null, image: _storedImages![i].path));
-      }
-    });
-  }
-
-  var _edittedBook = Book(
-    id: '',
-    author: 'Unknown',
-    bookName: '',
-    userId: '1',
-    postType: 'B',
-    category: null,
-    boughtDate: DateTime.now().toNepaliDateTime(),
-    description: '',
-    // wishlisted: false,
-    price: 0,
-    bookCount: 1,
-    images: [],
-    postedOn: DateTime.now().toNepaliDateTime(),
-    postRating: 0.0,
-  );
-
-  final _datePickercontroller = TextEditingController(
-    text:
-        DateFormat('yyyy-MM-dd').format(picker.NepaliDateTime.now()).toString(),
-  );
 
   @override
   void initState() {
-    _authorFocusNode = FocusNode();
-    _dateFocusNode = FocusNode();
-    _priceFocusNode = FocusNode();
-    _booksCountFocusNode = FocusNode();
-    _descFocusNode = FocusNode();
-
     super.initState();
+
+    Provider.of<BookProvider>(context, listen: false)
+        .bindAddPostScreenViewModel(context);
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+  //   bookProvider = Provider.of<BookProvider>(context, listen: false);
+  // }
 
   @override
   void dispose() {
-    _authorFocusNode.dispose();
-    _dateFocusNode.dispose();
-    _priceFocusNode.dispose();
-    _booksCountFocusNode.dispose();
-    _descFocusNode.dispose();
     super.dispose();
-  }
-
-  Future<void> _showPicker(BuildContext context) async {
-    _boughtDate = await picker.showAdaptiveDatePicker(
-      context: context,
-      initialDate: picker.NepaliDateTime.now(),
-      firstDate: picker.NepaliDateTime(2070),
-      lastDate: picker.NepaliDateTime.now(),
-    );
-
-    _datePickercontroller.text =
-        DateFormat('yyyy-MM-dd').format(_boughtDate as DateTime).toString();
-  }
-
-  _savePost(Session loggedInUser) async {
-    final isValid = _form.currentState!.validate();
-
-    if (!isValid) {
-      // return false;
-      return;
-    }
-
-    setState(() {
-      showSpinner = true;
-    });
-
-    _form.currentState!.save();
-    _edittedBook.postType = ispostType ? 'S' : 'B';
-    // _edittedBook.pictures = _storedImages;
-    _edittedBook.postRating = 0.0;
-    _edittedBook.userId =
-        Provider.of<UserProvider>(context, listen: false).user!.id;
-    BookProvider books = Provider.of<BookProvider>(context, listen: false);
-
-    if (await books.createPost(loggedInUser, _edittedBook)) {
-      if (_storedImages != null) {
-        _edittedBook = books.books.last;
-        _edittedBook.images = _storedImages;
-
-        if (await books.updatePictures(loggedInUser, _edittedBook)) {
-          showSpinner = false;
-          return true;
-        } else {
-          showSpinner = false;
-          return false;
-        }
-      }
-    }
-    showSpinner = false;
-    return false;
+    Provider.of<BookProvider>(context, listen: false)
+        .unbindAddPostScreenViewModel();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-    // final Session loggedInUserSession = args['loggedInUserSession'] as Session;
-    Session loggedInUserSession =
-        Provider.of<SessionProvider>(context).session as Session;
+    BookProvider _bookProvider = context.watch<BookProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -184,39 +65,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () async {
-              if (await _savePost(loggedInUserSession)) {
-                // final snackBar = SnackBar(
-                //   content: Text(
-                //     'Posted Successfully',
-                //     textAlign: TextAlign.center,
-                //     style: TextStyle(
-                //       fontSize: 13,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // );
-                // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              if (await _bookProvider.addPostScreenSavePost(_form)) {
                 AlertHelper.showToastAlert('Your book has been posted!');
-                // BotToast.showSimpleNotification(
-                //   title: 'Your book has been posted!!',
-                //   duration: Duration(seconds: 3),
-                //   backgroundColor: ColorManager.primary,
-                //   titleStyle: getBoldStyle(color: ColorManager.white),
-                //   align: Alignment(1, 1),
-                // );
               } else {
-                // BotToast.showSimpleNotification(
-                //   title: 'Couldn\'t post your book, plase try again!!',
-                //   duration: Duration(seconds: 3),
-                //   backgroundColor: ColorManager.primary,
-                //   titleStyle: getBoldStyle(color: ColorManager.white),
-                //   align: Alignment(1, 1),
-                //   hideCloseButton: true,
-                // );
                 AlertHelper.showToastAlert(
                     'Couldn\'t post your book, plase try again!');
-                // Navigator.pushReplacementNamed(context, HomeScreen.routeName,
-                //     arguments: {'authSession': loggedInUserSession});
                 Navigator.pushReplacementNamed(
                   context,
                   HomeScreenNew.routeName,
@@ -251,7 +104,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     ),
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_authorFocusNode);
+                      FocusScope.of(context).requestFocus(
+                          _bookProvider.addPostScreenAuthorFocusNode);
                     },
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -260,22 +114,23 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      // _edittedBook = Book(
-                      //   id: _edittedBook.id,
-                      //   author: _edittedBook.author,
+                      // _bookProvider.addPostScreenEdittedBook = Book(
+                      //   id: _bookProvider.addPostScreenEdittedBook.id,
+                      //   author: _bookProvider.addPostScreenEdittedBook.author,
                       //   bookName: value as String,
-                      //   userId: _edittedBook.userId,
-                      //   postType: _edittedBook.postType,
-                      //   boughtDate: _edittedBook.boughtDate,
-                      //   description: _edittedBook.description,
-                      //   wishlisted: _edittedBook.wishlisted,
-                      //   price: _edittedBook.price,
-                      //   bookCount: _edittedBook.bookCount,
-                      //   postedOn: _edittedBook.postedOn,
-                      //   postRating: _edittedBook.postRating,
+                      //   userId: _bookProvider.addPostScreenEdittedBook.userId,
+                      //   postType: _bookProvider.addPostScreenEdittedBook.postType,
+                      //   boughtDate: _bookProvider.addPostScreenEdittedBook.boughtDate,
+                      //   description: _bookProvider.addPostScreenEdittedBook.description,
+                      //   wishlisted: _bookProvider.addPostScreenEdittedBook.wishlisted,
+                      //   price: _bookProvider.addPostScreenEdittedBook.price,
+                      //   bookCount: _bookProvider.addPostScreenEdittedBook.bookCount,
+                      //   postedOn: _bookProvider.addPostScreenEdittedBook.postedOn,
+                      //   postRating: _bookProvider.addPostScreenEdittedBook.postRating,
                       // );
-                      _edittedBook = Book.withPoperty(
-                          _edittedBook, {'bookName': value as String});
+                      _bookProvider.addPostScreenEdittedBook = Book.withPoperty(
+                          _bookProvider.addPostScreenEdittedBook,
+                          {'bookName': value as String});
                     }),
                 Row(
                   children: [
@@ -284,7 +139,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
                             cursorColor: Theme.of(context).primaryColor,
-                            focusNode: _authorFocusNode,
+                            focusNode:
+                                _bookProvider.addPostScreenAuthorFocusNode,
                             decoration: InputDecoration(
                               labelText: 'Author',
                               focusColor: Colors.redAccent,
@@ -292,25 +148,27 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_dateFocusNode);
+                              FocusScope.of(context).requestFocus(
+                                  _bookProvider.addPostScreenDateFocusNode);
                             },
                             onSaved: (value) {
-                              // _edittedBook = Book(
-                              //   id: _edittedBook.id,
+                              // _bookProvider.addPostScreenEdittedBook = Book(
+                              //   id: _bookProvider.addPostScreenEdittedBook.id,
                               //   author: value!.isEmpty ? 'Unknown' : value,
-                              //   bookName: _edittedBook.bookName,
-                              //   userId: _edittedBook.userId,
-                              //   postType: _edittedBook.postType,
-                              //   boughtDate: _edittedBook.boughtDate,
-                              //   description: _edittedBook.description,
-                              //   wishlisted: _edittedBook.wishlisted,
-                              //   price: _edittedBook.price,
-                              //   bookCount: _edittedBook.bookCount,
-                              //   postedOn: _edittedBook.postedOn,
-                              //   postRating: _edittedBook.postRating,
+                              //   bookName: _bookProvider.addPostScreenEdittedBook.bookName,
+                              //   userId: _bookProvider.addPostScreenEdittedBook.userId,
+                              //   postType: _bookProvider.addPostScreenEdittedBook.postType,
+                              //   boughtDate: _bookProvider.addPostScreenEdittedBook.boughtDate,
+                              //   description: _bookProvider.addPostScreenEdittedBook.description,
+                              //   wishlisted: _bookProvider.addPostScreenEdittedBook.wishlisted,
+                              //   price: _bookProvider.addPostScreenEdittedBook.price,
+                              //   bookCount: _bookProvider.addPostScreenEdittedBook.bookCount,
+                              //   postedOn: _bookProvider.addPostScreenEdittedBook.postedOn,
+                              //   postRating: _bookProvider.addPostScreenEdittedBook.postRating,
                               // );
-                              _edittedBook = Book.withPoperty(_edittedBook, {
+                              _bookProvider.addPostScreenEdittedBook =
+                                  Book.withPoperty(
+                                      _bookProvider.addPostScreenEdittedBook, {
                                 'author': value!.isEmpty ? 'Unknown' : value
                               });
                             }),
@@ -320,41 +178,27 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                            controller: _datePickercontroller,
-                            focusNode: _dateFocusNode,
-                            // initialValue:
-                            //     DateFormat('yyyy/MM/dd').format(DateTime.now()),
+                            controller:
+                                _bookProvider.addPostScreenDatePickercontroller,
+                            focusNode: _bookProvider.addPostScreenDateFocusNode,
                             keyboardType: TextInputType.datetime,
                             cursorColor: Theme.of(context).primaryColor,
                             decoration: InputDecoration(
                               labelText: 'Bought Date',
-                              // suffix: IconButton(
-                              //   // onPressed: _showPicker,
-                              //   tooltip: 'Tap to open datePicker',
-                              //   onPressed: () {
-                              //     DatePickerDialog(
-                              //       initialDate: DateTime.now(),
-                              //       firstDate: DateTime(2000),
-                              //       lastDate: DateTime(2025),
-                              //     );
-                              //   },
-                              //   icon: Icon(Icons.calendar_view_day_rounded),
-                              // ),
                               suffix: IconButton(
                                 icon: Icon(Icons.calendar_today),
                                 tooltip: 'Tap to open date picker',
                                 onPressed: () {
-                                  _showPicker(context);
-
-                                  // _datePickercontroller.text = _boughtDate.toString();
+                                  _bookProvider
+                                      .addPostScreenShowPicker(context);
                                 },
                               ),
                             ),
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_priceFocusNode);
+                              FocusScope.of(context).requestFocus(
+                                  _bookProvider.addPostScreenPriceFocusNode);
                             },
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -363,27 +207,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              // print(DateFormat.yMd());
-                              // _edittedBook = Book(
-                              //   id: _edittedBook.id,
-                              //   author: _edittedBook.author,
-                              //   bookName: _edittedBook.bookName,
-                              //   userId: _edittedBook.userId,
-                              //   postType: _edittedBook.postType,
-                              //   // boughtDate: (DateFormat("yyyy/MM/dd")
-                              //   //         .parse(value as String))
-                              //   //     .toNepaliDateTime(),
-                              //   boughtDate:
-                              //       NepaliDateTime.parse(value as String),
-
-                              //   description: _edittedBook.description,
-                              //   wishlisted: _edittedBook.wishlisted,
-                              //   price: _edittedBook.price,
-                              //   bookCount: _edittedBook.bookCount,
-                              //   postedOn: _edittedBook.postedOn,
-                              //   postRating: _edittedBook.postRating,
-                              // );
-                              _edittedBook = Book.withPoperty(_edittedBook, {
+                              _bookProvider.addPostScreenEdittedBook =
+                                  Book.withPoperty(
+                                      _bookProvider.addPostScreenEdittedBook, {
                                 'boughtDate':
                                     picker.NepaliDateTime.parse(value as String)
                               });
@@ -399,7 +225,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
                             cursorColor: Theme.of(context).primaryColor,
-                            focusNode: _priceFocusNode,
+                            focusNode:
+                                _bookProvider.addPostScreenPriceFocusNode,
                             decoration: InputDecoration(
                               prefix: Text('Rs. '),
                               labelText: 'Price',
@@ -409,8 +236,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_booksCountFocusNode);
+                              FocusScope.of(context).requestFocus(_bookProvider
+                                  .addPostScreenBooksCountFocusNode);
                             },
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -422,23 +249,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              // _edittedBook = Book(
-                              //   id: _edittedBook.id,
-                              //   author: _edittedBook.author,
-                              //   bookName: _edittedBook.bookName,
-                              //   userId: _edittedBook.userId,
-                              //   postType: _edittedBook.postType,
-                              //   boughtDate: _edittedBook.boughtDate,
-                              //   description: _edittedBook.description,
-                              //   wishlisted: _edittedBook.wishlisted,
-                              //   price: double.parse(value as String),
-                              //   bookCount: _edittedBook.bookCount,
-                              //   postedOn: _edittedBook.postedOn,
-                              //   postRating: _edittedBook.postRating,
-                              // );
-
-                              _edittedBook = Book.withPoperty(_edittedBook,
-                                  {'price': double.parse(value as String)});
+                              _bookProvider.addPostScreenEdittedBook =
+                                  Book.withPoperty(
+                                      _bookProvider.addPostScreenEdittedBook,
+                                      {'price': double.parse(value as String)});
                             }),
                       ),
                     ),
@@ -446,7 +260,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          focusNode: _booksCountFocusNode,
+                          focusNode:
+                              _bookProvider.addPostScreenBooksCountFocusNode,
                           initialValue: '1',
                           keyboardType: TextInputType.number,
                           cursorColor: Theme.of(context).primaryColor,
@@ -456,7 +271,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           textInputAction: TextInputAction.next,
                           autovalidateMode: AutovalidateMode.always,
                           onFieldSubmitted: (_) {
-                            FocusScope.of(context).requestFocus(_descFocusNode);
+                            FocusScope.of(context).requestFocus(
+                                _bookProvider.addPostScreenDescFocusNode);
                           },
                           validator: (value) {
                             if (double.tryParse(value as String) == null) {
@@ -469,22 +285,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            // _edittedBook = Book(
-                            //   id: _edittedBook.id,
-                            //   author: _edittedBook.author,
-                            //   bookName: _edittedBook.bookName,
-                            //   userId: _edittedBook.userId,
-                            //   postType: _edittedBook.postType,
-                            //   boughtDate: _edittedBook.boughtDate,
-                            //   description: _edittedBook.description,
-                            //   wishlisted: _edittedBook.wishlisted,
-                            //   price: _edittedBook.price,
-                            //   bookCount: int.parse(value as String),
-                            //   postedOn: _edittedBook.postedOn,
-                            //   postRating: _edittedBook.postRating,
-                            // );
-                            _edittedBook = Book.withPoperty(_edittedBook,
-                                {'bookCount': int.parse(value as String)});
+                            _bookProvider.addPostScreenEdittedBook =
+                                Book.withPoperty(
+                                    _bookProvider.addPostScreenEdittedBook,
+                                    {'bookCount': int.parse(value as String)});
                           },
                         ),
                       ),
@@ -494,7 +298,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
-                    focusNode: _descFocusNode,
+                    focusNode: _bookProvider.addPostScreenDescFocusNode,
                     keyboardType: TextInputType.multiline,
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
@@ -505,7 +309,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     minLines: 3,
                     maxLines: 7,
                     // onFieldSubmitted: (_) {
-                    //   FocusScope.of(context).requestFocus(_descFocusNode);
+                    //   FocusScope.of(context).requestFocus(_bookProvider.addPostScreenDescFocusNode);
                     // },
                     validator: (value) {
                       if (value!.length < 50) {
@@ -514,29 +318,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      // _edittedBook = Book(
-                      //   id: _edittedBook.id,
-                      //   author: _edittedBook.author,
-                      //   bookName: _edittedBook.bookName,
-                      //   userId: _edittedBook.userId,
-                      //   postType: _edittedBook.postType,
-                      //   boughtDate: _edittedBook.boughtDate,
-                      //   description: value as String,
-                      //   wishlisted: _edittedBook.wishlisted,
-                      //   price: _edittedBook.price,
-                      //   bookCount: _edittedBook.bookCount,
-                      //   // pictures: actualImages,
-                      //   postedOn: _edittedBook.postedOn,
-                      //   postRating: _edittedBook.postRating,
-                      // );
-                      _edittedBook = Book.withPoperty(
-                          _edittedBook, {'description': value as String});
+                      _bookProvider.addPostScreenEdittedBook = Book.withPoperty(
+                          _bookProvider.addPostScreenEdittedBook,
+                          {'description': value as String});
                     },
                   ),
                 ),
                 Container(
                   child: ToggleButtons(
-                    isSelected: postTypeSelling,
+                    isSelected: _bookProvider.addPostScreenPostTypeSelling,
                     color: Colors.grey,
                     selectedColor: Colors.white,
                     fillColor: Theme.of(context).primaryColor,
@@ -565,13 +355,20 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     ],
                     onPressed: (int index) {
                       setState(() {
-                        for (int i = 0; i < postTypeSelling.length; i++) {
+                        for (int i = 0;
+                            i <
+                                _bookProvider
+                                    .addPostScreenPostTypeSelling.length;
+                            i++) {
                           if (i == index)
-                            postTypeSelling[i] = true;
+                            _bookProvider.addPostScreenPostTypeSelling[i] =
+                                true;
                           else
-                            postTypeSelling[i] = false;
+                            _bookProvider.addPostScreenPostTypeSelling[i] =
+                                false;
                         }
-                        ispostType = postTypeSelling[0];
+                        _bookProvider.addPostScreenIsPostType =
+                            _bookProvider.addPostScreenPostTypeSelling[0];
                       });
                     },
                   ),
@@ -579,24 +376,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 Container(
                   height: 150,
                   width: 150,
-                  // child: _storedImage != null
-                  //     ? kIsWeb
-                  //         ? Image.network(_storedImage!.path)
-                  //         : Image.file(File(_storedImage!.path))
-                  //     : Text('No Image'),
-                  // child: _storedImages != null
-                  //     ? kIsWeb
-                  //         ? Image.network(_storedImages!.path)
-                  //         : Image.file(File(_storedImage!.path))
-                  child: _storedImages != null
-                      ?
-                      // ImageGallery(null, _storedImages)
-                      // ImageGallery(false, null, actualImages)
-                      ImageGallery(
+                  child: _bookProvider.addPostScreenStoredImages != null
+                      ? ImageGallery(
                           false,
-                          images: actualImages,
+                          images: _bookProvider.addPostScreenSctualImages,
                           isErasable: true,
-                          eraseImage: eraseImage,
+                          eraseImage: _bookProvider.addPostScreenEraseImage,
                         )
                       : Text('No Image'),
                 ),
@@ -612,28 +397,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          showSpinner
-                              ? Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: CircularProgressIndicator(),
-                                )
-                              : ElevatedButton(
-                                  child: Text('From Gallery'),
-                                  style: ButtonStyle(),
-                                  onPressed: () {
-                                    _getPicture();
-                                  },
-                                ),
+                          ElevatedButton(
+                            child: Text('From Gallery'),
+                            style: ButtonStyle(),
+                            onPressed: () {
+                              _bookProvider.addPostScreenGetPicture();
+                            },
+                          ),
                           SizedBox(
                             width: 10,
                           ),
-                          // ElevatedButton(
-                          //   child: Text('From Camera'),
-                          //   style: ButtonStyle(),
-                          //   onPressed: () {
-                          //     _takePicture();
-                          //   },
-                          // ),
                         ],
                       ),
                     ],
@@ -641,65 +414,70 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          Theme.of(context).primaryColor),
-                    ),
-                    onPressed: () async {
-                      var result = await _savePost(loggedInUserSession);
-                      // if (await _savePost(loggedInUserSession)) {
-                      if (result == null) {
-                        AlertHelper.showToastAlert('Fields not valid');
-                        // BotToast.showSimpleNotification(
-                        //   title: 'Fields not valid',
-                        //   duration: Duration(seconds: 3),
-                        //   backgroundColor: ColorManager.primary,
-                        //   titleStyle: getBoldStyle(color: ColorManager.white),
-                        //   align: Alignment(1, 1),
-                        //   hideCloseButton: true,
-                        // );
-                        return;
-                      }
-                      if (result) {
-                        AlertHelper.showToastAlert(
-                            'Your book has been posted!');
-                        // BotToast.showSimpleNotification(
-                        //   title: 'Your book has been posted!!',
-                        //   duration: Duration(seconds: 3),
-                        //   backgroundColor: ColorManager.primary,
-                        //   titleStyle: getBoldStyle(color: ColorManager.white),
-                        //   align: Alignment(1, 1),
-                        // );
+                  child: Consumer<BookProvider>(
+                    builder: (context, bookProvider, child) =>
+                        ElevatedButton.icon(
+                      icon: bookProvider.addPostScreenIsPostingNewBook
+                          ? SizedBox(
+                              height: AppHeight.h20,
+                              width: AppHeight.h20,
+                              child: CircularProgressIndicator.adaptive(
+                                strokeWidth: 3,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                backgroundColor: ColorManager.primary,
+                              ),
+                            )
+                          : Container(),
+                      // style: ButtonStyle(
+                      //   backgroundColor: MaterialStateProperty.all(
+                      //       Theme.of(context).primaryColor),
+                      // ),
+                      onPressed: bookProvider.addPostScreenIsPostingNewBook
+                          ? null
+                          : () async {
+                              bookProvider
+                                  .setAddPostScreenIsPostingNewBook(true);
 
-                        Navigator.pushReplacementNamed(
-                          context,
-                          HomeScreenNew.routeName,
-                        );
-                      } else {
-                        AlertHelper.showToastAlert(
-                            'Couldn\'t post your book, please try again!');
-                        // BotToast.showSimpleNotification(
-                        //   title: 'Couldn\'t post your book, please try again!!',
-                        //   duration: Duration(seconds: 3),
-                        //   backgroundColor: ColorManager.primary,
-                        //   titleStyle: getBoldStyle(color: ColorManager.white),
-                        //   align: Alignment(1, 1),
-                        //   hideCloseButton: true,
-                        // );
+                              var result = await bookProvider
+                                  .addPostScreenSavePost(_form);
 
-                        Navigator.pushReplacementNamed(
-                          context,
-                          HomeScreenNew.routeName,
-                        );
-                      }
-                    },
-                    child: Text(
-                      'Add this Post',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                              if (result == null) {
+                                AlertHelper.showToastAlert('Fields not valid');
+                                bookProvider
+                                    .setAddPostScreenIsPostingNewBook(false);
+
+                                return;
+                              }
+                              if (result) {
+                                AlertHelper.showToastAlert(
+                                    'Your book has been posted!');
+
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  HomeScreenNew.routeName,
+                                );
+                              } else {
+                                AlertHelper.showToastAlert(
+                                    'Couldn\'t post your book, please try again!');
+
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  HomeScreenNew.routeName,
+                                );
+                              }
+                              bookProvider
+                                  .setAddPostScreenIsPostingNewBook(false);
+                            },
+                      label: bookProvider.addPostScreenIsPostingNewBook
+                          ? LoadingHelper.showTextLoading('Posting your book')
+                          : Text(
+                              'Add this Post',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 )

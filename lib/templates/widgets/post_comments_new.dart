@@ -498,7 +498,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       commentProvider.getPostComments(
-          commentProvider.bookProvider.selectedBook.id,
+          commentProvider.bookProvider.postDetailsScreenSelectedBook.id,
           commentProvider.sessionProvider.session as Session);
     });
   }
@@ -850,7 +850,8 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                 child: Text('Error'),
                                               );
                                             } else if (snapshot.hasData) {
-                                              _commentProvider.commentUser =
+                                              _commentProvider
+                                                      .postCommentNewCommentUser =
                                                   snapshot.data as User;
 
                                               User _currentUser;
@@ -864,7 +865,8 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                     .userProvider.user as User;
                                               }
                                               _commentProvider
-                                                      .edittedComment.userId =
+                                                      .postCommentNewEdittedComment
+                                                      .userId =
                                                   int.parse(_currentUser.id);
                                               return Container(
                                                 decoration: BoxDecoration(
@@ -892,7 +894,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                 listen: false,
                                                               ).hasPostByUser(
                                                                   _commentProvider
-                                                                      .commentUser
+                                                                      .postCommentNewCommentUser
                                                                       .id)) {
                                                                 Navigator.of(
                                                                         context)
@@ -902,7 +904,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                   arguments: {
                                                                     'userId':
                                                                         _commentProvider
-                                                                            .commentUser
+                                                                            .postCommentNewCommentUser
                                                                             .id,
                                                                   },
                                                                 );
@@ -913,7 +915,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                 final snackBar =
                                                                     SnackBar(
                                                                   content: Text(
-                                                                    'No posts by ${_commentProvider.commentUser.firstName}',
+                                                                    'No posts by ${_commentProvider.postCommentNewCommentUser.firstName}',
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -948,12 +950,12 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                       NetworkImage(
                                                                     UserHelper.userProfileImage(
                                                                         _commentProvider
-                                                                            .commentUser),
+                                                                            .postCommentNewCommentUser),
                                                                   ),
                                                                 ),
                                                                 _commentProvider
-                                                                        .shouldFlexCommentUserName(
-                                                                            '${_commentProvider.commentUser.firstName}')
+                                                                        .postCommentNewShouldFlexCommentUserName(
+                                                                            '${_commentProvider.postCommentNewCommentUser.firstName}')
                                                                     ? Flexible(
                                                                         child:
                                                                             Container(
@@ -963,7 +965,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                               EdgeInsets.all(10),
                                                                           child:
                                                                               Text(
-                                                                            UserHelper.userDisplayName(_commentProvider.commentUser),
+                                                                            UserHelper.userDisplayName(_commentProvider.postCommentNewCommentUser),
                                                                             textAlign:
                                                                                 TextAlign.center,
                                                                             style:
@@ -984,7 +986,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                             Text(
                                                                           // '${_commentUser.firstName}',
                                                                           UserHelper.userDisplayName(
-                                                                              _commentProvider.commentUser),
+                                                                              _commentProvider.postCommentNewCommentUser),
                                                                           textAlign:
                                                                               TextAlign.center,
                                                                           style:
@@ -1027,7 +1029,8 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                     ),
                                                     // _commentUser.id ==
                                                     //         loggedInUser.userId
-                                                    _commentProvider.commentUser
+                                                    _commentProvider
+                                                                .postCommentNewCommentUser
                                                                 .id ==
                                                             _currentUser.id
                                                         ? Row(
@@ -1035,17 +1038,17 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                               IconButton(
                                                                 onPressed: () {
                                                                   _commentProvider
-                                                                          .commentEditted =
+                                                                          .postCommentNewCommentEditted =
                                                                       true;
 
                                                                   _commentProvider
-                                                                          .edittedComment =
+                                                                          .postCommentNewEdittedComment =
                                                                       _commentProvider
                                                                               .comments[
                                                                           index];
 
                                                                   _commentProvider
-                                                                          .commentController
+                                                                          .postCommentNewCommentController
                                                                           .text =
                                                                       _commentProvider
                                                                           .comments[
@@ -1056,7 +1059,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                           context)
                                                                       .requestFocus(
                                                                           _commentProvider
-                                                                              .commentFocusNode);
+                                                                              .postCommentNewCommentFocusNode);
                                                                 },
                                                                 icon: Icon(
                                                                     Icons.edit),
@@ -1064,12 +1067,12 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                               IconButton(
                                                                 onPressed: () {
                                                                   _commentProvider
-                                                                          .edittedComment =
+                                                                          .postCommentNewEdittedComment =
                                                                       _commentProvider
                                                                               .comments[
                                                                           index];
                                                                   _commentProvider
-                                                                      .deletePostComment();
+                                                                      .postCommentNewDeletePostComment();
                                                                 },
                                                                 icon: Icon(Icons
                                                                     .delete),
@@ -1124,14 +1127,15 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10),
                                     child: TextFormField(
-                                      focusNode:
-                                          _commentProvider.commentFocusNode,
-                                      controller:
-                                          _commentProvider.commentController,
+                                      focusNode: _commentProvider
+                                          .postCommentNewCommentFocusNode,
+                                      controller: _commentProvider
+                                          .postCommentNewCommentController,
                                       cursorColor:
                                           Theme.of(context).primaryColor,
                                       onChanged: (value) {
-                                        _commentProvider.edittedComment
+                                        _commentProvider
+                                            .postCommentNewEdittedComment
                                             .commentBody = value.toString();
                                       },
                                       // onSaved: (_) {
@@ -1147,12 +1151,13 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                         suffixIcon: IconButton(
                                           onPressed: () {
                                             if (_commentProvider
-                                                    .commentEditted ==
+                                                    .postCommentNewCommentEditted ==
                                                 true) {
                                               _commentProvider
-                                                  .updatePostComment();
+                                                  .postCommentNewUpdatePostComment();
                                             } else
-                                              _commentProvider.addPostComment();
+                                              _commentProvider
+                                                  .postCommentNewAddPostComment();
                                           },
                                           icon: Icon(
                                             Icons.send,

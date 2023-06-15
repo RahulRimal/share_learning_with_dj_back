@@ -109,15 +109,4 @@ class CommentProvider
 
     return false;
   }
-
-  // ================================== Implementations for the output of PostNewWidget functions ends from here ===================================
-
-  // @override
-  // Future<bool> deletePostComment() async {
-  //   bool value = await super.deletePostComment();
-  //   notifyListeners();
-  //   return value;
-  // }
-
-  // ================================== Implementations for the output of BillingInfoWidgetViewModel functions starts from here ===================================
 }

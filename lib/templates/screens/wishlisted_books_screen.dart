@@ -110,7 +110,9 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                           iconSize: AppSize.s40,
                           onPressed: () => Navigator.pushNamed(
                               context, UserProfileScreen.routeName),
-                          icon: _wishlistProvider.user.image == null
+                          icon: (_wishlistProvider.userProvider.user as User)
+                                      .image ==
+                                  null
                               ? CircleAvatar(
                                   backgroundImage:
                                       AssetImage(ImageAssets.noProfile),
@@ -118,7 +120,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                               : CircleAvatar(
                                   backgroundImage: NetworkImage(
                                       UserHelper.userProfileImage(
-                                          _wishlistProvider.user)),
+                                          _wishlistProvider.userProvider.user
+                                              as User)),
                                 ),
                         ),
                       ],
@@ -148,7 +151,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                   prefixIcon: Icon(Icons.search),
                                   prefixIconColor: ColorManager.primary,
                                   suffixIcon: _wishlistProvider
-                                          .enableClearSearch
+                                          .wishlistScreenEnableClearSearch
                                       ? IconButton(
                                           icon: Icon(Icons.cancel_outlined),
                                           onPressed: () {
@@ -156,7 +159,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                                 .wishlistScreenSearchTextController
                                                 .text = '';
                                             _wishlistProvider
-                                                .setEnableClearSearch(false);
+                                                .wishlistScreenSetEnableClearSearch(
+                                                    false);
 
                                             // Call get Post to reload the view and also to set the next url to generic next url rather than next url of search query
                                             _wishlistProvider
@@ -170,7 +174,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                           icon: Icon(Icons.send),
                                           onPressed: () {
                                             _wishlistProvider
-                                                .getSearchResult(_form);
+                                                .wishlistScreenGetSearchResult(
+                                                    _form);
                                           },
                                         ),
                                   suffixIconColor: ColorManager.primary,
@@ -205,7 +210,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                   return null;
                                 },
                                 onFieldSubmitted: (_) {
-                                  _wishlistProvider.getSearchResult(_form);
+                                  _wishlistProvider
+                                      .wishlistScreenGetSearchResult(_form);
                                 },
                               ),
                             ),
@@ -217,13 +223,15 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                   700), // Adjust the duration as needed
                           curve:
                               Curves.easeInOut, // Adjust the curve as desired
-                          width: _wishlistProvider.showFilterButton
+                          width: _wishlistProvider
+                                  .wishlistScreenShowFilterButton
                               ? AppHeight.h60
                               : 0, // Define the desired height when visible or hidden
                           child: CircleAvatar(
                             backgroundColor: ColorManager.black,
                             radius: 20,
-                            child: !_wishlistProvider.showFilterButton
+                            child: !_wishlistProvider
+                                    .wishlistScreenShowFilterButton
                                 ? null
                                 : IconButton(
                                     onPressed: () {
@@ -278,7 +286,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
               )
             : SingleChildScrollView(
                 // controller: _wishlistProvider.scrollController,
-                controller: _wishlistProvider.getScrollController(),
+                controller:
+                    _wishlistProvider.wishlistScreenGetScrollController(),
                 child: Container(
                   padding: EdgeInsets.only(
                     bottom: AppPadding.p12,
@@ -452,7 +461,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                                 color: ColorManager.primary),
                           ),
                         ),
-                      _wishlistProvider.loadingMorePosts
+                      _wishlistProvider.wishlistScreenLoadingMorePosts
                           ? Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: AppPadding.p18,

@@ -22,7 +22,7 @@ import '../../templates/utils/system_helper.dart';
 import '../billing_info_widget_wiew_model.dart';
 import '../home_screen_new_view_model.dart';
 import '../post_details_view_model.dart';
-import '../post_new_widget.dart';
+import '../post_new_widget_view_model.dart';
 import 'book_filters_provider.dart';
 import 'category_provider.dart';
 import 'order_provider.dart';
@@ -37,8 +37,10 @@ class BookProvider
         ChangeNotifier,
         BaseViewModel,
         PostNewWidgetViewModel,
+        AddPostScreenViewModel,
         HomeScreenNewViewModel,
-        PostDetailsViewModel, BillingInfoWidgetViewModel {
+        PostDetailsViewModel,
+        BillingInfoWidgetViewModel {
   List<Book> _myBooks = [];
   bool _loading = false;
   BookError? _bookError;
@@ -96,7 +98,8 @@ class BookProvider
   // Future<List<double>> getMinAndMaxPrice() async {
   getMinAndMaxPrice() async {
     // If user tried to get min and max price after searching then show min and max prices for the searched books
-    var response = await BookApi.getMinAndMaxPrice(searchTextController.text);
+    var response =
+        await BookApi.getMinAndMaxPrice(homeScreenNewSearchTextController.text);
     if (response is Success) {
       List<double> result = (response.response as Map)
           .values
@@ -162,7 +165,7 @@ class BookProvider
 
   getMoreBooks(String nextPageUrl) async {
     // setLoading(true);
-    setLoadingMorePosts(true);
+    homeScreenNewSetLoadingMorePosts(true);
     var response = await BookApi.getMoreBooks(nextPageUrl);
     // print(response);
 
@@ -187,7 +190,7 @@ class BookProvider
     // bookFiltersProvider.setMinAndMaxPrice(
     //     getMinPrice(_myBooks), getMaxPrice(_myBooks));
 
-    setLoadingMorePosts(false);
+    homeScreenNewSetLoadingMorePosts(false);
   }
 
   Future<dynamic> getBookByIdFromServer(
@@ -245,7 +248,7 @@ class BookProvider
       );
       setBookError(error);
     }
-    setEnableClearSearch(true);
+    homeScreenNewSetEnableClearSearch(true);
     setLoading(false);
   }
 
@@ -288,8 +291,8 @@ class BookProvider
     }
 
     // If user first searched then applied filters then we should apply search and filter
-    if (searchTextController.text.isNotEmpty) {
-      newFilters['search'] = searchTextController.text;
+    if (homeScreenNewSearchTextController.text.isNotEmpty) {
+      newFilters['search'] = homeScreenNewSearchTextController.text;
     }
 
     var response = await BookApi.getBooksWithFilters(newFilters);
@@ -515,92 +518,4 @@ class BookProvider
     setLoading(false);
     return false;
   }
-
-// ================================== Implementations for the output of BaseProvider functions start from here ===================================
-  @override
-  setBillingInfoLocationData(String location){
-    super.setBillingInfoLocationData(location);
-    notifyListeners();
-  }
-
-// ================================== Implementations for the output of BaseProvider functions ends from here ===================================
-
-
-
-// ================================== Implementations for the output of HomeScreenNew functions start from here ===================================
-  @override
-  setEnableClearSearch(bool value) {
-    super.setEnableClearSearch(value);
-    notifyListeners();
-  }
-
-  @override
-  setShowFiltersButton(bool value) {
-    super.setShowFiltersButton(value);
-    notifyListeners();
-  }
-
-  @override
-  setLoadingMorePosts(bool value) {
-    super.setLoadingMorePosts(value);
-    notifyListeners();
-  }
-
-  // ================================== Implementations for the output of HomeScreenNew functions end from here ===================================
-
-  // ================================== Implementations for the output of PostDetailsScreen functions start from here ===================================
-   @override
-  setMainImageIndex(int value){
-    super.setMainImageIndex(value);
-    notifyListeners();
-  }
-
-   @override
-  setEnableRequestButton(bool value) {
-    super.setEnableRequestButton(value);
-    notifyListeners();
-  }
-
-
-   @override
-  setExpectedUnitPrice(double value) {
-    super.setExpectedUnitPrice(value);
-    notifyListeners();
-  }
-
-   @override
-  setIsRequestOnProcess(bool value) {
-    super.setIsRequestOnProcess(value);
-    notifyListeners();
-  }
-   @override
-  setIsCartOnProcess(bool value) {
-    super.setIsCartOnProcess(value);
-    notifyListeners();
-  }
-   @override
-  setIsOrderPlacementOnProcess(bool value) {
-    super.setIsOrderPlacementOnProcess(value);
-    notifyListeners();
-  }
-
-   @override
-  setItemCount(int value) {
-    super.setItemCount(value);
-    notifyListeners();
-  }
-  // ================================== Implementations for the output of PostDetailsScreen functions ends from here ===================================
-  // ================================== Implementations for the output of PostNewWidget functions ends from here ===================================
-  
-
-  // ================================== Implementations for the output of PostNewWidget functions ends from here ===================================
-  // ================================== Implementations for the output of BillingInfoWidgetViewModel functions starts from here ===================================
-  
-  
-  
-  // ================================== Implementations for the output of BillingInfoWidgetViewModel functions ends from here ===================================
-
-
-
-
 }

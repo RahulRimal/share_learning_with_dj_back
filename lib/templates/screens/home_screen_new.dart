@@ -127,16 +127,19 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           iconSize: AppSize.s40,
                           onPressed: () => Navigator.pushNamed(
                               context, UserProfileScreen.routeName),
-                          icon: _bookProvider.user.image == null
-                              ? CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage(ImageAssets.noProfile),
-                                )
-                              : CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                      UserHelper.userProfileImage(
-                                          _bookProvider.user)),
-                                ),
+                          icon:
+                              (_bookProvider.userProvider.user as User).image ==
+                                      null
+                                  ? CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(ImageAssets.noProfile),
+                                    )
+                                  : CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          UserHelper.userProfileImage(
+                                              _bookProvider.userProvider.user
+                                                  as User)),
+                                    ),
                         ),
                       ],
                     ),
@@ -152,8 +155,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             child: Padding(
                               padding: const EdgeInsets.only(right: 12),
                               child: TextFormField(
-                                controller: _bookProvider.searchTextController,
-                                focusNode: _bookProvider.searchFocusNode,
+                                controller: _bookProvider
+                                    .homeScreenNewSearchTextController,
+                                focusNode:
+                                    _bookProvider.homeScreenNewSearchFocusNode,
                                 cursorColor: ColorManager.primary,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
@@ -163,14 +168,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                   ),
                                   prefixIcon: Icon(Icons.search),
                                   prefixIconColor: ColorManager.primary,
-                                  suffixIcon: _bookProvider.enableClearSearch
+                                  suffixIcon: _bookProvider
+                                          .homeScreenNewEnableClearSearch
                                       ? IconButton(
                                           icon: Icon(Icons.cancel_outlined),
                                           onPressed: () {
                                             _bookProvider
-                                                .searchTextController.text = '';
+                                                .homeScreenNewSearchTextController
+                                                .text = '';
                                             _bookProvider
-                                                .setEnableClearSearch(false);
+                                                .homeScreenNewSetEnableClearSearch(
+                                                    false);
 
                                             // Call get Post to reload the view and also to set the next url to generic next url rather than next url of search query
                                             _bookProvider.getBooksAnnonimusly(
@@ -181,8 +189,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                       : IconButton(
                                           icon: Icon(Icons.send),
                                           onPressed: () {
-                                            _bookProvider.getSearchResult(
-                                                homeScreenNewSearchFormKey);
+                                            _bookProvider
+                                                .homeScreenNewGetSearchResult(
+                                                    homeScreenNewSearchFormKey);
                                           },
                                         ),
                                   suffixIconColor: ColorManager.primary,
@@ -217,7 +226,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                   return null;
                                 },
                                 onFieldSubmitted: (_) {
-                                  _bookProvider.getSearchResult(
+                                  _bookProvider.homeScreenNewGetSearchResult(
                                       homeScreenNewSearchFormKey);
                                 },
                               ),
@@ -230,13 +239,13 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                   700), // Adjust the duration as needed
                           curve:
                               Curves.easeInOut, // Adjust the curve as desired
-                          width: _bookProvider.showFilterButton
+                          width: _bookProvider.homeScreenNewShowFilterButton
                               ? AppHeight.h60
                               : 0, // Define the desired height when visible or hidden
                           child: CircleAvatar(
                             backgroundColor: ColorManager.black,
                             radius: 20,
-                            child: !_bookProvider.showFilterButton
+                            child: !_bookProvider.homeScreenNewShowFilterButton
                                 ? null
                                 : IconButton(
                                     onPressed: () {
@@ -291,7 +300,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
               )
             : SingleChildScrollView(
                 // controller: _bookProvider.scrollController,
-                controller: _bookProvider.getScrollController(),
+                controller: _bookProvider.homeScreenNewGetScrollController(),
                 child: Container(
                   padding: EdgeInsets.only(
                     bottom: AppPadding.p12,
@@ -303,38 +312,42 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                         height: AppHeight.h75,
                         child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: _bookProvider.categories.length,
+                            itemCount:
+                                _bookProvider.homeScreenNewCategories.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 6),
                                 child: FilterChip(
                                   label: Text(
-                                    _bookProvider.categories[index].name,
-                                    style:
-                                        _bookProvider.selectedCategoryIndex ==
-                                                index
-                                            ? getBoldStyle(
-                                                // color: ColorManager.black,
-                                                color: ColorManager.white,
-                                              )
-                                            : getMediumStyle(
-                                                color: ColorManager.black,
-                                              ),
+                                    _bookProvider
+                                        .homeScreenNewCategories[index].name,
+                                    style: _bookProvider
+                                                .homeScreenNewSelectedCategoryIndex ==
+                                            index
+                                        ? getBoldStyle(
+                                            // color: ColorManager.black,
+                                            color: ColorManager.white,
+                                          )
+                                        : getMediumStyle(
+                                            color: ColorManager.black,
+                                          ),
                                   ),
                                   selectedColor: ColorManager.primary,
                                   showCheckmark: false,
-                                  selected:
-                                      _bookProvider.selectedCategoryIndex ==
-                                          index,
+                                  selected: _bookProvider
+                                          .homeScreenNewSelectedCategoryIndex ==
+                                      index,
                                   onSelected: (bool isSelected) async {
-                                    if (_bookProvider.selectedCategoryIndex !=
+                                    if (_bookProvider
+                                            .homeScreenNewSelectedCategoryIndex !=
                                         index) {
-                                      _bookProvider.selectedCategoryIndex =
+                                      _bookProvider
+                                              .homeScreenNewSelectedCategoryIndex =
                                           index;
                                       if (_bookProvider
-                                              .categories[_bookProvider
-                                                  .selectedCategoryIndex]
+                                              .homeScreenNewCategories[_bookProvider
+                                                  .homeScreenNewSelectedCategoryIndex]
                                               .name
                                               .toLowerCase() !=
                                           'all') {
@@ -344,7 +357,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                             _bookProvider
                                                 .categoryProvider
                                                 .categories[_bookProvider
-                                                        .selectedCategoryIndex -
+                                                        .homeScreenNewSelectedCategoryIndex -
                                                     1]
                                                 .id
                                                 .toString());
@@ -391,8 +404,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             }
                           },
                         )
-                      else if (_bookProvider
-                              .searchTextController.text.isNotEmpty &&
+                      else if (_bookProvider.homeScreenNewSearchTextController
+                              .text.isNotEmpty &&
                           _bookProvider.books.isEmpty)
                         Center(
                           child: Text(
@@ -428,7 +441,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                 color: ColorManager.primary),
                           ),
                         ),
-                      _bookProvider.loadingMorePosts
+                      _bookProvider.homeScreenNewLoadingMorePosts
                           ? Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: AppPadding.p18,

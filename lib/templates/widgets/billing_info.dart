@@ -494,7 +494,8 @@ class _BillingInfoState extends State<BillingInfo> {
                   builder:
                       (BuildContext context, bookProvider, Widget? child) =>
                           ElevatedButton.icon(
-                    icon: bookProvider.isOrderPlacementOnProcess
+                    icon: bookProvider
+                            .postDetailsScreenIsOrderPlacementOnProcess
                         ? SizedBox(
                             height: AppHeight.h20,
                             width: AppHeight.h20,
@@ -585,7 +586,7 @@ class _BillingInfoState extends State<BillingInfo> {
                         AlertHelper.showToastAlert("Something went wrong");
                       }
                     },
-                    label: bookProvider.isCartOnProcess
+                    label: bookProvider.postDetailsScreenIsCartOnProcess
                         ? LoadingHelper.showTextLoading('Ordering book')
                         : Text(
                             'Place an order',

@@ -32,56 +32,44 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  bool userDeletionConfirmed = false;
-  bool showConfirmButton = false;
+  @override
+  void initState() {
+    super.initState();
 
-  _logOut(Session session) async {
-    SharedPreferences prefs = await _prefs;
-    Provider.of<BookProvider>(context, listen: false).setBooks([]);
-    // Provider.of<Users>(context, listen: false).logoutUser(session.id);
-    Provider.of<UserProvider>(context, listen: false).logoutUser('1');
-    Provider.of<CommentProvider>(context, listen: false).setComments([]);
-    prefs.remove('accessToken');
-    prefs.remove('refreshToken');
-    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    Provider.of<UserProvider>(context, listen: false)
+        .bindUserProfileScreenViewModel(context);
   }
 
-  _deleteUserAccount(Session userSession, String password) async {
-    bool value = await Provider.of<UserProvider>(context, listen: false)
-        .deleteUserAccount(userSession, password);
-    if (value) {
-      AlertHelper.showToastAlert('Account deleted successfully');
-    } else
-      AlertHelper.showToastAlert('Something went wrong, Please try again!');
-  }
-
-  // Future<void> _logout(Session session) async {
-  //   SharedPreferences prefs = await _prefs;
-  //   Provider.of<Books>(context, listen: false).setBooks([]);
-  //   Provider.of<Users>(context, listen: false).logoutUser(session.id);
-  //   Provider.of<Comments>(context, listen: false).setComments([]);
-  //   prefs.remove('accessToken');
-  //   Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+  //   bookProvider = Provider.of<BookProvider>(context, listen: false);
   // }
 
-  _profilePageUI(SessionProvider userSession, User user) {
-    if (userSession.loading) {
+  @override
+  void dispose() {
+    super.dispose();
+    Provider.of<UserProvider>(context, listen: false)
+        .unbindUserProfileScreenViewModel();
+  }
+
+  _profilePageUI(UserProvider userProvider) {
+    // if (userSession.loading) {
+    if (userProvider.sessionProvider.loading) {
       return Container(
         child: Center(
           child: CircularProgressIndicator(),
         ),
       );
     }
-    if (userSession.sessionError != null) {
+    if (userProvider.sessionProvider.sessionError != null) {
       return Container(
         child: Center(
           child: Text('Error fetching user data'),
         ),
       );
     }
-
-    Session? authSession = userSession.session;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -134,7 +122,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         padding: EdgeInsets.all(
                                           AppPadding.p4,
                                         ),
-                                        child: user.image == null
+                                        child: userProvider.user!.image == null
                                             ? Image.asset(
                                                 ImageAssets.noProfile,
                                               )
@@ -142,7 +130,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                 radius: AppRadius.r70,
                                                 backgroundImage: NetworkImage(
                                                   UserHelper.userProfileImage(
-                                                      user),
+                                                      userProvider.user!),
                                                 ),
                                               ),
                                       ),
@@ -156,7 +144,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         children: [
                                           Text(
                                             // 'Rahul Rimal',
-                                            UserHelper.userDisplayName(user),
+                                            UserHelper.userDisplayName(
+                                                userProvider.user!),
                                             style: getBoldStyle(
                                                 fontSize: FontSize.s18,
                                                 color: ColorManager.primary),
@@ -167,7 +156,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             ),
                                             child: Text(
                                               // 'CSIT',
-                                              UserHelper.userClass(user),
+                                              UserHelper.userClass(
+                                                  userProvider.user!),
                                               style: getBoldStyle(
                                                 color: ColorManager.black,
                                                 fontSize: FontSize.s14,
@@ -186,7 +176,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           ),
                                           child: Text(
                                             // 'mail@rahul.com',
-                                            user.email as String,
+                                            userProvider.user!.email as String,
                                             style: getMediumStyle(
                                               color: ColorManager.black,
                                               fontSize: FontSize.s12,
@@ -226,8 +216,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               arguments: {
                                                 // 'loggedInUserSession': userSession.session,
                                                 'loggedInUserSession':
-                                                    userSession.session,
-                                                'user': user,
+                                                    userProvider.sessionProvider
+                                                        .session,
+                                                'user': userProvider.user!,
                                               },
                                             );
                                           },
@@ -254,8 +245,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               size: AppSize.s30,
                                             ),
                                             onPressed: () async {
-                                              _logOut(userSession.session
-                                                  as Session);
+                                              userProvider
+                                                  .userProfileScreenLogOut(
+                                                      context);
                                             },
                                           ),
                                         ),
@@ -292,7 +284,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           0.9,
                                       child: Text(
                                         // 'I am a student and future billionair',
-                                        UserHelper.userDescription(user),
+                                        UserHelper.userDescription(
+                                            userProvider.user!),
                                         softWrap: true,
                                         style: getMediumStyle(
                                           color: ColorManager.black,
@@ -590,7 +583,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             onChanged: (value) {
                               setState(() {
                                 password = value;
-                                showConfirmButton = password.isNotEmpty;
+                                userProvider
+                                        .userProfileScreenShowConfirmButton =
+                                    password.isNotEmpty;
                               });
                               // print(showConfirmButton);
                             },
@@ -604,7 +599,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ],
                       ),
                       actions: [
-                        if (showConfirmButton)
+                        if (userProvider.userProfileScreenShowConfirmButton)
                           TextButton(
                             child: Text(
                               'Confirm delete',
@@ -616,7 +611,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             // onPressed: showConfirmButton
                             //     ? null
                             onPressed: () {
-                              userDeletionConfirmed = true;
+                              userProvider
+                                      .userProfileScreenUserDeletionConfirmed =
+                                  true;
                               Navigator.of(context).pop();
                             },
                           ),
@@ -635,8 +632,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       ],
                     ),
                   ).then((_) {
-                    if (userDeletionConfirmed) {
-                      _deleteUserAccount(authSession as Session, password);
+                    if (userProvider.userProfileScreenUserDeletionConfirmed) {
+                      userProvider.userProfileScreenDeleteUserAccount(password);
                     }
                   });
                 },
@@ -666,17 +663,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // Session loggedInUserSession = args['loggedInUserSession'] as Session;
-
-    Session loggedInUserSession =
-        Provider.of<SessionProvider>(context).session as Session;
-
-    User user = Provider.of<UserProvider>(context, listen: false).user as User;
-
-    SessionProvider userSession = (context).watch<SessionProvider>();
-    userSession.setSession(loggedInUserSession);
+    UserProvider _userProvider = context.watch<UserProvider>();
     return Scaffold(
       backgroundColor: ColorManager.lightestGrey,
       appBar: AppBar(
@@ -686,11 +673,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             onPressed: () {
               Navigator.of(context).pushNamed(
                 UserProfileEditScreen.routeName,
-                // arguments: {
-
-                //   'loggedInUserSession': loggedInUserSession,
-                //   'user': user,
-                // },
               );
             },
           ),
@@ -698,7 +680,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: _profilePageUI(userSession, user),
+          child: _profilePageUI(_userProvider),
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(

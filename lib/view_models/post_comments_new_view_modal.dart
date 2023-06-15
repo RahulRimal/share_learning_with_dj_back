@@ -8,9 +8,9 @@ import '../templates/utils/alert_helper.dart';
 import 'base_view_model.dart';
 
 mixin PostCommentsNewViewModel on BaseViewModel {
-  bool commentEditted = false;
+  bool postCommentNewCommentEditted = false;
 
-  User commentUser = new User(
+  User postCommentNewCommentUser = new User(
     id: '0',
     firstName: 'temp',
     lastName: 'Name',
@@ -26,11 +26,11 @@ mixin PostCommentsNewViewModel on BaseViewModel {
 
   late GlobalKey<FormState> form;
 
-  late TextEditingController commentController;
+  late TextEditingController postCommentNewCommentController;
 
-  late FocusNode commentFocusNode;
+  late FocusNode postCommentNewCommentFocusNode;
 
-  Comment edittedComment = Comment(
+  Comment postCommentNewEdittedComment = Comment(
     // id: '',
     id: 0,
     userId: 0,
@@ -42,21 +42,21 @@ mixin PostCommentsNewViewModel on BaseViewModel {
   bindPostCommentsNewViewSet(BuildContext context) {
     bindBaseViewModal(context);
     form = GlobalKey<FormState>();
-    commentController = new TextEditingController();
-    commentFocusNode = FocusNode();
-    commentUser = userProvider.user as User;
+    postCommentNewCommentController = new TextEditingController();
+    postCommentNewCommentFocusNode = FocusNode();
+    postCommentNewCommentUser = userProvider.user as User;
   }
 
   unBindPostCommentsNewViewSet(BuildContext context) {
-    commentFocusNode.dispose();
+    postCommentNewCommentFocusNode.dispose();
   }
 
-  bool shouldFlexCommentUserName(String testString) {
+  bool postCommentNewShouldFlexCommentUserName(String testString) {
     if (testString.length > 11) return true;
     return false;
   }
 
-  Future<bool> addPostComment() async {
+  Future<bool> postCommentNewAddPostComment() async {
     final isValid = form.currentState!.validate();
 
     if (!isValid) {
@@ -64,14 +64,16 @@ mixin PostCommentsNewViewModel on BaseViewModel {
     }
     form.currentState!.save();
 
-    edittedComment.postId = int.parse(bookProvider.selectedBook.id);
-    edittedComment.userId = int.parse(commentUser.id);
+    postCommentNewEdittedComment.postId =
+        int.parse(bookProvider.postDetailsScreenSelectedBook.id);
+    postCommentNewEdittedComment.userId =
+        int.parse(postCommentNewCommentUser.id);
 
-    commentFocusNode.unfocus();
-    commentEditted = false;
-    commentController.text = '';
+    postCommentNewCommentFocusNode.unfocus();
+    postCommentNewCommentEditted = false;
+    postCommentNewCommentController.text = '';
     if (await commentProvider.addComment(
-        sessionProvider.session as Session, edittedComment)) {
+        sessionProvider.session as Session, postCommentNewEdittedComment)) {
       AlertHelper.showToastAlert('Replied to the post');
       return true;
     }
@@ -80,7 +82,7 @@ mixin PostCommentsNewViewModel on BaseViewModel {
     return false;
   }
 
-  Future<bool> updatePostComment() async {
+  Future<bool> postCommentNewUpdatePostComment() async {
     final isValid = form.currentState!.validate();
 
     if (!isValid) {
@@ -88,12 +90,12 @@ mixin PostCommentsNewViewModel on BaseViewModel {
     }
     form.currentState!.save();
 
-    commentEditted = false;
-    commentFocusNode.unfocus();
-    commentController.text = '';
+    postCommentNewCommentEditted = false;
+    postCommentNewCommentFocusNode.unfocus();
+    postCommentNewCommentController.text = '';
 
     if (await commentProvider.updateComment(
-        sessionProvider.session as Session, edittedComment)) {
+        sessionProvider.session as Session, postCommentNewEdittedComment)) {
       AlertHelper.showToastAlert('Reply updated successfully');
       return true;
     }
@@ -102,20 +104,21 @@ mixin PostCommentsNewViewModel on BaseViewModel {
     return false;
   }
 
-  Future<bool> deletePostComment() async {
+  Future<bool> postCommentNewDeletePostComment() async {
     final isValid = form.currentState!.validate();
     if (!isValid) {
       return false;
     }
     form.currentState!.save();
 
-    edittedComment.postId = int.parse(bookProvider.selectedBook.id);
+    postCommentNewEdittedComment.postId =
+        int.parse(bookProvider.postDetailsScreenSelectedBook.id);
 
-    commentEditted = false;
-    commentFocusNode.unfocus();
-    commentController.text = '';
+    postCommentNewCommentEditted = false;
+    postCommentNewCommentFocusNode.unfocus();
+    postCommentNewCommentController.text = '';
     if (await commentProvider.deleteComment(
-        sessionProvider.session as Session, edittedComment)) {
+        sessionProvider.session as Session, postCommentNewEdittedComment)) {
       AlertHelper.showToastAlert('Your reply has been deleted');
       return true;
     }

@@ -12,10 +12,10 @@ mixin WishlistScreenViewModel on BaseViewModel {
   late FocusNode wishlistScreenSearchFocusNode;
   List<PostCategory> wishlistScreenCategories = [];
   ScrollController? wishlistScreenScrollController;
-  bool loadingMorePosts = false;
+  bool wishlistScreenLoadingMorePosts = false;
 
-  bool enableClearSearch = false;
-  bool showFilterButton = false;
+  bool wishlistScreenEnableClearSearch = false;
+  bool wishlistScreenShowFilterButton = false;
 
   bindWishlistScreenViewModel(BuildContext context) {
     bindBaseViewModal(context);
@@ -39,28 +39,28 @@ mixin WishlistScreenViewModel on BaseViewModel {
     wishlistScreenSearchFocusNode.dispose();
   }
 
-  getScrollController() {
+  wishlistScreenGetScrollController() {
     wishlistScreenScrollController = ScrollController();
-    wishlistScreenScrollController!.addListener(scrollListener);
+    wishlistScreenScrollController!.addListener(wishlistScreenScrollListener);
     return wishlistScreenScrollController;
   }
 
-  setEnableClearSearch(bool value) {
-    enableClearSearch = value;
+  wishlistScreenSetEnableClearSearch(bool value) {
+    wishlistScreenEnableClearSearch = value;
     // notifyListeners();
   }
 
-  setShowFiltersButton(bool value) {
-    showFilterButton = value;
+  wishlistScreenSetShowFiltersButton(bool value) {
+    wishlistScreenShowFilterButton = value;
     // notifyListeners();
   }
 
-  setLoadingMorePosts(bool value) {
-    loadingMorePosts = value;
+  wishlistScreenSetLoadingMorePosts(bool value) {
+    wishlistScreenLoadingMorePosts = value;
     // notifyListeners();
   }
 
-  getSearchResult(GlobalKey<FormState> form) async {
+  wishlistScreenGetSearchResult(GlobalKey<FormState> form) async {
     final _isValid = form.currentState!.validate();
     if (!_isValid) {
       return false;
@@ -70,7 +70,7 @@ mixin WishlistScreenViewModel on BaseViewModel {
     selectedCategoryIndex = 0;
   }
 
-  scrollListener() async {
+  wishlistScreenScrollListener() async {
     if (wishlistScreenScrollController!.position.pixels ==
         wishlistScreenScrollController!.position.maxScrollExtent) {
       if (bookProvider.nextPageUrl != null) {

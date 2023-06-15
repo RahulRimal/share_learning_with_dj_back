@@ -457,6 +457,7 @@ class BookApi {
         "description": newPost.description,
         // "bought_date": newPost.boughtDate.toIso8601String(),
         "bought_date": DateFormat('yyyy-MM-dd').format(newPost.boughtDate),
+
         "unit_price": newPost.price.toString(),
         "book_count": int.parse(newPost.bookCount.toString()),
         // "wishlisted": newPost.wishlisted ? '2' : '1',

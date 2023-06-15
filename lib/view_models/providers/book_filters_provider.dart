@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:share_learning/view_models/base_view_model.dart';
 
 import '../../models/book.dart';
 import '../../models/post_category.dart';
+import '../book_filters_view_model.dart';
 import 'book_provider.dart';
 import 'category_provider.dart';
 
 class BookFiltersProvider
-    with ChangeNotifier, BookFiltersProviderInputs, BookFiltersProviderOutputs {
+    with ChangeNotifier, BaseViewModel, BookFiltersViewModel {
   Map<String, dynamic> _initialFilterOptions = {
     'selected_loaction': '',
     'min_price': 0,
@@ -176,104 +178,4 @@ class BookFiltersProvider
     setShowFilteredResult(false);
     notifyListeners();
   }
-
-  // ==================================  Implementation of abastract funstion of BookFiltersProviderOutput starts here =================================
-
-  @override
-  setBooksToFilter(List<Book> booksToFilter) {
-    this.booksToFilter = booksToFilter;
-  }
-
-  @override
-  set selectedSortOption(String _selectedSortOption) {
-    selectedSortOption = _selectedSortOption;
-  }
-
-  // This function  sets min an max price value and then notifies the listner other wise there will be range values error if i use setminprice and setmaxprice with notifylistner on them
-  @override
-  setMinAndMaxPrice(double min, double max) {
-    setMinPrice(min);
-    setMaxPrice(max);
-    notifyListeners();
-  }
-
-  @override
-  bind(BuildContext context, List<Book> booksToFilter) async {
-    // bind(BuildContext context) {
-    bookProvider = Provider.of<BookProvider>(context, listen: false);
-    categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    this.booksToFilter = booksToFilter;
-
-    categories = categoryProvider.categories;
-
-    categories.insert(
-      0,
-      PostCategory(id: 0, name: 'All', postsCount: bookProvider.books.length),
-    );
-
-    List<double> minAndMaxPrice =
-        await bookProvider.getMinAndMaxPrice() as List<double>;
-    rangeSliderStart = minAndMaxPrice[0];
-    rangeSliderEnd = minAndMaxPrice[1];
-    setMinAndMaxPrice(minAndMaxPrice[0], minAndMaxPrice[1]);
-  }
-
-  @override
-  unBind() {}
-
-  // ==================================  Implementation of abastract funstion of BookFiltersProviderOutput ends here =================================
-}
-
-abstract class BookFiltersProviderInputs {
-  List<Map<String, String>> sortByButtons = [
-    {
-      'title': 'Price: Low to High',
-      'value': 'low_to_high',
-    },
-    {
-      'title': 'Price: High to Low',
-      'value': 'high_to_low',
-    },
-    {
-      'title': 'Customer review',
-      'value': 'customer_review',
-    },
-    {
-      'title': 'Sale',
-      'value': 'sale',
-    },
-  ];
-
-  List<String> locationOptions = [
-    'Kathmandu',
-    'Bhaktapur',
-    'Lalitpur',
-    'Nepalgunj',
-  ];
-
-  List<String> reviews = ['1+', '2+', '3+', '4+'];
-
-  // late String selectedSortOption;
-  // String _selectedSortOption = filterOptions['sort_by'];
-
-  double rangeSliderStart = 0.0;
-  double rangeSliderEnd = 0.0;
-
-  List<Book> booksToFilter = [];
-
-  late List<PostCategory> categories;
-
-  late BookProvider bookProvider;
-  late CategoryProvider categoryProvider;
-}
-
-abstract class BookFiltersProviderOutputs {
-  bind(BuildContext context, List<Book> booksToFilter);
-  // bind(BuildContext context);
-  unBind();
-  setBooksToFilter(List<Book> booksToFilter);
-  // This function  sets min an max price value and then notifies the listner other there will be range values error
-  setMinAndMaxPrice(double min, double max);
-  // setMaxPrice(double price);
-  // setMinPrice(double price);
 }

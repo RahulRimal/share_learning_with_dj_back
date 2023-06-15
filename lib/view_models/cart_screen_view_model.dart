@@ -5,23 +5,18 @@ import 'package:share_learning/view_models/base_view_model.dart';
 import '../models/cart_item.dart';
 import '../templates/utils/alert_helper.dart';
 
-mixin CartScreenViewModel on BaseViewModel{
+mixin CartScreenViewModel on BaseViewModel {
+  late TextEditingController cartScreenSearchController;
 
-late TextEditingController searchController;
+  bindCartScreenViewModel(BuildContext context) {
+    bindBaseViewModal(context);
 
-bindCartScreenViewModel(BuildContext context){
-  bindBaseViewModal(context);
+    cartScreenSearchController = TextEditingController();
+  }
 
-  searchController = TextEditingController();
-  
-
-}
-
-unBindCartScreenViewModel(){
-  searchController.dispose();
-}
-
-
+  unBindCartScreenViewModel() {
+    cartScreenSearchController.dispose();
+  }
 }
 
 

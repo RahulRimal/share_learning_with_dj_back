@@ -15,7 +15,7 @@ import 'providers/user_provider.dart';
 import 'providers/book_provider.dart';
 import 'providers/wishlist_provider.dart';
 
-mixin BaseViewModel {
+mixin BaseViewModel on ChangeNotifier {
   late UserProvider userProvider;
   late SessionProvider sessionProvider;
   late BookProvider bookProvider;
@@ -35,18 +35,18 @@ mixin BaseViewModel {
     'Nepalgunj',
   ];
 
-  User user = new User(
-      id: "temp",
-      firstName: 'firstName',
-      lastName: 'lastName',
-      username: 'username',
-      email: 'email',
-      phone: 'phone',
-      image: null,
-      description: 'description',
-      userClass: 'userClass',
-      followers: 'followers',
-      createdDate: DateTime.now());
+  // User user = new User(
+  //     id: "temp",
+  //     firstName: 'firstName',
+  //     lastName: 'lastName',
+  //     username: 'username',
+  //     email: 'email',
+  //     phone: 'phone',
+  //     image: null,
+  //     description: 'description',
+  //     userClass: 'userClass',
+  //     followers: 'followers',
+  //     createdDate: DateTime.now());
 
   bindBaseViewModal(BuildContext context) {
     sessionProvider = Provider.of<SessionProvider>(context, listen: false);
@@ -64,18 +64,18 @@ mixin BaseViewModel {
   }
 
   setBillingInfo() {
-    if (user.firstName!.isNotEmpty) {
-      billingInfo["first_name"] = user.firstName!;
+    if (userProvider.user!.firstName!.isNotEmpty) {
+      billingInfo["first_name"] = userProvider.user!.firstName!;
     }
-    if (user.lastName!.isNotEmpty) {
-      billingInfo["last_name"] = user.lastName!;
+    if (userProvider.user!.lastName!.isNotEmpty) {
+      billingInfo["last_name"] = userProvider.user!.lastName!;
     }
-    if (user.email!.isNotEmpty) {
-      billingInfo["email"] = user.email!;
+    if (userProvider.user!.email!.isNotEmpty) {
+      billingInfo["email"] = userProvider.user!.email!;
     }
-    if (user.phone != null) {
-      if (user.phone!.isNotEmpty) {
-        billingInfo["phone"] = user.phone!;
+    if (userProvider.user!.phone != null) {
+      if (userProvider.user!.phone!.isNotEmpty) {
+        billingInfo["phone"] = userProvider.user!.phone!;
       }
     }
     billingInfo["convenient_location"] = locationOptions[0];
@@ -83,6 +83,6 @@ mixin BaseViewModel {
 
   setBillingInfoLocationData(String value) {
     billingInfo["convenient_location"] = value;
-    // notifyListeners();
+    notifyListeners();
   }
 }

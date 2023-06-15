@@ -78,7 +78,8 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: AppPadding.p20),
                   child: TextFormField(
-                    controller: _orderRequestProvider.searchController,
+                    controller: _orderRequestProvider
+                        .orderRequestScreenSearchController,
                     // focusNode: _searchFocusNode,
                     keyboardType: TextInputType.text,
                     cursorColor: Theme.of(context).primaryColor,
@@ -368,7 +369,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                         ).then((_) {
                                           if (userConfirmed) {
                                             _orderRequestProvider
-                                                .removeOrderRequest(
+                                                .orderRequestScreenRemoveOrderRequest(
                                               widget.requestedItem.id
                                                   .toString(),
                                             );

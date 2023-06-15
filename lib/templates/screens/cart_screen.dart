@@ -27,23 +27,22 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   final _form = GlobalKey<FormState>();
 
-@override
- void initState(){
-  super.initState();
-  Provider.of<CartProvider>(context, listen: false).bindCartScreenViewModel(context);
-
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<CartProvider>(context, listen: false)
+        .bindCartScreenViewModel(context);
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
-    Provider.of<CartProvider>(context, listen: false).unBindCartScreenViewModel();
+    Provider.of<CartProvider>(context, listen: false)
+        .unBindCartScreenViewModel();
   }
-  
 
   @override
   Widget build(BuildContext context) {
-
     CartProvider _cartProvider = context.watch<CartProvider>();
 
     return Scaffold(
@@ -61,7 +60,7 @@ class _CartScreenState extends State<CartScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: AppPadding.p20),
                     child: TextFormField(
-                      controller: _cartProvider.searchController,
+                      controller: _cartProvider.cartScreenSearchController,
                       // focusNode: _searchFocusNode,
                       keyboardType: TextInputType.text,
                       cursorColor: Theme.of(context).primaryColor,
@@ -202,11 +201,8 @@ class CartList extends StatelessWidget {
     return ListView.builder(
       itemCount: context.watch<CartProvider>().cartItems.length,
       itemBuilder: (context, index) {
-        
-        return CartItemWidget(
-        cartItem: _cartProvider.cartItems[index]  
-        );
+        return CartItemWidget(cartItem: _cartProvider.cartItems[index]);
       },
     );
-    }
+  }
 }

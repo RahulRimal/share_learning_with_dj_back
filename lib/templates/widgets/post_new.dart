@@ -96,7 +96,9 @@ class _PostNewState extends State<PostNew> {
                         child: IconButton(
                           onPressed: () {
                             _bookProvider.wishlistProvider.toggleWishlistBook(
-                                _bookProvider.sessionProvider.session as Session, post);
+                                _bookProvider.sessionProvider.session
+                                    as Session,
+                                post);
                           },
                           icon:
                               _bookProvider.wishlistProvider.isWishlisted(post)
@@ -121,7 +123,7 @@ class _PostNewState extends State<PostNew> {
         ),
         GestureDetector(
           onTap: () {
-            _bookProvider.setSelectedBook(post);
+            _bookProvider.postDetailsScreenSetSelectedBook(post);
             Navigator.of(context).pushNamed(PostDetailsScreen.routeName
                 // arguments: {
                 //   'post': post,

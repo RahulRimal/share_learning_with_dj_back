@@ -6,7 +6,15 @@ import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 
-class UserProvider with ChangeNotifier {
+import '../base_view_model.dart';
+import '../user_profile_screen_view_model.dart';
+
+class UserProvider
+    with
+        ChangeNotifier,
+        BaseViewModel,
+        UserProfileScreenViewModel,
+        UserProfileEditScreenViewModel {
   UserProvider(this._session);
 
   List<User> _users = [];
@@ -265,7 +273,7 @@ class UserProvider with ChangeNotifier {
     return response;
   }
 
-  Future<bool> deleteUserAccount(Session userSession, String password) async {
+  Future<bool> deleteAccount(Session userSession, String password) async {
     var response = await UserApi.deleteUser(userSession, password);
     // print(response);
     if (response is Success) {
@@ -276,11 +284,6 @@ class UserProvider with ChangeNotifier {
       return true;
     }
     if (response is Failure) {
-      // CartError cartError = CartError(
-      //   code: response.code,
-      //   message: response.errorResponse,
-      // );
-      // setCartError(cartError);
       notifyListeners();
     }
     return false;

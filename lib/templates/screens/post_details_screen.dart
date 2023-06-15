@@ -47,7 +47,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   void initState() {
     super.initState();
     bookProvider = Provider.of<BookProvider>(context, listen: false);
-    bookProvider!.bindPostDetailsScreen(context);
+    bookProvider!.postDetailsScreenBindPostDetailsScreen(context);
   }
 
   @override
@@ -113,7 +113,9 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                     //     MediaQuery.of(context).size.width * 0.9,
                                     width: 90.w,
                                     child: Text(
-                                      _bookProvider.selectedBook.bookName,
+                                      _bookProvider
+                                          .postDetailsScreenSelectedBook
+                                          .bookName,
                                       softWrap: true,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -128,7 +130,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                     //     0.1,
                                     width: 90.w,
                                     child: Text(
-                                      _bookProvider.selectedBook.author,
+                                      _bookProvider
+                                          .postDetailsScreenSelectedBook.author,
                                       softWrap: true,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -233,7 +236,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                             top: AppPadding.p4,
                           ),
                           child: Text(
-                            _bookProvider.selectedBook.description,
+                            _bookProvider
+                                .postDetailsScreenSelectedBook.description,
                             style: getMediumStyle(
                               color: ColorManager.grey,
                               fontSize: FontSize.s14,
@@ -374,16 +378,14 @@ class CartBottomSheet extends StatefulWidget {
 }
 
 class _CartBottomSheetState extends State<CartBottomSheet> {
-  
-  
-  final _form  = GlobalKey<FormState>();
-  
-  @override  
-  Widget build(BuildContext context) {
+  final _form = GlobalKey<FormState>();
 
+  @override
+  Widget build(BuildContext context) {
     BookProvider _bookProvider = context.watch<BookProvider>();
 
-    if (_bookProvider.user.id == _bookProvider.selectedBook.userId) {
+    if ((_bookProvider.userProvider.user as User).id ==
+        _bookProvider.postDetailsScreenSelectedBook.userId) {
       return Padding(
         padding: EdgeInsets.symmetric(
           horizontal: AppPadding.p14,
@@ -405,15 +407,15 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           onPressed: () {
             Navigator.of(context)
                 .pushNamed(EditPostScreen.routeName, arguments: {
-              'bookId': _bookProvider.selectedBook.id,
+              'bookId': _bookProvider.postDetailsScreenSelectedBook.id,
               'loggedInUserSession': _bookProvider.sessionProvider,
             });
           },
         ),
       );
     }
-    if (_bookProvider.cartProvider
-        .cartItemsContains(int.parse(_bookProvider.selectedBook.id))) {
+    if (_bookProvider.cartProvider.cartItemsContains(
+        int.parse(_bookProvider.postDetailsScreenSelectedBook.id))) {
       return Padding(
         padding: const EdgeInsets.symmetric(
           vertical: AppPadding.p12,
@@ -444,7 +446,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
       );
     }
     if (_bookProvider.orderRequestProvider.orderRequestsByUserContains(
-        int.parse(_bookProvider.selectedBook.id))) {
+        int.parse(_bookProvider.postDetailsScreenSelectedBook.id))) {
       return Padding(
         padding: const EdgeInsets.symmetric(
           vertical: AppPadding.p12,
@@ -507,7 +509,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       top: AppPadding.p2,
                     ),
                     child: Text(
-                      'Rs. ${_bookProvider.selectedBook.price}',
+                      'Rs. ${_bookProvider.postDetailsScreenSelectedBook.price}',
                       softWrap: true,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -522,7 +524,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
               _bookProvider.orderRequestProvider.orderRequestsByUser
                           .firstWhereOrNull((orderRequest) =>
                               orderRequest.product.id ==
-                              int.parse(_bookProvider.selectedBook.id)) !=
+                              int.parse(_bookProvider
+                                  .postDetailsScreenSelectedBook.id)) !=
                       null
                   ? ElevatedButton(
                       onPressed: () {},
@@ -534,7 +537,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       onPressed: () {
                         showModalBottomSheet(
                           barrierColor: ColorManager.blackWithLowOpacity,
-                          
                           isScrollControlled: true,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
@@ -569,7 +571,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                         ),
                                         child: TextFormField(
                                           controller: _bookProvider
-                                              .datePickercontroller,
+                                              .postDetailsScreenDatePickercontroller,
                                           focusNode: _bookProvider
                                               .postDetailsPageCartBottomSheetBuyerDateFocusNode,
                                           keyboardType: TextInputType.datetime,
@@ -583,7 +585,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                   'Tap to open date picker',
                                               onPressed: () {
                                                 _bookProvider
-                                                    .showPicker(context);
+                                                    .postDetailsScreenShowPicker(
+                                                        context);
                                               },
                                             ),
                                           ),
@@ -621,7 +624,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                               ),
                                               child: TextFormField(
                                                 initialValue: _bookProvider
-                                                    .selectedBook.price
+                                                    .postDetailsScreenSelectedBook
+                                                    .price
                                                     .round()
                                                     .toString(),
                                                 keyboardType:
@@ -657,18 +661,19 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                 },
                                                 onChanged: (value) {
                                                   _bookProvider
-                                                      .setExpectedUnitPrice(
+                                                      .postDetailsScreenSetExpectedUnitPrice(
                                                           double.parse(value));
                                                   if (_bookProvider
-                                                          .expectedUnitPrice ==
+                                                          .postDetailsScreenExpectedUnitPrice ==
                                                       _bookProvider
-                                                          .selectedBook.price) {
+                                                          .postDetailsScreenSelectedBook
+                                                          .price) {
                                                     _bookProvider
-                                                        .setEnableRequestButton(
+                                                        .postDetailsScreenSetEnableRequestButton(
                                                             false);
                                                   } else {
                                                     _bookProvider
-                                                        .setEnableRequestButton(
+                                                        .postDetailsScreenSetEnableRequestButton(
                                                             true);
                                                   }
                                                   // });
@@ -703,14 +708,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                       splashRadius:
                                                           AppRadius.r12,
                                                       onPressed: bookProvider
-                                                                  .itemCount >
+                                                                  .postDetailsScreenItemCount >
                                                               1
                                                           ? () {
                                                               // setState(() {
                                                               bookProvider
-                                                                  .setItemCount(
+                                                                  .postDetailsScreenSetItemCount(
                                                                       bookProvider
-                                                                              .itemCount -
+                                                                              .postDetailsScreenItemCount -
                                                                           1);
 
                                                               // });
@@ -730,11 +735,11 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                         300),
                                                             child: Text(
                                                               bookProvider
-                                                                  .itemCount
+                                                                  .postDetailsScreenItemCount
                                                                   .toString(),
                                                               key: ValueKey(
                                                                   bookProvider
-                                                                      .itemCount),
+                                                                      .postDetailsScreenItemCount),
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
@@ -771,16 +776,16 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                       splashRadius:
                                                           AppRadius.r12,
                                                       onPressed: bookProvider
-                                                                  .selectedBook
+                                                                  .postDetailsScreenSelectedBook
                                                                   .bookCount >
                                                               bookProvider
-                                                                  .itemCount
+                                                                  .postDetailsScreenItemCount
                                                           ? () {
                                                               // setState(() {
                                                               bookProvider
-                                                                  .setItemCount(
+                                                                  .postDetailsScreenSetItemCount(
                                                                       bookProvider
-                                                                              .itemCount +
+                                                                              .postDetailsScreenItemCount +
                                                                           1);
                                                               // });
                                                             }
@@ -807,7 +812,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                   ElevatedButton.icon(
                                             // icon: _bookProvider
                                             icon: bookProvider
-                                                    .isRequestOnProcess
+                                                    .postDetailsScreenIsRequestOnProcess
                                                 ? SizedBox(
                                                     height: AppHeight.h20,
                                                     width: AppHeight.h20,
@@ -833,31 +838,29 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             ),
                                             // onPressed: !_bookProvider.enableRequestButton
                                             onPressed: !bookProvider
-                                                    .enableRequestButton
+                                                    .postDetailsScreenEnableRequestButton
                                                 ? null
                                                 : () async {
                                                     // _bookProvider.setIsRequestOnProcess(true);
 
-                                                    final isValid =
-                                                        _form.currentState!
+                                                    final isValid = _form
+                                                        .currentState!
                                                         .validate();
                                                     if (!isValid) {
                                                       AlertHelper.showToastAlert(
                                                           'Something went wrong');
                                                     }
-                                                    _form
-                                                        .currentState!
-                                                        .save();
+                                                    _form.currentState!.save();
                                                     Map<String, dynamic>
                                                         requestInfo = {
-                                                      'product_id':
-                                                          _bookProvider
-                                                              .selectedBook.id,
+                                                      'product_id': _bookProvider
+                                                          .postDetailsScreenSelectedBook
+                                                          .id,
                                                       'quantity': _bookProvider
-                                                          .itemCount,
+                                                          .postDetailsScreenItemCount,
                                                       'requested_price':
                                                           _bookProvider
-                                                              .expectedUnitPrice
+                                                              .postDetailsScreenExpectedUnitPrice
                                                     };
 
                                                     _createOrderRequest(
@@ -884,7 +887,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             (BuildContext context, bookProvider,
                                                 Widget? child) {
                                           return ElevatedButton.icon(
-                                            icon: bookProvider.isCartOnProcess
+                                            icon: bookProvider
+                                                    .postDetailsScreenIsCartOnProcess
                                                 ? SizedBox(
                                                     height: AppHeight.h20,
                                                     width: AppHeight.h20,
@@ -901,7 +905,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     ),
                                                   )
                                                 : Container(),
-                                            label: bookProvider.isCartOnProcess
+                                            label: bookProvider
+                                                    .postDetailsScreenIsCartOnProcess
                                                 ? LoadingHelper.showTextLoading(
                                                     'Adding')
                                                 : Text(
@@ -913,8 +918,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                   ),
                                             // If request button is enabled, or if the add to cart process is loading then disable cart button other enable it
                                             onPressed: bookProvider
-                                                        .enableRequestButton ||
-                                                    bookProvider.isCartOnProcess
+                                                        .postDetailsScreenEnableRequestButton ||
+                                                    bookProvider
+                                                        .postDetailsScreenIsCartOnProcess
                                                 ? null
                                                 : () async {
                                                     // ----------------------Order without cart starts here ----------------------
@@ -951,7 +957,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     // ----------------------Order without cart ends here ----------------------
 
                                                     _bookProvider
-                                                        .setIsCartOnProcess(
+                                                        .postDetailsScreenSetIsCartOnProcess(
                                                             true);
 
                                                     if (_bookProvider
@@ -978,8 +984,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         AlertHelper.showToastAlert(
                                                             'Something went wrong');
                                                       }
-                                                      _form
-                                                          .currentState!
+                                                      _form.currentState!
                                                           .save();
 
                                                       CartItem edittedItem =
@@ -988,24 +993,22 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         product: new Product(
                                                           id: int.parse(
                                                               _bookProvider
-                                                                  .selectedBook
+                                                                  .postDetailsScreenSelectedBook
                                                                   .id),
-                                                          bookName:
-                                                              _bookProvider
-                                                                  .selectedBook
-                                                                  .bookName,
-                                                          unitPrice:
-                                                              _bookProvider
-                                                                  .selectedBook
-                                                                  .price
-                                                                  .toString(),
+                                                          bookName: _bookProvider
+                                                              .postDetailsScreenSelectedBook
+                                                              .bookName,
+                                                          unitPrice: _bookProvider
+                                                              .postDetailsScreenSelectedBook
+                                                              .price
+                                                              .toString(),
                                                         ),
                                                         negotiatedPrice:
                                                             _bookProvider
-                                                                .selectedBook
+                                                                .postDetailsScreenSelectedBook
                                                                 .price,
                                                         quantity: _bookProvider
-                                                            .itemCount,
+                                                            .postDetailsScreenItemCount,
                                                         totalPrice: 0,
                                                       );
 
@@ -1017,7 +1020,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                                   .cart as Cart,
                                                               edittedItem)) {
                                                         _bookProvider
-                                                            .setIsCartOnProcess(
+                                                            .postDetailsScreenSetIsCartOnProcess(
                                                                 false);
 
                                                         Navigator.pop(context);
@@ -1030,7 +1033,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     }
                                                     // Hide order placement loading indicator
                                                     _bookProvider
-                                                        .setIsCartOnProcess(
+                                                        .postDetailsScreenSetIsCartOnProcess(
                                                             false);
                                                   },
                                           );
@@ -1046,7 +1049,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                       AppHeight.h36),
                                             ),
                                             icon: bookProvider
-                                                    .isOrderPlacementOnProcess
+                                                    .postDetailsScreenIsOrderPlacementOnProcess
                                                 ? SizedBox(
                                                     height: AppHeight.h20,
                                                     width: AppHeight.h20,
@@ -1072,13 +1075,13 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             ),
                                             // If request button is enabled, or if the add to direct order placement process is loading then disable place direct order button other enable it
                                             onPressed: bookProvider
-                                                        .enableRequestButton ||
+                                                        .postDetailsScreenEnableRequestButton ||
                                                     bookProvider
-                                                        .isOrderPlacementOnProcess
+                                                        .postDetailsScreenIsOrderPlacementOnProcess
                                                 ? null
                                                 : () async {
                                                     _bookProvider
-                                                        .setIsOrderPlacementOnProcess(
+                                                        .postDetailsScreenSetIsOrderPlacementOnProcess(
                                                             true);
 
                                                     var tempCart = await _bookProvider
@@ -1102,8 +1105,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         AlertHelper.showToastAlert(
                                                             'Something went wrong');
                                                       }
-                                                      _form
-                                                          .currentState!
+                                                      _form.currentState!
                                                           .save();
 
                                                       CartItem edittedItem =
@@ -1112,23 +1114,21 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                         product: new Product(
                                                           id: int.parse(
                                                               _bookProvider
-                                                                  .selectedBook
+                                                                  .postDetailsScreenSelectedBook
                                                                   .id),
-                                                          bookName:
-                                                              _bookProvider
-                                                                  .selectedBook
-                                                                  .bookName,
-                                                          unitPrice:
-                                                              _bookProvider
-                                                                  .selectedBook
-                                                                  .price
-                                                                  .toString(),
+                                                          bookName: _bookProvider
+                                                              .postDetailsScreenSelectedBook
+                                                              .bookName,
+                                                          unitPrice: _bookProvider
+                                                              .postDetailsScreenSelectedBook
+                                                              .price
+                                                              .toString(),
                                                         ),
                                                         quantity: _bookProvider
-                                                            .itemCount,
+                                                            .postDetailsScreenItemCount,
                                                         negotiatedPrice:
                                                             _bookProvider
-                                                                .selectedBook
+                                                                .postDetailsScreenSelectedBook
                                                                 .price,
                                                         totalPrice: 0,
                                                       );
@@ -1139,7 +1139,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                               tempCart,
                                                               edittedItem)) {
                                                         _bookProvider
-                                                            .setIsOrderPlacementOnProcess(
+                                                            .postDetailsScreenSetIsOrderPlacementOnProcess(
                                                                 false);
                                                         return showModalBottomSheet(
                                                           barrierColor: ColorManager
@@ -1189,7 +1189,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     }
                                                     // Hide order placement loading indicator
                                                     _bookProvider
-                                                        .setIsOrderPlacementOnProcess(
+                                                        .postDetailsScreenSetIsOrderPlacementOnProcess(
                                                             false);
                                                   },
                                           );
@@ -1218,12 +1218,20 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
 
   _createOrderRequest(
       BookProvider _bookProvider, Map<String, dynamic> requestInfo) {
-        final _form = GlobalKey<FormState>();
+    final _form = GlobalKey<FormState>();
     showModalBottomSheet(
       barrierColor: ColorManager.blackWithLowOpacity,
-      isDismissible: _bookProvider.isRequestOnProcess || _bookProvider.isCartOnProcess || _bookProvider.isOrderPlacementOnProcess ? false: true,
+      isDismissible: _bookProvider.postDetailsScreenIsRequestOnProcess ||
+              _bookProvider.postDetailsScreenIsCartOnProcess ||
+              _bookProvider.postDetailsScreenIsOrderPlacementOnProcess
+          ? false
+          : true,
       // isScrollControlled: true,
-      isScrollControlled: _bookProvider.isRequestOnProcess || _bookProvider.isCartOnProcess || _bookProvider.isOrderPlacementOnProcess ? false: true,
+      isScrollControlled: _bookProvider.postDetailsScreenIsRequestOnProcess ||
+              _bookProvider.postDetailsScreenIsCartOnProcess ||
+              _bookProvider.postDetailsScreenIsOrderPlacementOnProcess
+          ? false
+          : true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppRadius.r20),
@@ -1559,7 +1567,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                           child: Consumer<BookProvider>(
                             builder: (context, bookProvider, child) =>
                                 ElevatedButton.icon(
-                              icon: bookProvider.isRequestOnProcess
+                              icon: bookProvider
+                                      .postDetailsScreenIsRequestOnProcess
                                   ? SizedBox(
                                       height: AppHeight.h20,
                                       width: AppHeight.h20,
@@ -1572,56 +1581,58 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                       ),
                                     )
                                   : Container(),
-                              onPressed: bookProvider.isRequestOnProcess
+                              onPressed: bookProvider
+                                      .postDetailsScreenIsRequestOnProcess
                                   ? null
                                   : () async {
-                                      bookProvider.setIsRequestOnProcess(true);
-                                      
-                                        // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
-                                        // bool _orderPlacedSuccessfully = false;
+                                      bookProvider
+                                          .postDetailsScreenSetIsRequestOnProcess(
+                                              true);
 
-                                        final _isValid = _form
-                                            .currentState!
-                                            .validate();
-                                        if (!_isValid) {
-                                          return;
-                                        }
-                                        _form
-                                            .currentState!
-                                            .save();
+                                      // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                                      // bool _orderPlacedSuccessfully = false;
 
-                                        requestInfo["billing_info"] =
-                                            json.decode(json.encode(
-                                                _bookProvider.billingInfo));
+                                      final _isValid =
+                                          _form.currentState!.validate();
+                                      if (!_isValid) {
+                                        return;
+                                      }
+                                      _form.currentState!.save();
 
-                                        if (await Provider.of<
-                                                    OrderRequestProvider>(
-                                                context,
-                                                listen: false)
-                                            .createOrderRequest(
-                                                Provider.of<SessionProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .session as Session,
-                                                requestInfo)) {
-                                          bookProvider
-                                              .setIsRequestOnProcess(false);
-                                          AlertHelper.showToastAlert(
-                                              'Request has been sent successfully');
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                          // Navigator.pop(context);
-                                        } else {
-                                          AlertHelper.showToastAlert(
-                                              'Something went wrong');
-                                        }
+                                      requestInfo["billing_info"] = json.decode(
+                                          json.encode(
+                                              _bookProvider.billingInfo));
+
+                                      if (await Provider.of<
+                                                  OrderRequestProvider>(context,
+                                              listen: false)
+                                          .createOrderRequest(
+                                              Provider.of<SessionProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .session as Session,
+                                              requestInfo)) {
                                         bookProvider
-                                            .setEnableRequestButton(false);
-                                        bookProvider
-                                            .setIsRequestOnProcess(false);
-                                      
+                                            .postDetailsScreenSetIsRequestOnProcess(
+                                                false);
+                                        AlertHelper.showToastAlert(
+                                            'Request has been sent successfully');
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        // Navigator.pop(context);
+                                      } else {
+                                        AlertHelper.showToastAlert(
+                                            'Something went wrong');
+                                      }
+                                      bookProvider
+                                          .postDetailsScreenSetEnableRequestButton(
+                                              false);
+                                      bookProvider
+                                          .postDetailsScreenSetIsRequestOnProcess(
+                                              false);
                                     },
-                              label: bookProvider.isRequestOnProcess
+                              label: bookProvider
+                                      .postDetailsScreenIsRequestOnProcess
                                   ? LoadingHelper.showTextLoading('Requesting')
                                   : Text(
                                       'Request Now',
@@ -1677,12 +1688,15 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                _bookProvider.selectedBook.images!.isEmpty
+                _bookProvider.postDetailsScreenSelectedBook.images!.isEmpty
                     ? Container()
                     : Image.network(
                         // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                        _bookProvider.selectedBook
-                            .images![_bookProvider.mainImageIndex].image,
+                        _bookProvider
+                            .postDetailsScreenSelectedBook
+                            .images![
+                                _bookProvider.postDetailsScreenMainImageIndex]
+                            .image,
                         fit: BoxFit.cover,
                         height: MediaQuery.of(context).size.height * 0.4,
                       ),
@@ -1706,36 +1720,39 @@ class _DetailsPageImageGalleryState extends State<DetailsPageImageGallery> {
                       height: AppHeight.h60,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: _bookProvider.selectedBook.images!.length,
+                        itemCount: _bookProvider
+                            .postDetailsScreenSelectedBook.images!.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: (() {
                               // setState(() {
                               // _bookProvider.mainImageIndex = index;
-                              _bookProvider.setMainImageIndex(0);
+                              _bookProvider
+                                  .postDetailsScreenSetMainImageIndex(0);
                               // });
                             }),
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 2),
                               child: Container(
                                 padding: EdgeInsets.all(0),
-                                decoration:
-                                    _bookProvider.mainImageIndex == index
-                                        ? BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.red,
-                                              width: 2,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                                AppRadius.r12),
-                                          )
-                                        : null,
+                                decoration: _bookProvider
+                                            .postDetailsScreenMainImageIndex ==
+                                        index
+                                    ? BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.red,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            AppRadius.r12),
+                                      )
+                                    : null,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(
                                     // 'https://images.unsplash.com/photo-1679499067430-106da3ba663a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                                    _bookProvider
-                                        .selectedBook.images![index].image,
+                                    _bookProvider.postDetailsScreenSelectedBook
+                                        .images![index].image,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

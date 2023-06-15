@@ -24,42 +24,22 @@ class UserProfileEditScreen extends StatefulWidget {
 }
 
 class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
-  XFile? _addedImage;
+  // XFile? _addedImage;
   final _form = GlobalKey<FormState>();
 
-  late FocusNode _firstNameFocusNode;
-  late FocusNode _lastNameFocusNode;
-  late FocusNode _descriptionFocusNode;
-  late FocusNode _classFocusNode;
+  // late FocusNode _firstNameFocusNode;
+  // late FocusNode _lastNameFocusNode;
+  // late FocusNode _descriptionFocusNode;
+  // late FocusNode _classFocusNode;
 
-  bool _showLoading = false;
-  ImagePicker imagePicker = ImagePicker();
+  // bool _showLoading = false;
+  // ImagePicker imagePicker = ImagePicker();
 
-  bool _imageAdded = false;
+  // bool _imageAdded = false;
 
   @override
   void initState() {
-    _firstNameFocusNode = FocusNode();
-    _lastNameFocusNode = FocusNode();
-    _descriptionFocusNode = FocusNode();
-    _classFocusNode = FocusNode();
     super.initState();
-  }
-
-  Future<void> _getPicture() async {
-    final imageFiles = await imagePicker.pickImage(
-      maxWidth: 770,
-      imageQuality: 100,
-      source: ImageSource.gallery,
-    );
-
-    if (imageFiles == null) return;
-
-    _addedImage = imageFiles;
-
-    setState(() {
-      _imageAdded = true;
-    });
   }
 
   Widget _showWaiting() {
@@ -68,81 +48,9 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
     );
   }
 
-  User _edittedUser = User(
-    id: '',
-    firstName: null,
-    lastName: null,
-    email: null,
-    phone: null,
-    image: null,
-    description: null,
-    userClass: null,
-    username: null,
-    followers: null,
-    createdDate: null,
-  );
-
-  Future<bool> _updateProfile(
-      Session loggedInUserSession, User unEdittedUser, User edittedUser) async {
-    final isValid = _form.currentState!.validate();
-    if (!isValid) {
-      return false;
-    }
-    _form.currentState!.save();
-
-    var oldUserMap = unEdittedUser.toMap();
-    var edittedUserMap = _edittedUser.toMap();
-
-    Map<String, dynamic> changedValues =
-        SystemHelper.getChangedValues(oldUserMap, edittedUserMap);
-
-    changedValues['id'] = _edittedUser.id;
-
-    if (await Provider.of<UserProvider>(context, listen: false)
-        .updateUserInfo(loggedInUserSession, changedValues)) {
-      if (_imageAdded) {
-        if (!await Provider.of<UserProvider>(context, listen: false)
-            .updateProfilePicture(
-                loggedInUserSession, _edittedUser.id, _addedImage as XFile)) {
-          AlertHelper.showToastAlert('Something went worng, please try again');
-        }
-      }
-      AlertHelper.showToastAlert(
-        'Profile has been successfully updated',
-      );
-
-      return true;
-    }
-
-    if (Provider.of<UserProvider>(context, listen: false).userError != null) {
-      AlertHelper.showToastAlert(
-        Provider.of<UserProvider>(context, listen: false)
-            .userError!
-            .message
-            .toString(),
-      );
-    }
-    AlertHelper.showToastAlert(
-      'Something went wrong, please try again',
-    );
-
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // Session loggedInUserSession = args['loggedInUserSession'] as Session;
-
-    // User user = args['user'] as User;
-    // Users _users = Provider.of<Users>(context);
-    Session loggedInUserSession =
-        Provider.of<SessionProvider>(context).session as Session;
-    User _user = Provider.of<UserProvider>(context).user as User;
-    _edittedUser = _user;
-
-    UserProvider users = context.watch<UserProvider>();
+    UserProvider _userProvider = context.watch<UserProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -150,15 +58,18 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () async {
-              _user.image = _addedImage?.path;
+              _userProvider.user!.image =
+                  _userProvider.userProfileScreenAddedImage?.path;
               // users.updatePicture(loggedInUserSession, user);
-              if (await users.updatePicture(loggedInUserSession, _user)) {
+              if (await _userProvider.updatePicture(
+                  _userProvider.sessionProvider.session as Session,
+                  _userProvider.user as User)) {
                 Navigator.pop(context);
               }
 
-              _showWaiting();
-
-              // Navigator.of(context).pop();
+              Center(
+                child: CircularProgressIndicator(),
+              );
             },
           ),
         ],
@@ -171,14 +82,16 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
               Center(
                 child: CircleAvatar(
                     radius: 70,
-                    backgroundImage: _imageAdded
-                        ? FileImage(File(_addedImage!.path))
+                    backgroundImage: _userProvider.userProfileScreenImageAdded
+                        ? FileImage(File(
+                            _userProvider.userProfileScreenAddedImage!.path))
                         // : NetworkImage(
                         //     UserHelper.userProfileImage(user),
                         //   ),
-                        : _user.image != null
+                        : _userProvider.user!.image != null
                             ? NetworkImage(
-                                UserHelper.userProfileImage(_user),
+                                UserHelper.userProfileImage(
+                                    _userProvider.user!),
                               ) as ImageProvider
                             : AssetImage(
                                 ImageAssets.noProfile,
@@ -188,7 +101,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                 child: Text('From Gallery'),
                 style: ButtonStyle(),
                 onPressed: () {
-                  _getPicture();
+                  _userProvider.userProfileScreenGetPicture();
                 },
               ),
               SizedBox(
@@ -199,39 +112,17 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
-                    // TextFormField(
-                    //     initialValue: _edittedUser.firstName,
-                    //     cursorColor: Theme.of(context).primaryColor,
-                    //     decoration: InputDecoration(
-                    //       labelText: 'bookName',
-                    //       focusedBorder: OutlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //           color: Colors.redAccent,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     textInputAction: TextInputAction.next,
-                    //     onFieldSubmitted: (_) {
-                    //       FocusScope.of(context).requestFocus(_lastNameFocusNode);
-                    //     },
-                    //     validator: (value) {
-                    //       if (value!.isEmpty) {
-                    //         return 'Please provide the bookName';
-                    //       }
-                    //       return null;
-                    //     },
-                    //     onSaved: (value) {
-
-                    //     }),
                     Row(
                       children: [
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
-                                initialValue: _edittedUser.firstName,
+                                initialValue: _userProvider
+                                    .userProfileScreenEdittedUser.firstName,
                                 cursorColor: Theme.of(context).primaryColor,
-                                focusNode: _firstNameFocusNode,
+                                focusNode: _userProvider
+                                    .userProfileScreenFirstNameFocusNode,
                                 decoration: InputDecoration(
                                   labelText: 'First Name',
                                   focusColor: Colors.redAccent,
@@ -239,8 +130,9 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                                 textInputAction: TextInputAction.next,
                                 autovalidateMode: AutovalidateMode.always,
                                 onFieldSubmitted: (_) {
-                                  FocusScope.of(context)
-                                      .requestFocus(_lastNameFocusNode);
+                                  FocusScope.of(context).requestFocus(
+                                      _userProvider
+                                          .userProfileScreenLastNameFocusNode);
                                 },
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -249,8 +141,11 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                                   return null;
                                 },
                                 onSaved: (value) {
-                                  _edittedUser = User.withProperty(
-                                      _edittedUser, {'firstName': value});
+                                  _userProvider.userProfileScreenEdittedUser =
+                                      User.withProperty(
+                                          _userProvider
+                                              .userProfileScreenEdittedUser,
+                                          {'firstName': value});
                                 }),
                           ),
                         ),
@@ -258,7 +153,8 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
-                              initialValue: _edittedUser.lastName,
+                              initialValue: _userProvider
+                                  .userProfileScreenEdittedUser.lastName,
                               keyboardType: TextInputType.text,
                               cursorColor: Theme.of(context).primaryColor,
                               decoration: InputDecoration(
@@ -267,8 +163,9 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                               textInputAction: TextInputAction.next,
                               autovalidateMode: AutovalidateMode.always,
                               onFieldSubmitted: (_) {
-                                FocusScope.of(context)
-                                    .requestFocus(_descriptionFocusNode);
+                                FocusScope.of(context).requestFocus(
+                                    _userProvider
+                                        .userProfileScreenDescriptionFocusNode);
                               },
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -277,8 +174,11 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                                 return null;
                               },
                               onSaved: (value) {
-                                _edittedUser = User.withProperty(
-                                    _edittedUser, {'lastName': value});
+                                _userProvider.userProfileScreenEdittedUser =
+                                    User.withProperty(
+                                        _userProvider
+                                            .userProfileScreenEdittedUser,
+                                        {'lastName': value});
                               },
                             ),
                           ),
@@ -288,8 +188,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                          initialValue: _edittedUser.userClass,
-                          focusNode: _classFocusNode,
+                          initialValue: _userProvider
+                              .userProfileScreenEdittedUser.userClass,
+                          focusNode:
+                              _userProvider.userProfileScreenClassFocusNode,
                           keyboardType: TextInputType.text,
                           cursorColor: Theme.of(context).primaryColor,
                           decoration: InputDecoration(
@@ -298,8 +200,8 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                           textInputAction: TextInputAction.next,
                           autovalidateMode: AutovalidateMode.always,
                           onFieldSubmitted: (_) {
-                            FocusScope.of(context)
-                                .requestFocus(_descriptionFocusNode);
+                            FocusScope.of(context).requestFocus(_userProvider
+                                .userProfileScreenDescriptionFocusNode);
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -308,16 +210,20 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            _edittedUser = User.withProperty(
-                                _edittedUser, {'userClass': value});
+                            _userProvider.userProfileScreenEdittedUser =
+                                User.withProperty(
+                                    _userProvider.userProfileScreenEdittedUser,
+                                    {'userClass': value});
                             // print(_edittedUser);
                           }),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        initialValue: _edittedUser.description,
-                        focusNode: _descriptionFocusNode,
+                        initialValue: _userProvider
+                            .userProfileScreenEdittedUser.description,
+                        focusNode:
+                            _userProvider.userProfileScreenDescriptionFocusNode,
                         keyboardType: TextInputType.multiline,
                         cursorColor: Theme.of(context).primaryColor,
                         decoration: InputDecoration(
@@ -338,8 +244,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                           return null;
                         },
                         onSaved: (value) {
-                          _edittedUser = User.withProperty(
-                              _edittedUser, {'description': value});
+                          _userProvider.userProfileScreenEdittedUser =
+                              User.withProperty(
+                                  _userProvider.userProfileScreenEdittedUser,
+                                  {'description': value});
                         },
                       ),
                     ),
@@ -351,15 +259,19 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                               Theme.of(context).primaryColor),
                         ),
                         onPressed: () async {
-                          setState(() => _showLoading = true);
+                          setState(() => _userProvider
+                              .userProfileScreenShowLoading = true);
 
-                          if (_showLoading) {
+                          if (_userProvider.userProfileScreenShowLoading) {
                             AlertHelper.showLoading();
                           }
 
-                          if (await _updateProfile(
-                              loggedInUserSession, _user, _edittedUser))
-                            setState(() => {_showLoading = false});
+                          if (await _userProvider
+                              .userProfileScreenUpdateProfile(_form))
+                            setState(() => {
+                                  _userProvider.userProfileScreenShowLoading =
+                                      false
+                                });
                           Navigator.pushReplacementNamed(
                             context,
                             UserProfileScreen.routeName,
