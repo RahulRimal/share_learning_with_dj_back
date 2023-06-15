@@ -17,8 +17,8 @@ mixin PostDetailsViewModel on BaseViewModel {
   bool isOrderPlacementOnProcess = false;
   bool enableRequestButton = false;
 
-  late GlobalKey<FormState> postDetailsPageCreateOrderRequestBototmSheetForm;
-  late GlobalKey<FormState> postDetailsPageBototmSheetForm;
+  // late GlobalKey<FormState> postDetailsPageCreateOrderRequestBototmSheetForm;
+  // late GlobalKey<FormState> postDetailsPageBototmSheetForm;
   late Book selectedBook;
   late NepaliDateTime initDate;
   late NepaliDateTime? buyerExpectedDeadline;
@@ -101,8 +101,8 @@ mixin PostDetailsViewModel on BaseViewModel {
   bindPostDetailsScreen(BuildContext context) {
     bindBaseViewModal(context);
 
-    postDetailsPageCreateOrderRequestBototmSheetForm = GlobalKey<FormState>();
-    postDetailsPageBototmSheetForm = GlobalKey<FormState>();
+    // postDetailsPageCreateOrderRequestBototmSheetForm = GlobalKey<FormState>();
+    // postDetailsPageBototmSheetForm = GlobalKey<FormState>();
     setBillingInfo();
     initDate = NepaliDateTime.now();
     datePickercontroller = TextEditingController(

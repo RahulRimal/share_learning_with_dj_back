@@ -16,6 +16,7 @@ import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
 import '../screens/home_screen_new.dart';
+import '../utils/loading_helper.dart';
 import '../utils/payment.dart';
 
 enum PaymentMethod {
@@ -47,20 +48,19 @@ class _BillingInfoState extends State<BillingInfo> {
 
   PaymentMethod _paymentMethod = PaymentMethod.Khalti;
 
-
   @override
   void initState() {
-    Provider.of<BookProvider>(context, listen:false).bindBillingInfoWidgetViewModel(context);
+    Provider.of<BookProvider>(context, listen: false)
+        .bindBillingInfoWidgetViewModel(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     BookProvider _bookProvider = context.watch<BookProvider>();
 
     // OrderProvider orders = Provider.of<OrderProvider>(context);
-    
+
     // CartProvider carts = Provider.of<CartProvider>(context, listen: false);
     // OrderRequests orderRequests =
     //     Provider.of<OrderRequests>(context, listen: false);
@@ -142,9 +142,11 @@ class _BillingInfoState extends State<BillingInfo> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextFormField(
                                             // initialValue: _edittedUser.firstName,
-                                            initialValue: _bookProvider.billingInfo
+                                            initialValue: _bookProvider
+                                                    .billingInfo
                                                     .containsKey('first_name')
-                                                ? _bookProvider.billingInfo['first_name']
+                                                ? _bookProvider
+                                                    .billingInfo['first_name']
                                                 : null,
                                             cursorColor:
                                                 Theme.of(context).primaryColor,
@@ -169,7 +171,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                               return null;
                                             },
                                             onSaved: (value) {
-                                              _bookProvider.billingInfo['first_name'] =
+                                              _bookProvider.billingInfo[
+                                                      'first_name'] =
                                                   value.toString();
                                             }),
                                       ),
@@ -178,9 +181,11 @@ class _BillingInfoState extends State<BillingInfo> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextFormField(
-                                          initialValue: _bookProvider.billingInfo
+                                          initialValue: _bookProvider
+                                                  .billingInfo
                                                   .containsKey('last_name')
-                                              ? _bookProvider.billingInfo['last_name']
+                                              ? _bookProvider
+                                                  .billingInfo['last_name']
                                               : null,
                                           keyboardType: TextInputType.text,
                                           cursorColor:
@@ -203,7 +208,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                             return null;
                                           },
                                           onSaved: (value) {
-                                            _bookProvider.billingInfo['last_name'] =
+                                            _bookProvider
+                                                    .billingInfo['last_name'] =
                                                 value.toString();
                                           },
                                         ),
@@ -214,10 +220,10 @@ class _BillingInfoState extends State<BillingInfo> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
-                                      initialValue:
-                                          _bookProvider.billingInfo.containsKey('email')
-                                              ? _bookProvider.billingInfo['email']
-                                              : null,
+                                      initialValue: _bookProvider.billingInfo
+                                              .containsKey('email')
+                                          ? _bookProvider.billingInfo['email']
+                                          : null,
                                       focusNode: _emailFocusNode,
                                       keyboardType: TextInputType.text,
                                       cursorColor:
@@ -245,10 +251,10 @@ class _BillingInfoState extends State<BillingInfo> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
-                                      initialValue:
-                                          _bookProvider.billingInfo.containsKey('phone')
-                                              ? _bookProvider.billingInfo['phone']
-                                              : null,
+                                      initialValue: _bookProvider.billingInfo
+                                              .containsKey('phone')
+                                          ? _bookProvider.billingInfo['phone']
+                                          : null,
                                       focusNode: _phoneNumberFocusNode,
                                       keyboardType: TextInputType.number,
                                       cursorColor:
@@ -342,7 +348,8 @@ class _BillingInfoState extends State<BillingInfo> {
                         child: DropdownButton(
                             isExpanded: true,
                             style: getBoldStyle(color: ColorManager.black),
-                            value: _bookProvider.billingInfo['convenient_location'],
+                            value: _bookProvider
+                                .billingInfo['convenient_location'],
                             // value: _locationOptions[0],
                             items: _bookProvider.locationOptions
                                 .map((option) => DropdownMenuItem(
@@ -359,7 +366,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                 .toList(),
                             onChanged: (value) {
                               setState(() {
-                                _bookProvider.billingInfo['convenient_location'] =
+                                _bookProvider
+                                        .billingInfo['convenient_location'] =
                                     value as String;
                               });
                             }),
@@ -462,6 +470,7 @@ class _BillingInfoState extends State<BillingInfo> {
         ),
       ),
       bottomSheet: Container(
+        height: AppHeight.h60,
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
@@ -475,151 +484,121 @@ class _BillingInfoState extends State<BillingInfo> {
           vertical: AppPadding.p8,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                 ),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
-                    // bool _orderPlacedSuccessfully = false;
+                child: Consumer<BookProvider>(
+                  builder:
+                      (BuildContext context, bookProvider, Widget? child) =>
+                          ElevatedButton.icon(
+                    icon: bookProvider.isOrderPlacementOnProcess
+                        ? SizedBox(
+                            height: AppHeight.h20,
+                            width: AppHeight.h20,
+                            child: CircularProgressIndicator.adaptive(
+                              strokeWidth: 3,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              backgroundColor: ColorManager.primary,
+                            ),
+                          )
+                        : Container(),
+                    onPressed: () async {
+                      // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                      // bool _orderPlacedSuccessfully = false;
 
-                    final _isValid = _form.currentState!.validate();
-                    if (!_isValid) {
-                      return;
-                    }
-                    _form.currentState!.save();
-
-                    String paymentStatus = 'P';
-
-                    if (_paymentMethod == PaymentMethod.Esewa) {
-                      if (await PaymentHelper.payWithEsewa() == false) {
-                        AlertHelper.showToastAlert(
-                            "Something went wrong during payment. Please try again");
+                      final _isValid = _form.currentState!.validate();
+                      if (!_isValid) {
                         return;
-                      } else
-                        paymentStatus = "C";
-                    }
-                    if (_paymentMethod == PaymentMethod.Khalti) {
-                      if (await PaymentHelper.payWithKhalti(context) == false) {
-                        AlertHelper.showToastAlert(
-                            "Something went wrong during the payment, please try again");
-                        return;
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('Payment Successful'),
-                            );
-                          },
+                      }
+                      _form.currentState!.save();
+
+                      String paymentStatus = 'P';
+
+                      if (_paymentMethod == PaymentMethod.Esewa) {
+                        if (await PaymentHelper.payWithEsewa() == false) {
+                          AlertHelper.showToastAlert(
+                              "Something went wrong during payment. Please try again");
+                          return;
+                        } else
+                          paymentStatus = "C";
+                      }
+                      if (_paymentMethod == PaymentMethod.Khalti) {
+                        if (await PaymentHelper.payWithKhalti(context) ==
+                            false) {
+                          AlertHelper.showToastAlert(
+                              "Something went wrong during the payment, please try again");
+                          return;
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Payment Successful'),
+                              );
+                            },
+                          );
+                          paymentStatus = "C";
+                        }
+                      }
+
+                      // If cartid is provided, it will be passed to the function which will call direct order placement api function otherwise it will call  order placement api function which uses preexisting cart
+                      if (await bookProvider.orderProvider.placeOrder(
+                        loggedInSession:
+                            bookProvider.sessionProvider.session as Session,
+                        cartId: widget.cartId,
+                        billingInfo: bookProvider.billingInfo,
+                        paymentMethod: _paymentMethod == PaymentMethod.Cash
+                            ? "C"
+                            : _paymentMethod == PaymentMethod.Esewa
+                                ? "E"
+                                : "K",
+                      )) {
+                        if (_paymentMethod != PaymentMethod.Cash) {
+                          Order order = bookProvider.orderProvider.orders.last;
+                          await bookProvider.orderProvider.updatePaymentStatus(
+                              bookProvider.sessionProvider.session as Session,
+                              order.id.toString(),
+                              paymentStatus);
+                        }
+
+                        // Only recreate the cart and update it if the order is placed using the existing cart otherwise leave the cart as it is.
+                        if (widget.cartId == null) {
+                          await bookProvider.cartProvider.createCart(
+                              bookProvider.sessionProvider.session as Session);
+                          bookProvider.cartProvider.setCartItems([]);
+                          SharedPreferences prefs = await _prefs;
+                          prefs.remove('cartId');
+                          prefs.setString(
+                              'cartId', bookProvider.cartProvider.cart!.id);
+                        }
+
+                        AlertHelper.showToastAlert("Order placed successfully");
+                        Navigator.pushReplacementNamed(
+                          context, HomeScreenNew.routeName,
+                          // arguments: {'authSession': authSession}
                         );
-                        paymentStatus = "C";
+                      } else {
+                        AlertHelper.showToastAlert("Something went wrong");
                       }
-                    }
-                    // if (widget.cartId != null) {
-                    //   if (await orders.placeOrder(
-                    //     loggedInSession: authSession,
-                    //     cartId: widget.cartId as String,
-                    //     billingInfo: _billingInfo,
-                    //     paymentMethod: _paymentMethod == PaymentMethod.Cash
-                    //         ? "C"
-                    //         : _paymentMethod == PaymentMethod.Esewa
-                    //             ? "E"
-                    //             : "K",
-                    //   )) {
-                    //     // _orderPlacedSuccessfully = true;
-                    //     print('here');
-                    //     if (_paymentMethod != PaymentMethod.Cash) {
-                    //       Order order = orders.orders.last;
-                    //       await orders.updatePaymentStatus(authSession,
-                    //           order.id.toString(), paymentStatus);
-                    //     }
-                    //   }
-                    // }
-
-                    // if (
-                    //     //   await orders.placeOrder(
-                    //     //   authSession,
-                    //     //   _billingInfo,
-                    //     //   _paymentMethod == PaymentMethod.Cash
-                    //     //       ? "C"
-                    //     //       : _paymentMethod == PaymentMethod.Esewa
-                    //     //           ? "E"
-                    //     //           : "K",
-                    //     // )
-                    //     //   await orderRequests.createOrderRequest(authSession)) {
-                    //     // if (_paymentMethod != PaymentMethod.Cash) {
-                    //     await carts.createCart(authSession)) {
-                    //   if (_paymentMethod != PaymentMethod.Cash) {
-                    //     Order order = orders.orders.last;
-                    //     await orders.updatePaymentStatus(
-                    //         authSession, order.id.toString(), paymentStatus);
-                    //   }
-
-                    //   await carts.createCart(authSession);
-                    //   carts.setCartItems([]);
-                    //   SharedPreferences prefs = await _prefs;
-                    //   prefs.remove('cartId');
-                    //   prefs.setString('cartId', carts.cart!.id);
-                    //   _showToastNotification(
-                    //       "Order request created successfully");
-                    //   Navigator.pushReplacementNamed(
-                    //       context, HomeScreenNew.routeName,
-                    //       arguments: {'authSession': authSession});
-                    // } else {
-                    //   _showToastNotification("Something went wrong");
-                    // }
-
-// If cartid is provided, it will be passed to the function which will call direct order placement api function otherwise it will call  order placement api function which uses preexisting cart
-                    if (await _bookProvider.orderProvider .placeOrder(
-                      loggedInSession: _bookProvider.sessionProvider.session as Session,
-                      cartId: widget.cartId,
-                      billingInfo: _bookProvider.billingInfo,
-                      paymentMethod: _paymentMethod == PaymentMethod.Cash
-                          ? "C"
-                          : _paymentMethod == PaymentMethod.Esewa
-                              ? "E"
-                              : "K",
-                    )) {
-                      if (_paymentMethod != PaymentMethod.Cash) {
-                        Order order = _bookProvider.orderProvider.orders.last;
-                        await _bookProvider.orderProvider.updatePaymentStatus(
-                            _bookProvider.sessionProvider.session as Session, order.id.toString(), paymentStatus);
-                      }
-
-                      // Only recreate the cart and update it if the order is placed using the existing cart otherwise leave the cart as it is.
-                      if (widget.cartId == null) {
-                        await _bookProvider.cartProvider.createCart(_bookProvider.sessionProvider.session as Session);
-                        _bookProvider.cartProvider.setCartItems([]);
-                        SharedPreferences prefs = await _prefs;
-                        prefs.remove('cartId');
-                        prefs.setString('cartId', _bookProvider.cartProvider.cart!.id);
-                      }
-
-                      AlertHelper.showToastAlert("Order placed successfully");
-                      Navigator.pushReplacementNamed(
-                        context, HomeScreenNew.routeName,
-                        // arguments: {'authSession': authSession}
-                      );
-                    } else {
-                      AlertHelper.showToastAlert("Something went wrong");
-                    }
-                  },
-                  child: Text(
-                    'Place an order',
-                    style: getBoldStyle(
-                      color: ColorManager.black,
-                      fontSize: FontSize.s18,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorManager.primary,
-                    padding: EdgeInsets.symmetric(
-                      vertical: AppPadding.p12,
+                    },
+                    label: bookProvider.isCartOnProcess
+                        ? LoadingHelper.showTextLoading('Ordering book')
+                        : Text(
+                            'Place an order',
+                            style: getBoldStyle(
+                              color: ColorManager.black,
+                              fontSize: FontSize.s18,
+                            ),
+                          ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorManager.primary,
+                      padding: EdgeInsets.symmetric(
+                        vertical: AppPadding.p12,
+                      ),
                     ),
                   ),
                 ),

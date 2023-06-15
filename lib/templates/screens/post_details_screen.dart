@@ -28,6 +28,7 @@ import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
+import '../utils/loading_helper.dart';
 import '../widgets/billing_info.dart';
 
 class PostDetailsScreen extends StatefulWidget {
@@ -40,17 +41,26 @@ class PostDetailsScreen extends StatefulWidget {
 }
 
 class _PostDetailsScreenState extends State<PostDetailsScreen> {
+  BookProvider? bookProvider;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<BookProvider>(context, listen: false)
-        .bindPostDetailsScreen(context);
+    bookProvider = Provider.of<BookProvider>(context, listen: false);
+    bookProvider!.bindPostDetailsScreen(context);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    bookProvider = Provider.of<BookProvider>(context, listen: false);
   }
 
   @override
   void dispose() {
     super.dispose();
-    // Provider.of<BookProvider>(context, listen: false).unBindPostDetailsScreen();
+    bookProvider!.unBindPostDetailsScreen();
   }
 
   @override
@@ -364,8 +374,13 @@ class CartBottomSheet extends StatefulWidget {
 }
 
 class _CartBottomSheetState extends State<CartBottomSheet> {
-  @override
+  
+  
+  final _form  = GlobalKey<FormState>();
+  
+  @override  
   Widget build(BuildContext context) {
+
     BookProvider _bookProvider = context.watch<BookProvider>();
 
     if (_bookProvider.user.id == _bookProvider.selectedBook.userId) {
@@ -519,6 +534,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       onPressed: () {
                         showModalBottomSheet(
                           barrierColor: ColorManager.blackWithLowOpacity,
+                          
                           isScrollControlled: true,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
@@ -541,8 +557,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                     MediaQuery.of(context).viewInsets.bottom,
                               ),
                               child: Form(
-                                key: _bookProvider
-                                    .postDetailsPageBototmSheetForm,
+                                key: _form,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -823,16 +838,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                 : () async {
                                                     // _bookProvider.setIsRequestOnProcess(true);
 
-                                                    final isValid = _bookProvider
-                                                        .postDetailsPageBototmSheetForm
-                                                        .currentState!
+                                                    final isValid =
+                                                        _form.currentState!
                                                         .validate();
                                                     if (!isValid) {
                                                       AlertHelper.showToastAlert(
                                                           'Something went wrong');
                                                     }
-                                                    _bookProvider
-                                                        .postDetailsPageBototmSheetForm
+                                                    _form
                                                         .currentState!
                                                         .save();
                                                     Map<String, dynamic>
@@ -888,15 +901,16 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     ),
                                                   )
                                                 : Container(),
-                                            label: Text(
-                                              bookProvider.isCartOnProcess
-                                                  ? "Adding ..."
-                                                  : 'Add book to cart',
-                                              style: getBoldStyle(
-                                                color: ColorManager.white,
-                                                fontSize: FontSize.s14,
-                                              ),
-                                            ),
+                                            label: bookProvider.isCartOnProcess
+                                                ? LoadingHelper.showTextLoading(
+                                                    'Adding')
+                                                : Text(
+                                                    'Add book to cart',
+                                                    style: getBoldStyle(
+                                                      color: ColorManager.white,
+                                                      fontSize: FontSize.s14,
+                                                    ),
+                                                  ),
                                             // If request button is enabled, or if the add to cart process is loading then disable cart button other enable it
                                             onPressed: bookProvider
                                                         .enableRequestButton ||
@@ -957,16 +971,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             .cartProvider
                                                             .cart !=
                                                         null) {
-                                                      final isValid = _bookProvider
-                                                          .postDetailsPageBototmSheetForm
+                                                      final isValid = _form
                                                           .currentState!
                                                           .validate();
                                                       if (!isValid) {
                                                         AlertHelper.showToastAlert(
                                                             'Something went wrong');
                                                       }
-                                                      _bookProvider
-                                                          .postDetailsPageBototmSheetForm
+                                                      _form
                                                           .currentState!
                                                           .save();
 
@@ -1052,10 +1064,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                   )
                                                 : Container(),
                                             label: Text(
-                                              bookProvider
-                                                      .isOrderPlacementOnProcess
-                                                  ? 'Ordering book ...'
-                                                  : 'Place direct order',
+                                              'Place direct order',
                                               style: getBoldStyle(
                                                 color: ColorManager.white,
                                                 fontSize: FontSize.s14,
@@ -1086,16 +1095,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                           'Something went wrong');
                                                     }
                                                     if (tempCart is Cart) {
-                                                      final isValid = _bookProvider
-                                                          .postDetailsPageBototmSheetForm
+                                                      final isValid = _form
                                                           .currentState!
                                                           .validate();
                                                       if (!isValid) {
                                                         AlertHelper.showToastAlert(
                                                             'Something went wrong');
                                                       }
-                                                      _bookProvider
-                                                          .postDetailsPageBototmSheetForm
+                                                      _form
                                                           .currentState!
                                                           .save();
 
@@ -1211,9 +1218,12 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
 
   _createOrderRequest(
       BookProvider _bookProvider, Map<String, dynamic> requestInfo) {
+        final _form = GlobalKey<FormState>();
     showModalBottomSheet(
       barrierColor: ColorManager.blackWithLowOpacity,
-      isScrollControlled: true,
+      isDismissible: _bookProvider.isRequestOnProcess || _bookProvider.isCartOnProcess || _bookProvider.isOrderPlacementOnProcess ? false: true,
+      // isScrollControlled: true,
+      isScrollControlled: _bookProvider.isRequestOnProcess || _bookProvider.isCartOnProcess || _bookProvider.isOrderPlacementOnProcess ? false: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppRadius.r20),
@@ -1271,8 +1281,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Form(
-                                key: _bookProvider
-                                    .postDetailsPageCreateOrderRequestBototmSheetForm,
+                                key: _form,
                                 child: ListView(
                                   shrinkWrap: true,
                                   children: [
@@ -1567,19 +1576,17 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                   ? null
                                   : () async {
                                       bookProvider.setIsRequestOnProcess(true);
-                                      Timer(Duration(seconds: 10), () async {
+                                      
                                         // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
                                         // bool _orderPlacedSuccessfully = false;
 
-                                        final _isValid = _bookProvider
-                                            .postDetailsPageCreateOrderRequestBototmSheetForm
+                                        final _isValid = _form
                                             .currentState!
                                             .validate();
                                         if (!_isValid) {
                                           return;
                                         }
-                                        _bookProvider
-                                            .postDetailsPageCreateOrderRequestBototmSheetForm
+                                        _form
                                             .currentState!
                                             .save();
 
@@ -1609,18 +1616,20 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                               'Something went wrong');
                                         }
                                         bookProvider
+                                            .setEnableRequestButton(false);
+                                        bookProvider
                                             .setIsRequestOnProcess(false);
-                                      });
+                                      
                                     },
-                              label: Text(
-                                bookProvider.isRequestOnProcess
-                                    ? 'Requesting ...'
-                                    : 'Request Now',
-                                style: getBoldStyle(
-                                  color: ColorManager.black,
-                                  fontSize: FontSize.s18,
-                                ),
-                              ),
+                              label: bookProvider.isRequestOnProcess
+                                  ? LoadingHelper.showTextLoading('Requesting')
+                                  : Text(
+                                      'Request Now',
+                                      style: getBoldStyle(
+                                        color: ColorManager.black,
+                                        fontSize: FontSize.s18,
+                                      ),
+                                    ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: ColorManager.primary,
                                 padding: EdgeInsets.symmetric(

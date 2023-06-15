@@ -19,6 +19,7 @@ import 'package:share_learning/templates/utils/alert_helper.dart';
 import '../../models/book.dart';
 import '../../models/cart.dart';
 
+import '../utils/loading_helper.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import 'order_request_details_screen.dart';
 
@@ -31,24 +32,39 @@ class OrderRequestScreen extends StatefulWidget {
 }
 
 class _OrderRequestScreenState extends State<OrderRequestScreen> {
-  final _form = GlobalKey<FormState>();
-  final _searchController = TextEditingController();
+  OrderRequestProvider? orderRequestProvider;
+  final form = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    orderRequestProvider =
+        Provider.of<OrderRequestProvider>(context, listen: false);
+
+    orderRequestProvider!.bindOrderRequestViewModel(context);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    orderRequestProvider =
+        Provider.of<OrderRequestProvider>(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    orderRequestProvider!.unBindOrderRequestViewModel();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // final Session authendicatedSession = args['loggedInUserSession'] as Session;
-
-    Session authendicatedSession =
-        Provider.of<SessionProvider>(context).session as Session;
-
-    // Carts carts = Provider.of<Carts>(context, listen: false);
-    OrderRequestProvider orderRequests =
-        Provider.of<OrderRequestProvider>(context, listen: false);
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
 
     return Scaffold(
-      // appBar: AppBar(),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -57,12 +73,12 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
                 height: AppHeight.h20,
               ),
               Form(
-                key: _form,
+                key: form,
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: AppPadding.p20),
                   child: TextFormField(
-                    controller: _searchController,
+                    controller: _orderRequestProvider.searchController,
                     // focusNode: _searchFocusNode,
                     keyboardType: TextInputType.text,
                     cursorColor: Theme.of(context).primaryColor,
@@ -121,28 +137,9 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
                   ],
                 ),
               ),
-              // carts.cart!.items!.length <= 0
-              // orderRequests.orderRequests.length <= 0
-              //     ? Center(
-              //         child: Padding(
-              //           padding: const EdgeInsets.only(top: AppPadding.p45),
-              //           child: Text(
-              //             'No request for the order found',
-              //             style: getBoldStyle(
-              //               fontSize: FontSize.s20,
-              //               color: ColorManager.primary,
-              //             ),
-              //           ),
-              //         ),
-              //       )
-              //     : Expanded(
-              //         child: OrderRequestList(
-              //             orderRequests: orderRequests,
-              //             authendicatedSession: authendicatedSession),
-              //       ),
               FutureBuilder(
-                future:
-                    orderRequests.getOrderRequestsByUser(authendicatedSession),
+                future: _orderRequestProvider.getOrderRequestsByUser(
+                    _orderRequestProvider.sessionProvider.session as Session),
                 builder: (ctx, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(
@@ -174,9 +171,7 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
                                 ),
                               )
                             : Expanded(
-                                child: OrderRequestList(
-                                    orderRequests: orderRequests,
-                                    authendicatedSession: authendicatedSession),
+                                child: OrderRequestList(),
                               );
                       }
                     }
@@ -197,30 +192,17 @@ class _OrderRequestScreenState extends State<OrderRequestScreen> {
 class OrderRequestList extends StatelessWidget {
   const OrderRequestList({
     Key? key,
-    required this.orderRequests,
-    required this.authendicatedSession,
   }) : super(key: key);
-
-  final OrderRequestProvider orderRequests;
-  final Session authendicatedSession;
-
-  // _getCartId() async {
-  //   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  //   SharedPreferences prefs = await _prefs;
-  //   String cartId = prefs.getString('cartId') as String;
-  //   return cartId;
-  // }
 
   @override
   Widget build(BuildContext context) {
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
     return ListView.builder(
-      // itemCount: context.watch<Carts>().cartItems.length,
-      itemCount:
-          context.watch<OrderRequestProvider>().orderRequestsByUser.length,
+      itemCount: _orderRequestProvider.orderRequestsByUser.length,
       itemBuilder: (context, index) {
         return OrderRequestItemWidget(
-          // cartItem: carts.cartItems[index],
-          requestedItem: orderRequests.orderRequestsByUser[index],
+          requestedItem: _orderRequestProvider.orderRequestsByUser[index],
         );
       },
     );
@@ -238,79 +220,17 @@ class OrderRequestItemWidget extends StatefulWidget {
 }
 
 class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
-  // ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
-  // ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
-  // bool _isLoading = false;
-
-  // double _newRequestPrice = 0;
-
-  // _shouldShowRequestButton() {
-  //   if (_newRequestPrice != double.parse(widget.requestedItem.requestedPrice) &&
-  //       _newRequestPrice !=
-  //           double.parse(widget.requestedItem.product.unitPrice)) {
-  //     _showRequestButton.value = true;
-  //     return;
-  //   }
-  //   _showRequestButton.value = false;
-  // }
-
-  // _shouldShowOrderButton() {
-  //   if (_newRequestPrice ==
-  //       double.parse(widget.requestedItem.product.unitPrice)) {
-  //     _showOrderButton.value = true;
-  //     return;
-  //   }
-  //   _showOrderButton.value = false;
-  // }
-
-  // Future<bool> _updateRequestPrice(
-  //     String requestId, double newRequestPrice) async {
-  //   await Provider.of<OrderRequests>(context, listen: false)
-  //       .updateRequestPrice(widget.requestedItem.id, _newRequestPrice)
-  //       .then(
-  //     (value) {
-  //       if (value) {
-  //         AlertHelper.showToastAlert('Request price changed');
-
-  //         _showRequestButton.value = false;
-  //       } else
-  //         AlertHelper.showToastAlert("Something went wrong, Please try again!");
-  //     },
-  //   );
-
-  //   return true;
-  // }
-
-  // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-  //   bool value = await Provider.of<CartProvider>(context, listen: false)
-  //       .deleteCartItem(userSession, cartId, cartItemId);
-  //   if (value) {
-  //     AlertHelper.showToastAlert('Book deleted from the cart');
-  //   } else
-  //     AlertHelper.showToastAlert('Something went wrong, Please try again!');
-  // }
-  _deleteOrderRequest(Session userSession, String orderRequestId) async {
-    bool value = await Provider.of<OrderRequestProvider>(context, listen: false)
-        .deleteOrderRequest(userSession, orderRequestId,);
-    if (value) {
-      AlertHelper.showToastAlert('Book deleted from the cart');
-    } else
-      AlertHelper.showToastAlert('Something went wrong, Please try again!');
-  }
-
   @override
   Widget build(BuildContext context) {
     OrderRequest requestedItem = widget.requestedItem;
     Session authendicatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
-    // Carts _carts = context.watch<Carts>();
-    OrderRequestProvider _orderRequests = context.watch<OrderRequestProvider>();
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
 
     return FutureBuilder(
-        // future: _carts.getCartItemBook(
-        //     authendicatedSession, widget.requestedItem.product.id.toString()),
-        future: _orderRequests.getRequestedItemBook(
+        future: _orderRequestProvider.getRequestedItemBook(
             authendicatedSession, widget.requestedItem.product.id.toString()),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -387,49 +307,68 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       icon: Icon(Icons.delete),
                                       onPressed: () {
                                         bool userConfirmed = false;
-                                        showDialog(
+                                        showGeneralDialog(
+                                          barrierDismissible: true,
+                                          barrierLabel:
+                                              'Delete order request dilaog dismissed',
                                           context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: Text('Are you sure?'),
-                                            content: Text(
-                                              'The request will be deleted forever',
-                                              style: getRegularStyle(
-                                                fontSize: FontSize.s16,
-                                                color: ColorManager.black,
-                                              ),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                child: Text(
-                                                  'Yes',
-                                                  style: getBoldStyle(
+                                          pageBuilder: (ctx, a1, a2) {
+                                            return Container();
+                                          },
+                                          transitionDuration:
+                                              const Duration(milliseconds: 300),
+                                          transitionBuilder:
+                                              (ctx, a1, a2, child) {
+                                            var curve = Curves.easeInOut
+                                                .transform(a1.value);
+                                            return Transform.scale(
+                                              scale: curve,
+                                              child: AlertDialog(
+                                                title: Text('Are you sure?'),
+                                                content: Text(
+                                                  'The request will be deleted forever',
+                                                  style: getRegularStyle(
                                                     fontSize: FontSize.s16,
-                                                    color: ColorManager.primary,
+                                                    color: ColorManager.black,
                                                   ),
                                                 ),
-                                                onPressed: () {
-                                                  userConfirmed = true;
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              TextButton(
-                                                child: Text(
-                                                  'No',
-                                                  style: getBoldStyle(
-                                                    fontSize: FontSize.s16,
-                                                    color: Colors.green,
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text(
+                                                      'Yes',
+                                                      style: getBoldStyle(
+                                                        fontSize: FontSize.s16,
+                                                        color: ColorManager
+                                                            .primary,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      userConfirmed = true;
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
                                                   ),
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
+                                                  TextButton(
+                                                    child: Text(
+                                                      'No',
+                                                      style: getBoldStyle(
+                                                        fontSize: FontSize.s16,
+                                                        color: Colors.green,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
+                                            );
+                                          },
                                         ).then((_) {
                                           if (userConfirmed) {
-                                            _deleteOrderRequest(
-                                              authendicatedSession,
+                                            _orderRequestProvider
+                                                .removeOrderRequest(
                                               widget.requestedItem.id
                                                   .toString(),
                                             );

@@ -7,8 +7,11 @@ import '../../data/order_request_api.dart';
 import '../../models/book.dart';
 import '../../models/order.dart';
 import '../../models/order_request.dart';
+import '../base_view_model.dart';
+import '../order_request_view_model.dart';
 
-class OrderRequestProvider with ChangeNotifier {
+class OrderRequestProvider
+    with ChangeNotifier, BaseViewModel, OrderRequestViewModel {
   List<OrderRequest> _orderRequestsByUser = [];
   List<OrderRequest> _orderRequestsForUser = [];
 
@@ -229,19 +232,20 @@ class OrderRequestProvider with ChangeNotifier {
     setLoading(true);
     var response = await OrderRequestApi.deleteOrderRequest(
         loggedInSession, orderRequestId);
-    // print(response);
     if (response is Success) {
-      // _orderRequestsByUser.add(response.response as OrderRequest);
-      // setLoading(false);
-      // notifyListeners();
+      final postIndex = orderRequestsByUser
+          .indexWhere((element) => element.id == orderRequestId);
+      orderRequestsByUser.removeAt(postIndex);
+      setLoading(false);
+      notifyListeners();
       return true;
     } else if (response is Failure) {
       OrderRequestError orderRequestError = OrderRequestError(
           code: response.code, message: response.errorResponse);
       setOrderRequestError(orderRequestError);
-      setLoading(false);
-      notifyListeners();
     }
+    setLoading(false);
+    notifyListeners();
     return false;
   }
 
@@ -320,4 +324,8 @@ class OrderRequestProvider with ChangeNotifier {
   bool orderRequestsByUserContains(int bookId) {
     return _orderRequestsByUser.any((element) => element.product.id == bookId);
   }
+
+// ================================== Implementations for the output of OrderRequestViewModel functions starts from here ===================================
+
+  // ================================== Implementations for the output of OrderRequestViewModel functions ends from here ===================================
 }
