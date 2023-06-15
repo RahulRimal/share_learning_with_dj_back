@@ -26,19 +26,25 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final _form = GlobalKey<FormState>();
-  // final _searchFocusNode = FocusNode();
-  final _searchController = TextEditingController();
+
+@override
+ void initState(){
+  super.initState();
+  Provider.of<CartProvider>(context, listen: false).bindCartScreenViewModel(context);
+
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    Provider.of<CartProvider>(context, listen: false).unBindCartScreenViewModel();
+  }
+  
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    // final Session authendicatedSession = args['loggedInUserSession'] as Session;
-
-    Session authendicatedSession =
-        Provider.of<SessionProvider>(context).session as Session;
-
-    CartProvider carts = Provider.of<CartProvider>(context, listen: false);
+    CartProvider _cartProvider = context.watch<CartProvider>();
 
     return Scaffold(
         // appBar: AppBar(),
@@ -55,7 +61,7 @@ class _CartScreenState extends State<CartScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: AppPadding.p20),
                     child: TextFormField(
-                      controller: _searchController,
+                      controller: _cartProvider.searchController,
                       // focusNode: _searchFocusNode,
                       keyboardType: TextInputType.text,
                       cursorColor: Theme.of(context).primaryColor,
@@ -115,7 +121,7 @@ class _CartScreenState extends State<CartScreen> {
                     ],
                   ),
                 ),
-                carts.cart!.items!.length <= 0
+                _cartProvider.cart!.items!.length <= 0
                     ? Center(
                         child: Padding(
                           padding: const EdgeInsets.only(top: AppPadding.p45),
@@ -129,9 +135,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       )
                     : Expanded(
-                        child: CartList(
-                            carts: carts,
-                            authendicatedSession: authendicatedSession),
+                        child: CartList(),
                       ),
               ],
             ),
@@ -140,7 +144,7 @@ class _CartScreenState extends State<CartScreen> {
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 4,
         ),
-        bottomSheet: context.watch<CartProvider>().cartItems.length > 0
+        bottomSheet: _cartProvider.cartItems.length > 0
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppPadding.p12),
                 child: ElevatedButton(
@@ -189,71 +193,20 @@ class _CartScreenState extends State<CartScreen> {
 class CartList extends StatelessWidget {
   const CartList({
     Key? key,
-    required this.carts,
-    required this.authendicatedSession,
   }) : super(key: key);
-
-  final CartProvider carts;
-  final Session authendicatedSession;
-
-  // _getCartId() async {
-  //   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  //   SharedPreferences prefs = await _prefs;
-  //   String cartId = prefs.getString('cartId') as String;
-  //   return cartId;
-  // }
 
   @override
   Widget build(BuildContext context) {
+    CartProvider _cartProvider = context.watch<CartProvider>();
+
     return ListView.builder(
       itemCount: context.watch<CartProvider>().cartItems.length,
       itemBuilder: (context, index) {
+        
         return CartItemWidget(
-          cartItem: carts.cartItems[index],
+        cartItem: _cartProvider.cartItems[index]  
         );
       },
     );
-    // )
-    // : FutureBuilder(
-    //     future: carts.getCartItems(authendicatedSession),
-    //     // builder: carts.getUserCart(authendicatedSession),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return Center(
-    //           child: CircularProgressIndicator(),
-    //         );
-    //       } else {
-    //         if (snapshot.hasError) {
-    //           return Center(
-    //             child: Text(
-    //               'Error',
-    //             ),
-    //           );
-    //         } else {
-    //           return Consumer<Carts>(
-    //             builder: (ctx, cartItems, child) {
-    //               return carts.cartItems.length <= 0
-    //                   ? Center(
-    //                       child: Text(
-    //                         'No Item in the cart',
-    //                         style: getBoldStyle(
-    //                             fontSize: FontSize.s20,
-    //                             color: ColorManager.primary),
-    //                       ),
-    //                     )
-    //                   : ListView.builder(
-    //                       itemCount: carts.cartItems.length,
-    //                       itemBuilder: (ctx, index) {
-    //                         return CartItemWidget(
-    //                           cartItem: carts.cartItems[index],
-    //                         );
-    //                       },
-    //                     );
-    //             },
-    //           );
-    //         }
-    //       }
-    //     },
-    //   );
-  }
+    }
 }

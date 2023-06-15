@@ -6,8 +6,10 @@ import '../../models/api_status.dart';
 import '../../models/book.dart';
 import '../../models/session.dart';
 import '../../models/wishlist.dart';
+import '../wishlist_screen_view_model.dart';
+import '../base_view_model.dart';
 
-class WishlistProvider with ChangeNotifier {
+class WishlistProvider with ChangeNotifier, BaseViewModel, WishlistScreenViewModel {
   List<Wishlist> _wishlists = [];
   List<Book> _wishlistedBooks = [];
 

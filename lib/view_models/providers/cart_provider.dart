@@ -6,7 +6,11 @@ import 'package:share_learning/models/cart.dart';
 import 'package:share_learning/models/cart_item.dart';
 import 'package:share_learning/models/session.dart';
 
-class CartProvider with ChangeNotifier {
+import '../base_view_model.dart';
+import '../cart_screen_view_model.dart';
+
+// class CartProvider with ChangeNotifier, BaseViewModel,CartScreenViewModel, CartItemWidgetViewModel {
+class CartProvider with ChangeNotifier, BaseViewModel,CartScreenViewModel{
   Cart? _cart;
   List<CartItem> _cartItems = [];
 

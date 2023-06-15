@@ -13,6 +13,7 @@ class SessionProvider with ChangeNotifier {
   bool get loading => _loading;
 
   Session? get session => _session;
+  // Session get session => _session as Session;
 
   SessionError? get sessionError => _sessionError;
 

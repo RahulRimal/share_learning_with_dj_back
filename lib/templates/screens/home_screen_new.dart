@@ -344,7 +344,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                             _bookProvider
                                                 .categoryProvider
                                                 .categories[_bookProvider
-                                                    .selectedCategoryIndex]
+                                                        .selectedCategoryIndex -
+                                                    1]
                                                 .id
                                                 .toString());
                                       } else
