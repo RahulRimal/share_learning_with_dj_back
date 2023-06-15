@@ -124,11 +124,7 @@ class _PostNewState extends State<PostNew> {
         GestureDetector(
           onTap: () {
             _bookProvider.postDetailsScreenSetSelectedBook(post);
-            Navigator.of(context).pushNamed(PostDetailsScreen.routeName
-                // arguments: {
-                //   'post': post,
-                // },
-                );
+            Navigator.of(context).pushNamed(PostDetailsScreen.routeName);
           },
           child: Container(
             width: double.infinity,

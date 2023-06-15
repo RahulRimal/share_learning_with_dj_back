@@ -28,271 +28,69 @@ class EditPostScreen extends StatefulWidget {
 }
 
 class _EditPostScreenState extends State<EditPostScreen> {
-  bool _first = true;
-  // bool _presentInFile = true;
-  bool _showLoading = false;
-
   final _form = GlobalKey<FormState>();
-
-  late FocusNode _authorFocusNode;
-  late FocusNode _dateFocusNode;
-  late FocusNode _priceFocusNode;
-  late FocusNode _booksCountFocusNode;
-  late FocusNode _descFocusNode;
-  late FocusNode _cateFocusNode;
-
-  late PostCategory _selectedCategory;
-
-  List<bool> postTypeSelling = [true, false];
-
-  List<XFile>? _storedImages;
-  List<BookImage> actualImages = [];
-
-  List<BookImage> _imagesToDelete = [];
-
-  ImagePicker imagePicker = ImagePicker();
-
-  var _edittedBook = Book(
-    id: '',
-    author: '',
-    bookName: '',
-    userId: '',
-    category: null,
-    // postType: false,
-    postType: 'B',
-    boughtDate: DateTime.now().toNepaliDateTime(),
-    description: '',
-    // wishlisted: false,
-    price: 0,
-    bookCount: 1,
-    postedOn: DateTime.now().toNepaliDateTime(),
-    postRating: 0.0,
-  );
-
-  bool ispostType = true;
-
-  NepaliDateTime? _boughtDate;
-
-  final _datePickercontroller = TextEditingController(
-    text: DateFormat('yyyy-MM-dd').format(NepaliDateTime.now()).toString(),
-  );
 
   @override
   void initState() {
-    _authorFocusNode = FocusNode();
-    _dateFocusNode = FocusNode();
-    _priceFocusNode = FocusNode();
-    _booksCountFocusNode = FocusNode();
-    _descFocusNode = FocusNode();
-    _cateFocusNode = FocusNode();
     super.initState();
+    Provider.of<BookProvider>(context, listen: false)
+        .bindEditPostScreenViewModel(context);
   }
 
   @override
   void dispose() {
-    _authorFocusNode.dispose();
-    _dateFocusNode.dispose();
-    _priceFocusNode.dispose();
-    _booksCountFocusNode.dispose();
-    _descFocusNode.dispose();
-    _cateFocusNode.dispose();
     super.dispose();
+    Provider.of<BookProvider>(context, listen: false)
+        .unbindEditPostScreenViewModel();
   }
 
-  @override
-  void didChangeDependencies() {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    String bookId = args['bookId'];
+  // @override
+  // void didChangeDependencies() {
+  //   final args = ModalRoute.of(context)!.settings.arguments as Map;
+  //   String bookId = args['bookId'];
 
-    if (bookId.isNotEmpty) {
-      _edittedBook =
-          Provider.of<BookProvider>(context, listen: false).getBookById(bookId);
+  //   if (bookId.isNotEmpty) {
+  //     _bookProvider.editPostScreenEdittedBook =
+  //         Provider.of<BookProvider>(context, listen: false).getBookById(bookId);
 
-      ispostType = _edittedBook.postType == 'S' ? true : false;
-      postTypeSelling = [ispostType, !ispostType];
-      if (_first) _retrieveImage(_edittedBook);
-    } else
-      print('Book Id Is Empty');
+  //     _bookProvider.editPostScreenIspostType = _bookProvider.editPostScreenEdittedBook.postType == 'S' ? true : false;
+  //     _bookProvider.editPostScreenPostTypeSelling = [_bookProvider.editPostScreenIspostType, !_bookProvider.editPostScreenIspostType];
+  //     if (_first) _retrieveImage(_bookProvider.editPostScreenEdittedBook);
+  //   } else
+  //     print('Book Id Is Empty');
 
-    _datePickercontroller.text =
-        DateFormat('yyyy-MM-dd').format(_edittedBook.boughtDate).toString();
+  //   _bookProvider.editPostScreenDatePickercontroller.text =
+  //       DateFormat('yyyy-MM-dd').format(_bookProvider.editPostScreenEdittedBook.boughtDate).toString();
 
-    super.didChangeDependencies();
-  }
-
-  _retrieveImage(Book post) {
-    if (post.images != null) {
-      for (int i = 0; i < post.images!.length; i++) {
-        // actualImages.add(post.images![i]['image']);
-        actualImages.add(post.images![i]);
-      }
-      // print(actualImages);
-    }
-
-    // actualImages.addAll(post.pictures);
-  }
-
-  Future<void> _getPicture() async {
-    final imageFiles =
-        await imagePicker.pickMultiImage(maxWidth: 770, imageQuality: 100);
-
-    // if (imageFiles == null) return;
-
-    if (_storedImages == null) {
-      _storedImages = [];
-    }
-
-    _storedImages!.addAll(imageFiles);
-
-    setState(() {
-      for (int i = 0; i < _storedImages!.length; i++) {
-        // actualImages.add(_storedImages![i].path);
-        actualImages.add(BookImage(id: null, image: _storedImages![i].path));
-      }
-    });
-
-    _first = false;
-  }
-
-  eraseImage(dynamic image) {
-    // Null Id means it is a XFile
-    // if (image is XFile) {
-    if (image.id == null) {
-      setState(() {
-        _storedImages?.remove(image);
-        actualImages.remove(image);
-      });
-    } else {
-      // print('here');
-      setState(() {
-        // if (_storedImages != null) {
-        try {
-          _imagesToDelete.add(
-              actualImages.firstWhere((element) => element.id == image.id));
-          actualImages.remove(image);
-        } on StateError {
-          // imagesToRemove = null;
-          print('here');
-        }
-
-        // actualImages.remove(image);
-        // if (_edittedBook.pictures!.contains(image)) _imagesToDelete.add(image);
-      });
-    }
-  }
-
-  Future<void> _showPicker(BuildContext context) async {
-    _boughtDate = await picker.showAdaptiveDatePicker(
-      context: context,
-      initialDate: _edittedBook.boughtDate,
-      firstDate: picker.NepaliDateTime(2070),
-      lastDate: picker.NepaliDateTime.now(),
-    );
-    _datePickercontroller.text =
-        DateFormat('yyyy-MM-dd').format(_boughtDate as DateTime).toString();
-  }
-  // Map<String, dynamic> _getBookWithEdittedFields (Book book1, Book book2) {
-  //   final map1 = SystemHelper.convertKeysToSnakeCase(book1.toMap());
-  //   map1['bought_date'] = DateFormat('yyyy-MM-dd').format(book1.boughtDate);
-  //   final map2 = SystemHelper.convertKeysToSnakeCase(book2.toMap());
-  //   map2['bought_date'] = DateFormat('yyyy-MM-dd').format(book1.boughtDate);
-  //   final differentFields = Map<String, dynamic>.from({});
-  //    map1.forEach((key, value) {
-  //   if (map2[key] != value) {
-  //     differentFields[key] = value;
-  //   }
-  // });
-  // differentFields.remove("pictures");
-  // return differentFields;
-  // // return Book.fromMap(differentFields);
+  //   super.didChangeDependencies();
   // }
-
-  Future<bool> _updatePost(
-      Session loggedInUserSession, Book edittedBook) async {
-    final isValid = _form.currentState!.validate();
-
-    if (!isValid) {
-      return false;
-    }
-    _form.currentState!.save();
-    _edittedBook.postType = ispostType ? 'S' : 'B';
-
-    if (await Provider.of<BookProvider>(context, listen: false)
-        .updatePost(loggedInUserSession, _edittedBook)) {
-      if (_imagesToDelete.isNotEmpty) {
-        await Provider.of<BookProvider>(context, listen: false).deletePictures(
-            loggedInUserSession, _edittedBook.id, _imagesToDelete);
-      }
-      if (_storedImages != null) {
-        if (_storedImages!.isNotEmpty) {
-          _edittedBook.images = _storedImages;
-          if (await Provider.of<BookProvider>(context, listen: false)
-              .updatePictures(loggedInUserSession, _edittedBook)) {
-            AlertHelper.showToastAlert('Post has been successfully updated');
-          }
-        }
-      }
-    }
-    if (Provider.of<BookProvider>(context, listen: false).bookError != null) {
-      AlertHelper.showToastAlert(
-        Provider.of<BookProvider>(context, listen: false)
-            .bookError!
-            .message
-            .toString(),
-      );
-    }
-    AlertHelper.showToastAlert('Something went wrong, please try again');
-
-    // Navigator.of(context).pop();
-    // Navigator.of(context).pop();
-    // showUpdateSnackbar(context);
-
-    return true;
-  }
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    // String bookId = args['id'];
-    final Session loggedInUserSession = args['loggedInUserSession'] as Session;
-
-    // Categories categoriesProvier =  Provider.of<Categories>(context, listen: false);
-    CategoryProvider categoriesProvier = Provider.of<CategoryProvider>(context);
-
-    List<PostCategory> _categories = categoriesProvier.categories;
-    User loggedInUser = Provider.of<UserProvider>(context).user as User;
-
-    // dynamic _selectedCategory = _getBookCategory(
-    //     context, loggedInUserSession, _edittedBook.category!.id);
+    BookProvider _bookProvider = context.watch<BookProvider>();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Post'),
         actions: <Widget>[
-          loggedInUser.id == _edittedBook.userId
-
-              // ? IconButton(
-              //     icon: Icon(Icons.save),
-              //     onPressed: () async {
-              //       if (await _updatePost(loggedInUserSession, _edittedBook))
-              //         Navigator.pushReplacementNamed(
-              //             context, HomeScreen.routeName,
-              //             arguments: {'authSession': loggedInUserSession});
-              //     },
-              //     // onPressed: _updatePost,
-              //   )
+          _bookProvider.userProvider.user!.id ==
+                  _bookProvider.addPostScreenEdittedBook.userId
               ? IconButton(
                   icon: Icon(Icons.delete),
                   onPressed: () async {
-                    setState(() => _showLoading = true);
+                    // setState(() => _bookProvider.editPostScreenShowLoading = true);
+                    _bookProvider.setEditPostScreenShowLoading(true);
 
-                    if (_showLoading) {
+                    if (_bookProvider.editPostScreenShowLoading) {
                       AlertHelper.showLoading();
                     }
 
                     if (await Provider.of<BookProvider>(context, listen: false)
-                        .deletePost(loggedInUserSession, _edittedBook.id)) {
-                      setState(() => _showLoading = false);
+                        .deletePost(
+                            _bookProvider.sessionProvider.session as Session,
+                            _bookProvider.editPostScreenEdittedBook.id)) {
+                      setState(() =>
+                          _bookProvider.editPostScreenShowLoading = false);
                       AlertHelper.showToastAlert(
                           'Post has been deleted successfully');
 
@@ -301,7 +99,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     } else {
                       AlertHelper.showToastAlert('Something went wrong');
 
-                      setState(() => _showLoading = false);
+                      setState(() =>
+                          _bookProvider.editPostScreenShowLoading = false);
                     }
                   },
                 )
@@ -322,7 +121,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
             child: ListView(
               children: [
                 TextFormField(
-                    initialValue: _edittedBook.bookName,
+                    initialValue:
+                        _bookProvider.editPostScreenEdittedBook.bookName,
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
                       labelText: 'bookName',
@@ -334,7 +134,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     ),
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_authorFocusNode);
+                      FocusScope.of(context).requestFocus(
+                          _bookProvider.editPostScreenAuthorFocusNode);
                     },
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -343,8 +144,10 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      _edittedBook = Book.withPoperty(
-                          _edittedBook, {'bookName': value as String});
+                      _bookProvider.editPostScreenEdittedBook =
+                          Book.withPoperty(
+                              _bookProvider.editPostScreenEdittedBook,
+                              {'bookName': value as String});
                     }),
                 Row(
                   children: [
@@ -352,9 +155,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                            initialValue: _edittedBook.author,
+                            initialValue:
+                                _bookProvider.editPostScreenEdittedBook.author,
                             cursorColor: Theme.of(context).primaryColor,
-                            focusNode: _authorFocusNode,
+                            focusNode:
+                                _bookProvider.editPostScreenAuthorFocusNode,
                             decoration: InputDecoration(
                               labelText: 'Author',
                               focusColor: Colors.redAccent,
@@ -362,11 +167,13 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_dateFocusNode);
+                              FocusScope.of(context).requestFocus(
+                                  _bookProvider.editPostScreenDateFocusNode);
                             },
                             onSaved: (value) {
-                              _edittedBook = Book.withPoperty(_edittedBook, {
+                              _bookProvider.editPostScreenEdittedBook =
+                                  Book.withPoperty(
+                                      _bookProvider.editPostScreenEdittedBook, {
                                 'author': value!.isEmpty ? 'Unknown' : value
                               });
                             }),
@@ -376,8 +183,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          controller: _datePickercontroller,
-                          focusNode: _dateFocusNode,
+                          controller:
+                              _bookProvider.editPostScreenDatePickercontroller,
+                          focusNode: _bookProvider.editPostScreenDateFocusNode,
                           keyboardType: TextInputType.datetime,
                           cursorColor: Theme.of(context).primaryColor,
                           decoration: InputDecoration(
@@ -386,17 +194,17 @@ class _EditPostScreenState extends State<EditPostScreen> {
                               icon: Icon(Icons.calendar_today),
                               tooltip: 'Tap to open date picker',
                               onPressed: () {
-                                _showPicker(context);
+                                _bookProvider.editPostScreenShowPicker(context);
 
-                                // _datePickercontroller.text = _boughtDate.toString();
+                                // _bookProvider.editPostScreenDatePickercontroller.text = _boughtDate.toString();
                               },
                             ),
                           ),
                           textInputAction: TextInputAction.next,
                           autovalidateMode: AutovalidateMode.always,
                           onFieldSubmitted: (_) {
-                            FocusScope.of(context)
-                                .requestFocus(_priceFocusNode);
+                            FocusScope.of(context).requestFocus(
+                                _bookProvider.editPostScreenPriceFocusNode);
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -405,7 +213,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            _edittedBook = Book.withPoperty(_edittedBook, {
+                            _bookProvider.editPostScreenEdittedBook =
+                                Book.withPoperty(
+                                    _bookProvider.editPostScreenEdittedBook, {
                               'boughtDate':
                                   picker.NepaliDateTime.parse(value as String)
                             });
@@ -421,9 +231,12 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                            initialValue: _edittedBook.price.toString(),
+                            initialValue: _bookProvider
+                                .editPostScreenEdittedBook.price
+                                .toString(),
                             cursorColor: Theme.of(context).primaryColor,
-                            focusNode: _priceFocusNode,
+                            focusNode:
+                                _bookProvider.editPostScreenPriceFocusNode,
                             decoration: InputDecoration(
                               prefix: Text('Rs. '),
                               labelText: 'Price',
@@ -432,8 +245,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             textInputAction: TextInputAction.next,
                             autovalidateMode: AutovalidateMode.always,
                             onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(_booksCountFocusNode);
+                              FocusScope.of(context).requestFocus(_bookProvider
+                                  .editPostScreenBooksCountFocusNode);
                             },
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -445,8 +258,10 @@ class _EditPostScreenState extends State<EditPostScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              _edittedBook = Book.withPoperty(_edittedBook,
-                                  {'price': double.parse(value as String)});
+                              _bookProvider.editPostScreenEdittedBook =
+                                  Book.withPoperty(
+                                      _bookProvider.editPostScreenEdittedBook,
+                                      {'price': double.parse(value as String)});
                             }),
                       ),
                     ),
@@ -454,8 +269,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          initialValue: _edittedBook.bookCount.toString(),
-                          focusNode: _booksCountFocusNode,
+                          initialValue: _bookProvider
+                              .editPostScreenEdittedBook.bookCount
+                              .toString(),
+                          focusNode:
+                              _bookProvider.editPostScreenBooksCountFocusNode,
                           keyboardType: TextInputType.number,
                           cursorColor: Theme.of(context).primaryColor,
                           decoration: InputDecoration(
@@ -464,7 +282,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                           textInputAction: TextInputAction.next,
                           autovalidateMode: AutovalidateMode.always,
                           onFieldSubmitted: (_) {
-                            FocusScope.of(context).requestFocus(_descFocusNode);
+                            FocusScope.of(context).requestFocus(
+                                _bookProvider.editPostScreenDescFocusNode);
                           },
                           validator: (value) {
                             if (double.tryParse(value as String) == null) {
@@ -477,8 +296,10 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            _edittedBook = Book.withPoperty(_edittedBook,
-                                {'bookCount': int.parse(value as String)});
+                            _bookProvider.editPostScreenEdittedBook =
+                                Book.withPoperty(
+                                    _bookProvider.editPostScreenEdittedBook,
+                                    {'bookCount': int.parse(value as String)});
                           },
                         ),
                       ),
@@ -488,8 +309,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
-                      initialValue: _edittedBook.description,
-                      focusNode: _descFocusNode,
+                      initialValue:
+                          _bookProvider.editPostScreenEdittedBook.description,
+                      focusNode: _bookProvider.editPostScreenDescFocusNode,
                       keyboardType: TextInputType.multiline,
                       cursorColor: Theme.of(context).primaryColor,
                       decoration: InputDecoration(
@@ -500,7 +322,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       minLines: 3,
                       maxLines: 7,
                       onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_cateFocusNode);
+                        FocusScope.of(context).requestFocus(
+                            _bookProvider.editPostScreenCateFocusNode);
                       },
                       validator: (value) {
                         if (value!.length < 50) {
@@ -509,18 +332,25 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        _edittedBook = Book.withPoperty(
-                            _edittedBook, {'description': value as String});
+                        _bookProvider.editPostScreenEdittedBook =
+                            Book.withPoperty(
+                                _bookProvider.editPostScreenEdittedBook,
+                                {'description': value as String});
                       }),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
 
-                  child: _edittedBook.category == null
+                  child: _bookProvider.editPostScreenEdittedBook.category ==
+                          null
                       ? Container()
                       : FutureBuilder(
-                          future: categoriesProvier.getCategoryById(
-                              loggedInUserSession, _edittedBook.category!.id),
+                          future: _bookProvider.categoryProvider
+                              .getCategoryById(
+                                  _bookProvider.sessionProvider.session
+                                      as Session,
+                                  _bookProvider
+                                      .editPostScreenEdittedBook.category!.id),
                           builder: (ctx, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -539,7 +369,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                       snapshot.data as CategoryError;
                                   return Text(error.message as String);
                                 } else {
-                                  _selectedCategory =
+                                  _bookProvider.editPostScreenSelectedCategory =
                                       snapshot.data as PostCategory;
 
                                   return Container(
@@ -555,13 +385,16 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
                                         isExpanded: true,
-                                        value: _selectedCategory,
-                                        items: _categories
+                                        value: _bookProvider
+                                            .editPostScreenSelectedCategory,
+                                        items: _bookProvider
+                                            .editPostScreenCategories
                                             .map((option) => DropdownMenuItem(
                                                   value: option,
                                                   child: ListTile(
                                                     selected: option ==
-                                                        _selectedCategory,
+                                                        _bookProvider
+                                                            .editPostScreenSelectedCategory,
                                                     selectedColor:
                                                         ColorManager.black,
                                                     selectedTileColor:
@@ -573,10 +406,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                             .toList(),
                                         onChanged: (value) {
                                           setState(() {
-                                            _selectedCategory =
+                                            _bookProvider
+                                                    .editPostScreenSelectedCategory =
                                                 value as PostCategory;
                                           });
-                                          // print(_selectedCategory);
+                                          // print(_bookProvider.editPostScreenSelectedCategory);
                                         },
                                       ),
                                     ),
@@ -590,7 +424,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                 ),
                 Container(
                   child: ToggleButtons(
-                    isSelected: postTypeSelling,
+                    isSelected: _bookProvider.editPostScreenPostTypeSelling,
                     color: Colors.grey,
                     selectedColor: Colors.white,
                     fillColor: Theme.of(context).primaryColor,
@@ -619,24 +453,32 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     ],
                     onPressed: (int index) {
                       setState(() {
-                        for (int i = 0; i < postTypeSelling.length; i++) {
+                        for (int i = 0;
+                            i <
+                                _bookProvider
+                                    .editPostScreenPostTypeSelling.length;
+                            i++) {
                           if (i == index)
-                            postTypeSelling[i] = true;
+                            _bookProvider.editPostScreenPostTypeSelling[i] =
+                                true;
                           else
-                            postTypeSelling[i] = false;
+                            _bookProvider.editPostScreenPostTypeSelling[i] =
+                                false;
                         }
-                        ispostType = postTypeSelling[0];
+
+                        _bookProvider.editPostScreenIspostType =
+                            _bookProvider.editPostScreenPostTypeSelling[0];
                       });
                     },
                   ),
                 ),
-                actualImages.isNotEmpty
+                _bookProvider.editPostScreenActualImages.isNotEmpty
                     ? ImageGallery(
                         true,
-                        // images: _edittedBook.pictures,
-                        images: actualImages,
+                        // images: _bookProvider.editPostScreenEdittedBook.pictures,
+                        images: _bookProvider.editPostScreenActualImages,
                         isErasable: true,
-                        eraseImage: eraseImage,
+                        eraseImage: _bookProvider.editPostScreenEraseImage,
                       )
                     : Padding(
                         padding: const EdgeInsets.only(
@@ -668,7 +510,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             child: Text('From Gallery'),
                             style: ButtonStyle(),
                             onPressed: () {
-                              _getPicture();
+                              _bookProvider.editPostScreenGetPicture();
                             },
                           ),
                           SizedBox(
@@ -694,14 +536,15 @@ class _EditPostScreenState extends State<EditPostScreen> {
                           Theme.of(context).primaryColor),
                     ),
                     onPressed: () async {
-                      setState(() => _showLoading = true);
+                      setState(
+                          () => _bookProvider.editPostScreenShowLoading = true);
 
-                      if (_showLoading) {
+                      if (_bookProvider.editPostScreenShowLoading) {
                         AlertHelper.showLoading();
                       }
-                      if (await _updatePost(
-                          loggedInUserSession, _edittedBook)) {
-                        setState(() => {_showLoading = false});
+                      if (await _bookProvider.editPostScreenUpdatePost(_form)) {
+                        setState(() =>
+                            {_bookProvider.editPostScreenShowLoading = false});
                         AlertHelper.showToastAlert(
                             'Posted Updated Successfully');
 

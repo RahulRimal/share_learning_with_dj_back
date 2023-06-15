@@ -429,10 +429,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               ),
                             )
                           : Container(),
-                      // style: ButtonStyle(
-                      //   backgroundColor: MaterialStateProperty.all(
-                      //       Theme.of(context).primaryColor),
-                      // ),
                       onPressed: bookProvider.addPostScreenIsPostingNewBook
                           ? null
                           : () async {

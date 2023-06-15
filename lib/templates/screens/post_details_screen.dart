@@ -405,11 +405,10 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
             ),
           ),
           onPressed: () {
+            _bookProvider.setEditPostScreenSelectedBook(
+                _bookProvider.postDetailsScreenSelectedBook);
             Navigator.of(context)
-                .pushNamed(EditPostScreen.routeName, arguments: {
-              'bookId': _bookProvider.postDetailsScreenSelectedBook.id,
-              'loggedInUserSession': _bookProvider.sessionProvider,
-            });
+                .pushNamed(EditPostScreen.routeName, arguments: {});
           },
         ),
       );

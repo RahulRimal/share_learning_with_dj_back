@@ -20,7 +20,7 @@ import '../../models/post_category.dart';
 import '../../models/user.dart';
 import '../../templates/utils/system_helper.dart';
 import '../billing_info_widget_wiew_model.dart';
-import '../home_screen_new_view_model.dart';
+import '../book_view_model.dart';
 import '../post_details_view_model.dart';
 import '../post_new_widget_view_model.dart';
 import 'book_filters_provider.dart';
@@ -38,6 +38,7 @@ class BookProvider
         BaseViewModel,
         PostNewWidgetViewModel,
         AddPostScreenViewModel,
+        EditPostScreenViewModel,
         HomeScreenNewViewModel,
         PostDetailsViewModel,
         BillingInfoWidgetViewModel {
