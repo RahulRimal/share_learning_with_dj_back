@@ -538,99 +538,109 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                 totalPrice += item.quantity * item.orderedPrice;
               });
 
-              return ListTile(
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: AppPadding.p2,
-                  horizontal: AppPadding.p8,
-                ),
-                title: Text(
-                  'Order placed on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
-                  style: getBoldStyle(
-                    color: ColorManager.black,
-                    fontSize: FontSize.s16,
+              return AnimatedContainer(
+                duration: const Duration(
+                    milliseconds: 2000), // Adjust the duration as needed
+                curve: Curves.easeInOut, // Adjust the curve as desired
+                width: isExpanded
+                    ? AppHeight.h20
+                    : 0, // Define the desired height when visible or hidden
+                child: ListTile(
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: AppPadding.p2,
+                    horizontal: AppPadding.p8,
                   ),
-                ),
-                subtitle: (item['order'].deliveryInfo != null &&
-                        item['order'].deliveryInfo['status'] == 'T')
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Delivering on ${DateFormat('d MMMM y').format(DateTime.parse((item['order'] as Order).deliveryInfo!['expected_delivery_date']))}',
-                                style: getBoldStyle(
-                                    color: Colors.orange,
-                                    fontSize: FontSize.s14),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            (item['order'] as Order).paymentStatus ==
-                                    PaymentStatus.PENDING
-                                ? 'Payment: Cash on delivery'
-                                : 'Payment: Completed',
-                            style: getBoldStyle(
-                                color: (item['order'] as Order).paymentStatus ==
-                                        PaymentStatus.PENDING
-                                    ? ColorManager.yellow
-                                    : ColorManager.green,
-                                fontSize: FontSize.s14),
-                          ),
-                          Text(
-                            'Total: Rs.${totalPrice.toString()}',
-                            style: getMediumStyle(
-                              color: ColorManager.black,
+                  title: Text(
+                    'Order placed on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+                    style: getBoldStyle(
+                      color: ColorManager.black,
+                      fontSize: FontSize.s16,
+                    ),
+                  ),
+                  subtitle: (item['order'].deliveryInfo != null &&
+                          item['order'].deliveryInfo['status'] == 'T')
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Delivering on ${DateFormat('d MMMM y').format(DateTime.parse((item['order'] as Order).deliveryInfo!['expected_delivery_date']))}',
+                                  style: getBoldStyle(
+                                      color: Colors.orange,
+                                      fontSize: FontSize.s14),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                // 'Delivered on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
+                            Text(
+                              (item['order'] as Order).paymentStatus ==
+                                      PaymentStatus.PENDING
+                                  ? 'Payment: Cash on delivery'
+                                  : 'Payment: Completed',
+                              style: getBoldStyle(
+                                  color:
+                                      (item['order'] as Order).paymentStatus ==
+                                              PaymentStatus.PENDING
+                                          ? ColorManager.yellow
+                                          : ColorManager.green,
+                                  fontSize: FontSize.s14),
+                            ),
+                            Text(
+                              'Total: Rs.${totalPrice.toString()}',
+                              style: getMediumStyle(
+                                color: ColorManager.black,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  // 'Delivered on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
 
-                                'Delivered on ${DateFormat('d MMMM y').format(DateTime.parse((item['order'] as Order).deliveryInfo!['expected_delivery_date']))}',
-                                style: getBoldStyle(
-                                    color: ColorManager.green,
-                                    fontSize: FontSize.s14),
-                              ),
-                              SizedBox(
-                                width: AppSize.s4,
-                              ),
-                              Icon(
-                                Icons.check_circle,
-                                color: ColorManager.green,
-                                size: AppSize.s18,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            (item['order'] as Order).paymentStatus ==
-                                    PaymentStatus.PENDING
-                                ? 'Payment: Cash on delivery'
-                                : 'Payment: Completed',
-                            style: getBoldStyle(
-                                color: (item['order'] as Order).paymentStatus ==
-                                        PaymentStatus.PENDING
-                                    ? ColorManager.yellow
-                                    : ColorManager.green,
-                                fontSize: FontSize.s14),
-                          ),
-                          SizedBox(
-                            height: AppHeight.h2,
-                          ),
-                          Text(
-                            'Total: Rs.${totalPrice.toString()}',
-                            style: getMediumStyle(
-                              color: ColorManager.black,
+                                  'Delivered on ${DateFormat('d MMMM y').format(DateTime.parse((item['order'] as Order).deliveryInfo!['expected_delivery_date']))}',
+                                  style: getBoldStyle(
+                                      color: ColorManager.green,
+                                      fontSize: FontSize.s14),
+                                ),
+                                SizedBox(
+                                  width: AppSize.s4,
+                                ),
+                                Icon(
+                                  Icons.check_circle,
+                                  color: ColorManager.green,
+                                  size: AppSize.s18,
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
+                            Text(
+                              (item['order'] as Order).paymentStatus ==
+                                      PaymentStatus.PENDING
+                                  ? 'Payment: Cash on delivery'
+                                  : 'Payment: Completed',
+                              style: getBoldStyle(
+                                  color:
+                                      (item['order'] as Order).paymentStatus ==
+                                              PaymentStatus.PENDING
+                                          ? ColorManager.yellow
+                                          : ColorManager.green,
+                                  fontSize: FontSize.s14),
+                            ),
+                            SizedBox(
+                              height: AppHeight.h2,
+                            ),
+                            Text(
+                              'Total: Rs.${totalPrice.toString()}',
+                              style: getMediumStyle(
+                                color: ColorManager.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
               );
             },
             body: ListView.builder(

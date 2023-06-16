@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:share_learning/view_models/base_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,6 +9,8 @@ import '../models/api_status.dart';
 import '../models/session.dart';
 import '../models/user.dart';
 import '../templates/managers/color_manager.dart';
+import '../templates/managers/font_manager.dart';
+import '../templates/managers/style_manager.dart';
 import '../templates/screens/home_screen_new.dart';
 import '../templates/screens/login_screen.dart';
 import '../templates/screens/user_interests_screen.dart';
@@ -310,6 +312,153 @@ mixin LoginScreenViewModel on BaseViewModel {
               }
             });
           }
+
+          // Show notifications one by one with a delay
+          int delay = 0;
+          for (String element in data) {
+            Future.delayed(Duration(milliseconds: delay), () {
+              AlertHelper.showToastAlert(element);
+              BotToast.showCustomNotification(
+                duration: Duration(seconds: 3),
+                toastBuilder: (cancelFunc) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Text(
+                      element,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                },
+              );
+            });
+            delay += 1500; // increase delay for next notification
+          }
+        } else {
+          AlertHelper.showToastAlert("Something went wrong, please try again");
+        }
+      }
+    }
+  }
+}
+
+mixin SignUpScreenViewModel on BaseViewModel {
+  FocusNode signUpScreenPasswordFocusNode = FocusNode();
+  FocusNode signUpScreenEmailFocusNode = FocusNode();
+  var signUpScreenUserpassword;
+  bool signUpScreenVisible = false;
+  var signUpScreenShowSpinner = false;
+
+  var signUpScreenNewUser = User(
+    id: 'tempUser',
+    firstName: 'tempFirstName',
+    lastName: 'tempLastName',
+    username: 'tempUsername',
+    email: 'temp@mail.com',
+    phone: 'tempPhone',
+    image: null,
+    description: 'This is a temp user',
+    userClass: 'tempClass',
+    followers: '',
+    createdDate: NepaliDateTime.now(),
+  );
+
+  signUpScreenGoogleSignIn() async {
+    // final users = Provider.of<Users>(context, listen: false);
+    // final sessions = Provider.of<SessionProvider>(context, listen: false);
+    // var response = await users.googleSignIn();
+    // if (response is Success) {
+    //   sessions.setSession((response.response as Map)['session']);
+    //   SharedPreferences prefs = await _prefs;
+    //   Users users = Provider.of<Users>(context, listen: false);
+    //   prefs.setString('accessToken', sessions.session!.accessToken);
+    //   prefs.setString('refreshToken', sessions.session!.refreshToken);
+    //   if (!prefs.containsKey('cartId')) {
+    //     if (await Provider.of<Carts>(context, listen: false)
+    //         .createCart(sessions.session as Session)) {
+    //       prefs.setString('cartId',
+    //           Provider.of<Carts>(context, listen: false).cart!.id.toString());
+    //     } else {
+    //       print('here');
+    //     }
+    //   } else {
+    //     print('here');
+    //   }
+    //   Navigator.of(context)
+    //       .pushReplacementNamed(HomeScreen.routeName, arguments: {
+    //     'authSession': sessions.session,
+    //   });
+    // }
+  }
+
+  void signUpScreenSaveForm(
+      BuildContext context, GlobalKey<FormState> form, bool mounted) async {
+    final isValid = form.currentState!.validate();
+
+    if (isValid) {
+      // setState(() {
+      signUpScreenShowSpinner = true;
+      notifyListeners();
+      // });
+      form.currentState!.save();
+
+      // UserProvider users = UserProvider(null);
+
+      if (await userProvider.createNewUser(
+          signUpScreenNewUser, signUpScreenUserpassword)) {
+        // setState(() {
+        if (mounted) {
+          signUpScreenShowSpinner = false;
+          notifyListeners();
+        }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Welcome!'),
+            content: Text(
+              'You have been registered, please log in to continue',
+              style: getRegularStyle(
+                fontSize: FontSize.s16,
+                color: ColorManager.black,
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text(
+                  'Go to login',
+                  style: getBoldStyle(
+                    fontSize: FontSize.s16,
+                    // color: ColorManager.primary,
+                    color: Colors.green,
+                  ),
+                ),
+                onPressed: () {
+                  // Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .pushReplacementNamed(LoginScreen.routeName);
+                },
+              ),
+            ],
+          ),
+        );
+        // });
+      } else {
+        // setState(() {
+        signUpScreenShowSpinner = false;
+        notifyListeners();
+        // });
+        if (userProvider.userError != null) {
+          List<String> data = [];
+          (userProvider.userError!.message as Map).forEach((key, value) {
+            if (value is List) {
+              value.forEach((item) => {data.add(item.toString())});
+            } else {
+              data.add(value.toString());
+            }
+          });
 
           // Show notifications one by one with a delay
           int delay = 0;

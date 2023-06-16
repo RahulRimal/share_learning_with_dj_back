@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
@@ -26,170 +27,6 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _form = GlobalKey<FormState>();
-  FocusNode _passwordFocusNode = FocusNode();
-  FocusNode _emailFocusNode = FocusNode();
-  // var usernameOrEmail;
-  var userpassword;
-  bool visible = false;
-  var showSpinner = false;
-
-  var _newUser = User(
-    id: 'tempUser',
-    firstName: 'tempFirstName',
-    lastName: 'tempLastName',
-    username: 'tempUsername',
-    email: 'temp@mail.com',
-    phone: 'tempPhone',
-    image: null,
-    description: 'This is a temp user',
-    userClass: 'tempClass',
-    followers: '',
-    createdDate: NepaliDateTime.now(),
-  );
-
-  _googleSignIn() async {
-    // final users = Provider.of<Users>(context, listen: false);
-    // final sessions = Provider.of<SessionProvider>(context, listen: false);
-    // var response = await users.googleSignIn();
-    // if (response is Success) {
-    //   sessions.setSession((response.response as Map)['session']);
-
-    //   SharedPreferences prefs = await _prefs;
-
-    //   Users users = Provider.of<Users>(context, listen: false);
-
-    //   prefs.setString('accessToken', sessions.session!.accessToken);
-    //   prefs.setString('refreshToken', sessions.session!.refreshToken);
-
-    //   if (!prefs.containsKey('cartId')) {
-    //     if (await Provider.of<Carts>(context, listen: false)
-    //         .createCart(sessions.session as Session)) {
-    //       prefs.setString('cartId',
-    //           Provider.of<Carts>(context, listen: false).cart!.id.toString());
-    //     } else {
-    //       print('here');
-    //     }
-    //   } else {
-    //     print('here');
-    //   }
-
-    //   Navigator.of(context)
-    //       .pushReplacementNamed(HomeScreen.routeName, arguments: {
-    //     'authSession': sessions.session,
-    //   });
-    // }
-  }
-
-  void _saveForm() async {
-    final isValid = _form.currentState!.validate();
-
-    if (isValid) {
-      setState(() {
-        showSpinner = true;
-      });
-      _form.currentState!.save();
-      // print(_newUser.email);
-      // print(_newUser.username);
-      // print(userpassword);
-      // User logginedUser = new User(
-      //     id: 'tempUser',
-      //     firstName: 'temp',
-      //     lastName: 'Name',
-      //     username: 'tempN',
-      //     email: 'temp@mail.com',
-      //     description: 'This is a temp user',
-      //     userClass: 'tempClass',
-      //     followers: '',
-      //     createdDate: NepaliDateTime.now());
-      // Users loggedInUser = Users();
-      // SessionProvider userSession = new SessionProvider();
-
-      UserProvider users = UserProvider(null);
-      // Provider.of<Users>(context, listen: false)
-      //     .createNewUser(_newUser, userpassword);
-      // users.
-
-      if (await users.createNewUser(_newUser, userpassword)) {
-        setState(() {
-          if (mounted) {
-            showSpinner = false;
-          }
-          // bool userConfirmed = false;
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Welcome!'),
-              content: Text(
-                'You have been registered, please log in to continue',
-                style: getRegularStyle(
-                  fontSize: FontSize.s16,
-                  color: ColorManager.black,
-                ),
-              ),
-              actions: [
-                TextButton(
-                  child: Text(
-                    'Go to login',
-                    style: getBoldStyle(
-                      fontSize: FontSize.s16,
-                      // color: ColorManager.primary,
-                      color: Colors.green,
-                    ),
-                  ),
-                  onPressed: () {
-                    // Navigator.of(context).pop();
-                    Navigator.of(context)
-                        .pushReplacementNamed(LoginScreen.routeName);
-                  },
-                ),
-              ],
-            ),
-          );
-        });
-      } else {
-        setState(() {
-          showSpinner = false;
-        });
-        if (users.userError != null) {
-          List<String> data = [];
-          (users.userError!.message as Map).forEach((key, value) {
-            if (value is List) {
-              value.forEach((item) => {data.add(item.toString())});
-            } else {
-              data.add(value.toString());
-            }
-          });
-
-          // Show notifications one by one with a delay
-          int delay = 0;
-          for (String element in data) {
-            Future.delayed(Duration(milliseconds: delay), () {
-              AlertHelper.showToastAlert(element);
-              BotToast.showCustomNotification(
-                duration: Duration(seconds: 3),
-                toastBuilder: (cancelFunc) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: ColorManager.primary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Text(
-                      element,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                },
-              );
-            });
-            delay += 1500; // increase delay for next notification
-          }
-        } else {
-          AlertHelper.showToastAlert("Something went wrong, please try again");
-        }
-      }
-    }
-  }
 
   Widget _backButton() {
     return InkWell(
@@ -212,36 +49,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Widget _entryField(String title, {bool isPassword = false}) {
-  //   return Container(
-  //     margin: EdgeInsets.symmetric(vertical: 10),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: <Widget>[
-  //         Text(
-  //           title,
-  //           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-  //         ),
-  //         SizedBox(
-  //           height: 10,
-  //         ),
-  //         TextField(
-  //           obscureText: isPassword,
-  //           decoration: new InputDecoration(
-  //             enabledBorder: const OutlineInputBorder(
-  //               borderSide: const BorderSide(color: Colors.black, width: 1.0),
-  //             ),
-  //             border: const OutlineInputBorder(),
-  //             labelStyle: new TextStyle(color: Colors.green),
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _entryField(String title,
       {bool isPassword = false, bool isEmail = false}) {
+    UserProvider _userProvider = context.watch<UserProvider>();
     return Container(
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -294,11 +104,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 }
                 return null;
               },
-              // obscureText: isPassword,
-              obscureText: isPassword ? !visible : false,
+              obscureText:
+                  isPassword ? !_userProvider.signUpScreenVisible : false,
               focusNode: isPassword
-                  ? _passwordFocusNode
-                  : (isEmail ? _emailFocusNode : null),
+                  ? _userProvider.signUpScreenPasswordFocusNode
+                  : (isEmail ? _userProvider.signUpScreenEmailFocusNode : null),
               textInputAction:
                   isPassword ? TextInputAction.done : TextInputAction.next,
               keyboardType:
@@ -307,11 +117,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               decoration: new InputDecoration(
                 suffix: isPassword
                     ? IconButton(
-                        icon: Icon(
-                            visible ? Icons.visibility : Icons.visibility_off),
+                        icon: Icon(_userProvider.signUpScreenVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off),
                         onPressed: () {
                           setState(() {
-                            visible = !visible;
+                            _userProvider.signUpScreenVisible =
+                                !_userProvider.signUpScreenVisible;
                           });
                         })
                     : null,
@@ -323,45 +135,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               onFieldSubmitted: (_) {
                 if (isEmail)
-                  FocusScope.of(context).requestFocus(_passwordFocusNode);
+                  FocusScope.of(context).requestFocus(
+                      _userProvider.signUpScreenPasswordFocusNode);
                 if (isPassword)
-                  _saveForm();
+                  _userProvider.signUpScreenSaveForm(context, _form, mounted);
                 else {
-                  // _saveForm();
-                  FocusScope.of(context).requestFocus(_emailFocusNode);
+                  // _userProvider.signUpScreenSaveForm(context, _form, mounted);
+                  FocusScope.of(context)
+                      .requestFocus(_userProvider.signUpScreenEmailFocusNode);
                 }
               },
               onSaved: (value) {
                 if (isPassword) {
-                  userpassword = value;
+                  _userProvider.signUpScreenUserpassword = value;
                 } else {
-                  // usernameOrEmail = value;
                   isEmail
-                      ? _newUser = new User(
-                          id: _newUser.id,
-                          firstName: _newUser.firstName,
-                          lastName: _newUser.lastName,
-                          username: _newUser.username,
+                      ? _userProvider.signUpScreenNewUser = new User(
+                          id: _userProvider.signUpScreenNewUser.id,
+                          firstName:
+                              _userProvider.signUpScreenNewUser.firstName,
+                          lastName: _userProvider.signUpScreenNewUser.lastName,
+                          username: _userProvider.signUpScreenNewUser.username,
                           email: value,
-                          phone: _newUser.phone,
-                          image: _newUser.image,
-                          description: _newUser.description,
-                          userClass: _newUser.userClass,
-                          followers: _newUser.followers,
-                          createdDate: _newUser.createdDate,
+                          phone: _userProvider.signUpScreenNewUser.phone,
+                          image: _userProvider.signUpScreenNewUser.image,
+                          description:
+                              _userProvider.signUpScreenNewUser.description,
+                          userClass:
+                              _userProvider.signUpScreenNewUser.userClass,
+                          followers:
+                              _userProvider.signUpScreenNewUser.followers,
+                          createdDate:
+                              _userProvider.signUpScreenNewUser.createdDate,
                         )
-                      : _newUser = new User(
-                          id: _newUser.id,
-                          firstName: _newUser.firstName,
-                          lastName: _newUser.lastName,
+                      : _userProvider.signUpScreenNewUser = new User(
+                          id: _userProvider.signUpScreenNewUser.id,
+                          firstName:
+                              _userProvider.signUpScreenNewUser.firstName,
+                          lastName: _userProvider.signUpScreenNewUser.lastName,
                           username: value,
-                          email: _newUser.email,
-                          phone: _newUser.phone,
-                          image: _newUser.image,
-                          description: _newUser.description,
-                          userClass: _newUser.userClass,
-                          followers: _newUser.followers,
-                          createdDate: _newUser.createdDate,
+                          email: _userProvider.signUpScreenNewUser.email,
+                          phone: _userProvider.signUpScreenNewUser.phone,
+                          image: _userProvider.signUpScreenNewUser.image,
+                          description:
+                              _userProvider.signUpScreenNewUser.description,
+                          userClass:
+                              _userProvider.signUpScreenNewUser.userClass,
+                          followers:
+                              _userProvider.signUpScreenNewUser.followers,
+                          createdDate:
+                              _userProvider.signUpScreenNewUser.createdDate,
                         );
                 }
               },
@@ -373,8 +196,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _googleButton() {
+    UserProvider _userProvider = context.watch<UserProvider>();
     return ElevatedButton(
-      onPressed: _googleSignIn,
+      onPressed: _userProvider.signUpScreenGoogleSignIn,
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -412,8 +236,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _submitButton() {
+    UserProvider _userProvider = context.watch<UserProvider>();
     return GestureDetector(
-      onTap: _saveForm,
+      onTap: () => _userProvider.signUpScreenSaveForm(context, _form, mounted),
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 15),
@@ -555,6 +380,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+    UserProvider _userProvider = context.watch<UserProvider>();
     return Scaffold(
       body: Container(
         height: height,
@@ -612,20 +438,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       //             ),
                       //             onFieldSubmitted: (_) {
                       //               FocusScope.of(context)
-                      //                   .requestFocus(_emailFocusNode);
+                      //                   .requestFocus(_userProvider.signUpScreenEmailFocusNode);
                       //             },
                       //             onSaved: (value) {
-                      //               _newUser = new User(
-                      //                 id: _newUser.id,
-                      //                 firstName: _newUser.firstName,
-                      //                 lastName: _newUser.lastName,
+                      //               _userProvider.signUpScreenNewUser = new User(
+                      //                 id: _userProvider.signUpScreenNewUser.id,
+                      //                 firstName: _userProvider.signUpScreenNewUser.firstName,
+                      //                 lastName: _userProvider.signUpScreenNewUser.lastName,
                       //                 username: value,
-                      //                 email: _newUser.email,
-                      //                 image: _newUser.image,
-                      //                 description: _newUser.description,
-                      //                 userClass: _newUser.userClass,
-                      //                 followers: _newUser.followers,
-                      //                 createdDate: _newUser.createdDate,
+                      //                 email: _userProvider.signUpScreenNewUser.email,
+                      //                 image: _userProvider.signUpScreenNewUser.image,
+                      //                 description: _userProvider.signUpScreenNewUser.description,
+                      //                 userClass: _userProvider.signUpScreenNewUser.userClass,
+                      //                 followers: _userProvider.signUpScreenNewUser.followers,
+                      //                 createdDate: _userProvider.signUpScreenNewUser.createdDate,
                       //               );
                       //             },
                       //           ),
@@ -662,20 +488,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       //             ),
                       //             onFieldSubmitted: (_) {
                       //               FocusScope.of(context)
-                      //                   .requestFocus(_passwordFocusNode);
+                      //                   .requestFocus(_userProvider.signUpScreenPasswordFocusNode);
                       //             },
                       //             onSaved: (value) {
-                      //               _newUser = new User(
-                      //                 id: _newUser.id,
-                      //                 firstName: _newUser.firstName,
-                      //                 lastName: _newUser.lastName,
-                      //                 username: _newUser.username,
+                      //               _userProvider.signUpScreenNewUser = new User(
+                      //                 id: _userProvider.signUpScreenNewUser.id,
+                      //                 firstName: _userProvider.signUpScreenNewUser.firstName,
+                      //                 lastName: _userProvider.signUpScreenNewUser.lastName,
+                      //                 username: _userProvider.signUpScreenNewUser.username,
                       //                 email: value,
-                      //                 image: _newUser.image,
-                      //                 description: _newUser.description,
-                      //                 userClass: _newUser.userClass,
-                      //                 followers: _newUser.followers,
-                      //                 createdDate: _newUser.createdDate,
+                      //                 image: _userProvider.signUpScreenNewUser.image,
+                      //                 description: _userProvider.signUpScreenNewUser.description,
+                      //                 userClass: _userProvider.signUpScreenNewUser.userClass,
+                      //                 followers: _userProvider.signUpScreenNewUser.followers,
+                      //                 createdDate: _userProvider.signUpScreenNewUser.createdDate,
                       //               );
                       //             },
                       //           ),
@@ -711,18 +537,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       //                   new TextStyle(color: Colors.green),
                       //             ),
                       //             onSaved: (value) {
-                      //               userpassword = value;
-                      //               // _newUser = new User(
-                      //               //   id: _newUser.id,
-                      //               //   firstName: _newUser.firstName,
-                      //               //   lastName: _newUser.lastName,
+                      //               _userProvider.signUpScreenUserpassword = value;
+                      //               // _userProvider.signUpScreenNewUser = new User(
+                      //               //   id: _userProvider.signUpScreenNewUser.id,
+                      //               //   firstName: _userProvider.signUpScreenNewUser.firstName,
+                      //               //   lastName: _userProvider.signUpScreenNewUser.lastName,
                       //               //   username: value,
-                      //               //   email: _newUser.email,
-                      //               //   image: _newUser.image,
-                      //               //   description: _newUser.description,
-                      //               //   userClass: _newUser.userClass,
-                      //               //   followers: _newUser.followers,
-                      //               //   createdDate: _newUser.createdDate,
+                      //               //   email: _userProvider.signUpScreenNewUser.email,
+                      //               //   image: _userProvider.signUpScreenNewUser.image,
+                      //               //   description: _userProvider.signUpScreenNewUser.description,
+                      //               //   userClass: _userProvider.signUpScreenNewUser.userClass,
+                      //               //   followers: _userProvider.signUpScreenNewUser.followers,
+                      //               //   createdDate: _userProvider.signUpScreenNewUser.createdDate,
                       //               // );
                       //             },
                       //           ),
@@ -735,7 +561,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    showSpinner
+
+                    _userProvider.signUpScreenShowSpinner
                         ? Column(
                             children: [
                               CircularProgressIndicator(),
@@ -748,7 +575,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _submitButton(),
                     _divider(),
                     // _facebookButton(),
-                    showSpinner ? CircularProgressIndicator() : Container(),
+                    _userProvider.signUpScreenShowSpinner
+                        ? CircularProgressIndicator()
+                        : Container(),
                     _googleButton(),
                     SizedBox(height: height * .055),
                     // SizedBox(height: height * .14),
