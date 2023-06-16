@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../models/book.dart';
+import '../models/order.dart';
 import '../models/order_item.dart';
 import '../models/session.dart';
 import 'base_view_model.dart';
@@ -48,4 +49,19 @@ mixin OrdersItemWidgetViewModel on BaseViewModel {
   }
 
   unbindOrdersItemWidgetViewModel() {}
+}
+
+mixin OrderDetailsScreenViewModel on BaseViewModel {
+  late Order _order;
+
+  Order get orderDetailsScreenOrder => _order;
+
+  set orderDetailsScreenOrder(Order value) {
+    _order = value;
+    notifyListeners();
+  }
+
+  bindOrderDetailsScreenViewModel(BuildContext context) {}
+
+  unbindOrderDetailsScreenViewModel() {}
 }

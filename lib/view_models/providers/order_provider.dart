@@ -16,6 +16,7 @@ class OrderProvider
         BaseViewModel,
         OrdersScreenViewModel,
         OrdersScreenNewViewModel,
+        OrderDetailsScreenViewModel,
         OrdersItemWidgetViewModel {
   // Order? _order;
   List<Order> _orders = [];

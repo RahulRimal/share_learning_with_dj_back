@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/models/order.dart';
+import 'package:share_learning/view_models/providers/order_provider.dart';
 import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 
 import '../../models/book.dart';
+import '../../models/order.dart';
 import '../../models/order_item.dart';
 import '../../models/session.dart';
 import '../../view_models/providers/book_provider.dart';
@@ -32,10 +33,9 @@ class OrderDetailsScreen extends StatefulWidget {
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    Order order = args['order'];
-    Session authSession =
-        Provider.of<SessionProvider>(context).session as Session;
+    OrderProvider _orderProvider = context.watch<OrderProvider>();
+    // final args = ModalRoute.of(context)!.settings.arguments as Map;
+    // Order order = args['order'];
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Details'),
@@ -47,7 +47,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                order.items.length > 1 ? 'Ordered books' : 'Ordered book',
+                _orderProvider.orderDetailsScreenOrder.items.length > 1
+                    ? 'Ordered books'
+                    : 'Ordered book',
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
@@ -57,15 +59,19 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               // ------------------------------------------------------ Order items start here ----------------------------------------------------
               ListView.builder(
                   shrinkWrap: true,
-                  itemCount: order.items.length,
+                  itemCount:
+                      _orderProvider.orderDetailsScreenOrder.items.length,
                   itemBuilder: (context, index) {
-                    OrderItem _orderItem = order.items[index];
+                    OrderItem _orderItem =
+                        _orderProvider.orderDetailsScreenOrder.items[index];
 
                     return FutureBuilder(
-                        future: Provider.of<BookProvider>(context,
-                                listen: false)
-                            .getBookByIdFromServer(
-                                authSession, _orderItem.productId.toString()),
+                        future:
+                            Provider.of<BookProvider>(context, listen: false)
+                                .getBookByIdFromServer(
+                                    _orderProvider.sessionProvider.session
+                                        as Session,
+                                    _orderItem.productId.toString()),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -170,7 +176,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${order.billingInfo!['first_name']} ${order.billingInfo!['last_name']} ",
+                      "${_orderProvider.orderDetailsScreenOrder.billingInfo!['first_name']} ${_orderProvider.orderDetailsScreenOrder.billingInfo!['last_name']} ",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -178,7 +184,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     SizedBox(height: 8.0),
                     Text(
                       // '123 Main St',
-                      "${order.deliveryInfo!['address']}",
+                      "${_orderProvider.orderDetailsScreenOrder.deliveryInfo!['address']}",
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -186,7 +192,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     SizedBox(height: 8.0),
                     Text(
                       // 'Anytown, USA 12345',
-                      "${order.billingInfo!['email']}, ${order.billingInfo!['phone']}",
+                      "${_orderProvider.orderDetailsScreenOrder.billingInfo!['email']}, ${_orderProvider.orderDetailsScreenOrder.billingInfo!['phone']}",
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -202,7 +208,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ),
                         ),
                         Text(
-                          "${order.billingInfo!['convenient_location']}",
+                          "${_orderProvider.orderDetailsScreenOrder.billingInfo!['convenient_location']}",
                           style: TextStyle(
                             color: Colors.grey[600],
                           ),
@@ -223,7 +229,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ),
                         Text(
                           // 'Standard',
-                          "${order.deliveryInfo!['method'] == 'S' ? 'Standard' : 'Emergency'}",
+                          "${_orderProvider.orderDetailsScreenOrder.deliveryInfo!['method'] == 'S' ? 'Standard' : 'Emergency'}",
 
                           style: TextStyle(
                             color: Colors.grey[600],
@@ -262,14 +268,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       title: Padding(
                         padding: const EdgeInsets.only(bottom: AppPadding.p4),
                         child: Text(
-                          'Order placed on ${DateFormat('d MMMM y').format(order.placedAt)}',
+                          'Order placed on ${DateFormat('d MMMM y').format(_orderProvider.orderDetailsScreenOrder.placedAt)}',
                           style: getBoldStyle(
                               color: ColorManager.black,
                               fontSize: FontSize.s16),
                         ),
                       ),
-                      subtitle: (order.deliveryInfo != null &&
-                              order.deliveryInfo!['status'] == 'T')
+                      subtitle: (_orderProvider
+                                      .orderDetailsScreenOrder.deliveryInfo !=
+                                  null &&
+                              _orderProvider.orderDetailsScreenOrder
+                                      .deliveryInfo!['status'] ==
+                                  'T')
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -279,7 +289,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       padding: const EdgeInsets.only(
                                           bottom: AppPadding.p4),
                                       child: Text(
-                                        'Delivering on ${DateFormat('d MMMM y').format(DateTime.parse(order.deliveryInfo!['expected_delivery_date']))}',
+                                        'Delivering on ${DateFormat('d MMMM y').format(DateTime.parse(_orderProvider.orderDetailsScreenOrder.deliveryInfo!['expected_delivery_date']))}',
                                         style: getBoldStyle(
                                             color: Colors.orange,
                                             fontSize: FontSize.s14),
@@ -291,11 +301,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   padding: const EdgeInsets.only(
                                       bottom: AppPadding.p4),
                                   child: Text(
-                                    order.paymentStatus == PaymentStatus.PENDING
+                                    _orderProvider.orderDetailsScreenOrder
+                                                .paymentStatus ==
+                                            PaymentStatus.PENDING
                                         ? 'Payment: Cash on delivery'
                                         : 'Payment: Completed',
                                     style: getBoldStyle(
-                                        color: order.paymentStatus ==
+                                        color: _orderProvider
+                                                    .orderDetailsScreenOrder
+                                                    .paymentStatus ==
                                                 PaymentStatus.PENDING
                                             ? ColorManager.yellow
                                             : ColorManager.green,
@@ -315,7 +329,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       child: Text(
                                         // 'Delivered on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
 
-                                        'Delivered on ${DateFormat('d MMMM y').format(DateTime.parse(order.deliveryInfo!['expected_delivery_date']))}',
+                                        'Delivered on ${DateFormat('d MMMM y').format(DateTime.parse(_orderProvider.orderDetailsScreenOrder.deliveryInfo!['expected_delivery_date']))}',
                                         style: getBoldStyle(
                                             color: ColorManager.green,
                                             fontSize: FontSize.s14),
@@ -335,11 +349,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   padding: const EdgeInsets.only(
                                       bottom: AppPadding.p4),
                                   child: Text(
-                                    order.paymentStatus == PaymentStatus.PENDING
+                                    _orderProvider.orderDetailsScreenOrder
+                                                .paymentStatus ==
+                                            PaymentStatus.PENDING
                                         ? 'Payment: Cash on delivery'
                                         : 'Payment: Completed',
                                     style: getBoldStyle(
-                                        color: order.paymentStatus ==
+                                        color: _orderProvider
+                                                    .orderDetailsScreenOrder
+                                                    .paymentStatus ==
                                                 PaymentStatus.PENDING
                                             ? ColorManager.yellow
                                             : ColorManager.green,
@@ -357,7 +375,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ),
               SizedBox(height: 24.0),
               // ------------------------------------------------------ Complete payment start here ----------------------------------------------------
-              if (order.paymentStatus == PaymentStatus.PENDING)
+              if (_orderProvider.orderDetailsScreenOrder.paymentStatus ==
+                  PaymentStatus.PENDING)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -394,7 +413,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           onPressed: () async {
                             if (await PaymentHelper.payWithEsewa()) {
                               setState(() {
-                                order.paymentStatus = PaymentStatus.COMPLETE;
+                                _orderProvider.orderDetailsScreenOrder
+                                    .paymentStatus = PaymentStatus.COMPLETE;
                               });
                               AlertHelper.showToastAlert(
                                   'Payment completed successfully');
@@ -412,7 +432,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           onPressed: () async {
                             if (await PaymentHelper.payWithKhalti(context)) {
                               setState(() {
-                                order.paymentStatus = PaymentStatus.COMPLETE;
+                                _orderProvider.orderDetailsScreenOrder
+                                    .paymentStatus = PaymentStatus.COMPLETE;
                               });
                               AlertHelper.showToastAlert(
                                   'Payment completed successfully');

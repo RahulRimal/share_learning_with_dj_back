@@ -522,6 +522,7 @@ class _OrdersWidgetState extends State<OrdersWidget> {
 
   @override
   Widget build(BuildContext context) {
+    OrderProvider _orderProvider = context.watch<OrderProvider>();
     return SingleChildScrollView(
       child: ExpansionPanelList(
         expansionCallback: ((index, isExpanded) {
@@ -653,9 +654,10 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                   ),
                   child: GestureDetector(
                     onTap: () {
+                      _orderProvider.orderDetailsScreenOrder = item['order'];
                       Navigator.of(context).pushNamed(
                         OrderDetailsScreen.routeName,
-                        arguments: {'order': item['order']},
+                        // arguments: {'order': item['order']},
                       );
                     },
                     child: OrderItemWidget(
