@@ -66,6 +66,8 @@ mixin BaseViewModel on ChangeNotifier {
     wishlistProvider = Provider.of<WishlistProvider>(context, listen: false);
   }
 
+  unBindBaseViewModal() {}
+
   setBillingInfo() {
     if (userProvider.user != null) {
       if (userProvider.user!.firstName!.isNotEmpty) {

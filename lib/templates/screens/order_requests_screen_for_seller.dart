@@ -19,37 +19,27 @@ import '../../models/book.dart';
 import '../../models/cart.dart';
 
 import '../widgets/custom_bottom_navbar.dart';
-import 'order_requests_for_user_details_screen.dart';
+import 'order_requests_for_seller_details_screen.dart';
 
-class OrderRequestsForUserScreen extends StatefulWidget {
-  const OrderRequestsForUserScreen({Key? key}) : super(key: key);
+class OrderRequestsScreenForSeller extends StatefulWidget {
+  const OrderRequestsScreenForSeller({Key? key}) : super(key: key);
   static final routeName = '/order-requests-for-user-list';
 
   @override
-  State<OrderRequestsForUserScreen> createState() =>
-      _OrderRequestsForUserScreenState();
+  State<OrderRequestsScreenForSeller> createState() =>
+      _OrderRequestsScreenForSellerState();
 }
 
-class _OrderRequestsForUserScreenState
-    extends State<OrderRequestsForUserScreen> {
+class _OrderRequestsScreenForSellerState
+    extends State<OrderRequestsScreenForSeller> {
   final _form = GlobalKey<FormState>();
-  final _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // final Session authendicatedSession = args['loggedInUserSession'] as Session;
-
-    Session authendicatedSession =
-        Provider.of<SessionProvider>(context).session as Session;
-
-    // Carts carts = Provider.of<Carts>(context, listen: false);
-    OrderRequestProvider orderRequests =
-        Provider.of<OrderRequestProvider>(context, listen: false);
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
 
     return Scaffold(
-      // appBar: AppBar(),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -63,7 +53,8 @@ class _OrderRequestsForUserScreenState
                   padding:
                       const EdgeInsets.symmetric(horizontal: AppPadding.p20),
                   child: TextFormField(
-                    controller: _searchController,
+                    controller: _orderRequestProvider
+                        .orderRequestScreenSearchController,
                     // focusNode: _searchFocusNode,
                     keyboardType: TextInputType.text,
                     cursorColor: Theme.of(context).primaryColor,
@@ -142,7 +133,8 @@ class _OrderRequestsForUserScreenState
               //             authendicatedSession: authendicatedSession),
               //       ),
               FutureBuilder(
-                future: orderRequests.getRequestsForUser(authendicatedSession),
+                future: _orderRequestProvider.getRequestsForUser(
+                    _orderRequestProvider.sessionProvider.session as Session),
                 builder: (ctx, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(
@@ -175,8 +167,9 @@ class _OrderRequestsForUserScreenState
                               )
                             : Expanded(
                                 child: OrderRequestList(
-                                    orderRequests: orderRequests,
-                                    authendicatedSession: authendicatedSession),
+                                    orderRequests: _orderRequestProvider,
+                                    authendicatedSession: _orderRequestProvider
+                                        .sessionProvider.session as Session),
                               );
                       }
                     }
@@ -765,7 +758,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       ElevatedButton(
                                           onPressed: () =>
                                               Navigator.of(context).pushNamed(
-                                                OrderRequestForUserDetailsScreen
+                                                OrderRequestForSellerDetailsScreen
                                                     .routeName,
                                                 arguments: {
                                                   'requestItem': requestedItem,

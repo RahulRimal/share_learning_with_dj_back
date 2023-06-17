@@ -17,17 +17,17 @@ import '../../view_models/providers/order_provider.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 
-class OrderRequestForUserDetailsScreen extends StatefulWidget {
+class OrderRequestForSellerDetailsScreen extends StatefulWidget {
   static const routeName = 'order-request-for-user-details-screen';
-  const OrderRequestForUserDetailsScreen({Key? key}) : super(key: key);
+  const OrderRequestForSellerDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  State<OrderRequestForUserDetailsScreen> createState() =>
-      _OrderRequestForUserDetailsScreenState();
+  State<OrderRequestForSellerDetailsScreen> createState() =>
+      _OrderRequestForSellerDetailsScreenState();
 }
 
-class _OrderRequestForUserDetailsScreenState
-    extends State<OrderRequestForUserDetailsScreen> {
+class _OrderRequestForSellerDetailsScreenState
+    extends State<OrderRequestForSellerDetailsScreen> {
   ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
   // ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
 

@@ -21,7 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../managers/assets_manager.dart';
 import '../screens/order_request_screen.dart';
-import '../screens/order_requests_for_user_screen.dart';
+import '../screens/order_requests_screen_for_seller.dart';
 
 class AppDrawer extends StatelessWidget {
   // AppDrawer(this.loggedInSession, this.loggedInUser);
@@ -92,7 +92,7 @@ class AppDrawer extends StatelessWidget {
     DrawerItem(
       title: 'Requests for your books',
       icon: Icons.shop_rounded,
-      route: OrderRequestsForUserScreen.routeName,
+      route: OrderRequestsScreenForSeller.routeName,
     ),
 
     DrawerItem(
@@ -169,7 +169,7 @@ class AppDrawer extends StatelessWidget {
                 context,
                 item.route,
               );
-            if (item.route == OrderRequestsForUserScreen.routeName)
+            if (item.route == OrderRequestsScreenForSeller.routeName)
               Navigator.pushNamed(
                 context,
                 item.route,

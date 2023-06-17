@@ -23,8 +23,9 @@ import 'templates/screens/onboarding_screen.dart';
 import 'templates/screens/order_details_screen.dart';
 import 'templates/screens/order_request_details_screen.dart';
 import 'templates/screens/order_request_screen.dart';
-import 'templates/screens/order_requests_for_user_details_screen.dart';
-import 'templates/screens/order_requests_for_user_screen.dart';
+import 'templates/screens/order_requests_screen_for_seller.dart';
+import 'templates/screens/order_requests_for_seller_details_screen.dart';
+
 import 'templates/screens/orders_screen.dart';
 import 'templates/screens/orders_screen_new.dart';
 import 'templates/screens/post_details_screen.dart';
@@ -243,12 +244,12 @@ class MyApp extends StatelessWidget {
                       CartScreen.routeName: (context) => CartScreen(),
                       OrderRequestScreen.routeName: (context) =>
                           OrderRequestScreen(),
-                      OrderRequestsForUserScreen.routeName: (context) =>
-                          OrderRequestsForUserScreen(),
+                      OrderRequestsScreenForSeller.routeName: (context) =>
+                          OrderRequestsScreenForSeller(),
                       OrderRequestDetailsScreen.routeName: (context) =>
                           OrderRequestDetailsScreen(),
-                      OrderRequestForUserDetailsScreen.routeName: (context) =>
-                          OrderRequestForUserDetailsScreen(),
+                      OrderRequestForSellerDetailsScreen.routeName: (context) =>
+                          OrderRequestForSellerDetailsScreen(),
                       OrderScreen.routeName: (context) => OrderScreen(),
                       OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
                       OrderDetailsScreen.routeName: (context) =>

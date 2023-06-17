@@ -32,11 +32,6 @@ mixin OrderRequestScreenViewModel on BaseViewModel {
 }
 
 mixin OrderRequestDetailsScreenViewModel on BaseViewModel {
-  // ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
-  // ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
-
-  // late OrderRequest _requestItem = args['requestItem'];
-  // late Book _requestedProduct = args['requestedProduct'];
   late OrderRequest _requestItem;
   late Book _requestedProduct;
 
@@ -116,5 +111,24 @@ mixin OrderRequestDetailsScreenViewModel on BaseViewModel {
     );
 
     return true;
+  }
+}
+
+mixin OrderRequestsScreenForSellerViewModle on BaseViewModel {
+  late TextEditingController _searchController;
+
+  TextEditingController
+      get orderRequestsScreenForSellerViewModleSearchController =>
+          _searchController;
+  set orderRequestsScreenForSellerViewModleSearchController(
+          TextEditingController controller) =>
+      _searchController = controller;
+
+  bindOrderRequestsScreenForSellerViewModle(BuildContext context) {
+    bindBaseViewModal(context);
+  }
+
+  unBindOrderRequestsScreenForSellerViewModle() {
+    unBindBaseViewModal();
   }
 }
