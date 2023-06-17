@@ -34,8 +34,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     OrderProvider _orderProvider = context.watch<OrderProvider>();
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-    // Order order = args['order'];
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Details'),

@@ -11,7 +11,11 @@ import '../base_view_model.dart';
 import '../order_request_view_model.dart';
 
 class OrderRequestProvider
-    with ChangeNotifier, BaseViewModel, OrderRequestScreenViewModel {
+    with
+        ChangeNotifier,
+        BaseViewModel,
+        OrderRequestScreenViewModel,
+        OrderRequestDetailsScreenViewModel {
   List<OrderRequest> _orderRequestsByUser = [];
   List<OrderRequest> _orderRequestsForUser = [];
 

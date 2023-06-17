@@ -621,15 +621,23 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       height: AppHeight.h4,
                                     ),
                                     ElevatedButton(
-                                        onPressed: () => Navigator.of(context)
-                                                .pushNamed(
-                                                    OrderRequestDetailsScreen
-                                                        .routeName,
-                                                    arguments: {
-                                                  'requestItem': requestedItem,
-                                                  'requestedProduct':
-                                                      requestedBook
-                                                }),
+                                        onPressed: () {
+                                          _orderRequestProvider
+                                                  .orderRequestDetailsScreenViewModelRequestItem =
+                                              requestedItem;
+                                          _orderRequestProvider
+                                                  .orderRequestDetailsScreenViewModelRequestedProduct =
+                                              requestedBook;
+
+                                          Navigator.of(context).pushNamed(
+                                              OrderRequestDetailsScreen
+                                                  .routeName,
+                                              arguments: {
+                                                'requestItem': requestedItem,
+                                                'requestedProduct':
+                                                    requestedBook
+                                              });
+                                        },
                                         child: Text('Show request details'))
                                   ],
                                 ),

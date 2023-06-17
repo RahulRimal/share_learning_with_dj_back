@@ -27,54 +27,24 @@ class OrderRequestDetailsScreen extends StatefulWidget {
 }
 
 class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
-  ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
-  ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
-  double _newRequestPrice = 0;
-
-  _shouldShowRequestButton(double requestPrice) {
-    if (_newRequestPrice != requestPrice) {
-      _showOrderButton.value = false;
-      _showRequestButton.value = true;
-      return;
-    }
-    _showRequestButton.value = false;
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<OrderRequestProvider>(context, listen: false)
+        .bindOrderRequestDetailsScreenViewModel(context);
   }
 
-  _shouldShowOrderButton(OrderRequest requestItem) {
-    if (_newRequestPrice == double.parse(requestItem.product.unitPrice)) {
-      _showRequestButton.value = false;
-      _showOrderButton.value = true;
-      return;
-    }
-    _showOrderButton.value = false;
-  }
-
-  Future<bool> _updateRequestPrice(String requestId) async {
-    await Provider.of<OrderRequestProvider>(context, listen: false)
-        .updateRequestPrice(requestId, _newRequestPrice)
-        .then(
-      (value) {
-        if (value) {
-          AlertHelper.showToastAlert('Request price changed');
-
-          _showRequestButton.value = false;
-          Navigator.of(context).pop();
-        } else
-          AlertHelper.showToastAlert("Something went wrong, Please try again!");
-      },
-    );
-
-    return true;
+  @override
+  void dispose() {
+    super.dispose();
+    Provider.of<OrderRequestProvider>(context, listen: false)
+        .unBindOrderRequestDetailsScreenViewModel();
   }
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    OrderRequest requestItem = args['requestItem'];
-    Book requestedProduct = args['requestedProduct'];
-    Session authSession =
-        Provider.of<SessionProvider>(context).session as Session;
-    // User currentUser = Provider.of<Users>(context).user as User;
+    OrderRequestProvider _orderRequest = context.watch<OrderRequestProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Request'),
@@ -85,132 +55,6 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text(
-              //   currentUser.id == requestItem.requestedCustomer ?
-              //   'Request for you':'Your request',
-              //   style: TextStyle(
-              //     fontSize: 20.0,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // SizedBox(height: 16.0),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8.0),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.grey.withOpacity(0.3),
-              //         spreadRadius: 2,
-              //         blurRadius: 5,
-              //         offset: Offset(0, 3),
-              //       ),
-              //     ],
-              //   ),
-              //   padding: EdgeInsets.all(16.0),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Text(
-              //             // 'Product Name',
-              //             requestedProduct.bookName,
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //           Text(
-              //             // '\$25.00',
-              //             requestedProduct.price.toString(),
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //       SizedBox(height: 8.0),
-              //       Text(
-              //         requestedProduct.description,
-              //         maxLines: 3,
-              //         overflow: TextOverflow.ellipsis,
-              //         // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
-              //         style: TextStyle(
-              //           color: Colors.grey[600],
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(height: 24.0),
-              // Text(
-              //   'Shipping Information',
-              //   style: TextStyle(
-              //     fontSize: 20.0,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // SizedBox(height: 16.0),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8.0),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.grey.withOpacity(0.3),
-              //         spreadRadius: 2,
-              //         blurRadius: 5,
-              //         offset: Offset(0, 3),
-              //       ),
-              //     ],
-              //   ),
-              //   padding: EdgeInsets.all(16.0),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         'John Doe',
-              //         style: TextStyle(
-              //           fontWeight: FontWeight.bold,
-              //         ),
-              //       ),
-              //       SizedBox(height: 8.0),
-              //       Text(
-              //         '123 Main St',
-              //         style: TextStyle(
-              //           color: Colors.grey[600],
-              //         ),
-              //       ),
-              //       SizedBox(height: 8.0),
-              //       Text(
-              //         'Anytown, USA 12345',
-              //         style: TextStyle(
-              //           color: Colors.grey[600],
-              //         ),
-              //       ),
-              //       SizedBox(height: 8.0),
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Text(
-              //             'Shipping Method',
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //           Text(
-              //             'Standard',
-              //             style: TextStyle(
-              //               color: Colors.grey[600],
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
               SizedBox(height: 24.0),
               Text(
                 'Offer Details',
@@ -238,7 +82,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'You have sent an offer to ${requestItem.requestedCustomer.firstName} ${requestItem.requestedCustomer.lastName} for the following item:',
+                      'You have sent an offer to ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName} ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.lastName} for the following item:',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -249,13 +93,16 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                       children: [
                         Text(
                           // 'Product Name',
-                          requestedProduct.bookName,
+
+                          _orderRequest
+                              .orderRequestDetailsScreenViewModelRequestedProduct
+                              .bookName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          'Rs. ${requestedProduct.price}',
+                          'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestedProduct.price}',
                           // '\$25.00',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -265,7 +112,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      requestedProduct.description,
+                      _orderRequest
+                          .orderRequestDetailsScreenViewModelRequestedProduct
+                          .description,
                       // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -284,7 +133,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     //       ),
                     //     ),
                     //     Text(
-                    //       'Rs. ${requestItem.requestedPrice.toString()}',
+                    //       'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
                     //       // '\$20.00',
                     //       style: TextStyle(
                     //         fontWeight: FontWeight.bold,
@@ -294,19 +143,25 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     // ),
                     // ----------------------- Show this row when selling user has send the offer price start here -----------------------------
                     // if price has been changed by the seller is false then buyer was the one to recently offer the price because the priceChangedBySeller is also not null which mean seller had offered some price before so show this before buyer's offer price
-                    if (requestItem.priceChangedBySeller != null &&
-                        requestItem.priceChangedBySeller == false)
+                    if (_orderRequest
+                                .orderRequestDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller !=
+                            null &&
+                        _orderRequest
+                                .orderRequestDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller ==
+                            false)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${requestItem.requestedCustomer.firstName}\'s offer Price',
+                            '${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            'Rs. ${requestItem.sellerOfferPrice.toString()}',
+                            'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
                             // '\$20.00',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -324,7 +179,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                           ),
                         ),
                         Text(
-                          'Rs. ${requestItem.requestedPrice.toString()}',
+                          'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
                           // '\$20.00',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -337,19 +192,25 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     SizedBox(height: 8.0),
                     // ----------------------- Show this row when selling user has send the offer price start here -----------------------------
                     // if price has been changed by the seller is true then seller was the one to recently offer the price so show this after buyer's offer price
-                    if (requestItem.priceChangedBySeller != null &&
-                        requestItem.priceChangedBySeller == true)
+                    if (_orderRequest
+                                .orderRequestDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller !=
+                            null &&
+                        _orderRequest
+                                .orderRequestDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller ==
+                            true)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${requestItem.requestedCustomer.firstName}\'s offer Price',
+                            '${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            'Rs. ${requestItem.sellerOfferPrice.toString()}',
+                            'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
                             // '\$20.00',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -370,7 +231,10 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         ),
                         Text(
                           // '1',
-                          requestItem.quantity.toString(),
+                          _orderRequest
+                              .orderRequestDetailsScreenViewModelRequestItem
+                              .quantity
+                              .toString(),
                           style: TextStyle(
                             color: Colors.grey[600],
                           ),
@@ -378,79 +242,20 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                       ],
                     ),
                     SizedBox(height: 16.0),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text(
-                    //       'Shipping Method',
-                    //       style: TextStyle(
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //     Text(
-                    //       'Standard',
-                    //       style: TextStyle(
-                    //         color: Colors.grey[600],
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
               ),
-
               SizedBox(height: 24.0),
-
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8.0),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.grey.withOpacity(0.3),
-              //         spreadRadius: 2,
-              //         blurRadius: 5,
-              //         offset: Offset(0, 3),
-              //       ),
-              //     ],
-              //   ),
-              //   padding: EdgeInsets.all(16.0),
-              //   child: Column(
-              //     children: [
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Text(
-              //             'Request status',
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //           Text(
-              //             'Pending',
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //       SizedBox(
-              //         height: AppHeight.h8,
-              //       ),
-              //       Text(
-              //         'We will let you know when ${requestItem.requestedCustomer.firstName} responds to the request',
-              //         style: TextStyle(
-              //           // color: Colors.grey[600],
-              //           color: ColorManager.yellow,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
-              if (requestItem.priceChangedBySeller == null ||
-                  (requestItem.priceChangedBySeller != null &&
-                      requestItem.priceChangedBySeller == false))
+              if (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
+                          .priceChangedBySeller ==
+                      null ||
+                  (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
+                              .priceChangedBySeller !=
+                          null &&
+                      _orderRequest
+                              .orderRequestDetailsScreenViewModelRequestItem
+                              .priceChangedBySeller ==
+                          false))
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -488,7 +293,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         height: AppHeight.h8,
                       ),
                       Text(
-                        'We will let you know when ${requestItem.requestedCustomer.firstName} responds to the request',
+                        'We will let you know when ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName} responds to the request',
                         style: TextStyle(
                           // color: Colors.grey[600],
                           color: ColorManager.yellow,
@@ -497,8 +302,12 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     ],
                   ),
                 ),
-              if (requestItem.priceChangedBySeller != null &&
-                  requestItem.priceChangedBySeller == true)
+              if (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
+                          .priceChangedBySeller !=
+                      null &&
+                  _orderRequest.orderRequestDetailsScreenViewModelRequestItem
+                          .priceChangedBySeller ==
+                      true)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -530,7 +339,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'By accepting this offer, you agree to sell the following item to ${requestItem.requestingCustomer.firstName} ${requestItem.requestingCustomer.lastName} for the price of Rs. ${requestItem.requestedPrice} each :',
+                            'By accepting this offer, you agree to sell the following item to ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the price of Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedPrice} each :',
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),
@@ -612,7 +421,11 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                                 context,
                                                 listen: false)
                                             .deleteOrderRequest(
-                                                authSession, requestItem.id)) {
+                                                _orderRequest.sessionProvider
+                                                    .session as Session,
+                                                _orderRequest
+                                                    .orderRequestDetailsScreenViewModelRequestItem
+                                                    .id)) {
                                           AlertHelper.showToastAlert(
                                               'Request deleted successfully');
 
@@ -653,14 +466,23 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                     CartItem edittedItem = new CartItem(
                                       id: 0,
                                       product: new Product(
-                                        id: int.parse(requestedProduct.id),
-                                        bookName: requestedProduct.bookName,
-                                        unitPrice:
-                                            requestedProduct.price.toString(),
+                                        id: int.parse(_orderRequest
+                                            .orderRequestDetailsScreenViewModelRequestedProduct
+                                            .id),
+                                        bookName: _orderRequest
+                                            .orderRequestDetailsScreenViewModelRequestedProduct
+                                            .bookName,
+                                        unitPrice: _orderRequest
+                                            .orderRequestDetailsScreenViewModelRequestedProduct
+                                            .price
+                                            .toString(),
                                       ),
-                                      negotiatedPrice: double.parse(requestItem
+                                      negotiatedPrice: double.parse(_orderRequest
+                                          .orderRequestDetailsScreenViewModelRequestItem
                                           .sellerOfferPrice as String),
-                                      quantity: requestItem.quantity,
+                                      quantity: _orderRequest
+                                          .orderRequestDetailsScreenViewModelRequestItem
+                                          .quantity,
                                       totalPrice: 0,
                                     );
                                     if (await carts.addItemToTemporaryCart(
@@ -669,7 +491,11 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                       Provider.of<OrderRequestProvider>(context,
                                               listen: false)
                                           .deleteOrderRequest(
-                                              authSession, requestItem.id);
+                                              _orderRequest.sessionProvider
+                                                  .session as Session,
+                                              _orderRequest
+                                                  .orderRequestDetailsScreenViewModelRequestItem
+                                                  .id);
                                       return showModalBottomSheet(
                                         barrierColor:
                                             ColorManager.blackWithLowOpacity,
@@ -765,14 +591,19 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                             ),
                             textInputAction: TextInputAction.done,
                             onChanged: (value) {
-                              _newRequestPrice = double.parse(value);
-                              _shouldShowRequestButton(
-                                  double.parse(requestItem.requestedPrice));
-                              _shouldShowOrderButton(requestItem);
+                              _orderRequest
+                                      .orderRequestDetailsScreenViewModelNewRequestPrice =
+                                  double.parse(value);
+                              _orderRequest
+                                  .orderRequestDetailsScreenViewModelShouldShowRequestButton(
+                                      double.parse(_orderRequest
+                                          .orderRequestDetailsScreenViewModelRequestItem
+                                          .requestedPrice));
+                              _orderRequest
+                                  .orderRequestDetailsScreenViewModelShouldShowOrderButton(
+                                      _orderRequest
+                                          .orderRequestDetailsScreenViewModelRequestItem);
                             },
-                            // onFieldSubmitted: (_) {
-                            //   FocusScope.of(context).requestFocus(_authorFocusNode);
-                            // },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please provide valid price';
@@ -784,13 +615,18 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         ),
 
                         ValueListenableBuilder(
-                          valueListenable: _showRequestButton,
+                          valueListenable: ValueNotifier(_orderRequest
+                              .orderRequestDetailsScreenViewModelShowRequestButton),
                           builder: (BuildContext context,
                               bool showRequestButton, Widget? child) {
                             return showRequestButton
                                 ? ElevatedButton(
-                                    onPressed: () =>
-                                        _updateRequestPrice(requestItem.id),
+                                    onPressed: () => _orderRequest
+                                        .orderRequestDetailsScreenViewModelUpdateRequestPrice(
+                                            context,
+                                            _orderRequest
+                                                .orderRequestDetailsScreenViewModelRequestItem
+                                                .id),
                                     // child: Text('Update Request Price'),
                                     child: Text('Request for this price'),
                                   )
@@ -799,7 +635,8 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         ),
 
                         ValueListenableBuilder(
-                          valueListenable: _showOrderButton,
+                          valueListenable: ValueNotifier(_orderRequest
+                              .orderRequestDetailsScreenViewModelShowOrderButton),
                           builder: (BuildContext context, bool showOrderButton,
                               Widget? child) {
                             return showOrderButton
@@ -824,13 +661,22 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                         CartItem edittedItem = new CartItem(
                                           id: 0,
                                           product: new Product(
-                                            id: int.parse(requestedProduct.id),
-                                            bookName: requestedProduct.bookName,
-                                            unitPrice: requestedProduct.price
+                                            id: int.parse(_orderRequest
+                                                .orderRequestDetailsScreenViewModelRequestedProduct
+                                                .id),
+                                            bookName: _orderRequest
+                                                .orderRequestDetailsScreenViewModelRequestedProduct
+                                                .bookName,
+                                            unitPrice: _orderRequest
+                                                .orderRequestDetailsScreenViewModelRequestedProduct
+                                                .price
                                                 .toString(),
                                           ),
-                                          negotiatedPrice: _newRequestPrice,
-                                          quantity: requestItem.quantity,
+                                          negotiatedPrice: _orderRequest
+                                              .orderRequestDetailsScreenViewModelNewRequestPrice,
+                                          quantity: _orderRequest
+                                              .orderRequestDetailsScreenViewModelRequestItem
+                                              .quantity,
                                           totalPrice: 0,
                                         );
                                         if (await carts.addItemToTemporaryCart(
@@ -840,7 +686,11 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                                   context,
                                                   listen: false)
                                               .deleteOrderRequest(
-                                                  authSession, requestItem.id);
+                                                  _orderRequest.sessionProvider
+                                                      .session as Session,
+                                                  _orderRequest
+                                                      .orderRequestDetailsScreenViewModelRequestItem
+                                                      .id);
                                           return showModalBottomSheet(
                                             barrierColor: ColorManager
                                                 .blackWithLowOpacity,
