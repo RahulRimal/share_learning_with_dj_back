@@ -28,16 +28,11 @@ class _BookFiltersWidgetState extends State<BookFiltersWidget>
     BookFiltersProvider bookFiltersProvider =
         Provider.of<BookFiltersProvider>(context, listen: false);
     bookFiltersProvider.bind(context, widget.booksToFilter);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // bookFiltersProvider.setMinAndMaxPrice(
-      //     bookFiltersProvider.bookProvider.getMinPrice(widget.booksToFilter),
-      //     bookFiltersProvider.bookProvider.getMaxPrice(widget.booksToFilter));
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   @override
   void dispose() {
-    // Provider.of<BookFiltersProvider>(context, listen: false).unBind();
     // Unregister this object as an observer
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();

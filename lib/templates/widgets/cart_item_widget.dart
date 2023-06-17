@@ -29,9 +29,6 @@ class _CartItemWidgetState extends State<CartItemWidget> {
   late ValueNotifier<int> _quantity;
   late CartItem _edittedItem;
 
-  // late AnimationController _controller;
-  // late Animation<double> _opacityAnimation;
-
   _ifCartItemChanged() {
     if (_quantity.value != widget.cartItem.quantity) {
       _cartItemChanged.value = true;
@@ -47,30 +44,16 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     _cartItemChanged = ValueNotifier<bool>(false);
     _quantity = ValueNotifier<int>(widget.cartItem.quantity);
 
-    // _controller = AnimationController(
-    //   duration: const Duration(milliseconds: 300),
-    //   vsync: this,
-    // );
-    // if (_cartItemChanged.value) {
-    //   _controller.forward();
-    // } else {
-    //   _controller.reverse();
-    // }
-    // _opacityAnimation =
-    //     Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
-
     super.initState();
   }
 
   @override
   void dispose() {
-    // _controller.dispose();
     super.dispose();
   }
 
   Future<bool> _updateCartItem(Cart cart, CartItem edittedItem) async {
     _edittedItem.quantity = _quantity.value;
-    // _edittedItem.wishlisted = _wishlisted;
 
     await Provider.of<CartProvider>(context, listen: false)
         .updateCartItem(cart.id, edittedItem)
@@ -97,39 +80,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
       AlertHelper.showToastAlert('Something went wrong, Please try again!');
   }
 
-  // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-  //   await Provider.of<Carts>(context, listen: false)
-  //       .deleteCartItem(userSession, cartId, cartItemId)
-  //       .then(
-  //     (value) {
-  //       if (value) {
-  //         BotToast.showSimpleNotification(
-  //           title: 'Book deleted from the cart',
-  //           duration: Duration(seconds: 3),
-  //           backgroundColor: ColorManager.primary,
-  //           titleStyle: getBoldStyle(color: ColorManager.white),
-  //           align: Alignment(-1, -1),
-  //           hideCloseButton: true,
-  //         );
-  //       } else
-  //         BotToast.showSimpleNotification(
-  //           title: 'Something went wrong, Please try again!',
-  //           duration: Duration(seconds: 3),
-  //           backgroundColor: ColorManager.primary,
-  //           titleStyle: getBoldStyle(color: ColorManager.white),
-  //           align: Alignment(-1, -1),
-  //           hideCloseButton: true,
-  //         );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // final Session authendicatedSession = args['loggedInUserSession'] as Session;
-
     Session authendicatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
