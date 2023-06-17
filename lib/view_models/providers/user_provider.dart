@@ -16,7 +16,8 @@ class UserProvider
         UserProfileScreenViewModel,
         UserProfileEditScreenViewModel,
         LoginScreenViewModel,
-        SignUpScreenViewModel {
+        SignUpScreenViewModel,
+        UserInterestsScreenViewModel {
   UserProvider(this._session);
 
   List<User> _users = [];

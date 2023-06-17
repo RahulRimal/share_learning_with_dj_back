@@ -1,11 +1,9 @@
 // import 'package:flutter/material.dart';
-
 // class UserInterestsScreen extends StatefulWidget {
 //   @override
 //   _UserInterestsScreenState createState() => _UserInterestsScreenState();
 //   static const routeName = '/user-interests';
 // }
-
 // class _UserInterestsScreenState extends State<UserInterestsScreen> {
 //   List<String> interests = [
 //     'Cooking',
@@ -19,7 +17,6 @@
 //     'Fashion',
 //     'Dancing',
 //   ];
-
 //   List<String> hobbies = [
 //     'Video games',
 //     'Watching TV',
@@ -32,36 +29,31 @@
 //     'Collecting',
 //     'Listening to music',
 //   ];
-
 //   List<String> selectedInterests = [];
 //   List<String> selectedHobbies = [];
-
 //   void handleInterestSelect(String interest) {
 //     setState(() {
-//       if (selectedInterests.contains(interest)) {
-//         selectedInterests.remove(interest);
+//       if (_userProvider.userInterestsScreenViewModelSelectedInterests.contains(interest)) {
+//         _userProvider.userInterestsScreenViewModelSelectedInterests.remove(interest);
 //       } else {
-//         selectedInterests.add(interest);
+//         _userProvider.userInterestsScreenViewModelSelectedInterests.add(interest);
 //       }
 //     });
 //   }
-
 //   void handleHobbySelect(String hobby) {
 //     setState(() {
-//       if (selectedHobbies.contains(hobby)) {
-//         selectedHobbies.remove(hobby);
+//       if (_userProvider.userInterestsScreenViewModelSelectedHobbies.contains(hobby)) {
+//         _userProvider.userInterestsScreenViewModelSelectedHobbies.remove(hobby);
 //       } else {
-//         selectedHobbies.add(hobby);
+//         _userProvider.userInterestsScreenViewModelSelectedHobbies.add(hobby);
 //       }
 //     });
 //   }
-
 //   void handleNextButtonPress() {
 //     // This is where you would navigate to the next page and pass
 //     // the selected interests and hobbies to it, in order to display
 //     // information on the types of books the user might like.
 //   }
-
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
@@ -87,7 +79,7 @@
 //               children: interests
 //                   .map((interest) => FilterChip(
 //                         label: Text(interest),
-//                         selected: selectedInterests.contains(interest),
+//                         selected: _userProvider.userInterestsScreenViewModelSelectedInterests.contains(interest),
 //                         onSelected: (selected) {
 //                           handleInterestSelect(interest);
 //                         },
@@ -109,7 +101,7 @@
 //               children: hobbies
 //                   .map((hobby) => FilterChip(
 //                         label: Text(hobby),
-//                         selected: selectedHobbies.contains(hobby),
+//                         selected: _userProvider.userInterestsScreenViewModelSelectedHobbies.contains(hobby),
 //                         onSelected: (selected) {
 //                           handleHobbySelect(hobby);
 //                         },
@@ -119,7 +111,7 @@
 //             SizedBox(height: 32),
 //             ElevatedButton(
 //               onPressed:
-//                   selectedInterests.isNotEmpty && selectedHobbies.isNotEmpty
+//                   _userProvider.userInterestsScreenViewModelSelectedInterests.isNotEmpty && _userProvider.userInterestsScreenViewModelSelectedHobbies.isNotEmpty
 //                       ? handleNextButtonPress
 //                       : null,
 //               child: Text('Next'),
@@ -153,117 +145,9 @@ class UserInterestsScreen extends StatefulWidget {
 }
 
 class _UserInterestsScreenState extends State<UserInterestsScreen> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  bool _isLoading = false;
-
-  List<String> interests = [
-    'Cooking',
-    'Sports',
-    'Traveling',
-    'Music',
-    'Art',
-    'Reading',
-    'Writing',
-    'Gardening',
-    'Fashion',
-    'Dancing',
-  ];
-
-  List<String> hobbies = [
-    'Video games',
-    'Watching TV',
-    'Playing sports',
-    'Photography',
-    'Baking',
-    'Watching movies',
-    'Painting',
-    'Gardening',
-    'Collecting',
-    'Listening to music',
-  ];
-
-  List<String> selectedInterests = [];
-  List<String> selectedHobbies = [];
-
-  void handleInterestSelect(String interest) async {
-    setState(() {
-      if (selectedInterests.contains(interest)) {
-        selectedInterests.remove(interest);
-      } else {
-        selectedInterests.add(interest);
-      }
-    });
-  }
-
-  void handleHobbySelect(String hobby) {
-    setState(() {
-      if (selectedHobbies.contains(hobby)) {
-        selectedHobbies.remove(hobby);
-      } else {
-        selectedHobbies.add(hobby);
-      }
-    });
-  }
-
-  // Future<bool> _handleNextButtonPress() {
-  _handleNextButtonPress() async {
-    setState(() {
-      _isLoading = true;
-    });
-    UserProvider users = Provider.of<UserProvider>(context, listen: false);
-    SharedPreferences prefs = await _prefs;
-
-    Map<String, List<String>> userData = {
-      'interests': selectedInterests,
-      'hobbies': selectedHobbies,
-    };
-
-    userData.forEach((key, value) async {
-      if (users.user == null) {
-        Session userSession =
-            Provider.of<SessionProvider>(context, listen: false).session
-                as Session;
-        await users.getUserByToken(userSession.accessToken);
-      }
-      var response = await users.updateUserData(users.user!.id, key, value);
-      // print(response);
-      if (response is Success) {
-        AlertHelper.showToastAlert(response.response.toString());
-
-        prefs.setBool('isFirstTime', false);
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-
-        // Navigator.pushReplacementNamed(context, HomeScreen.routeName,
-        //     arguments: {
-        //       'authSession':
-        //           Provider.of<SessionProvider>(context, listen: false).session,
-        //     });
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, HomeScreenNew.routeName);
-        }
-      }
-      if (response is Failure) {
-        setState(() {
-          _isLoading = false;
-        });
-        AlertHelper.showToastAlert(response.errorResponse.toString());
-      }
-    });
-    // return Future.value(false);
-    // return false;
-
-    // print(selectedInterests);
-    // print(userData);
-  }
-
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as Map;
-    // final Session authenticatedSession = args['authSession'];
+    UserProvider _userProvider = context.watch<UserProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Your Interests'),
@@ -285,12 +169,16 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: interests
+                children: _userProvider.userInterestsScreenViewModelInterests
                     .map((interest) => FilterChip(
                           label: Text(interest),
-                          selected: selectedInterests.contains(interest),
+                          selected: _userProvider
+                              .userInterestsScreenViewModelSelectedInterests
+                              .contains(interest),
                           onSelected: (selected) {
-                            handleInterestSelect(interest);
+                            _userProvider
+                                .userInterestsScreenViewModelHandleInterestSelect(
+                                    interest);
                           },
                           // backgroundColor: Theme.of(context).primaryColor,
                           // selectedColor: Colors.white,
@@ -322,12 +210,16 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: hobbies
+                children: _userProvider.userInterestsScreenViewModelHobbies
                     .map((hobby) => FilterChip(
                           label: Text(hobby),
-                          selected: selectedHobbies.contains(hobby),
+                          selected: _userProvider
+                              .userInterestsScreenViewModelSelectedHobbies
+                              .contains(hobby),
                           onSelected: (selected) {
-                            handleHobbySelect(hobby);
+                            _userProvider
+                                .userInterestsScreenViewModelHandleHobbySelect(
+                                    hobby);
                           },
                           // backgroundColor: Theme.of(context).primaryColor,
                           // backgroundColor: ColorManager.grey,
@@ -345,7 +237,7 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
               ),
               SizedBox(height: 32),
               ElevatedButton.icon(
-                icon: _isLoading
+                icon: _userProvider.userInterestsScreenViewModelIsLoading
                     ? SizedBox(
                         height: AppHeight.h20,
                         width: AppHeight.h20,
@@ -357,18 +249,24 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
                         ),
                       )
                     : Container(),
-                onPressed:
-                    selectedInterests.isNotEmpty && selectedHobbies.isNotEmpty
-                        ? _handleNextButtonPress
-                        // ? () async {
-                        //     if (await _handleNextButtonPress() == true) {
-                        //       print('success');
-                        //       Navigator.of(context).pushNamed(
-                        //         HomeScreen.routeName,
-                        //       );
-                        //     }
-                        //   }
-                        : null,
+                onPressed: _userProvider
+                            .userInterestsScreenViewModelSelectedInterests
+                            .isNotEmpty &&
+                        _userProvider
+                            .userInterestsScreenViewModelSelectedHobbies
+                            .isNotEmpty
+                    ? () => _userProvider
+                        .userInterestsScreenViewModelHandleNextButtonPress(
+                            context, mounted)
+                    // ? () async {
+                    //     if (await _handleNextButtonPress() == true) {
+                    //       print('success');
+                    //       Navigator.of(context).pushNamed(
+                    //         HomeScreen.routeName,
+                    //       );
+                    //     }
+                    //   }
+                    : null,
                 label: Text(
                   'Next',
                   style: getBoldStyle(color: ColorManager.white),

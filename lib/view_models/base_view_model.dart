@@ -28,7 +28,7 @@ mixin BaseViewModel on ChangeNotifier {
   late WishlistProvider wishlistProvider;
   late CommentProvider commentProvider;
 
-  Future<SharedPreferences> prefences = SharedPreferences.getInstance();
+  Future<SharedPreferences> preferences = SharedPreferences.getInstance();
 
   Map<String, String> billingInfo = {};
   List<String> locationOptions = [

@@ -36,7 +36,7 @@ mixin UserProfileScreenViewModel on BaseViewModel {
   );
 
   userProfileScreenLogOut(BuildContext context) async {
-    SharedPreferences prefs = await prefences;
+    SharedPreferences prefs = await preferences;
     bookProvider.setBooks([]);
 
     userProvider.logoutUser('1');
@@ -195,7 +195,7 @@ mixin LoginScreenViewModel on BaseViewModel {
     if (response is Success) {
       sessionProvider.setSession((response.response as Map)['session']);
 
-      SharedPreferences prefs = await prefences;
+      SharedPreferences prefs = await preferences;
 
       prefs.setString('accessToken', sessionProvider.session!.accessToken);
       prefs.setString('refreshToken', sessionProvider.session!.refreshToken);
@@ -241,7 +241,7 @@ mixin LoginScreenViewModel on BaseViewModel {
         if (mounted) {
           loginScreenShowSpinner = false;
           // notifyListeners();
-          SharedPreferences prefs = await prefences;
+          SharedPreferences prefs = await preferences;
 
           prefs.setString('accessToken', sessionProvider.session!.accessToken);
           prefs.setString(
@@ -369,7 +369,7 @@ mixin SignUpScreenViewModel on BaseViewModel {
   signUpScreenGoogleSignIn() async {
     // final users = Provider.of<Users>(context, listen: false);
     // final sessions = Provider.of<SessionProvider>(context, listen: false);
-    // var response = await users.googleSignIn();
+    // var response = await userProvider.googleSignIn();
     // if (response is Success) {
     //   sessions.setSession((response.response as Map)['session']);
     //   SharedPreferences prefs = await _prefs;
@@ -489,5 +489,141 @@ mixin SignUpScreenViewModel on BaseViewModel {
         }
       }
     }
+  }
+}
+
+mixin UserInterestsScreenViewModel on BaseViewModel {
+  // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  bool _isLoading = false;
+
+  List<String> _interests = [
+    'Cooking',
+    'Sports',
+    'Traveling',
+    'Music',
+    'Art',
+    'Reading',
+    'Writing',
+    'Gardening',
+    'Fashion',
+    'Dancing',
+  ];
+
+  List<String> _hobbies = [
+    'Video games',
+    'Watching TV',
+    'Playing sports',
+    'Photography',
+    'Baking',
+    'Watching movies',
+    'Painting',
+    'Gardening',
+    'Collecting',
+    'Listening to music',
+  ];
+
+  List<String> _selectedInterests = [];
+  List<String> _selectedHobbies = [];
+
+  bool get userInterestsScreenViewModelIsLoading => _isLoading;
+
+  set userInterestsScreenViewModelIsLoading(bool value) {
+    _isLoading = value;
+  }
+
+  List<String> get userInterestsScreenViewModelInterests => _interests;
+
+  set userInterestsScreenViewModelInterests(List<String> value) =>
+      _interests = value;
+
+  List<String> get userInterestsScreenViewModelHobbies => _hobbies;
+
+  set userInterestsScreenViewModelHobbies(List<String> value) =>
+      _hobbies = value;
+
+  List<String> get userInterestsScreenViewModelSelectedInterests =>
+      _selectedInterests;
+
+  set userInterestsScreenViewModelSelectedInterests(List<String> value) =>
+      _selectedInterests = value;
+
+  List<String> get userInterestsScreenViewModelSelectedHobbies =>
+      _selectedHobbies;
+  set userInterestsScreenViewModelSelectedHobbies(List<String> value) =>
+      _selectedHobbies = value;
+
+  bindUserInterestsScreenViewModel(BuildContext context) {
+    bindBaseViewModal(context);
+  }
+
+  unBindUserInterestsScreenViewModel() {}
+
+  void userInterestsScreenViewModelHandleInterestSelect(String interest) async {
+    // setState(() {
+    if (_selectedInterests.contains(interest)) {
+      _selectedInterests.remove(interest);
+    } else {
+      _selectedInterests.add(interest);
+    }
+    notifyListeners();
+    // });
+  }
+
+  void userInterestsScreenViewModelHandleHobbySelect(String hobby) {
+    // setState(() {
+    if (_selectedHobbies.contains(hobby)) {
+      _selectedHobbies.remove(hobby);
+    } else {
+      _selectedHobbies.add(hobby);
+    }
+    notifyListeners();
+    // });
+  }
+
+  // Future<bool> _handleNextButtonPress() {
+  userInterestsScreenViewModelHandleNextButtonPress(
+      BuildContext context, bool mounted) async {
+    // setState(() {
+    _isLoading = true;
+    notifyListeners();
+    // });
+
+    SharedPreferences prefs = await preferences;
+
+    Map<String, List<String>> userData = {
+      'interests': _selectedInterests,
+      'hobbies': _selectedHobbies,
+    };
+
+    userData.forEach((key, value) async {
+      if (userProvider.user == null) {
+        Session userSession = sessionProvider.session as Session;
+        await userProvider.getUserByToken(userSession.accessToken);
+      }
+      var response =
+          await userProvider.updateUserData(userProvider.user!.id, key, value);
+      // print(response);
+      if (response is Success) {
+        AlertHelper.showToastAlert(response.response.toString());
+
+        prefs.setBool('isFirstTime', false);
+        if (mounted) {
+          // setState(() {
+          _isLoading = false;
+          notifyListeners();
+          // });
+        }
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, HomeScreenNew.routeName);
+        }
+      }
+      if (response is Failure) {
+        // setState(() {
+        _isLoading = false;
+        notifyListeners();
+        // });
+        AlertHelper.showToastAlert(response.errorResponse.toString());
+      }
+    });
   }
 }
