@@ -28,46 +28,25 @@ class OrderRequestForSellerDetailsScreen extends StatefulWidget {
 
 class _OrderRequestForSellerDetailsScreenState
     extends State<OrderRequestForSellerDetailsScreen> {
-  ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
-  // ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
-
-  double _newSellerOfferPrice = 0;
-
-  _shouldShowRequestButton(double requestPrice) {
-    if (_newSellerOfferPrice != requestPrice) {
-      _showRequestButton.value = true;
-      return;
-    }
-    _showRequestButton.value = false;
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<OrderRequestProvider>(context, listen: false)
+        .bindOrderRequestForSellerDetailsScreenViewModel(context);
   }
 
-  Future<bool> _updateSellerOfferPrice(
-      Session authSession, String requestId) async {
-    await Provider.of<OrderRequestProvider>(context, listen: false)
-        .updateSellerOfferPrice(requestId, _newSellerOfferPrice)
-        .then(
-      (value) {
-        if (value) {
-          AlertHelper.showToastAlert('Request price changed');
-
-          _showRequestButton.value = false;
-          Navigator.of(context).pop();
-        } else
-          AlertHelper.showToastAlert("Something went wrong, Please try again!");
-      },
-    );
-
-    return true;
+  @override
+  void dispose() {
+    super.dispose();
+    Provider.of<OrderRequestProvider>(context, listen: false)
+        .unbindOrderRequestForSellerDetailsScreenViewModel();
   }
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    OrderRequest requestItem = args['requestItem'];
-    Book requestedProduct = args['requestedProduct'];
-    // User currentUser = Provider.of<Users>(context).user as User;
-    Session authSession =
-        Provider.of<SessionProvider>(context).session as Session;
+    
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Request'),
@@ -106,10 +85,10 @@ class _OrderRequestForSellerDetailsScreenState
                   children: [
                     Text(
                       // currentUser.id ==
-                      //         requestItem.requestedCustomer.id.toString()
-                      //     ? 'You have received an offer from ${requestItem.requestingCustomer.firstName} ${requestItem.requestingCustomer.lastName} for the following item:'
-                      //     : 'You have sent an offer to ${requestItem.requestedCustomer.firstName} ${requestItem.requestedCustomer.lastName} for the following item:',
-                      'You have received an offer from ${requestItem.requestingCustomer.firstName} ${requestItem.requestingCustomer.lastName} for the following item:',
+                      //         _orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.id.toString()
+                      //     ? 'You have received an offer from ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the following item:'
+                      //     : 'You have sent an offer to ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.lastName} for the following item:',
+                      'You have received an offer from ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the following item:',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -120,13 +99,15 @@ class _OrderRequestForSellerDetailsScreenState
                       children: [
                         Text(
                           // 'Product Name',
-                          requestedProduct.bookName,
+                          _orderRequestProvider
+                              .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                              .bookName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          'Rs. ${requestedProduct.price}',
+                          'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestedProduct.price}',
                           // '\$25.00',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -136,7 +117,9 @@ class _OrderRequestForSellerDetailsScreenState
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      requestedProduct.description,
+                      _orderRequestProvider
+                          .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                          .description,
                       // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -147,8 +130,14 @@ class _OrderRequestForSellerDetailsScreenState
                     SizedBox(height: 16.0),
                     // ----------------------- Show this row when selling user has send the offer price start here -----------------------------
                     // if price has been changed by the seller is false then buyer was the one to recently offer the price because the priceChangedBySeller is also not null which mean seller had offered some price before so show this before buyer's offer price
-                    if (requestItem.priceChangedBySeller != null &&
-                        requestItem.priceChangedBySeller == false)
+                    if (_orderRequestProvider
+                                .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller !=
+                            null &&
+                        _orderRequestProvider
+                                .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller ==
+                            false)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -159,7 +148,7 @@ class _OrderRequestForSellerDetailsScreenState
                             ),
                           ),
                           Text(
-                            'Rs. ${requestItem.sellerOfferPrice.toString()}',
+                            'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
                             // '\$20.00',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -172,13 +161,13 @@ class _OrderRequestForSellerDetailsScreenState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${requestItem.requestingCustomer.firstName}\'s offer Price',
+                          '${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName}\'s offer Price',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          'Rs. ${requestItem.requestedPrice.toString()}',
+                          'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
                           // '\$20.00',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -189,8 +178,14 @@ class _OrderRequestForSellerDetailsScreenState
                     SizedBox(height: 8.0),
                     // ----------------------- Show this row when selling user has send the offer price start here -----------------------------
                     // if price has been changed by the seller is true then seller was the one to recently offer the price so show this after buyer's offer price
-                    if (requestItem.priceChangedBySeller != null &&
-                        requestItem.priceChangedBySeller == true)
+                    if (_orderRequestProvider
+                                .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller !=
+                            null &&
+                        _orderRequestProvider
+                                .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                .priceChangedBySeller ==
+                            true)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -201,7 +196,7 @@ class _OrderRequestForSellerDetailsScreenState
                             ),
                           ),
                           Text(
-                            'Rs. ${requestItem.sellerOfferPrice.toString()}',
+                            'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
                             // '\$20.00',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -222,7 +217,10 @@ class _OrderRequestForSellerDetailsScreenState
                         ),
                         Text(
                           // '1',
-                          requestItem.quantity.toString(),
+                          _orderRequestProvider
+                              .orderRequestForSellerDetailsScreenViewModelRequestItem
+                              .quantity
+                              .toString(),
                           style: TextStyle(
                             color: Colors.grey[600],
                           ),
@@ -251,8 +249,14 @@ class _OrderRequestForSellerDetailsScreenState
                 ),
               ),
               SizedBox(height: AppHeight.h20),
-              if (requestItem.priceChangedBySeller != null &&
-                  requestItem.priceChangedBySeller == true)
+              if (_orderRequestProvider
+                          .orderRequestForSellerDetailsScreenViewModelRequestItem
+                          .priceChangedBySeller !=
+                      null &&
+                  _orderRequestProvider
+                          .orderRequestForSellerDetailsScreenViewModelRequestItem
+                          .priceChangedBySeller ==
+                      true)
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -290,7 +294,7 @@ class _OrderRequestForSellerDetailsScreenState
                         height: AppHeight.h8,
                       ),
                       Text(
-                        'We will let you know when ${requestItem.requestingCustomer.firstName} responds to the request',
+                        'We will let you know when ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} responds to the request',
                         style: TextStyle(
                           // color: Colors.grey[600],
                           color: ColorManager.yellow,
@@ -330,7 +334,7 @@ class _OrderRequestForSellerDetailsScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'By accepting this offer, you agree to sell the following item to ${requestItem.requestingCustomer.firstName} ${requestItem.requestingCustomer.lastName} for the price of Rs. ${requestItem.requestedPrice} each :',
+                            'By accepting this offer, you agree to sell the following item to ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the price of Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice} each :',
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),
@@ -490,7 +494,12 @@ class _OrderRequestForSellerDetailsScreenState
                                                 context,
                                                 listen: false)
                                             .deleteOrderRequest(
-                                                authSession, requestItem.id)) {
+                                                _orderRequestProvider
+                                                    .sessionProvider
+                                                    .session as Session,
+                                                _orderRequestProvider
+                                                    .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                    .id)) {
                                           AlertHelper.showToastAlert(
                                               'Request deleted successfully');
                                           // Navigator.pop(context);
@@ -533,29 +542,46 @@ class _OrderRequestForSellerDetailsScreenState
                                     CartItem edittedItem = new CartItem(
                                       id: 0,
                                       product: new Product(
-                                        id: int.parse(requestedProduct.id),
-                                        bookName: requestedProduct.bookName,
-                                        unitPrice:
-                                            requestedProduct.price.toString(),
+                                        id: int.parse(_orderRequestProvider
+                                            .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                                            .id),
+                                        bookName: _orderRequestProvider
+                                            .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                                            .bookName,
+                                        unitPrice: _orderRequestProvider
+                                            .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                                            .price
+                                            .toString(),
                                       ),
                                       negotiatedPrice: double.parse(
-                                          requestItem.requestedPrice),
-                                      quantity: requestItem.quantity,
+                                          _orderRequestProvider
+                                              .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                              .requestedPrice),
+                                      quantity: _orderRequestProvider
+                                          .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                          .quantity,
                                       totalPrice: 0,
                                     );
                                     if (await carts.addItemToTemporaryCart(
                                         tempCart, edittedItem)) {
-                                      if (await Provider.of<OrderProvider>(
+                                      if (await Provider.of<
+                                                  OrderProvider>(
                                               context,
                                               listen: false)
                                           .placeOrderForRequestingCustomer(
-                                              loggedInSession: authSession,
-                                              userId: requestItem
-                                                  .requestingCustomer.id
+                                              loggedInSession:
+                                                  _orderRequestProvider
+                                                      .sessionProvider
+                                                      .session as Session,
+                                              userId: _orderRequestProvider
+                                                  .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                  .requestingCustomer
+                                                  .id
                                                   .toString(),
                                               cartId: tempCart.id,
-                                              billingInfo:
-                                                  requestItem.billingInfo,
+                                              billingInfo: _orderRequestProvider
+                                                  .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                  .billingInfo,
                                               paymentMethod: 'C')) {
                                         // Delete the order request when the order has been palced
                                         if (await Provider.of<
@@ -563,7 +589,12 @@ class _OrderRequestForSellerDetailsScreenState
                                                 context,
                                                 listen: false)
                                             .deleteOrderRequest(
-                                                authSession, requestItem.id)) {
+                                                _orderRequestProvider
+                                                    .sessionProvider
+                                                    .session as Session,
+                                                _orderRequestProvider
+                                                    .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                    .id)) {
                                           AlertHelper.showToastAlert(
                                               'Request accepted successfully');
 
@@ -638,13 +669,15 @@ class _OrderRequestForSellerDetailsScreenState
                             ),
                             textInputAction: TextInputAction.done,
                             onChanged: (value) {
-                              _newSellerOfferPrice = double.parse(value);
-                              _shouldShowRequestButton(
-                                  double.parse(requestItem.requestedPrice));
+                              _orderRequestProvider
+                                      .orderRequestForSellerDetailsScreenViewModelNewSellerRequestPrice =
+                                  double.parse(value);
+                              _orderRequestProvider
+                                  .orderRequestForSellerDetailsScreenViewModelShouldShowRequestButton(
+                                      double.parse(_orderRequestProvider
+                                          .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                          .requestedPrice));
                             },
-                            // onFieldSubmitted: (_) {
-                            //   FocusScope.of(context).requestFocus(_authorFocusNode);
-                            // },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please provide valid price';
@@ -656,13 +689,18 @@ class _OrderRequestForSellerDetailsScreenState
                         ),
 
                         ValueListenableBuilder(
-                          valueListenable: _showRequestButton,
+                          valueListenable: ValueNotifier(_orderRequestProvider
+                              .orderRequestForSellerDetailsScreenViewModelShowRequestButton),
                           builder: (BuildContext context,
                               bool showRequestButton, Widget? child) {
                             return showRequestButton
                                 ? ElevatedButton(
-                                    onPressed: () => _updateSellerOfferPrice(
-                                        authSession, requestItem.id),
+                                    onPressed: () => _orderRequestProvider
+                                        .orderRequestForSellerDetailsScreenViewModelUpdateSellerOfferPrice(
+                                            context,
+                                            _orderRequestProvider
+                                                .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                .id),
                                     // child: Text('Update Request Price'),
                                     child: Text('Request for this price'),
                                   )

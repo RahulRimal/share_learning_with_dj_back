@@ -35,6 +35,20 @@ class _OrderRequestsScreenForSellerState
   final _form = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<OrderRequestProvider>(context, listen: false)
+        .bindOrderRequestsScreenForSellerViewModle(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Provider.of<OrderRequestProvider>(context, listen: false)
+        .unBindOrderRequestsScreenForSellerViewModle();
+  }
+
+  @override
   Widget build(BuildContext context) {
     OrderRequestProvider _orderRequestProvider =
         context.watch<OrderRequestProvider>();
@@ -319,12 +333,13 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
         Provider.of<SessionProvider>(context).session as Session;
 
     // Carts _carts = context.watch<Carts>();
-    OrderRequestProvider _orderRequests = context.watch<OrderRequestProvider>();
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
 
     return FutureBuilder(
         // future: _carts.getCartItemBook(
         //     authendicatedSession, widget.requestedItem.product.id.toString()),
-        future: _orderRequests.getRequestedItemBook(
+        future: _orderRequestProvider.getRequestedItemBook(
             authendicatedSession, widget.requestedItem.product.id.toString()),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -756,16 +771,23 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
 
                                       // --------------------------Change Request Price ends here-----------------------
                                       ElevatedButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pushNamed(
-                                                OrderRequestForSellerDetailsScreen
-                                                    .routeName,
-                                                arguments: {
-                                                  'requestItem': requestedItem,
-                                                  'requestedProduct':
-                                                      requestedBook
-                                                },
-                                              ),
+                                          onPressed: () {
+                                            _orderRequestProvider
+                                                    .orderRequestForSellerDetailsScreenViewModelRequestItem =
+                                                requestedItem;
+                                            _orderRequestProvider
+                                                    .orderRequestForSellerDetailsScreenViewModelRequestedProduct =
+                                                requestedBook;
+                                            Navigator.of(context).pushNamed(
+                                              OrderRequestForSellerDetailsScreen
+                                                  .routeName,
+                                              // arguments: {
+                                              //   'requestItem': requestedItem,
+                                              //   'requestedProduct':
+                                              //       requestedBook
+                                              // },
+                                            );
+                                          },
                                           child: Text('Show request details'))
                                     ],
                                   ),

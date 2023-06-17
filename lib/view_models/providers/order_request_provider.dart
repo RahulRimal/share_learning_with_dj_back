@@ -15,7 +15,9 @@ class OrderRequestProvider
         ChangeNotifier,
         BaseViewModel,
         OrderRequestScreenViewModel,
-        OrderRequestDetailsScreenViewModel {
+        OrderRequestDetailsScreenViewModel,
+        OrderRequestsScreenForSellerViewModle,
+        OrderRequestForSellerDetailsScreenViewModel {
   List<OrderRequest> _orderRequestsByUser = [];
   List<OrderRequest> _orderRequestsForUser = [];
 

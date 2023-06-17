@@ -3,7 +3,11 @@ import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
 
-class SessionProvider with ChangeNotifier {
+import '../base_view_model.dart';
+import '../session_view_model.dart';
+
+class SessionProvider
+    with ChangeNotifier, BaseViewModel, SplashScreenViewModel {
   // List<Session> _sessions = [];
   bool _loading = false;
   // late Session _session;
@@ -53,7 +57,8 @@ class SessionProvider with ChangeNotifier {
     }
     return false;
   }
-  Future<bool> refreshSession(String accessToken)async {
+
+  Future<bool> refreshSession(String accessToken) async {
     setLoading(true);
     var response = await SessionApi.refreshSession(accessToken);
     if (response is Success) {

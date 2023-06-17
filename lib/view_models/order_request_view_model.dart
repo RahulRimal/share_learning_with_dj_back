@@ -132,3 +132,72 @@ mixin OrderRequestsScreenForSellerViewModle on BaseViewModel {
     unBindBaseViewModal();
   }
 }
+
+mixin OrderRequestForSellerDetailsScreenViewModel on BaseViewModel {
+  // ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
+
+  late OrderRequest _item;
+  late Book _requestProduct;
+
+  bool _showRequestBtn = false;
+  double _newSellerOfferPrice = 0;
+
+  OrderRequest get orderRequestForSellerDetailsScreenViewModelRequestItem =>
+      _item;
+  Book get orderRequestForSellerDetailsScreenViewModelRequestedProduct =>
+      _requestProduct;
+
+  bool get orderRequestForSellerDetailsScreenViewModelShowRequestButton =>
+      _showRequestBtn;
+
+  double get orderRequestForSellerDetailsScreenViewModelNewSellerRequestPrice =>
+      _newSellerOfferPrice;
+
+  set orderRequestForSellerDetailsScreenViewModelNewSellerRequestPrice(
+      double value) {
+    _newSellerOfferPrice = value;
+  }
+
+  set orderRequestForSellerDetailsScreenViewModelRequestItem(
+          OrderRequest request) =>
+      _item = request;
+  set orderRequestForSellerDetailsScreenViewModelRequestedProduct(
+          Book product) =>
+      _requestProduct = product;
+
+  set orderRequestForSellerDetailsScreenViewModelShowRequestButton(
+          bool value) =>
+      this._showRequestBtn = value;
+
+  bindOrderRequestForSellerDetailsScreenViewModel(BuildContext context) {}
+  unbindOrderRequestForSellerDetailsScreenViewModel() {}
+
+  orderRequestForSellerDetailsScreenViewModelShouldShowRequestButton(
+      double requestPrice) {
+    if (_newSellerOfferPrice != requestPrice) {
+      _showRequestBtn = true;
+      return;
+    }
+    _showRequestBtn = false;
+  }
+
+  Future<bool>
+      orderRequestForSellerDetailsScreenViewModelUpdateSellerOfferPrice(
+          BuildContext context, String requestId) async {
+    await orderRequestProvider
+        .updateSellerOfferPrice(requestId, _newSellerOfferPrice)
+        .then(
+      (value) {
+        if (value) {
+          AlertHelper.showToastAlert('Request price changed');
+
+          _showRequestBtn = false;
+          Navigator.of(context).pop();
+        } else
+          AlertHelper.showToastAlert("Something went wrong, Please try again!");
+      },
+    );
+
+    return true;
+  }
+}
