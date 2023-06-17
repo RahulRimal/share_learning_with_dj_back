@@ -16,12 +16,6 @@ import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../utils/payment.dart';
 
-enum PaymentMethod {
-  Esewa,
-  Khalti,
-  Cash,
-}
-
 class OrderDetailsScreen extends StatefulWidget {
   static const routeName = 'order-details-screen';
   const OrderDetailsScreen({Key? key}) : super(key: key);

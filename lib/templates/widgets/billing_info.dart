@@ -12,18 +12,13 @@ import '../../view_models/providers/order_provider.dart';
 import '../../view_models/providers/session_provider.dart';
 import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
+import '../managers/enum_managers.dart';
 import '../managers/font_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
 import '../screens/home_screen_new.dart';
 import '../utils/loading_helper.dart';
 import '../utils/payment.dart';
-
-enum PaymentMethod {
-  Esewa,
-  Khalti,
-  Cash,
-}
 
 class BillingInfo extends StatefulWidget {
   BillingInfo({Key? key, this.cartId}) : super(key: key);
@@ -39,35 +34,23 @@ class BillingInfo extends StatefulWidget {
 class _BillingInfoState extends State<BillingInfo> {
   final _form = GlobalKey<FormState>();
 
-  final _firstNameFocusNode = FocusNode();
-  final _lastNameFocusNode = FocusNode();
-  final _phoneNumberFocusNode = FocusNode();
-  final _emailFocusNode = FocusNode();
-
-  final _sideNoteFocusNode = FocusNode();
-
-  PaymentMethod _paymentMethod = PaymentMethod.Khalti;
-
   @override
   void initState() {
-    Provider.of<BookProvider>(context, listen: false)
-        .bindBillingInfoWidgetViewModel(context);
+    Provider.of<UserProvider>(context, listen: false)
+        .bindBillingInfoViewModel(context);
     super.initState();
   }
 
   @override
+  dispose() {
+    super.dispose();
+    Provider.of<UserProvider>(context, listen: false)
+        .unBindBillingInfoViewModel();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    BookProvider _bookProvider = context.watch<BookProvider>();
-
-    // OrderProvider orders = Provider.of<OrderProvider>(context);
-
-    // CartProvider carts = Provider.of<CartProvider>(context, listen: false);
-    // OrderRequests orderRequests =
-    //     Provider.of<OrderRequests>(context, listen: false);
-    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-    // Session authSession =
-    //     Provider.of<SessionProvider>(context).session as Session;
+    UserProvider _userProvider = context.watch<UserProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -142,15 +125,17 @@ class _BillingInfoState extends State<BillingInfo> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextFormField(
                                             // initialValue: _edittedUser.firstName,
-                                            initialValue: _bookProvider
-                                                    .billingInfo
+
+                                            initialValue: _userProvider
+                                                    .bookProvider.billingInfo
                                                     .containsKey('first_name')
-                                                ? _bookProvider
+                                                ? _userProvider.bookProvider
                                                     .billingInfo['first_name']
                                                 : null,
                                             cursorColor:
                                                 Theme.of(context).primaryColor,
-                                            focusNode: _firstNameFocusNode,
+                                            focusNode: _userProvider
+                                                .billingInfoViewModelFirstNameFocusNode,
                                             decoration: InputDecoration(
                                               labelText: 'First Name',
                                               focusColor: Colors.redAccent,
@@ -161,8 +146,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                                 AutovalidateMode.always,
                                             onFieldSubmitted: (_) {
                                               FocusScope.of(context)
-                                                  .requestFocus(
-                                                      _lastNameFocusNode);
+                                                  .requestFocus(_userProvider
+                                                      .billingInfoViewModelLastNameFocusNode);
                                             },
                                             validator: (value) {
                                               if (value!.isEmpty) {
@@ -171,8 +156,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                               return null;
                                             },
                                             onSaved: (value) {
-                                              _bookProvider.billingInfo[
-                                                      'first_name'] =
+                                              _userProvider.bookProvider
+                                                      .billingInfo['first_name'] =
                                                   value.toString();
                                             }),
                                       ),
@@ -181,16 +166,17 @@ class _BillingInfoState extends State<BillingInfo> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextFormField(
-                                          initialValue: _bookProvider
-                                                  .billingInfo
+                                          initialValue: _userProvider
+                                                  .bookProvider.billingInfo
                                                   .containsKey('last_name')
-                                              ? _bookProvider
+                                              ? _userProvider.bookProvider
                                                   .billingInfo['last_name']
                                               : null,
                                           keyboardType: TextInputType.text,
                                           cursorColor:
                                               Theme.of(context).primaryColor,
-                                          focusNode: _lastNameFocusNode,
+                                          focusNode: _userProvider
+                                              .billingInfoViewModelLastNameFocusNode,
                                           decoration: InputDecoration(
                                             labelText: 'Last Name',
                                           ),
@@ -198,8 +184,9 @@ class _BillingInfoState extends State<BillingInfo> {
                                           autovalidateMode:
                                               AutovalidateMode.always,
                                           onFieldSubmitted: (_) {
-                                            FocusScope.of(context)
-                                                .requestFocus(_emailFocusNode);
+                                            FocusScope.of(context).requestFocus(
+                                                _userProvider
+                                                    .billingInfoViewModelEmailFocusNode);
                                           },
                                           validator: (value) {
                                             if (value!.isEmpty) {
@@ -208,7 +195,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                             return null;
                                           },
                                           onSaved: (value) {
-                                            _bookProvider
+                                            _userProvider.bookProvider
                                                     .billingInfo['last_name'] =
                                                 value.toString();
                                           },
@@ -220,11 +207,14 @@ class _BillingInfoState extends State<BillingInfo> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
-                                      initialValue: _bookProvider.billingInfo
+                                      initialValue: _userProvider
+                                              .bookProvider.billingInfo
                                               .containsKey('email')
-                                          ? _bookProvider.billingInfo['email']
+                                          ? _userProvider
+                                              .bookProvider.billingInfo['email']
                                           : null,
-                                      focusNode: _emailFocusNode,
+                                      focusNode: _userProvider
+                                          .billingInfoViewModelEmailFocusNode,
                                       keyboardType: TextInputType.text,
                                       cursorColor:
                                           Theme.of(context).primaryColor,
@@ -235,7 +225,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                       autovalidateMode: AutovalidateMode.always,
                                       onFieldSubmitted: (_) {
                                         FocusScope.of(context).requestFocus(
-                                            _phoneNumberFocusNode);
+                                            _userProvider
+                                                .billingInfoViewModelPhoneNumberFocusNode);
                                       },
                                       validator: (value) {
                                         if (value!.isEmpty) {
@@ -244,18 +235,22 @@ class _BillingInfoState extends State<BillingInfo> {
                                         return null;
                                       },
                                       onSaved: (value) {
-                                        _bookProvider.billingInfo['email'] =
+                                        _userProvider.bookProvider
+                                                .billingInfo['email'] =
                                             value.toString();
                                       }),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
-                                      initialValue: _bookProvider.billingInfo
+                                      initialValue: _userProvider
+                                              .bookProvider.billingInfo
                                               .containsKey('phone')
-                                          ? _bookProvider.billingInfo['phone']
+                                          ? _userProvider
+                                              .bookProvider.billingInfo['phone']
                                           : null,
-                                      focusNode: _phoneNumberFocusNode,
+                                      focusNode: _userProvider
+                                          .billingInfoViewModelPhoneNumberFocusNode,
                                       keyboardType: TextInputType.number,
                                       cursorColor:
                                           Theme.of(context).primaryColor,
@@ -265,8 +260,9 @@ class _BillingInfoState extends State<BillingInfo> {
                                       textInputAction: TextInputAction.next,
                                       autovalidateMode: AutovalidateMode.always,
                                       onFieldSubmitted: (_) {
-                                        FocusScope.of(context)
-                                            .requestFocus(_sideNoteFocusNode);
+                                        FocusScope.of(context).requestFocus(
+                                            _userProvider
+                                                .billingInfoViewModelSideNoteFocusNode);
                                       },
                                       validator: (value) {
                                         if (value!.isEmpty) {
@@ -275,7 +271,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                         return null;
                                       },
                                       onSaved: (value) {
-                                        _bookProvider.billingInfo['phone'] =
+                                        _userProvider.bookProvider
+                                                .billingInfo['phone'] =
                                             value.toString();
                                       }),
                                 ),
@@ -283,7 +280,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
                                     // initialValue: _edittedUser.description,
-                                    focusNode: _sideNoteFocusNode,
+                                    focusNode: _userProvider
+                                        .billingInfoViewModelSideNoteFocusNode,
                                     keyboardType: TextInputType.multiline,
                                     cursorColor: Theme.of(context).primaryColor,
                                     decoration: InputDecoration(
@@ -304,7 +302,8 @@ class _BillingInfoState extends State<BillingInfo> {
                                     //   return null;
                                     // },
                                     onSaved: (value) {
-                                      _bookProvider.billingInfo['side_note'] =
+                                      _userProvider.bookProvider
+                                              .billingInfo['side_note'] =
                                           value.toString();
                                     },
                                   ),
@@ -348,10 +347,10 @@ class _BillingInfoState extends State<BillingInfo> {
                         child: DropdownButton(
                             isExpanded: true,
                             style: getBoldStyle(color: ColorManager.black),
-                            value: _bookProvider
+                            value: _userProvider.bookProvider
                                 .billingInfo['convenient_location'],
                             // value: _locationOptions[0],
-                            items: _bookProvider.locationOptions
+                            items: _userProvider.bookProvider.locationOptions
                                 .map((option) => DropdownMenuItem(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -366,7 +365,7 @@ class _BillingInfoState extends State<BillingInfo> {
                                 .toList(),
                             onChanged: (value) {
                               setState(() {
-                                _bookProvider
+                                _userProvider.bookProvider
                                         .billingInfo['convenient_location'] =
                                     value as String;
                               });
@@ -395,26 +394,31 @@ class _BillingInfoState extends State<BillingInfo> {
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _paymentMethod == PaymentMethod.Esewa
-                      ? ColorManager.green
-                      : ColorManager.lightGrey,
+                  backgroundColor:
+                      _userProvider.billingInfoViewModelPaymentMethod ==
+                              PaymentMethod.Esewa
+                          ? ColorManager.green
+                          : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
                     MediaQuery.of(context).size.width,
                   ),
                 ),
                 onPressed: () async {
-                  setState(() {
-                    _paymentMethod = PaymentMethod.Esewa;
-                  });
+                  // setState(() {
+                  _userProvider.billingInfoViewModelPaymentMethod =
+                      PaymentMethod.Esewa;
+                  // });
                 },
                 child: Text("Pay with e-Sewa"),
               ),
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _paymentMethod == PaymentMethod.Khalti
-                      ? ColorManager.purple
-                      : ColorManager.lightGrey,
+                  backgroundColor:
+                      _userProvider.billingInfoViewModelPaymentMethod ==
+                              PaymentMethod.Khalti
+                          ? ColorManager.purple
+                          : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
                     MediaQuery.of(context).size.width,
                   ),
@@ -422,7 +426,8 @@ class _BillingInfoState extends State<BillingInfo> {
                 onPressed: () async {
                   // _payWithKhalti();
                   setState(() {
-                    _paymentMethod = PaymentMethod.Khalti;
+                    _userProvider.billingInfoViewModelPaymentMethod =
+                        PaymentMethod.Khalti;
                   });
                 },
                 child: Text("Pay with Khalti"),
@@ -430,16 +435,19 @@ class _BillingInfoState extends State<BillingInfo> {
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _paymentMethod == PaymentMethod.Cash
-                      ? ColorManager.primary
-                      : ColorManager.lightGrey,
+                  backgroundColor:
+                      _userProvider.billingInfoViewModelPaymentMethod ==
+                              PaymentMethod.Cash
+                          ? ColorManager.primary
+                          : ColorManager.lightGrey,
                   fixedSize: Size.fromWidth(
                     MediaQuery.of(context).size.width,
                   ),
                 ),
                 onPressed: () async {
                   setState(() {
-                    _paymentMethod = PaymentMethod.Cash;
+                    _userProvider.billingInfoViewModelPaymentMethod =
+                        PaymentMethod.Cash;
                   });
                   // Initiate Ewsea payment
                   // EwseaResult result = await Ewsea.initializePayment(
@@ -519,7 +527,8 @@ class _BillingInfoState extends State<BillingInfo> {
 
                       String paymentStatus = 'P';
 
-                      if (_paymentMethod == PaymentMethod.Esewa) {
+                      if (_userProvider.billingInfoViewModelPaymentMethod ==
+                          PaymentMethod.Esewa) {
                         if (await PaymentHelper.payWithEsewa() == false) {
                           AlertHelper.showToastAlert(
                               "Something went wrong during payment. Please try again");
@@ -527,7 +536,8 @@ class _BillingInfoState extends State<BillingInfo> {
                         } else
                           paymentStatus = "C";
                       }
-                      if (_paymentMethod == PaymentMethod.Khalti) {
+                      if (_userProvider.billingInfoViewModelPaymentMethod ==
+                          PaymentMethod.Khalti) {
                         if (await PaymentHelper.payWithKhalti(context) ==
                             false) {
                           AlertHelper.showToastAlert(
@@ -552,13 +562,17 @@ class _BillingInfoState extends State<BillingInfo> {
                             bookProvider.sessionProvider.session as Session,
                         cartId: widget.cartId,
                         billingInfo: bookProvider.billingInfo,
-                        paymentMethod: _paymentMethod == PaymentMethod.Cash
+                        paymentMethod: _userProvider
+                                    .billingInfoViewModelPaymentMethod ==
+                                PaymentMethod.Cash
                             ? "C"
-                            : _paymentMethod == PaymentMethod.Esewa
+                            : _userProvider.billingInfoViewModelPaymentMethod ==
+                                    PaymentMethod.Esewa
                                 ? "E"
                                 : "K",
                       )) {
-                        if (_paymentMethod != PaymentMethod.Cash) {
+                        if (_userProvider.billingInfoViewModelPaymentMethod !=
+                            PaymentMethod.Cash) {
                           Order order = bookProvider.orderProvider.orders.last;
                           await bookProvider.orderProvider.updatePaymentStatus(
                               bookProvider.sessionProvider.session as Session,
@@ -571,7 +585,10 @@ class _BillingInfoState extends State<BillingInfo> {
                           await bookProvider.cartProvider.createCart(
                               bookProvider.sessionProvider.session as Session);
                           bookProvider.cartProvider.setCartItems([]);
-                          SharedPreferences prefs = await _prefs;
+                          // SharedPreferences prefs = await _prefs;
+                          SharedPreferences prefs =
+                              await _userProvider.preferences;
+
                           prefs.remove('cartId');
                           prefs.setString(
                               'cartId', bookProvider.cartProvider.cart!.id);

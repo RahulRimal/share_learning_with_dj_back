@@ -196,7 +196,7 @@ class SinglePostScreen extends StatelessWidget {
       //         loggedInUserSession,
       //         users.user,
       //       ),
-      drawer: AppDrawer(loggedInUserSession),
+      drawer: AppDrawer(),
       appBar: AppBar(
         actions: [
           Padding(

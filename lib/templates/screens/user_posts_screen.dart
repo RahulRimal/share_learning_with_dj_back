@@ -49,7 +49,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
 
     return SafeArea(
       child: Scaffold(
-        drawer: AppDrawer(_bookProvider.sessionProvider.session as Session),
+        drawer: AppDrawer(),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           elevation: 0,

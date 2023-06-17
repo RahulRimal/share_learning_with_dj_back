@@ -298,11 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
               ),
             ),
-            // drawer: _user.id == "temp"
-            //     ? AppDrawer(authenticatedSession, null)
-            //     : AppDrawer(authenticatedSession, _user),
-
-            drawer: AppDrawer(authenticatedSession),
+            drawer: AppDrawer(),
           );
   }
 }

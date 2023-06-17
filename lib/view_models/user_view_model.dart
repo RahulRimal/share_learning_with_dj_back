@@ -9,13 +9,23 @@ import '../models/api_status.dart';
 import '../models/session.dart';
 import '../models/user.dart';
 import '../templates/managers/color_manager.dart';
+import '../templates/managers/enum_managers.dart';
 import '../templates/managers/font_manager.dart';
 import '../templates/managers/style_manager.dart';
+import '../templates/screens/add_post_screen.dart';
+import '../templates/screens/cart_screen.dart';
 import '../templates/screens/home_screen_new.dart';
 import '../templates/screens/login_screen.dart';
+import '../templates/screens/order_details_screen.dart';
+import '../templates/screens/order_request_screen.dart';
+import '../templates/screens/order_requests_screen_for_seller.dart';
+import '../templates/screens/orders_screen_new.dart';
 import '../templates/screens/user_interests_screen.dart';
+import '../templates/screens/user_posts_screen.dart';
+import '../templates/screens/user_profile_screen.dart';
 import '../templates/utils/alert_helper.dart';
 import '../templates/utils/system_helper.dart';
+import '../templates/widgets/app_drawer.dart';
 
 mixin UserProfileScreenViewModel on BaseViewModel {
   // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -627,4 +637,102 @@ mixin UserInterestsScreenViewModel on BaseViewModel {
       }
     });
   }
+}
+
+mixin AppDrawerViewModel on BaseViewModel {
+  final List<DrawerItem> _drawerItems = [
+    DrawerItem(
+      icon: Icons.add_circle,
+      title: 'Add Post',
+      route: AddPostScreen.routeName,
+    ),
+    DrawerItem(
+      icon: Icons.person,
+      title: 'Your Posts',
+      route: UserPostsScreen.routeName,
+    ),
+    DrawerItem(
+      icon: Icons.person,
+      title: 'Your Profile',
+      route: UserProfileScreen.routeName,
+    ),
+    DrawerItem(
+      title: 'Your Cart',
+      icon: Icons.shop_rounded,
+      route: CartScreen.routeName,
+    ),
+    DrawerItem(
+      title: 'Your Requests',
+      icon: Icons.shop_rounded,
+      route: OrderRequestScreen.routeName,
+    ),
+    DrawerItem(
+      title: 'Requests for your books',
+      icon: Icons.shop_rounded,
+      route: OrderRequestsScreenForSeller.routeName,
+    ),
+    DrawerItem(
+        title: 'Your Orders',
+        icon: Icons.carpenter,
+        route: OrdersScreenNew.routeName),
+    DrawerItem(
+      title: 'Your Interests',
+      icon: Icons.carpenter,
+      route: UserInterestsScreen.routeName,
+    ),
+  ];
+
+  List<DrawerItem> get appDrawerViewModelDrawerItems => _drawerItems;
+
+  bindAppDrawerViewModel(BuildContext context) {
+    bindBaseViewModal(context);
+  }
+
+  unbindAppDrawerViewModel() {}
+
+  AppDrawerViewModelLogOut(BuildContext context) async {
+    bookProvider.setBooks([]);
+
+    commentProvider.setComments([]);
+
+    SharedPreferences prefs = await preferences;
+
+    prefs.remove('accessToken');
+    prefs.remove('refreshToken');
+    prefs.remove('isFirstTime');
+
+    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+  }
+}
+
+mixin BillingInfoViewModel on BaseViewModel {
+  final _firstNameFocusNode = FocusNode();
+  final _lastNameFocusNode = FocusNode();
+  final _phoneNumberFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+
+  final _sideNoteFocusNode = FocusNode();
+
+  late PaymentMethod _paymentMethod;
+
+  get billingInfoViewModelFirstNameFocusNode => _firstNameFocusNode;
+  get billingInfoViewModelLastNameFocusNode => _lastNameFocusNode;
+  get billingInfoViewModelPhoneNumberFocusNode => _phoneNumberFocusNode;
+  get billingInfoViewModelEmailFocusNode => _emailFocusNode;
+  get billingInfoViewModelSideNoteFocusNode => _sideNoteFocusNode;
+
+  PaymentMethod get billingInfoViewModelPaymentMethod => _paymentMethod;
+  set billingInfoViewModelPaymentMethod(PaymentMethod method) {
+    _paymentMethod = method;
+    notifyListeners();
+  }
+
+  bindBillingInfoViewModel(BuildContext context) {
+    bindBaseViewModal(context);
+    _paymentMethod = PaymentMethod.Khalti;
+
+    if (userProvider.user != null) setBillingInfo();
+  }
+
+  unBindBillingInfoViewModel() {}
 }

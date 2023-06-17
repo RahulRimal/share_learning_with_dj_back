@@ -458,7 +458,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                 ),
               ),
         // drawer: AppDrawer(authenticatedSession, null),
-        drawer: AppDrawer(_bookProvider.sessionProvider.session as Session),
+        drawer: AppDrawer(),
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 0,
         ),

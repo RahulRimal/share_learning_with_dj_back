@@ -476,7 +476,7 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                 ),
               ),
         // drawer: AppDrawer(authenticatedSession, null),
-        drawer: AppDrawer(_wishlistProvider.sessionProvider.session as Session),
+        drawer: AppDrawer(),
         bottomNavigationBar: CustomBottomNavigationBar(
           index: 1,
         ),
