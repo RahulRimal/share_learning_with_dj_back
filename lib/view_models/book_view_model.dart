@@ -495,3 +495,84 @@ mixin EditPostScreenViewModel on BaseViewModel, ChangeNotifier {
     return true;
   }
 }
+
+mixin UserPostsScreenViewModel on BaseViewModel, ChangeNotifier {
+  late int _selectedCategoryIndex;
+  int? _selectedUserId;
+  late List<Book> _userBooks;
+  // Making it nullable because i can check it for empty and not empty to show no books found text if list is not null but is empty, if we initialize it with empty list then we can't check if search result is empty
+  List<Book>? _filteredBooks;
+  final _searchTextController = TextEditingController();
+  late FocusNode _searchFocusNode;
+
+  late List<PostCategory> _categories;
+
+  int get userPostsScreenViewModelSelectedCategoryIndex =>
+      _selectedCategoryIndex;
+  set userPostsScreenViewModelSelectedCategoryIndex(int index) =>
+      _selectedCategoryIndex = index;
+
+  int? get userPostsScreenViewModelSelectedUserId => _selectedUserId;
+  set userPostsScreenViewModelSelectedUserId(int? index) =>
+      _selectedUserId = index;
+
+  List<Book> get userPostsScreenViewModelUserBooks => _userBooks;
+  set userPostsScreenViewModelUserBooks(List<Book> books) => _userBooks = books;
+
+  List<Book>? get userPostsScreenViewModelSelectedFilteredBooks =>
+      _filteredBooks;
+  set userPostsScreenViewModelSelectedFilteredBooks(
+          List<Book>? filteredBooks) =>
+      _filteredBooks = filteredBooks;
+
+  get userPostsScreenViewModelSearchTextController => _searchTextController;
+
+  get userPostsScreenViewModelSearchFocusNode => _searchFocusNode;
+
+  List<PostCategory> get userPostsScreenViewModelCategories => _categories;
+
+  set userPostsScreenViewModelCategories(List<PostCategory> categories) =>
+      _categories = categories;
+
+  bindUserPostsScreenViewModel(BuildContext context) {
+    bindBaseViewModal(context);
+    _searchFocusNode = FocusNode();
+    _selectedCategoryIndex = 0;
+    _categories = categoryProvider.categories;
+    _categories.insert(
+      0,
+      PostCategory(id: 0, name: 'All', postsCount: bookProvider.books.length),
+    );
+  }
+
+  unBindUserPostsScreenViewModel() {
+    _searchTextController.dispose();
+    _searchFocusNode.dispose();
+  }
+
+  userPostsScreenViewModelSearchUserBooks(GlobalKey<FormState> form) {
+    final _isValid = form.currentState!.validate();
+    if (!_isValid) {
+      return false;
+    }
+    form.currentState!.save();
+    _searchFocusNode.unfocus();
+    _selectedCategoryIndex = 0;
+    List<Book> allBooks = bookProvider.postsByUser(userProvider.user!.id);
+
+    String searchTerm = _searchTextController.text.toLowerCase();
+
+    List<Book> _filteredBookList = [];
+
+    for (Book book in allBooks) {
+      if (book.bookName.toLowerCase().contains(searchTerm)) {
+        _filteredBookList.add(book);
+      }
+    }
+
+    // setState(() {
+    _filteredBooks = _filteredBookList;
+    notifyListeners();
+    // });
+  }
+}

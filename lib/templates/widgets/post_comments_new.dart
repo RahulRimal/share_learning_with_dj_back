@@ -896,17 +896,24 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                   _commentProvider
                                                                       .postCommentNewCommentUser
                                                                       .id)) {
+                                                                _commentProvider
+                                                                        .bookProvider
+                                                                        .userPostsScreenViewModelSelectedUserId =
+                                                                    int.parse(
+                                                                        _commentProvider
+                                                                            .postCommentNewCommentUser
+                                                                            .id);
                                                                 Navigator.of(
                                                                         context)
                                                                     .pushNamed(
                                                                   UserPostsScreen
                                                                       .routeName,
-                                                                  arguments: {
-                                                                    'userId':
-                                                                        _commentProvider
-                                                                            .postCommentNewCommentUser
-                                                                            .id,
-                                                                  },
+                                                                  // arguments: {
+                                                                  //   'userId':
+                                                                  //       _commentProvider
+                                                                  //           .postCommentNewCommentUser
+                                                                  //           .id,
+                                                                  // },
                                                                 );
                                                               } else {
                                                                 ScaffoldMessenger.of(

@@ -28,9 +28,9 @@ mixin SplashScreenViewModel on BaseViewModel {
     _timer?.cancel();
   }
 
-  splashScreenViewModelStartDelay() {
-    _timer = Timer(
-        Duration(seconds: 2), splashScreenViewModelGoNext as void Function());
+  splashScreenViewModelStartDelay(BuildContext context) {
+    _timer =
+        Timer(Duration(seconds: 2), () => splashScreenViewModelGoNext(context));
   }
 
   splashScreenViewModelGoNext(BuildContext context) async {
@@ -107,6 +107,6 @@ mixin SplashScreenViewModel on BaseViewModel {
             'authSession': sessionProvider.session,
           });
     } else
-      splashScreenViewModelStartDelay();
+      splashScreenViewModelStartDelay(context);
   }
 }

@@ -24,28 +24,11 @@ class UserProfileEditScreen extends StatefulWidget {
 }
 
 class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
-  // XFile? _addedImage;
   final _form = GlobalKey<FormState>();
-
-  // late FocusNode _firstNameFocusNode;
-  // late FocusNode _lastNameFocusNode;
-  // late FocusNode _descriptionFocusNode;
-  // late FocusNode _classFocusNode;
-
-  // bool _showLoading = false;
-  // ImagePicker imagePicker = ImagePicker();
-
-  // bool _imageAdded = false;
 
   @override
   void initState() {
     super.initState();
-  }
-
-  Widget _showWaiting() {
-    return Center(
-      child: CircularProgressIndicator(),
-    );
   }
 
   @override

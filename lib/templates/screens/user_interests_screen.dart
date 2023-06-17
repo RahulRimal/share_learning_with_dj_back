@@ -146,6 +146,20 @@ class UserInterestsScreen extends StatefulWidget {
 
 class _UserInterestsScreenState extends State<UserInterestsScreen> {
   @override
+  void initState() {
+    super.initState();
+    Provider.of<UserProvider>(context, listen: false)
+        .bindUserInterestsScreenViewModel(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Provider.of<UserProvider>(context, listen: false)
+        .unBindUserInterestsScreenViewModel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     UserProvider _userProvider = context.watch<UserProvider>();
     return Scaffold(

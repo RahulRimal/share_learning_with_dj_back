@@ -179,7 +179,6 @@ mixin LoginScreenViewModel on BaseViewModel {
 
   bindLoginScreenViewModel(BuildContext context) {
     bindBaseViewModal(context);
-    // loginScreenPasswordFocusNode = FocusNode();
   }
 
   unbindLoginScreenViewModel() {
@@ -295,8 +294,10 @@ mixin LoginScreenViewModel on BaseViewModel {
         }
       } else {
         // setState(() {
-        loginScreenShowSpinner = false;
-        notifyListeners();
+        if (mounted) {
+          loginScreenShowSpinner = false;
+          notifyListeners();
+        }
         // });
         if (sessionProvider.sessionError != null) {
           List<String> data = [];
@@ -597,8 +598,8 @@ mixin UserInterestsScreenViewModel on BaseViewModel {
 
     userData.forEach((key, value) async {
       if (userProvider.user == null) {
-        Session userSession = sessionProvider.session as Session;
-        await userProvider.getUserByToken(userSession.accessToken);
+        await userProvider
+            .getUserByToken((sessionProvider.session as Session).accessToken);
       }
       var response =
           await userProvider.updateUserData(userProvider.user!.id, key, value);

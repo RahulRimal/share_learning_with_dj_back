@@ -40,6 +40,7 @@ class BookProvider
         AddPostScreenViewModel,
         EditPostScreenViewModel,
         HomeScreenNewViewModel,
+        UserPostsScreenViewModel,
         PostDetailsViewModel,
         BillingInfoWidgetViewModel {
   List<Book> _myBooks = [];

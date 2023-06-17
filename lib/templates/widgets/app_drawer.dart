@@ -108,6 +108,7 @@ class AppDrawer extends StatelessWidget {
   ];
 
   Widget getDrawerItem(BuildContext context, DrawerItem item) {
+    BookProvider _bookProvider = context.watch<BookProvider>();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: ListTile(
@@ -125,44 +126,31 @@ class AppDrawer extends StatelessWidget {
           onTap: () {
             if (item.route == HomeScreen.routeName)
               Navigator.pushNamed(
-                context, item.route,
-                // arguments: {'authSession': loggedInSession}
+                context,
+                item.route,
               );
             if (item.route == AddPostScreen.routeName)
               Navigator.pushNamed(
-                context, item.route,
-                // arguments: {
-                //   'loggedInUserSession': loggedInSession,
-                // }
+                context,
+                item.route,
               );
             if (item.route == UserPostsScreen.routeName)
-              Navigator.pushNamed(
-                context, item.route,
-                // arguments: {
-                //   // 'uId': loggedInSession.userId,
-                //   'uId': '1',
-                //   'loggedInUserSession': loggedInSession
-                // }
-              );
+              // Set selected user to null so current user books will be fetched, otherwise books of selected user will be fetched
+              _bookProvider.userPostsScreenViewModelSelectedUserId = null;
+            Navigator.pushNamed(
+              context,
+              item.route,
+            );
             if (item.route == UserProfileScreen.routeName) {
               Navigator.pushNamed(
                 context,
                 item.route,
-                // arguments: {
-                //   'loggedInUserSession': loggedInSession,
-                //   // 'user': users.user,
-                //   // 'user': loggedInUser,
-                // },
               );
             }
             if (item.route == CartScreen.routeName)
               Navigator.pushNamed(
                 context,
                 item.route,
-                // arguments: {
-                //   // 'uId': loggedInSession.userId,
-                //   'loggedInUserSession': loggedInSession
-                // },
               );
             if (item.route == OrderRequestScreen.routeName)
               Navigator.pushNamed(
@@ -178,7 +166,6 @@ class AppDrawer extends StatelessWidget {
               Navigator.pushNamed(
                 context,
                 item.route,
-                // arguments: {'loggedInUserSession': loggedInSession},
               );
             if (item.route == UserInterestsScreen.routeName) {
               Navigator.pushNamed(

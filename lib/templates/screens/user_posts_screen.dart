@@ -28,90 +28,36 @@ class UserPostsScreen extends StatefulWidget {
 
 class _UserPostsScreenState extends State<UserPostsScreen> {
   final _form = GlobalKey<FormState>();
-  late int _selectedCategoryIndex;
-  late List<Book> _userBooks;
-  // Making it nullable because i can check it for empty and not empty to show no books found text if list is not null but is empty, if we initialize it with empty list then we can't check if search result is empty
-  List<Book>? filteredBooks;
-
-  final _searchTextController = TextEditingController();
-  final _searchFocusNode = FocusNode();
-
-  _searchUserBooks(List<Book> allBooks) {
-    final _isValid = _form.currentState!.validate();
-    if (!_isValid) {
-      return false;
-    }
-    _form.currentState!.save();
-
-    _searchFocusNode.unfocus();
-    _selectedCategoryIndex = 0;
-
-    String searchTerm = _searchTextController.text.toLowerCase();
-
-    List<Book> _filteredBookList = [];
-
-    for (Book book in allBooks) {
-      if (book.bookName.toLowerCase().contains(searchTerm)) {
-        _filteredBookList.add(book);
-      }
-    }
-
-    setState(() {
-      filteredBooks = _filteredBookList;
-    });
-  }
 
   @override
   void initState() {
-    _selectedCategoryIndex = 0;
     super.initState();
+    Provider.of<BookProvider>(context, listen: false)
+        .bindUserPostsScreenViewModel(context);
   }
 
   @override
   void dispose() {
-    _searchTextController.dispose();
-    _searchFocusNode.dispose();
     super.dispose();
+    Provider.of<BookProvider>(context, listen: false)
+        .unBindUserPostsScreenViewModel();
   }
 
   @override
   Widget build(BuildContext context) {
-    Object? args = ModalRoute.of(context)!.settings.arguments;
-    String? _selectedUserId;
-    if (args != null) {
-      _selectedUserId = (args as Map)['userId'];
-    }
-
-    UserProvider users = Provider.of<UserProvider>(context);
-    Session loggedInUserSession =
-        Provider.of<SessionProvider>(context).session as Session;
-
-    users.getUserByToken(loggedInUserSession.accessToken);
-
-    List<Book> _allPosts =
-        Provider.of<BookProvider>(context).postsByUser(users.user!.id);
-
-    BookProvider _books = Provider.of<BookProvider>(context, listen: false);
-    CategoryProvider _categoryProvider =
-        Provider.of<CategoryProvider>(context, listen: false);
-
-    List<PostCategory> _categories = _categoryProvider.categories;
-    _categories.insert(
-      0,
-      PostCategory(id: 0, name: 'All', postsCount: _books.books.length),
-    );
+    BookProvider _bookProvider = context.watch<BookProvider>();
 
     return SafeArea(
       child: Scaffold(
-        drawer: AppDrawer(loggedInUserSession),
+        drawer: AppDrawer(_bookProvider.sessionProvider.session as Session),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           elevation: 0,
-          // backgroundColor: ColorManager.lightGrey,
+
           backgroundColor: Colors.transparent,
 
           toolbarHeight: 15.h,
-          // flexibleSpace: Stack(
+
           //   children: [
           //     // Background container with rounded corners
           //     Container(
@@ -148,9 +94,9 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
           //                   },
           //                 ),
           //               ),
-          //               _selectedUserId != null
+          //               _bookProvider.userProvider.user!.id != null
           //                   ? FutureBuilder(
-          //                       future: users.getUserById(_selectedUserId),
+          //                       future: _bookProvider.userProvider.getUserById(_bookProvider.userProvider.user!.id),
           //                       builder: (context, snapshot) {
           //                         if (snapshot.connectionState ==
           //                             ConnectionState.waiting) {
@@ -182,16 +128,16 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
           //                     ),
           //               Padding(
           //                 padding: const EdgeInsets.all(8.0),
-          //                 child: users.user != null
+          //                 child: _bookProvider.userProvider.user != null
           //                     ? CircleAvatar(
           //                         backgroundImage: NetworkImage(
           //                           UserHelper.userProfileImage(
-          //                               users.user as User),
+          //                               _bookProvider.userProvider.user as User),
           //                         ),
           //                       )
           //                     : FutureBuilder(
-          //                         // future: users.getUserByIdAndSession(
-          //                         future: users.getUserById(
+          //                         // future: _bookProvider.userProvider.getUserByIdAndSession(
+          //                         future: _bookProvider.userProvider.getUserById(
           //                             // loggedInUserSession, loggedInUserSession.userId),
           //                             '1'),
           //                         builder: (ctx, snapshot) {
@@ -232,27 +178,27 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
           //             child: Padding(
           //               padding: const EdgeInsets.only(right: 12),
           //               child: TextFormField(
-          //                 controller: _searchTextController,
-          //                 focusNode: _searchFocusNode,
+          //                 controller: _bookProvider.userPostsScreenViewModelSearchTextController,
+          //                 focusNode: _bookProvider.userPostsScreenViewModelSearchFocusNode,
           //                 cursorColor: ColorManager.primary,
           //                 decoration: InputDecoration(
           //                   prefixIcon: Icon(Icons.search),
           //                   prefixIconColor: ColorManager.primary,
-          //                   suffixIcon: filteredBooks == null
+          //                   suffixIcon: _bookProvider.userPostsScreenViewModelSelectedFilteredBooks == null
           //                       ? IconButton(
           //                           icon: Icon(
           //                             Icons.send,
           //                           ),
           //                           onPressed: () =>
-          //                               _searchUserBooks(_allPosts))
+          //                               _bookProvider._bookProvider.userPostsScreenViewModelSearchUserBooks(_form))
           //                       : IconButton(
           //                           icon: Icon(
           //                             Icons.cancel_outlined,
           //                           ),
           //                           onPressed: () {
           //                             setState(() {
-          //                               filteredBooks = null;
-          //                               _searchTextController.text = '';
+          //                               _bookProvider.userPostsScreenViewModelSelectedFilteredBooks = null;
+          //                               _bookProvider.userPostsScreenViewModelSearchTextController.text = '';
           //                             });
           //                           },
           //                         ),
@@ -283,7 +229,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
           //                   return null;
           //                 },
           //                 onFieldSubmitted: (_) {
-          //                   _searchUserBooks(_allPosts);
+          //                   _bookProvider._bookProvider.userPostsScreenViewModelSearchUserBooks(_form);
           //                 },
           //               ),
           //             ),
@@ -330,50 +276,62 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                             },
                           ),
                         ),
-                        _selectedUserId != null
-                            ? FutureBuilder(
-                                future: users.getUserById(_selectedUserId),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return CircularProgressIndicator(
-                                      color: ColorManager.secondary,
-                                    );
-                                  } else {
-                                    if (snapshot.hasError) {
-                                      return Container();
-                                    } else {
-                                      User user = snapshot.data as User;
-                                      return Text(
-                                        "${user.firstName}'s Posts",
-                                        style: getBoldStyle(
-                                          color: ColorManager.white,
-                                          fontSize: FontSize.s16,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                },
-                              )
-                            : Text(
-                                'Your Posts',
-                                style: getBoldStyle(
-                                  color: ColorManager.white,
-                                  fontSize: FontSize.s16,
-                                ),
-                              ),
+                        // if (_bookProvider.userProvider.user!.id != null) FutureBuilder(
+                        if (_bookProvider
+                                    .userPostsScreenViewModelSelectedUserId !=
+                                null &&
+                            _bookProvider.userProvider.user!.id !=
+                                _bookProvider
+                                    .userPostsScreenViewModelSelectedUserId
+                                    .toString())
+                          FutureBuilder(
+                            future: _bookProvider.userProvider.getUserById(
+                                // _bookProvider.userProvider.user!.id),
+                                _bookProvider
+                                    .userPostsScreenViewModelSelectedUserId
+                                    .toString()),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator(
+                                  color: ColorManager.secondary,
+                                );
+                              } else {
+                                if (snapshot.hasError) {
+                                  return Container();
+                                } else {
+                                  User user = snapshot.data as User;
+                                  return Text(
+                                    "${user.firstName}'s Posts",
+                                    style: getBoldStyle(
+                                      color: ColorManager.white,
+                                      fontSize: FontSize.s16,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          )
+                        else
+                          Text(
+                            'Your Posts',
+                            style: getBoldStyle(
+                              color: ColorManager.white,
+                              fontSize: FontSize.s16,
+                            ),
+                          ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: users.user != null
+                          child: _bookProvider.userProvider.user != null
                               ? CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                    UserHelper.userProfileImage(
-                                        users.user as User),
+                                    UserHelper.userProfileImage(_bookProvider
+                                        .userProvider.user as User),
                                   ),
                                 )
                               : FutureBuilder(
-                                  // future: users.getUserByIdAndSession(
-                                  future: users.getUserById(
+                                  // future: _bookProvider.userProvider.getUserByIdAndSession(
+                                  future: _bookProvider.userProvider.getUserById(
                                       // loggedInUserSession, loggedInUserSession.userId),
                                       '1'),
                                   builder: (ctx, snapshot) {
@@ -414,8 +372,10 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 12),
                         child: TextFormField(
-                          controller: _searchTextController,
-                          focusNode: _searchFocusNode,
+                          controller: _bookProvider
+                              .userPostsScreenViewModelSearchTextController,
+                          focusNode: _bookProvider
+                              .userPostsScreenViewModelSearchFocusNode,
                           cursorColor: ColorManager.primary,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -425,21 +385,29 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                             ),
                             prefixIcon: Icon(Icons.search),
                             prefixIconColor: ColorManager.primary,
-                            suffixIcon: filteredBooks == null
+
+                            suffixIcon: _bookProvider
+                                        .userPostsScreenViewModelSelectedFilteredBooks ==
+                                    null
                                 ? IconButton(
                                     icon: Icon(
                                       Icons.send,
                                     ),
-                                    onPressed: () =>
-                                        _searchUserBooks(_allPosts))
+                                    onPressed: () => _bookProvider
+                                        .userPostsScreenViewModelSearchUserBooks(
+                                            _form))
                                 : IconButton(
                                     icon: Icon(
                                       Icons.cancel_outlined,
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        filteredBooks = null;
-                                        _searchTextController.text = '';
+                                        _bookProvider
+                                                .userPostsScreenViewModelSelectedFilteredBooks =
+                                            null;
+                                        _bookProvider
+                                            .userPostsScreenViewModelSearchTextController
+                                            .text = '';
                                       });
                                     },
                                   ),
@@ -474,7 +442,8 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                             return null;
                           },
                           onFieldSubmitted: (_) {
-                            _searchUserBooks(_allPosts);
+                            _bookProvider
+                                .userPostsScreenViewModelSearchUserBooks(_form);
                           },
                         ),
                       ),
@@ -492,7 +461,11 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
               SizedBox(
                 height: AppHeight.h20,
               ),
-              if (filteredBooks != null && filteredBooks!.length <= 0)
+              if (_bookProvider.userPostsScreenViewModelSelectedFilteredBooks !=
+                      null &&
+                  _bookProvider.userPostsScreenViewModelSelectedFilteredBooks!
+                          .length <=
+                      0)
                 Center(
                   child: Text(
                     'No books found',
@@ -500,7 +473,8 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                         fontSize: FontSize.s20, color: ColorManager.primary),
                   ),
                 ),
-              if (filteredBooks != null)
+              if (_bookProvider.userPostsScreenViewModelSelectedFilteredBooks !=
+                  null)
                 MasonryGridView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -511,25 +485,35 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                   ),
                   gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2),
-                  itemCount: filteredBooks!.length,
+                  itemCount: _bookProvider
+                      .userPostsScreenViewModelSelectedFilteredBooks!.length,
                   itemBuilder: (ctx, idx) => PostNew(
-                    book: filteredBooks![idx],
+                    book: _bookProvider
+                        .userPostsScreenViewModelSelectedFilteredBooks![idx],
                     // authSession: loggedInUserSession,
                   ),
                 )
               else
                 FutureBuilder(
-                  future: _categories[_selectedCategoryIndex]
+                  future: _bookProvider
+                              .userPostsScreenViewModelCategories[_bookProvider
+                                  .userPostsScreenViewModelSelectedCategoryIndex]
                               .name
                               .toLowerCase() ==
                           'all'
-                      ? _books.getUserBooks(_selectedUserId != null
-                          ? _selectedUserId
-                          : Provider.of<UserProvider>(context, listen: false)
-                              .user!
-                              .id)
-                      : _books.getBooksByCategory(loggedInUserSession,
-                          _categories[_selectedCategoryIndex].id.toString()),
+                      ? _bookProvider.getUserBooks(_bookProvider
+                                  .userPostsScreenViewModelSelectedUserId !=
+                              null
+                          ? _bookProvider.userPostsScreenViewModelSelectedUserId
+                              .toString()
+                          : _bookProvider.userProvider.user!.id)
+                      : _bookProvider.getBooksByCategory(
+                          _bookProvider.sessionProvider.session as Session,
+                          _bookProvider
+                              .userPostsScreenViewModelCategories[_bookProvider
+                                  .userPostsScreenViewModelSelectedCategoryIndex]
+                              .id
+                              .toString()),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -550,9 +534,11 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                                 .toString()),
                           );
                         } else {
-                          _userBooks =
+                          _bookProvider.userPostsScreenViewModelUserBooks =
                               (snapshot.data as Map)['books'] as List<Book>;
-                          return _userBooks.length <= 0
+                          return _bookProvider.userPostsScreenViewModelUserBooks
+                                      .length <=
+                                  0
                               ? Center(
                                   child: Text(
                                     'No books found',
@@ -572,9 +558,11 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                                   gridDelegate:
                                       SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2),
-                                  itemCount: _userBooks.length,
+                                  itemCount: _bookProvider
+                                      .userPostsScreenViewModelUserBooks.length,
                                   itemBuilder: (ctx, idx) => PostNew(
-                                    book: _userBooks[idx],
+                                    book: _bookProvider
+                                        .userPostsScreenViewModelUserBooks[idx],
                                     // authSession: loggedInUserSession,
                                   ),
                                 );
