@@ -24,13 +24,14 @@ import '../../view_models/providers/session_provider.dart';
 import '../../view_models/providers/user_provider.dart';
 import '../managers/api_values_manager.dart';
 import '../managers/assets_manager.dart';
+import '../managers/routes_manager.dart';
 import '../utils/user_helper.dart';
 import 'user_profile_screen.dart';
 
 class WishlistedBooksScreen extends StatefulWidget {
   const WishlistedBooksScreen({Key? key}) : super(key: key);
 
-  static const routeName = '/wishlists';
+  // static const routeName = '/wishlists';
 
   @override
   State<WishlistedBooksScreen> createState() => _WishlistedBooksScreenState();
@@ -48,9 +49,9 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<WishlistProvider>(context, listen: false)
         .unbindWishlistScreenViewModel();
+    super.dispose();
   }
 
   @override
@@ -108,8 +109,8 @@ class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
                             bottom: AppPadding.p4,
                           ),
                           iconSize: AppSize.s40,
-                          onPressed: () => Navigator.pushNamed(
-                              context, UserProfileScreen.routeName),
+                          onPressed: () => Navigator.pushNamed(context,
+                              RoutesManager.userProfileEditScreenRoute),
                           icon: (_wishlistProvider.userProvider.user as User)
                                       .image ==
                                   null

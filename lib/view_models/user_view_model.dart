@@ -11,6 +11,7 @@ import '../models/user.dart';
 import '../templates/managers/color_manager.dart';
 import '../templates/managers/enum_managers.dart';
 import '../templates/managers/font_manager.dart';
+import '../templates/managers/routes_manager.dart';
 import '../templates/managers/style_manager.dart';
 import '../templates/screens/add_post_screen.dart';
 import '../templates/screens/cart_screen.dart';
@@ -53,7 +54,7 @@ mixin UserProfileScreenViewModel on BaseViewModel {
     commentProvider.setComments([]);
     prefs.remove('accessToken');
     prefs.remove('refreshToken');
-    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    Navigator.pushReplacementNamed(context, RoutesManager.loginScreenRoute);
   }
 
   userProfileScreenDeleteUserAccount(String password) async {
@@ -189,6 +190,7 @@ mixin LoginScreenViewModel on BaseViewModel {
 
   bindLoginScreenViewModel(BuildContext context) {
     bindBaseViewModal(context);
+    loginScreenPasswordFocusNode = FocusNode();
   }
 
   unbindLoginScreenViewModel() {
@@ -224,12 +226,12 @@ mixin LoginScreenViewModel on BaseViewModel {
 
       if (await userProvider.haveProvidedData(userProvider.user!.id)) {
         Navigator.of(context)
-            .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
+            .pushReplacementNamed(RoutesManager.homeScreenNewRoute, arguments: {
           'authSession': sessionProvider.session,
         });
       } else {
         Navigator.of(context)
-            .pushReplacementNamed(UserInterestsScreen.routeName);
+            .pushReplacementNamed(RoutesManager.userInterestsScreenRoute);
       }
     }
   }
@@ -282,20 +284,22 @@ mixin LoginScreenViewModel on BaseViewModel {
               prefs.getBool('isFirstTime') == false) {
             Navigator.of(context)
                 // .pushReplacementNamed(HomeScreen.routeName, arguments: {
-                .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
-              'authSession': sessionProvider.session,
-            });
+                .pushReplacementNamed(RoutesManager.homeScreenNewRoute,
+                    arguments: {
+                  'authSession': sessionProvider.session,
+                });
           } else {
             if (await userProvider.haveProvidedData(userProvider.user!.id)) {
               prefs.setBool('isFirstTime', false);
               Navigator.of(context)
                   // .pushReplacementNamed(HomeScreen.routeName, arguments: {
-                  .pushReplacementNamed(HomeScreenNew.routeName, arguments: {
-                'authSession': sessionProvider.session,
-              });
+                  .pushReplacementNamed(RoutesManager.homeScreenNewRoute,
+                      arguments: {
+                    'authSession': sessionProvider.session,
+                  });
             } else {
               Navigator.of(context).pushReplacementNamed(
-                  UserInterestsScreen.routeName,
+                  RoutesManager.userInterestsScreenRoute,
                   arguments: {
                     'authSession': sessionProvider.session,
                   });
@@ -306,7 +310,7 @@ mixin LoginScreenViewModel on BaseViewModel {
         // setState(() {
         if (mounted) {
           loginScreenShowSpinner = false;
-          notifyListeners();
+          // notifyListeners();
         }
         // });
         if (sessionProvider.sessionError != null) {
@@ -357,8 +361,10 @@ mixin LoginScreenViewModel on BaseViewModel {
 }
 
 mixin SignUpScreenViewModel on BaseViewModel {
-  FocusNode signUpScreenPasswordFocusNode = FocusNode();
-  FocusNode signUpScreenEmailFocusNode = FocusNode();
+  // FocusNode signUpScreenPasswordFocusNode = FocusNode();
+  // FocusNode signUpScreenEmailFocusNode = FocusNode();
+  late FocusNode signUpScreenPasswordFocusNode;
+  late FocusNode signUpScreenEmailFocusNode;
   var signUpScreenUserpassword;
   bool signUpScreenVisible = false;
   var signUpScreenShowSpinner = false;
@@ -376,6 +382,17 @@ mixin SignUpScreenViewModel on BaseViewModel {
     followers: '',
     createdDate: NepaliDateTime.now(),
   );
+
+  bindSignUpScreenViewModel(BuildContext context) {
+    bindBaseViewModal(context);
+    signUpScreenPasswordFocusNode = FocusNode();
+    signUpScreenEmailFocusNode = FocusNode();
+  }
+
+  unBindSignUpScreenViewModel() {
+    signUpScreenPasswordFocusNode.dispose();
+    signUpScreenEmailFocusNode.dispose();
+  }
 
   signUpScreenGoogleSignIn() async {
     // final users = Provider.of<Users>(context, listen: false);
@@ -449,7 +466,7 @@ mixin SignUpScreenViewModel on BaseViewModel {
                 onPressed: () {
                   // Navigator.of(context).pop();
                   Navigator.of(context)
-                      .pushReplacementNamed(LoginScreen.routeName);
+                      .pushReplacementNamed(RoutesManager.loginScreenRoute);
                 },
               ),
             ],
@@ -625,7 +642,8 @@ mixin UserInterestsScreenViewModel on BaseViewModel {
           // });
         }
         if (mounted) {
-          Navigator.pushReplacementNamed(context, HomeScreenNew.routeName);
+          Navigator.pushReplacementNamed(
+              context, RoutesManager.homeScreenNewRoute);
         }
       }
       if (response is Failure) {
@@ -644,41 +662,41 @@ mixin AppDrawerViewModel on BaseViewModel {
     DrawerItem(
       icon: Icons.add_circle,
       title: 'Add Post',
-      route: AddPostScreen.routeName,
+      route: RoutesManager.addPostScreenRoute,
     ),
     DrawerItem(
       icon: Icons.person,
       title: 'Your Posts',
-      route: UserPostsScreen.routeName,
+      route: RoutesManager.userPostsScreenRoute,
     ),
     DrawerItem(
       icon: Icons.person,
       title: 'Your Profile',
-      route: UserProfileScreen.routeName,
+      route: RoutesManager.userProfileEditScreenRoute,
     ),
     DrawerItem(
       title: 'Your Cart',
       icon: Icons.shop_rounded,
-      route: CartScreen.routeName,
+      route: RoutesManager.cartScreenRoute,
     ),
     DrawerItem(
       title: 'Your Requests',
       icon: Icons.shop_rounded,
-      route: OrderRequestScreen.routeName,
+      route: RoutesManager.orderRequestScreenRoute,
     ),
     DrawerItem(
       title: 'Requests for your books',
       icon: Icons.shop_rounded,
-      route: OrderRequestsScreenForSeller.routeName,
+      route: RoutesManager.orderRequestsScreenForSellerRoute,
     ),
     DrawerItem(
         title: 'Your Orders',
         icon: Icons.carpenter,
-        route: OrdersScreenNew.routeName),
+        route: RoutesManager.ordersScreenNewRoute),
     DrawerItem(
       title: 'Your Interests',
       icon: Icons.carpenter,
-      route: UserInterestsScreen.routeName,
+      route: RoutesManager.userInterestsScreenRoute,
     ),
   ];
 
@@ -701,7 +719,7 @@ mixin AppDrawerViewModel on BaseViewModel {
     prefs.remove('refreshToken');
     prefs.remove('isFirstTime');
 
-    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    Navigator.pushReplacementNamed(context, RoutesManager.loginScreenRoute);
   }
 }
 

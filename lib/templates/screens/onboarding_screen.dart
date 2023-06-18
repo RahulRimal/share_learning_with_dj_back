@@ -9,10 +9,12 @@ import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 
+import '../managers/routes_manager.dart';
+
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({Key? key}) : super(key: key);
 
-  static const routeName = '/on-board';
+  // static const routeName = '/on-board';
 
   @override
   _OnBoardingScreenState createState() => _OnBoardingScreenState();
@@ -68,7 +70,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 child: TextButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(
-                        context, LoginScreen.routeName);
+                        context, RoutesManager.loginScreenRoute);
                     // Navigator.pushReplacementNamed(
                     //     context, HomeScreen.routeName);
                   },

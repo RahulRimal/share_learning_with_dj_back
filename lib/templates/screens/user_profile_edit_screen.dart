@@ -13,11 +13,12 @@ import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
 import '../managers/assets_manager.dart';
+import '../managers/routes_manager.dart';
 
 class UserProfileEditScreen extends StatefulWidget {
   const UserProfileEditScreen({Key? key}) : super(key: key);
 
-  static const String routeName = '/user-profile-edit';
+  // static const String routeName = '/user-profile-edit';
 
   @override
   State<UserProfileEditScreen> createState() => _UserProfileEditScreenState();
@@ -25,11 +26,6 @@ class UserProfileEditScreen extends StatefulWidget {
 
 class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
   final _form = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -257,7 +253,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                                 });
                           Navigator.pushReplacementNamed(
                             context,
-                            UserProfileScreen.routeName,
+                            RoutesManager.userProfileScreenRoute,
                           );
                         },
                         child: Text(

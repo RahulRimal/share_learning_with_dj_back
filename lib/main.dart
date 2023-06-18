@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_learning/view_models/providers/theme_provider.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
 
 import 'firebase_options.dart';
 import 'models/session.dart';
+import 'templates/managers/routes_manager.dart';
 import 'templates/managers/strings_manager.dart';
 import 'templates/managers/theme_manager.dart';
 import 'templates/screens/add_post_screen.dart';
@@ -152,42 +154,36 @@ class MyApp extends StatelessWidget {
               navigatorObservers: [BotToastNavigatorObserver()],
               debugShowCheckedModeBanner: false,
               theme: getCupertinoApplicationTheme(),
-              // home: HomeScreen(),
-              home: SplashScreen(),
-              // home: TempScreen(),
-              // home: OnBoardingScreen(),
-              // home: AddPostScreen(),
-              // home: LoginSignupScreen(),
-              // home: LoginScreen(),
-              // home: CartScreen(),
-              // home: SignUpScreen(),
-              routes: {
-                SinglePostScreen.routeName: (context) => SinglePostScreen(),
-                UserPostsScreen.routeName: (context) => UserPostsScreen(),
-                AddPostScreen.routeName: (context) => AddPostScreen(),
-                EditPostScreen.routeName: (context) => EditPostScreen(),
-                WishlistedBooksScreen.routeName: (context) =>
-                    WishlistedBooksScreen(),
-                HomeScreen.routeName: (context) => HomeScreen(),
-                HomeScreenNew.routeName: (context) => HomeScreenNew(),
-                SplashScreen.routeName: (context) => SplashScreen(),
-                OnBoardingScreen.routeName: (context) => OnBoardingScreen(),
-                LoginScreen.routeName: (context) => LoginScreen(),
-                SignUpScreen.routeName: (context) => SignUpScreen(),
-                LoginSignupScreen.routeName: (context) => LoginSignupScreen(),
-                UserProfileScreen.routeName: (context) => UserProfileScreen(),
-                UserProfileEditScreen.routeName: (context) =>
-                    UserProfileEditScreen(),
-                CartScreen.routeName: (context) => CartScreen(),
-                OrderRequestScreen.routeName: (context) => OrderRequestScreen(),
-                OrderRequestDetailsScreen.routeName: (context) =>
-                    OrderRequestDetailsScreen(),
-                OrderScreen.routeName: (context) => OrderScreen(),
-                OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
-                OrderDetailsScreen.routeName: (context) => OrderDetailsScreen(),
-                UserInterestsScreen.routeName: (context) =>
-                    UserInterestsScreen(),
-              },
+              onGenerateRoute: RouteGenerator.getRoute,
+              initialRoute: RoutesManager.splashScreenRoute,
+              // home: SplashScreen(),
+              // routes: {
+              //   SinglePostScreen.routeName: (context) => SinglePostScreen(),
+              //   UserPostsScreen.routeName: (context) => UserPostsScreen(),
+              //   AddPostScreen.routeName: (context) => AddPostScreen(),
+              //   EditPostScreen.routeName: (context) => EditPostScreen(),
+              //   WishlistedBooksScreen.routeName: (context) =>
+              //       WishlistedBooksScreen(),
+              //   HomeScreen.routeName: (context) => HomeScreen(),
+              //   HomeScreenNew.routeName: (context) => HomeScreenNew(),
+              //   SplashScreen.routeName: (context) => SplashScreen(),
+              //   OnBoardingScreen.routeName: (context) => OnBoardingScreen(),
+              //   LoginScreen.routeName: (context) => LoginScreen(),
+              //   SignUpScreen.routeName: (context) => SignUpScreen(),
+              //   LoginSignupScreen.routeName: (context) => LoginSignupScreen(),
+              //   UserProfileScreen.routeName: (context) => UserProfileScreen(),
+              //   UserProfileEditScreen.routeName: (context) =>
+              //       UserProfileEditScreen(),
+              //   CartScreen.routeName: (context) => CartScreen(),
+              //   OrderRequestScreen.routeName: (context) => OrderRequestScreen(),
+              //   OrderRequestDetailsScreen.routeName: (context) =>
+              //       OrderRequestDetailsScreen(),
+              //   OrderScreen.routeName: (context) => OrderScreen(),
+              //   OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
+              //   OrderDetailsScreen.routeName: (context) => OrderDetailsScreen(),
+              //   UserInterestsScreen.routeName: (context) =>
+              //       UserInterestsScreen(),
+              // },
             )
           : KhaltiScope(
               publicKey: 'test_public_key_78965ea539884431b8e9172178d08e91',
@@ -196,66 +192,68 @@ class MyApp extends StatelessWidget {
                 MyApp.navigatorKey = navKey;
                 return ResponsiveSizer(
                     builder: (context, orientation, screenType) {
-                  return MaterialApp(
-                    navigatorKey: navKey,
-                    localizationsDelegates: const [
-                      KhaltiLocalizations.delegate,
-                    ],
-                    builder: BotToastInit(),
-                    navigatorObservers: [BotToastNavigatorObserver()],
-                    debugShowCheckedModeBanner: false,
-                    title: AppStrings.appTitle,
-                    theme: getApplicationTheme(ThemeMode.light),
+                  return ChangeNotifierProvider(
+                    create: (context) => ThemeProvider(),
+                    builder: (context, _) {
+                      final themeProvider =
+                          Provider.of<ThemeProvider>(context, listen: false);
+                      return MaterialApp(
+                        navigatorKey: navKey,
+                        onGenerateRoute: RouteGenerator.getRoute,
+                        initialRoute: RoutesManager.splashScreenRoute,
+                        localizationsDelegates: const [
+                          KhaltiLocalizations.delegate,
+                        ],
+                        builder: BotToastInit(),
+                        navigatorObservers: [BotToastNavigatorObserver()],
+                        debugShowCheckedModeBanner: false,
+                        title: AppStrings.appTitle,
+                        // theme: getApplicationTheme(ThemeMode.light),
+                        themeMode: themeProvider.themeMode,
+                        theme: ThemeManager.lightTheme,
+                        darkTheme: ThemeManager.darkTheme,
+                        // home: SplashScreen(),
 
-                    home: SplashScreen(),
-                    // home: TempScreen(),
-                    // home: OrderScreenNew(),
-                    // home: SinglePostScreenNew(),
-                    // home: HomeScreenNew(),
-                    // home: OnBoardingScreen(),
-                    // home: AddPostScreen(),
-                    // home: LoginSignupScreen(),
-                    // home: LoginScreen(),
-                    // home: OrderListScreen(),
-                    // home: SignUpScreen(),
-                    routes: {
-                      SinglePostScreen.routeName: (context) =>
-                          SinglePostScreen(),
-                      PostDetailsScreen.routeName: (context) =>
-                          PostDetailsScreen(),
-                      UserPostsScreen.routeName: (context) => UserPostsScreen(),
-                      AddPostScreen.routeName: (context) => AddPostScreen(),
-                      EditPostScreen.routeName: (context) => EditPostScreen(),
-                      WishlistedBooksScreen.routeName: (context) =>
-                          WishlistedBooksScreen(),
-                      HomeScreen.routeName: (context) => HomeScreen(),
-                      HomeScreenNew.routeName: (context) => HomeScreenNew(),
-                      SplashScreen.routeName: (context) => SplashScreen(),
-                      OnBoardingScreen.routeName: (context) =>
-                          OnBoardingScreen(),
-                      LoginScreen.routeName: (context) => LoginScreen(),
-                      SignUpScreen.routeName: (context) => SignUpScreen(),
-                      LoginSignupScreen.routeName: (context) =>
-                          LoginSignupScreen(),
-                      UserProfileScreen.routeName: (context) =>
-                          UserProfileScreen(),
-                      UserProfileEditScreen.routeName: (context) =>
-                          UserProfileEditScreen(),
-                      CartScreen.routeName: (context) => CartScreen(),
-                      OrderRequestScreen.routeName: (context) =>
-                          OrderRequestScreen(),
-                      OrderRequestsScreenForSeller.routeName: (context) =>
-                          OrderRequestsScreenForSeller(),
-                      OrderRequestDetailsScreen.routeName: (context) =>
-                          OrderRequestDetailsScreen(),
-                      OrderRequestForSellerDetailsScreen.routeName: (context) =>
-                          OrderRequestForSellerDetailsScreen(),
-                      OrderScreen.routeName: (context) => OrderScreen(),
-                      OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
-                      OrderDetailsScreen.routeName: (context) =>
-                          OrderDetailsScreen(),
-                      UserInterestsScreen.routeName: (context) =>
-                          UserInterestsScreen(),
+                        // routes: {
+                        //   SinglePostScreen.routeName: (context) =>
+                        //       SinglePostScreen(),
+                        //   PostDetailsScreen.routeName: (context) =>
+                        //       PostDetailsScreen(),
+                        //   UserPostsScreen.routeName: (context) => UserPostsScreen(),
+                        //   AddPostScreen.routeName: (context) => AddPostScreen(),
+                        //   EditPostScreen.routeName: (context) => EditPostScreen(),
+                        //   WishlistedBooksScreen.routeName: (context) =>
+                        //       WishlistedBooksScreen(),
+                        //   HomeScreen.routeName: (context) => HomeScreen(),
+                        //   HomeScreenNew.routeName: (context) => HomeScreenNew(),
+                        //   SplashScreen.routeName: (context) => SplashScreen(),
+                        //   OnBoardingScreen.routeName: (context) =>
+                        //       OnBoardingScreen(),
+                        //   LoginScreen.routeName: (context) => LoginScreen(),
+                        //   SignUpScreen.routeName: (context) => SignUpScreen(),
+                        //   LoginSignupScreen.routeName: (context) =>
+                        //       LoginSignupScreen(),
+                        //   UserProfileScreen.routeName: (context) =>
+                        //       UserProfileScreen(),
+                        //   UserProfileEditScreen.routeName: (context) =>
+                        //       UserProfileEditScreen(),
+                        //   CartScreen.routeName: (context) => CartScreen(),
+                        //   OrderRequestScreen.routeName: (context) =>
+                        //       OrderRequestScreen(),
+                        //   OrderRequestsScreenForSeller.routeName: (context) =>
+                        //       OrderRequestsScreenForSeller(),
+                        //   OrderRequestDetailsScreen.routeName: (context) =>
+                        //       OrderRequestDetailsScreen(),
+                        //   OrderRequestForSellerDetailsScreen.routeName: (context) =>
+                        //       OrderRequestForSellerDetailsScreen(),
+                        //   OrderScreen.routeName: (context) => OrderScreen(),
+                        //   OrdersScreenNew.routeName: (context) => OrdersScreenNew(),
+                        //   OrderDetailsScreen.routeName: (context) =>
+                        //       OrderDetailsScreen(),
+                        //   UserInterestsScreen.routeName: (context) =>
+                        //       UserInterestsScreen(),
+                        // },
+                      );
                     },
                   );
                 });

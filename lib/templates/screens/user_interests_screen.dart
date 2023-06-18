@@ -141,7 +141,7 @@ class UserInterestsScreen extends StatefulWidget {
   @override
   _UserInterestsScreenState createState() => _UserInterestsScreenState();
 
-  static const routeName = '/user-interests';
+  // static const routeName = '/user-interests';
 }
 
 class _UserInterestsScreenState extends State<UserInterestsScreen> {
@@ -154,9 +154,9 @@ class _UserInterestsScreenState extends State<UserInterestsScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<UserProvider>(context, listen: false)
         .unBindUserInterestsScreenViewModel();
+    super.dispose();
   }
 
   @override

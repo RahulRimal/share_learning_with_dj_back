@@ -15,7 +15,7 @@ import 'orders_screen_new.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
-  static final routeName = '/order-list';
+  // static final routeName = '/order-list';
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
@@ -43,12 +43,11 @@ class _OrderScreenState extends State<OrderScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    super.dispose();
-
     Provider.of<OrderProvider>(context, listen: false)
         .unbindOrdersScreenViewModel();
     // Unregister this object as an observer
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override

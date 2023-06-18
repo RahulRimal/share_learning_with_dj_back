@@ -5,6 +5,8 @@ import 'package:share_learning/models/session.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/screens/single_post_screen.dart';
 
+import '../managers/routes_manager.dart';
+
 // ignore: must_be_immutable
 class Post extends StatelessWidget {
   final String id;
@@ -59,7 +61,7 @@ class Post extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () => Navigator.of(context).pushNamed(
-                SinglePostScreen.routeName,
+                RoutesManager.singlePostScreenRoute,
                 arguments: {
                   'id': this.id,
                   'loggedInUserSession': this.loggedInUserSession

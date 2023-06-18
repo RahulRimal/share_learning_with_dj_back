@@ -20,6 +20,7 @@ import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../managers/assets_manager.dart';
+import '../managers/routes_manager.dart';
 import '../screens/order_request_screen.dart';
 import '../screens/order_requests_screen_for_seller.dart';
 
@@ -38,9 +39,9 @@ class _AppDrawerState extends State<AppDrawer> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<UserProvider>(context, listen: false)
         .unbindAppDrawerViewModel();
+    super.dispose();
   }
 
   Widget getDrawerItem(BuildContext context, DrawerItem item) {
@@ -60,17 +61,17 @@ class _AppDrawerState extends State<AppDrawer> {
             color: Colors.white,
           ),
           onTap: () {
-            if (item.route == HomeScreen.routeName)
+            if (item.route == RoutesManager.homeScreenRoute)
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            if (item.route == AddPostScreen.routeName)
+            if (item.route == RoutesManager.addPostScreenRoute)
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            if (item.route == UserPostsScreen.routeName)
+            if (item.route == RoutesManager.userPostsScreenRoute)
               // Set selected user to null so current user books will be fetched, otherwise books of selected user will be fetched
               _userProvider
                   .bookProvider.userPostsScreenViewModelSelectedUserId = null;
@@ -78,33 +79,33 @@ class _AppDrawerState extends State<AppDrawer> {
               context,
               item.route,
             );
-            if (item.route == UserProfileScreen.routeName) {
+            if (item.route == RoutesManager.userProfileEditScreenRoute) {
               Navigator.pushNamed(
                 context,
                 item.route,
               );
             }
-            if (item.route == CartScreen.routeName)
+            if (item.route == RoutesManager.cartScreenRoute)
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            if (item.route == OrderRequestScreen.routeName)
+            if (item.route == RoutesManager.orderRequestScreenRoute)
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            if (item.route == OrderRequestsScreenForSeller.routeName)
+            if (item.route == RoutesManager.orderRequestsScreenForSellerRoute)
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            if (item.route == OrdersScreenNew.routeName)
+            if (item.route == RoutesManager.ordersScreenNewRoute)
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            if (item.route == UserInterestsScreen.routeName) {
+            if (item.route == RoutesManager.userInterestsScreenRoute) {
               Navigator.pushNamed(
                 context,
                 item.route,
@@ -162,8 +163,8 @@ class _AppDrawerState extends State<AppDrawer> {
                         //   ),
                         // ),
                         GestureDetector(
-                          onTap: () => Navigator.pushNamed(
-                              context, UserProfileScreen.routeName),
+                          onTap: () => Navigator.pushNamed(context,
+                              RoutesManager.userProfileEditScreenRoute),
                           child: (_userProvider.user as User).image == null
                               ? CircleAvatar(
                                   radius: 70,

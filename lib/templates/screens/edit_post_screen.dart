@@ -18,10 +18,11 @@ import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../models/user.dart';
 import '../../view_models/providers/user_provider.dart';
+import '../managers/routes_manager.dart';
 import '../utils/alert_helper.dart';
 
 class EditPostScreen extends StatefulWidget {
-  static const routeName = '/edit-post';
+  // static const routeName = '/edit-post';
 
   @override
   _EditPostScreenState createState() => _EditPostScreenState();
@@ -39,9 +40,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<BookProvider>(context, listen: false)
         .unbindEditPostScreenViewModel();
+    super.dispose();
   }
 
   // @override
@@ -95,7 +96,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                           'Post has been deleted successfully');
 
                       Navigator.pushReplacementNamed(
-                          context, HomeScreenNew.routeName);
+                          context, RoutesManager.homeScreenNewRoute);
                     } else {
                       AlertHelper.showToastAlert('Something went wrong');
 
@@ -550,7 +551,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
                         Navigator.pushReplacementNamed(
                           context,
-                          HomeScreenNew.routeName,
+                          RoutesManager.homeScreenNewRoute,
                         );
                       }
                     },

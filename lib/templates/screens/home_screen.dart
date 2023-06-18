@@ -18,7 +18,7 @@ import 'package:share_learning/templates/widgets/post.dart';
 import '../../view_models/providers/session_provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const routeName = '/home';
+  // static const routeName = '/home';
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

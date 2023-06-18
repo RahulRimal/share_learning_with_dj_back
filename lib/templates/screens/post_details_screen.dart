@@ -27,12 +27,13 @@ import '../../view_models/providers/session_provider.dart';
 import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 import '../utils/loading_helper.dart';
 import '../widgets/billing_info.dart';
 
 class PostDetailsScreen extends StatefulWidget {
-  static const routeName = '/post-details-screen';
+  // static const routeName = '/post-details-screen';
 
   const PostDetailsScreen({Key? key}) : super(key: key);
 
@@ -59,8 +60,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     bookProvider!.unBindPostDetailsScreen();
+    super.dispose();
   }
 
   @override
@@ -408,7 +409,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
             _bookProvider.setEditPostScreenSelectedBook(
                 _bookProvider.postDetailsScreenSelectedBook);
             Navigator.of(context)
-                .pushNamed(EditPostScreen.routeName, arguments: {});
+                .pushNamed(RoutesManager.editPostScreenRoute, arguments: {});
           },
         ),
       );
@@ -424,7 +425,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           onPressed: () {
             Navigator.pushNamed(
               context,
-              CartScreen.routeName,
+              RoutesManager.cartScreenRoute,
             );
           },
           style: ElevatedButton.styleFrom(
@@ -455,7 +456,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           onPressed: () {
             Navigator.pushNamed(
               context,
-              OrderRequestScreen.routeName,
+              RoutesManager.orderRequestScreenRoute,
             );
           },
           style: ElevatedButton.styleFrom(

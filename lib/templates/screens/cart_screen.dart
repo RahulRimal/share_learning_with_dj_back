@@ -18,7 +18,7 @@ import '../widgets/custom_bottom_navbar.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
-  static final routeName = '/cart-list';
+  // static final routeName = '/cart-list';
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -36,9 +36,9 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<CartProvider>(context, listen: false)
         .unBindCartScreenViewModel();
+    super.dispose();
   }
 
   @override

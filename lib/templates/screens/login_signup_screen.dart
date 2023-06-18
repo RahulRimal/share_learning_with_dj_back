@@ -3,10 +3,12 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/screens/login_screen.dart';
 import 'package:share_learning/templates/screens/signup_screen.dart';
 
+import '../managers/routes_manager.dart';
+
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
 
-  static const routeName = '/login-signup';
+  // static const routeName = '/login-signup';
 
   @override
   State<LoginSignupScreen> createState() => _LoginSignupScreenState();
@@ -16,7 +18,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   Widget _submitButton() {
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(LoginScreen.routeName);
+        Navigator.of(context).pushNamed(RoutesManager.loginScreenRoute);
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -47,7 +49,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   Widget _signUpButton() {
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(SignUpScreen.routeName);
+        Navigator.of(context).pushNamed(RoutesManager.signUpScreenRoute);
       },
       child: Container(
         width: MediaQuery.of(context).size.width,

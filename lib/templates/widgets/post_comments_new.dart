@@ -14,6 +14,7 @@ import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
 import '../../models/comment.dart';
+import '../managers/routes_manager.dart';
 
 // class PostCommentsNew extends StatelessWidget {
 //   final Session loggedInSession;
@@ -505,10 +506,10 @@ class _PostCommentsNewState extends State<PostCommentsNew>
 
   @override
   void dispose() {
-    super.dispose();
     // Provider.of<CommentProvider>(context, listen: false)
     //     .unBindPostCommentsNewViewSet(context);
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -906,8 +907,8 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                                 Navigator.of(
                                                                         context)
                                                                     .pushNamed(
-                                                                  UserPostsScreen
-                                                                      .routeName,
+                                                                  RoutesManager
+                                                                      .userPostsScreenRoute,
                                                                   // arguments: {
                                                                   //   'userId':
                                                                   //       _commentProvider

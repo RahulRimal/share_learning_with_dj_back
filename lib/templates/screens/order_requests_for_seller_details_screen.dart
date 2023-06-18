@@ -15,10 +15,11 @@ import '../../view_models/providers/cart_provider.dart';
 import '../../view_models/providers/order_request_provider.dart';
 import '../../view_models/providers/order_provider.dart';
 import '../managers/font_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 
 class OrderRequestForSellerDetailsScreen extends StatefulWidget {
-  static const routeName = 'order-request-for-user-details-screen';
+  // static const routeName = 'order-request-for-user-details-screen';
   const OrderRequestForSellerDetailsScreen({Key? key}) : super(key: key);
 
   @override
@@ -37,14 +38,13 @@ class _OrderRequestForSellerDetailsScreenState
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<OrderRequestProvider>(context, listen: false)
         .unbindOrderRequestForSellerDetailsScreenViewModel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     OrderRequestProvider _orderRequestProvider =
         context.watch<OrderRequestProvider>();
     return Scaffold(
@@ -505,7 +505,8 @@ class _OrderRequestForSellerDetailsScreenState
                                           // Navigator.pop(context);
                                           Navigator.of(context)
                                               .pushReplacementNamed(
-                                                  HomeScreenNew.routeName);
+                                                  RoutesManager
+                                                      .homeScreenNewRoute);
                                         }
                                       }
                                     },
@@ -600,7 +601,8 @@ class _OrderRequestForSellerDetailsScreenState
 
                                           Navigator.of(context)
                                               .pushReplacementNamed(
-                                                  HomeScreenNew.routeName);
+                                                  RoutesManager
+                                                      .homeScreenNewRoute);
                                         }
                                       }
                                     }

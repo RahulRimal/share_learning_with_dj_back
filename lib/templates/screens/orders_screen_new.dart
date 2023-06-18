@@ -17,12 +17,13 @@ import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/values_manager.dart';
 import '../utils/user_helper.dart';
 import '../widgets/order_item_widget.dart';
 
 class OrdersScreenNew extends StatefulWidget {
-  static const routeName = '/orders-list-new';
+  // static const routeName = '/orders-list-new';
   OrdersScreenNew({Key? key}) : super(key: key);
 
   @override
@@ -305,12 +306,11 @@ class _OrderItemWidgetState extends State<OrderItemWidget>
 
   @override
   void dispose() {
-    super.dispose();
-
     Provider.of<OrderProvider>(context, listen: false)
         .unbindOrdersItemWidgetViewModel();
     // Unregister this object as an observer
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -656,7 +656,8 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                     onTap: () {
                       _orderProvider.orderDetailsScreenOrder = item['order'];
                       Navigator.of(context).pushNamed(
-                        OrderDetailsScreen.routeName,
+                        RoutesManager.orderDetailsScreenRoute,
+
                         // arguments: {'order': item['order']},
                       );
                     },

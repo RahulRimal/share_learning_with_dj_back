@@ -9,6 +9,7 @@ import '../../models/api_status.dart';
 import '../../models/order.dart';
 import '../../models/order_request.dart';
 import '../../models/session.dart';
+import '../managers/routes_manager.dart';
 import '../screens/order_requests_for_seller_details_screen.dart';
 
 class NotificationService {
@@ -103,7 +104,7 @@ class NotificationService {
 
       if (response is Success) {
         MyApp.navigatorKey.currentState?.pushNamed(
-            OrderRequestForSellerDetailsScreen.routeName,
+            RoutesManager.orderRequestForSellerDetailsScreenRoute,
             arguments: {
               'requestItem': requestItem,
               'requestedProduct': response.response,
@@ -118,7 +119,8 @@ class NotificationService {
     if (payload.containsKey('click_action') &&
         payload['click_action'] == 'GO_TO_ORDER_DETAILS_SCREEN') {
       Order order = orderFromJson(convertToJsonParsable(payload['order']));
-      MyApp.navigatorKey.currentState?.pushNamed(OrderDetailsScreen.routeName,
+      MyApp.navigatorKey.currentState?.pushNamed(
+          RoutesManager.orderDetailsScreenRoute,
           arguments: {'order': order});
     }
 

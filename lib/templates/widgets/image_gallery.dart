@@ -6,6 +6,7 @@ import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/widgets/custom_image.dart';
 
 import '../../view_models/providers/user_provider.dart';
+import '../managers/routes_manager.dart';
 import '../screens/edit_post_screen.dart';
 
 // ignore: must_be_immutable
@@ -101,7 +102,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                                       style: ButtonStyle(),
                                       onPressed: () {
                                         Navigator.of(context).pushNamed(
-                                            EditPostScreen.routeName,
+                                            RoutesManager.editPostScreenRoute,
                                             arguments: {
                                               'bookId': widget.bookId,
                                               'loggedInUserSession':

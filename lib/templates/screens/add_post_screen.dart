@@ -18,12 +18,13 @@ import 'package:share_learning/templates/widgets/image_gallery.dart';
 
 import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/values_manager.dart';
 import '../utils/alert_helper.dart';
 import '../utils/loading_helper.dart';
 
 class AddPostScreen extends StatefulWidget {
-  static const routeName = '/add-post';
+  // static const routeName = '/add-post';
 
   @override
   _AddPostScreenState createState() => _AddPostScreenState();
@@ -49,9 +50,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<BookProvider>(context, listen: false)
         .unbindAddPostScreenViewModel();
+    super.dispose();
   }
 
   @override
@@ -72,7 +73,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     'Couldn\'t post your book, plase try again!');
                 Navigator.pushReplacementNamed(
                   context,
-                  HomeScreenNew.routeName,
+                  RoutesManager.homeScreenNewRoute,
                 );
               }
             },
@@ -451,7 +452,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
                                 Navigator.pushReplacementNamed(
                                   context,
-                                  HomeScreenNew.routeName,
+                                  RoutesManager.homeScreenNewRoute,
                                 );
                               } else {
                                 AlertHelper.showToastAlert(
@@ -459,7 +460,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
                                 Navigator.pushReplacementNamed(
                                   context,
-                                  HomeScreenNew.routeName,
+                                  RoutesManager.homeScreenNewRoute,
                                 );
                               }
                               bookProvider

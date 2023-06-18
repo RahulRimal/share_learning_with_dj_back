@@ -14,6 +14,7 @@ import '../../models/session.dart';
 import '../../view_models/providers/book_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
 
@@ -46,8 +47,8 @@ class _PostNewState extends State<PostNew> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<BookProvider>(context, listen: false).unBindPostNewWidget();
+    super.dispose();
   }
 
   @override
@@ -124,7 +125,8 @@ class _PostNewState extends State<PostNew> {
         GestureDetector(
           onTap: () {
             _bookProvider.postDetailsScreenSetSelectedBook(post);
-            Navigator.of(context).pushNamed(PostDetailsScreen.routeName);
+            Navigator.of(context)
+                .pushNamed(RoutesManager.postDetailsScreenRoute);
           },
           child: Container(
             width: double.infinity,

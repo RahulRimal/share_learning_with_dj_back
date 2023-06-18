@@ -50,8 +50,7 @@ class SessionProvider
         message: response.errorResponse,
       );
       setSessionError(sessionError);
-      // setSessionError(sessionError as SessionError);
-      // sessionError.showErrorMessage();
+
       setLoading(false);
       return false;
     }

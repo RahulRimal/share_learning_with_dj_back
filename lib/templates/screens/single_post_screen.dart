@@ -21,12 +21,13 @@ import 'package:share_learning/templates/widgets/post_comments.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 
 import '../../models/cart_item.dart';
+import '../managers/routes_manager.dart';
 import 'edit_post_screen.dart';
 import 'user_posts_screen.dart';
 
 // ignore: must_be_immutable
 class SinglePostScreen extends StatelessWidget {
-  static const routeName = '/post-details';
+  // static const routeName = '/post-details';
 
   // final _form = GlobalKey<FormState>();
 
@@ -206,7 +207,7 @@ class SinglePostScreen extends StatelessWidget {
                     icon: Icon(Icons.delete),
                     onPressed: () async {
                       // Navigator.of(context)
-                      //     .pushNamed(EditPostScreen.routeName, arguments: {
+                      //     .pushNamed(RoutesManager.editPostScreenRoute, arguments: {
                       //   'bookId': bookId,
                       //   'loggedInUserSession': loggedInUserSession
                       // });
@@ -214,7 +215,7 @@ class SinglePostScreen extends StatelessWidget {
                       if (await books.deletePost(loggedInUserSession, bookId)) {
                         // Navigator.pop(context);
                         Navigator.of(context).pushReplacementNamed(
-                            HomeScreen.routeName,
+                            RoutesManager.homeScreenRoute,
                             arguments: {
                               'authSession': loggedInUserSession,
                             });
@@ -233,7 +234,8 @@ class SinglePostScreen extends StatelessWidget {
                 ? IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(EditPostScreen.routeName,
+                      Navigator.of(context).pushNamed(
+                          RoutesManager.editPostScreenRoute,
                           arguments: {
                             'bookId': bookId,
                             'loggedInUserSession': loggedInUserSession
@@ -284,7 +286,7 @@ class SinglePostScreen extends StatelessWidget {
                     padding: EdgeInsets.all(10),
                     child: GestureDetector(
                       onTap: () => Navigator.of(context).pushNamed(
-                        UserPostsScreen.routeName,
+                        RoutesManager.userPostsScreenRoute,
                         arguments: {
                           'uId': selectedPost.userId,
                           'loggedInUserSession': loggedInUserSession,

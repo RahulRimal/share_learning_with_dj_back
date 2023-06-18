@@ -5,6 +5,7 @@ import 'package:share_learning/templates/screens/order_request_screen.dart';
 import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
 
+import '../managers/routes_manager.dart';
 import '../screens/cart_screen.dart';
 import '../screens/home_screen_new.dart';
 
@@ -24,27 +25,27 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     {
       'icon': Icons.home,
       'label': 'Home',
-      'route': HomeScreenNew.routeName,
+      'route': RoutesManager.homeScreenNewRoute,
     },
     {
       'icon': Icons.favorite,
       'label': 'Wishlist',
-      'route': WishlistedBooksScreen.routeName,
+      'route': RoutesManager.wishlistedBooksScreenRoute,
     },
     {
       'icon': Icons.person,
       'label': 'Profile',
-      'route': UserProfileScreen.routeName,
+      'route': RoutesManager.userProfileEditScreenRoute,
     },
     {
       'icon': Icons.send,
       'label': 'Requests',
-      'route': OrderRequestScreen.routeName,
+      'route': RoutesManager.orderRequestScreenRoute,
     },
     {
       'icon': Icons.shopping_cart,
       'label': 'Cart',
-      'route': CartScreen.routeName,
+      'route': RoutesManager.cartScreenRoute,
     }
   ];
 

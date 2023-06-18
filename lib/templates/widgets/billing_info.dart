@@ -14,6 +14,7 @@ import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/enum_managers.dart';
 import '../managers/font_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
 import '../screens/home_screen_new.dart';
@@ -43,9 +44,9 @@ class _BillingInfoState extends State<BillingInfo> {
 
   @override
   dispose() {
-    super.dispose();
     Provider.of<UserProvider>(context, listen: false)
         .unBindBillingInfoViewModel();
+    super.dispose();
   }
 
   @override
@@ -596,7 +597,7 @@ class _BillingInfoState extends State<BillingInfo> {
 
                         AlertHelper.showToastAlert("Order placed successfully");
                         Navigator.pushReplacementNamed(
-                          context, HomeScreenNew.routeName,
+                          context, RoutesManager.homeScreenNewRoute,
                           // arguments: {'authSession': authSession}
                         );
                       } else {

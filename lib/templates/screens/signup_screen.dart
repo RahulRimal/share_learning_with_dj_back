@@ -12,12 +12,13 @@ import 'package:share_learning/templates/widgets/beizer_container.dart';
 import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key, this.title}) : super(key: key);
 
-  static const routeName = '/signup';
+  // static const routeName = '/signup';
 
   final String? title;
 
@@ -27,6 +28,26 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _form = GlobalKey<FormState>();
+  late UserProvider userProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.bindSignUpScreenViewModel(context);
+  }
+
+  @override
+  didChangeDependencies() {
+    super.didChangeDependencies();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    userProvider.unBindSignUpScreenViewModel();
+    super.dispose();
+  }
 
   Widget _backButton() {
     return InkWell(
@@ -275,7 +296,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       },
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, LoginScreen.routeName);
+          Navigator.pushNamed(context, RoutesManager.loginScreenRoute);
         },
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 20),

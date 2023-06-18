@@ -20,7 +20,7 @@ import '../managers/values_manager.dart';
 import '../widgets/post_new.dart';
 
 class UserPostsScreen extends StatefulWidget {
-  static const routeName = '/user-posts';
+  // static const routeName = '/user-posts';
 
   @override
   State<UserPostsScreen> createState() => _UserPostsScreenState();
@@ -38,9 +38,9 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<BookProvider>(context, listen: false)
         .unBindUserPostsScreenViewModel();
+    super.dispose();
   }
 
   @override

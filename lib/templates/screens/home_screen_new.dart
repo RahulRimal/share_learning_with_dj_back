@@ -25,12 +25,13 @@ import '../../models/user.dart';
 import '../../view_models/providers/book_provider.dart';
 import '../../view_models/providers/session_provider.dart';
 import '../../view_models/providers/user_provider.dart';
+import '../managers/routes_manager.dart';
 import '../utils/user_helper.dart';
 
 class HomeScreenNew extends StatefulWidget {
   const HomeScreenNew({Key? key}) : super(key: key);
 
-  static const routeName = '/home_new';
+  // static const routeName = '/home-new';
 
   @override
   State<HomeScreenNew> createState() => _HomeScreenNewState();
@@ -38,34 +39,39 @@ class HomeScreenNew extends StatefulWidget {
 
 class _HomeScreenNewState extends State<HomeScreenNew>
     with WidgetsBindingObserver {
-  final homeScreenNewSearchFormKey = GlobalKey<FormState>();
+  final _form = GlobalKey<FormState>();
+  BookProvider? bookProvider;
 
   @override
   void initState() {
     super.initState();
-    BookProvider booksProvider =
-        Provider.of<BookProvider>(context, listen: false);
+    bookProvider = Provider.of<BookProvider>(context, listen: false);
 
-    booksProvider.bindHomeScreenNew(context);
+    bookProvider!.bindHomeScreenNew(context);
 
     // Register this object as an observer
     WidgetsBinding.instance.addObserver(this);
     // WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      booksProvider.getBooksAnnonimusly(
+      bookProvider!.getBooksAnnonimusly(
           Provider.of<SessionProvider>(context, listen: false).session
               as Session);
     });
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    bookProvider = Provider.of<BookProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
-    super.dispose();
-    // Form.of(context).removeWhere((state) => state == formKey.currentState);
-    // Provider.of<BookProvider>(context, listen: false).homeScreenNewSearchFormKey.currentState?.reset();
-    Provider.of<BookProvider>(context, listen: false).unBindHomeScreenNew();
+    bookProvider!.unBindHomeScreenNew();
     // Unregister this object as an observer
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -125,8 +131,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             bottom: AppPadding.p4,
                           ),
                           iconSize: AppSize.s40,
-                          onPressed: () => Navigator.pushNamed(
-                              context, UserProfileScreen.routeName),
+                          onPressed: () => Navigator.pushNamed(context,
+                              RoutesManager.userProfileEditScreenRoute),
                           icon: _bookProvider.userProvider.user != null
                               ? (_bookProvider.userProvider.user as User)
                                           .image ==
@@ -152,7 +158,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                       children: [
                         Form(
                           // key: _bookProvider.homeScreenNewSearchFormKey,
-                          key: homeScreenNewSearchFormKey,
+                          key: _form,
                           child: Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(right: 12),
@@ -193,7 +199,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                           onPressed: () {
                                             _bookProvider
                                                 .homeScreenNewGetSearchResult(
-                                                    homeScreenNewSearchFormKey);
+                                                    _form);
                                           },
                                         ),
                                   suffixIconColor: ColorManager.primary,
@@ -228,8 +234,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                   return null;
                                 },
                                 onFieldSubmitted: (_) {
-                                  _bookProvider.homeScreenNewGetSearchResult(
-                                      homeScreenNewSearchFormKey);
+                                  _bookProvider
+                                      .homeScreenNewGetSearchResult(_form);
                                 },
                               ),
                             ),
@@ -649,7 +655,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 //                             ),
 //                             iconSize: AppSize.s40,
 //                             onPressed: () => Navigator.pushNamed(
-//                                 context, UserProfileScreen.routeName),
+//                                 context, RoutesManager.userProfileEditScreenRoute),
 //                             // icon: _user.id != "temp"
 //                             //     ?
 

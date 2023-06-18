@@ -17,8 +17,8 @@ import 'providers/book_provider.dart';
 import 'providers/wishlist_provider.dart';
 
 mixin BaseViewModel on ChangeNotifier {
-  late UserProvider userProvider;
   late SessionProvider sessionProvider;
+  late UserProvider userProvider;
   late BookProvider bookProvider;
   late BookFiltersProvider bookFiltersProvider;
   late CartProvider cartProvider;

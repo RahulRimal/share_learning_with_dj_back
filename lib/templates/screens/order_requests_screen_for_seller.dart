@@ -18,12 +18,13 @@ import 'package:share_learning/templates/utils/alert_helper.dart';
 import '../../models/book.dart';
 import '../../models/cart.dart';
 
+import '../managers/routes_manager.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import 'order_requests_for_seller_details_screen.dart';
 
 class OrderRequestsScreenForSeller extends StatefulWidget {
   const OrderRequestsScreenForSeller({Key? key}) : super(key: key);
-  static final routeName = '/order-requests-for-user-list';
+  // static final routeName = '/order-requests-for-user-list';
 
   @override
   State<OrderRequestsScreenForSeller> createState() =>
@@ -43,9 +44,9 @@ class _OrderRequestsScreenForSellerState
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<OrderRequestProvider>(context, listen: false)
         .unBindOrderRequestsScreenForSellerViewModle();
+    super.dispose();
   }
 
   @override
@@ -779,8 +780,9 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                     .orderRequestForSellerDetailsScreenViewModelRequestedProduct =
                                                 requestedBook;
                                             Navigator.of(context).pushNamed(
-                                              OrderRequestForSellerDetailsScreen
-                                                  .routeName,
+                                              RoutesManager
+                                                  .orderRequestForSellerDetailsScreenRoute,
+
                                               // arguments: {
                                               //   'requestItem': requestedItem,
                                               //   'requestedProduct':

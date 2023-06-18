@@ -17,7 +17,7 @@ import '../managers/style_manager.dart';
 import '../utils/payment.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
-  static const routeName = 'order-details-screen';
+  // static const routeName = 'order-details-screen';
   const OrderDetailsScreen({Key? key}) : super(key: key);
 
   @override

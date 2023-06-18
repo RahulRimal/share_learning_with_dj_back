@@ -20,12 +20,14 @@ import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../managers/routes_manager.dart';
+
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({
     Key? key,
   }) : super(key: key);
 
-  static const String routeName = '/user-profile';
+  // static const String routeName = '/user-profile';
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -49,9 +51,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<UserProvider>(context, listen: false)
         .unbindUserProfileScreenViewModel();
+    super.dispose();
   }
 
   _profilePageUI(UserProvider userProvider) {
@@ -212,7 +214,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           ),
                                           onPressed: () {
                                             Navigator.of(context).pushNamed(
-                                              UserProfileEditScreen.routeName,
+                                              RoutesManager
+                                                  .userProfileEditScreenRoute,
                                               arguments: {
                                                 // 'loggedInUserSession': userSession.session,
                                                 'loggedInUserSession':
@@ -332,7 +335,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 tileColor: ColorManager.white,
                 onTap: () {
                   Navigator.of(context)
-                      .pushNamed(WishlistedBooksScreen.routeName);
+                      .pushNamed(RoutesManager.wishlistedBooksScreenRoute);
                 },
                 leading: Icon(
                   Icons.favorite_border,
@@ -355,7 +358,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 textColor: ColorManager.black,
                 tileColor: ColorManager.white,
                 onTap: () {
-                  Navigator.of(context).pushNamed(UserPostsScreen.routeName);
+                  Navigator.of(context)
+                      .pushNamed(RoutesManager.userPostsScreenRoute);
                 },
                 leading: Icon(
                   Icons.book_rounded,
@@ -672,7 +676,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             icon: Icon(Icons.edit_rounded),
             onPressed: () {
               Navigator.of(context).pushNamed(
-                UserProfileEditScreen.routeName,
+                RoutesManager.userProfileEditScreenRoute,
               );
             },
           ),

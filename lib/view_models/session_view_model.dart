@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/session.dart';
 import '../models/user.dart';
 import '../templates/managers/color_manager.dart';
+import '../templates/managers/routes_manager.dart';
 import '../templates/managers/values_manager.dart';
 import '../templates/screens/home_screen_new.dart';
 import '../templates/screens/login_screen.dart';
@@ -37,7 +38,7 @@ mixin SplashScreenViewModel on BaseViewModel {
     // ! Just for development purpose when internet is absent fix it
     if (await InternetConnectionChecker.checkInternetConnection())
       // if (true)
-      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+      Navigator.pushReplacementNamed(context, RoutesManager.loginScreenRoute);
     else {
       AlertHelper.showWidgetAlert(Container(
         width: MediaQuery.of(context).size.width,
@@ -81,7 +82,8 @@ mixin SplashScreenViewModel on BaseViewModel {
           if (sessionProvider.sessionError!.code ==
               ApiStatusCode.unauthorized) {
             print('here');
-            Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            Navigator.pushReplacementNamed(
+                context, RoutesManager.loginScreenRoute);
             return;
           }
         }
@@ -102,7 +104,7 @@ mixin SplashScreenViewModel on BaseViewModel {
       await categoryProvider.getCategories(sessionProvider.session as Session);
       await orderRequestProvider
           .getOrderRequestsByUser(sessionProvider.session as Session);
-      Navigator.pushReplacementNamed(context, HomeScreenNew.routeName,
+      Navigator.pushReplacementNamed(context, RoutesManager.homeScreenNewRoute,
           arguments: {
             'authSession': sessionProvider.session,
           });

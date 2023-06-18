@@ -13,12 +13,13 @@ import '../../view_models/providers/cart_provider.dart';
 import '../../view_models/providers/order_request_provider.dart';
 import '../../view_models/providers/session_provider.dart';
 import '../managers/font_manager.dart';
+import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 import '../widgets/billing_info.dart';
 import 'home_screen_new.dart';
 
 class OrderRequestDetailsScreen extends StatefulWidget {
-  static const routeName = 'order-request-details-screen';
+  // static const routeName = 'order-request-details-screen';
   const OrderRequestDetailsScreen({Key? key}) : super(key: key);
 
   @override
@@ -36,9 +37,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Provider.of<OrderRequestProvider>(context, listen: false)
         .unBindOrderRequestDetailsScreenViewModel();
+    super.dispose();
   }
 
   @override
@@ -431,7 +432,8 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
 
                                           Navigator.of(context)
                                               .pushReplacementNamed(
-                                                  HomeScreenNew.routeName);
+                                                  RoutesManager
+                                                      .homeScreenNewRoute);
                                         }
                                       }
                                     },

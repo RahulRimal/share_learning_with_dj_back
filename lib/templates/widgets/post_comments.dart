@@ -13,6 +13,7 @@ import 'package:share_learning/templates/screens/user_posts_screen.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
 import '../../models/comment.dart';
+import '../managers/routes_manager.dart';
 import '../utils/alert_helper.dart';
 
 class PostComments extends StatefulWidget {
@@ -236,8 +237,8 @@ class _PostCommentsState extends State<PostComments> {
                                                           _commentUser.id)) {
                                                         Navigator.of(context)
                                                             .pushNamed(
-                                                          UserPostsScreen
-                                                              .routeName,
+                                                          RoutesManager
+                                                              .userPostsScreenRoute,
                                                           arguments: {
                                                             'uId':
                                                                 _commentUser.id,

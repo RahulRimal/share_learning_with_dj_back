@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:share_learning/templates/utils/loading_helper.dart';
 import 'package:share_learning/view_models/providers/book_provider.dart';
 import 'package:share_learning/view_models/providers/category_provider.dart';
 import 'package:share_learning/view_models/providers/session_provider.dart';
@@ -22,12 +23,15 @@ import '../../view_models/providers/cart_provider.dart';
 import '../../view_models/providers/order_request_provider.dart';
 import '../../view_models/providers/user_provider.dart';
 import '../managers/assets_manager.dart';
+import '../managers/font_manager.dart';
+import '../managers/routes_manager.dart';
+import '../managers/values_manager.dart';
 import '../utils/alert_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.title}) : super(key: key);
 
-  static const routeName = '/login';
+  // static const routeName = '/login';
 
   final String? title;
 
@@ -54,8 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     userProvider.unbindLoginScreenViewModel();
+    super.dispose();
   }
 
   Widget _backButton() {
@@ -273,33 +277,108 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _submitButton() {
     UserProvider _userProvider = context.watch<UserProvider>();
-    return GestureDetector(
-      onTap: () => _userProvider.loginScreenSaveForm(context, _form, mounted),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              // colors: [Color(0xfffbb448), Color(0xfff7892b)],
-              colors: [
-                Theme.of(context).primaryColor.withAlpha(200),
-                Theme.of(context).primaryColorDark.withAlpha(200),
-              ]),
-        ),
-        child: Text(
-          'Login',
-          style: TextStyle(fontSize: 20, color: Colors.white),
+    // return Consumer<SessionProvider>(
+    //   builder: (context, sessionProvider, child) => ElevatedButton.icon(
+    //     icon: sessionProvider.loading
+    //         ? SizedBox(
+    //             height: AppHeight.h20,
+    //             width: AppHeight.h20,
+    //             child: CircularProgressIndicator.adaptive(
+    //               strokeWidth: 3,
+    //               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+    //               backgroundColor: ColorManager.primary,
+    //             ),
+    //           )
+    //         : Container(),
+    //     label: Container(
+    //       width: MediaQuery.of(context).size.width,
+    //       padding: EdgeInsets.symmetric(vertical: 15),
+    //       alignment: Alignment.center,
+    //       decoration: BoxDecoration(
+    //         borderRadius: BorderRadius.all(Radius.circular(5)),
+    //         boxShadow: <BoxShadow>[
+    //           BoxShadow(
+    //               color: Colors.grey.shade200,
+    //               offset: Offset(2, 4),
+    //               blurRadius: 5,
+    //               spreadRadius: 2)
+    //         ],
+    //         gradient: LinearGradient(
+    //             begin: Alignment.centerLeft,
+    //             end: Alignment.centerRight,
+    //             // colors: [Color(0xfffbb448), Color(0xfff7892b)],
+    //             colors: [
+    //               Theme.of(context).primaryColor.withAlpha(200),
+    //               Theme.of(context).primaryColorDark.withAlpha(200),
+    //             ]),
+    //       ),
+    //       child: Text(
+    //         'Login',
+    //         style: getBoldStyle(
+    //           color: ColorManager.white,
+    //           fontSize: FontSize.s14,
+    //         ),
+    //       ),
+    //     ),
+    //     onPressed: sessionProvider.loading
+    //         ? null
+    //         : () => _userProvider.loginScreenSaveForm(context, _form, mounted),
+    //   ),
+    // );
+
+    return Consumer<SessionProvider>(
+      builder: (context, sessionProvider, child) => GestureDetector(
+        onTap: () => _userProvider.loginScreenSaveForm(context, _form, mounted),
+        // onTap: () => sessionProvider.setLoading(true),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.symmetric(vertical: 15),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            color: sessionProvider.loading ? ColorManager.lightestGrey : null,
+            gradient: sessionProvider.loading
+                ? null
+                : LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                        Theme.of(context).primaryColor.withAlpha(200),
+                        Theme.of(context).primaryColorDark.withAlpha(200),
+                      ]),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (sessionProvider.loading)
+                Padding(
+                  padding: const EdgeInsets.only(right: AppPadding.p12),
+                  child: SizedBox(
+                    height: AppHeight.h20,
+                    width: AppHeight.h20,
+                    child: CircularProgressIndicator.adaptive(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      backgroundColor: ColorManager.primary,
+                    ),
+                  ),
+                ),
+              if (sessionProvider.loading)
+                LoadingHelper.showTextLoading('Signing in')
+              else
+                Text(
+                  'Login',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -468,7 +547,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () {
               // Navigator.push(
               //     context, MaterialPageRoute(builder: (context) => SignUpPage()));
-              Navigator.pushNamed(context, SignUpScreen.routeName);
+              Navigator.pushNamed(context, RoutesManager.signUpScreenRoute);
             },
             child: Container(
               margin: EdgeInsets.symmetric(vertical: 20),
@@ -501,7 +580,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () {
               // Navigator.push(
               //     context, MaterialPageRoute(builder: (context) => SignUpPage()));
-              Navigator.pushNamed(context, SignUpScreen.routeName);
+              Navigator.pushNamed(context, RoutesManager.signUpScreenRoute);
             },
             child: Container(
               margin: EdgeInsets.symmetric(vertical: 20),

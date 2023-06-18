@@ -9,7 +9,7 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
-  static const routeName = '/splash';
+  // static const routeName = '/splash';
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -33,8 +33,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     sessionProvider.unBindSplashScreenViewModel();
+    super.dispose();
   }
 
   @override
