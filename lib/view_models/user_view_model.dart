@@ -76,17 +76,17 @@ mixin UserProfileScreenViewModel on BaseViewModel {
 mixin UserProfileEditScreenViewModel on BaseViewModel {
   XFile? userProfileScreenAddedImage;
 
-  late FocusNode userProfileScreenFirstNameFocusNode;
-  late FocusNode userProfileScreenLastNameFocusNode;
-  late FocusNode userProfileScreenDescriptionFocusNode;
-  late FocusNode userProfileScreenClassFocusNode;
+  late FocusNode userProfileEditScreenFirstNameFocusNode;
+  late FocusNode userProfileEditScreenLastNameFocusNode;
+  late FocusNode userProfileEditScreenDescriptionFocusNode;
+  late FocusNode userProfileEditScreenClassFocusNode;
 
-  bool userProfileScreenShowLoading = false;
-  ImagePicker userProfileScreenImagePicker = ImagePicker();
+  bool userProfileEditScreenShowLoading = false;
+  ImagePicker userProfileEditScreenImagePicker = ImagePicker();
 
-  bool userProfileScreenImageAdded = false;
+  bool userProfileEditScreenImageAdded = false;
 
-  User userProfileScreenEdittedUser = User(
+  User userProfileEditScreenEdittedUser = User(
     id: '',
     firstName: null,
     lastName: null,
@@ -100,20 +100,20 @@ mixin UserProfileEditScreenViewModel on BaseViewModel {
     createdDate: null,
   );
 
-  bindUserProfileScreenViewModel(BuildContext context) {
+  bindUserProfileEditScreenViewModel(BuildContext context) {
     bindBaseViewModal(context);
-    userProfileScreenFirstNameFocusNode = FocusNode();
-    userProfileScreenLastNameFocusNode = FocusNode();
-    userProfileScreenDescriptionFocusNode = FocusNode();
-    userProfileScreenClassFocusNode = FocusNode();
+    userProfileEditScreenFirstNameFocusNode = FocusNode();
+    userProfileEditScreenLastNameFocusNode = FocusNode();
+    userProfileEditScreenDescriptionFocusNode = FocusNode();
+    userProfileEditScreenClassFocusNode = FocusNode();
     if (userProvider.user != null)
-      userProfileScreenEdittedUser = userProvider.user!;
+      userProfileEditScreenEdittedUser = userProvider.user!;
   }
 
-  unbindUserProfileScreenViewModel() {}
+  unbindUserProfileEditScreenViewModel() {}
 
-  Future<void> userProfileScreenGetPicture() async {
-    final imageFiles = await userProfileScreenImagePicker.pickImage(
+  Future<void> userProfileEditScreenGetPicture() async {
+    final imageFiles = await userProfileEditScreenImagePicker.pickImage(
       maxWidth: 770,
       imageQuality: 100,
       source: ImageSource.gallery,
@@ -125,12 +125,12 @@ mixin UserProfileEditScreenViewModel on BaseViewModel {
 
     // setState(() {
     // userProfileScreenSetImageAdded(true);
-    userProfileScreenImageAdded = true;
+    userProfileEditScreenImageAdded = true;
     notifyListeners();
     // });
   }
 
-  Future<bool> userProfileScreenUpdateProfile(
+  Future<bool> userProfileEditScreenUpdateProfile(
     GlobalKey<FormState> form,
   ) async {
     final isValid = form.currentState!.validate();
@@ -140,19 +140,19 @@ mixin UserProfileEditScreenViewModel on BaseViewModel {
     form.currentState!.save();
 
     var oldUserMap = userProvider.user!.toMap();
-    var edittedUserMap = userProfileScreenEdittedUser.toMap();
+    var edittedUserMap = userProfileEditScreenEdittedUser.toMap();
 
     Map<String, dynamic> changedValues =
         SystemHelper.getChangedValues(oldUserMap, edittedUserMap);
 
-    changedValues['id'] = userProfileScreenEdittedUser.id;
+    changedValues['id'] = userProfileEditScreenEdittedUser.id;
 
     if (await userProvider.updateUserInfo(
         sessionProvider.session as Session, changedValues)) {
-      if (userProfileScreenImageAdded) {
+      if (userProfileEditScreenImageAdded) {
         if (!await userProvider.updateProfilePicture(
             sessionProvider.session as Session,
-            userProfileScreenEdittedUser.id,
+            userProfileEditScreenEdittedUser.id,
             userProfileScreenAddedImage as XFile)) {
           AlertHelper.showToastAlert('Something went worng, please try again');
         }

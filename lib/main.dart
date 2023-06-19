@@ -195,8 +195,8 @@ class MyApp extends StatelessWidget {
                   return ChangeNotifierProvider(
                     create: (context) => ThemeProvider(),
                     builder: (context, _) {
-                      final themeProvider =
-                          Provider.of<ThemeProvider>(context, listen: false);
+                      final themeProvider = Provider.of<ThemeProvider>(context);
+                      // Provider.of<ThemeProvider>(context, listen: false);
                       return MaterialApp(
                         navigatorKey: navKey,
                         onGenerateRoute: RouteGenerator.getRoute,

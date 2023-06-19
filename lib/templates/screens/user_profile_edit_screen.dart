@@ -61,7 +61,8 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
               Center(
                 child: CircleAvatar(
                     radius: 70,
-                    backgroundImage: _userProvider.userProfileScreenImageAdded
+                    backgroundImage: _userProvider
+                            .userProfileEditScreenImageAdded
                         ? FileImage(File(
                             _userProvider.userProfileScreenAddedImage!.path))
                         // : NetworkImage(
@@ -80,7 +81,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                 child: Text('From Gallery'),
                 style: ButtonStyle(),
                 onPressed: () {
-                  _userProvider.userProfileScreenGetPicture();
+                  _userProvider.userProfileEditScreenGetPicture();
                 },
               ),
               SizedBox(
@@ -98,10 +99,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
                                 initialValue: _userProvider
-                                    .userProfileScreenEdittedUser.firstName,
+                                    .userProfileEditScreenEdittedUser.firstName,
                                 cursorColor: Theme.of(context).primaryColor,
                                 focusNode: _userProvider
-                                    .userProfileScreenFirstNameFocusNode,
+                                    .userProfileEditScreenFirstNameFocusNode,
                                 decoration: InputDecoration(
                                   labelText: 'First Name',
                                   focusColor: Colors.redAccent,
@@ -109,9 +110,8 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                                 textInputAction: TextInputAction.next,
                                 autovalidateMode: AutovalidateMode.always,
                                 onFieldSubmitted: (_) {
-                                  FocusScope.of(context).requestFocus(
-                                      _userProvider
-                                          .userProfileScreenLastNameFocusNode);
+                                  FocusScope.of(context).requestFocus(_userProvider
+                                      .userProfileEditScreenLastNameFocusNode);
                                 },
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -120,10 +120,11 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                                   return null;
                                 },
                                 onSaved: (value) {
-                                  _userProvider.userProfileScreenEdittedUser =
+                                  _userProvider
+                                          .userProfileEditScreenEdittedUser =
                                       User.withProperty(
                                           _userProvider
-                                              .userProfileScreenEdittedUser,
+                                              .userProfileEditScreenEdittedUser,
                                           {'firstName': value});
                                 }),
                           ),
@@ -133,7 +134,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
                               initialValue: _userProvider
-                                  .userProfileScreenEdittedUser.lastName,
+                                  .userProfileEditScreenEdittedUser.lastName,
                               keyboardType: TextInputType.text,
                               cursorColor: Theme.of(context).primaryColor,
                               decoration: InputDecoration(
@@ -142,9 +143,8 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                               textInputAction: TextInputAction.next,
                               autovalidateMode: AutovalidateMode.always,
                               onFieldSubmitted: (_) {
-                                FocusScope.of(context).requestFocus(
-                                    _userProvider
-                                        .userProfileScreenDescriptionFocusNode);
+                                FocusScope.of(context).requestFocus(_userProvider
+                                    .userProfileEditScreenDescriptionFocusNode);
                               },
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -153,10 +153,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                                 return null;
                               },
                               onSaved: (value) {
-                                _userProvider.userProfileScreenEdittedUser =
+                                _userProvider.userProfileEditScreenEdittedUser =
                                     User.withProperty(
                                         _userProvider
-                                            .userProfileScreenEdittedUser,
+                                            .userProfileEditScreenEdittedUser,
                                         {'lastName': value});
                               },
                             ),
@@ -168,9 +168,9 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                           initialValue: _userProvider
-                              .userProfileScreenEdittedUser.userClass,
+                              .userProfileEditScreenEdittedUser.userClass,
                           focusNode:
-                              _userProvider.userProfileScreenClassFocusNode,
+                              _userProvider.userProfileEditScreenClassFocusNode,
                           keyboardType: TextInputType.text,
                           cursorColor: Theme.of(context).primaryColor,
                           decoration: InputDecoration(
@@ -180,7 +180,7 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                           autovalidateMode: AutovalidateMode.always,
                           onFieldSubmitted: (_) {
                             FocusScope.of(context).requestFocus(_userProvider
-                                .userProfileScreenDescriptionFocusNode);
+                                .userProfileEditScreenDescriptionFocusNode);
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -189,9 +189,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            _userProvider.userProfileScreenEdittedUser =
+                            _userProvider.userProfileEditScreenEdittedUser =
                                 User.withProperty(
-                                    _userProvider.userProfileScreenEdittedUser,
+                                    _userProvider
+                                        .userProfileEditScreenEdittedUser,
                                     {'userClass': value});
                             // print(_edittedUser);
                           }),
@@ -200,9 +201,9 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         initialValue: _userProvider
-                            .userProfileScreenEdittedUser.description,
-                        focusNode:
-                            _userProvider.userProfileScreenDescriptionFocusNode,
+                            .userProfileEditScreenEdittedUser.description,
+                        focusNode: _userProvider
+                            .userProfileEditScreenDescriptionFocusNode,
                         keyboardType: TextInputType.multiline,
                         cursorColor: Theme.of(context).primaryColor,
                         decoration: InputDecoration(
@@ -223,9 +224,10 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                           return null;
                         },
                         onSaved: (value) {
-                          _userProvider.userProfileScreenEdittedUser =
+                          _userProvider.userProfileEditScreenEdittedUser =
                               User.withProperty(
-                                  _userProvider.userProfileScreenEdittedUser,
+                                  _userProvider
+                                      .userProfileEditScreenEdittedUser,
                                   {'description': value});
                         },
                       ),
@@ -239,17 +241,17 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                         ),
                         onPressed: () async {
                           setState(() => _userProvider
-                              .userProfileScreenShowLoading = true);
+                              .userProfileEditScreenShowLoading = true);
 
-                          if (_userProvider.userProfileScreenShowLoading) {
+                          if (_userProvider.userProfileEditScreenShowLoading) {
                             AlertHelper.showLoading();
                           }
 
                           if (await _userProvider
-                              .userProfileScreenUpdateProfile(_form))
+                              .userProfileEditScreenUpdateProfile(_form))
                             setState(() => {
-                                  _userProvider.userProfileScreenShowLoading =
-                                      false
+                                  _userProvider
+                                      .userProfileEditScreenShowLoading = false
                                 });
                           Navigator.pushReplacementNamed(
                             context,

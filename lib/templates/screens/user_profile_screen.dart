@@ -5,6 +5,7 @@ import 'package:share_learning/models/user.dart';
 import 'package:share_learning/view_models/providers/book_provider.dart';
 import 'package:share_learning/view_models/providers/comment_provider.dart';
 import 'package:share_learning/view_models/providers/session_provider.dart';
+import 'package:share_learning/view_models/providers/theme_provider.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -466,67 +467,79 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   size: AppSize.s30,
                 ),
               ),
-              ListTile(
-                iconColor: ColorManager.black,
-                textColor: ColorManager.black,
-                tileColor: ColorManager.white,
-                onTap: () {
-                  // Define a list of options
-                  List<String> appThemes = [
-                    'Light',
-                    'Dark',
-                  ];
+              Consumer<ThemeProvider>(
+                builder: (context, themeProvider, child) => ListTile(
+                  iconColor: ColorManager.black,
+                  textColor: ColorManager.black,
+                  tileColor: ColorManager.white,
+                  onTap: () {
+                    // Define a list of options
+                    // List<String> appThemes = [
+                    //   'Light',
+                    //   'Dark',
+                    // ];
+                    Map<ThemeMode, String> appThemes = {
+                      ThemeMode.light: 'Light',
+                      ThemeMode.dark: 'Dark',
+                    };
 
-                  String selectedMode = 'Light';
+                    // String selectedMode = 'Light';
+                    // ThemeProvider themeProvider =
+                    //     Provider.of<ThemeProvider>(context, listen: false);
+                    // ThemeMode selectedMode = themeProvider.themeMode;
 
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        // title: Text('Select an option'),
-                        contentPadding: EdgeInsets.zero,
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: appThemes
-                              .map(
-                                (option) => ListTile(
-                                  tileColor: selectedMode == option
-                                      ? ColorManager.lightGrey
-                                      : null,
-                                  title: Text(
-                                    option,
-                                    style: getBoldStyle(
-                                      color: ColorManager.black,
-                                      fontSize: FontSize.s16,
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          // title: Text('Select an option'),
+                          contentPadding: EdgeInsets.zero,
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: appThemes.entries
+                                .map(
+                                  (entry) => ListTile(
+                                    tileColor:
+                                        themeProvider.themeMode == entry.key
+                                            ? ColorManager.primary
+                                            : null,
+                                    title: Text(
+                                      entry.value,
+                                      style: getBoldStyle(
+                                        color: ColorManager.black,
+                                        fontSize: FontSize.s16,
+                                      ),
                                     ),
+                                    onTap: () {
+                                      // Do something when the option is tapped
+                                      themeProvider.setTheme(entry.key);
+                                      // print('here');
+                                      Navigator.of(context).pop();
+                                    },
                                   ),
-                                  onTap: () {
-                                    // Do something when the option is tapped
-                                    selectedMode = option;
-                                    Navigator.of(context).pop(option);
-                                  },
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      );
-                    },
-                  );
-                },
-                leading: Icon(
-                  Icons.dark_mode_outlined,
-                  size: FontSize.s24,
-                ),
-                title: Text(
-                  'Darkmode',
-                  style: getBoldStyle(
-                    color: ColorManager.black,
-                    fontSize: FontSize.s16,
+                                )
+                                .toList(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  leading: Icon(
+                    Icons.dark_mode_outlined,
+                    size: FontSize.s24,
                   ),
-                ),
-                trailing: Icon(
-                  Icons.keyboard_arrow_right,
-                  size: AppSize.s30,
+                  title: Text(
+                    'Darkmode',
+                    // style: getBoldStyle(
+                    //   color: ColorManager.black,
+                    //   fontSize: FontSize.s16,
+                    // ),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right,
+                    size: AppSize.s30,
+                  ),
                 ),
               ),
             ],

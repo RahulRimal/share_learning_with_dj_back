@@ -35,7 +35,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     {
       'icon': Icons.person,
       'label': 'Profile',
-      'route': RoutesManager.userProfileEditScreenRoute,
+      'route': RoutesManager.userProfileScreenRoute,
     },
     {
       'icon': Icons.send,
