@@ -58,6 +58,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   _profilePageUI(UserProvider userProvider) {
+    ThemeData theme = Theme.of(context);
     // if (userSession.loading) {
     if (userProvider.sessionProvider.loading) {
       return Container(
@@ -79,9 +80,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       children: [
         // ---------------------- User top section starts here ----------------------------
         Container(
-          // decoration: BoxDecoration(
-          //   color: ColorManager.grey,
-          // ),
+          
           child: Column(
             children: [
               Row(
@@ -90,8 +89,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      // color: ColorManager.darkPrimary,
-                      color: ColorManager.white,
+                      
+                      color: theme.colorScheme.background,
                     ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -114,7 +113,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                   children: [
                                     Card(
                                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      color: ColorManager.primary,
                                       elevation: 2,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
@@ -149,9 +147,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             // 'Rahul Rimal',
                                             UserHelper.userDisplayName(
                                                 userProvider.user!),
-                                            style: getBoldStyle(
-                                                fontSize: FontSize.s18,
-                                                color: ColorManager.primary),
+                                            
+                                            style: theme.textTheme.displayMedium,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.only(
@@ -161,10 +158,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               // 'CSIT',
                                               UserHelper.userClass(
                                                   userProvider.user!),
-                                              style: getBoldStyle(
-                                                color: ColorManager.black,
-                                                fontSize: FontSize.s14,
-                                              ),
+                                              // style: getBoldStyle(
+                                              //   color: ColorManager.black,
+                                              //   fontSize: FontSize.s14,
+                                              // ),
+                                              style: theme.textTheme.headlineSmall,
                                             ),
                                           ),
                                         ],
@@ -178,12 +176,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             vertical: AppPadding.p2,
                                           ),
                                           child: Text(
-                                            // 'mail@rahul.com',
+                                            
                                             userProvider.user!.email as String,
-                                            style: getMediumStyle(
-                                              color: ColorManager.black,
-                                              fontSize: FontSize.s12,
-                                            ),
+                                            
+                                            style: theme.textTheme.titleSmall
                                           ),
                                         ),
                                       ],
@@ -278,10 +274,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     Text(
                                       'Description',
                                       textAlign: TextAlign.start,
-                                      style: getBoldStyle(
-                                        color: ColorManager.black,
-                                        fontSize: FontSize.s14,
-                                      ),
+                                      
+                                      style: theme.textTheme.headlineSmall,
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
@@ -291,10 +285,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         UserHelper.userDescription(
                                             userProvider.user!),
                                         softWrap: true,
-                                        style: getMediumStyle(
-                                          color: ColorManager.black,
-                                          fontSize: FontSize.s12,
-                                        ),
+                                        
+                                        style: theme.textTheme.bodySmall,
                                       ),
                                     ),
                                   ],
@@ -324,16 +316,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 child: Text(
                   'Content',
-                  style: getBoldStyle(
-                    color: ColorManager.primary,
-                    fontSize: FontSize.s14,
-                  ),
+                  // style: getBoldStyle(
+                  //   color: ColorManager.primary,
+                  //   fontSize: FontSize.s14,
+                  // ),
+                  style: theme.textTheme.displaySmall,
                 ),
               ),
               ListTile(
-                iconColor: ColorManager.black,
-                textColor: ColorManager.black,
-                tileColor: ColorManager.white,
+                
                 onTap: () {
                   Navigator.of(context)
                       .pushNamed(RoutesManager.wishlistedBooksScreenRoute);
@@ -344,10 +335,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 title: Text(
                   'Wishlisted',
-                  style: getBoldStyle(
-                    color: ColorManager.black,
-                    fontSize: FontSize.s16,
-                  ),
+                  // style: getBoldStyle(
+                  //   color: ColorManager.black,
+                  //   fontSize: FontSize.s16,
+                  // ),
+                  style: theme.textTheme.headlineMedium,
                 ),
                 trailing: Icon(
                   Icons.keyboard_arrow_right,
@@ -355,9 +347,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
               ),
               ListTile(
-                iconColor: ColorManager.black,
-                textColor: ColorManager.black,
-                tileColor: ColorManager.white,
+                
                 onTap: () {
                   Navigator.of(context)
                       .pushNamed(RoutesManager.userPostsScreenRoute);
@@ -368,10 +358,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 title: Text(
                   'Your Posts',
-                  style: getBoldStyle(
-                    color: ColorManager.black,
-                    fontSize: FontSize.s16,
-                  ),
+                  // style: getBoldStyle(
+                  //   color: ColorManager.black,
+                  //   fontSize: FontSize.s16,
+                  // ),
+                  style: theme.textTheme.headlineMedium,
                 ),
                 trailing: Icon(
                   Icons.keyboard_arrow_right,
@@ -396,16 +387,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 child: Text(
                   'Preferences',
-                  style: getBoldStyle(
-                    color: ColorManager.primary,
-                    fontSize: FontSize.s14,
-                  ),
+                  // style: getBoldStyle(
+                  //   color: ColorManager.primary,
+                  //   fontSize: FontSize.s14,
+                  // ),
+                  style: theme.textTheme.displaySmall,
                 ),
               ),
               ListTile(
-                iconColor: ColorManager.black,
-                textColor: ColorManager.black,
-                tileColor: ColorManager.white,
+                
                 onTap: () {
                   // Define a list of options
                   List<String> languages = [
@@ -429,14 +419,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               .map(
                                 (option) => ListTile(
                                   tileColor: selectedLanguage == option
-                                      ? ColorManager.lightGrey
+                                      ? ColorManager.primary
                                       : null,
                                   title: Text(
                                     option,
-                                    style: getBoldStyle(
-                                      color: ColorManager.black,
-                                      fontSize: FontSize.s16,
-                                    ),
+                                    // style: getBoldStyle(
+                                    //   color: ColorManager.black,
+                                    //   fontSize: FontSize.s16,
+                                    // ),
+                                    style: theme.textTheme.headlineSmall,
                                   ),
                                   onTap: () {
                                     // Do something when the option is tapped
@@ -457,10 +448,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 title: Text(
                   'Language',
-                  style: getBoldStyle(
-                    color: ColorManager.black,
-                    fontSize: FontSize.s16,
-                  ),
+                  // style: getBoldStyle(
+                  //   color: ColorManager.black,
+                  //   fontSize: FontSize.s16,
+                  // ),
+                  style: theme.textTheme.headlineMedium,
                 ),
                 trailing: Icon(
                   Icons.keyboard_arrow_right,
@@ -469,9 +461,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ),
               Consumer<ThemeProvider>(
                 builder: (context, themeProvider, child) => ListTile(
-                  iconColor: ColorManager.black,
-                  textColor: ColorManager.black,
-                  tileColor: ColorManager.white,
+                  
                   onTap: () {
                     // Define a list of options
                     // List<String> appThemes = [
@@ -505,10 +495,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             : null,
                                     title: Text(
                                       entry.value,
-                                      style: getBoldStyle(
-                                        color: ColorManager.black,
-                                        fontSize: FontSize.s16,
-                                      ),
+                                      // style: getBoldStyle(
+                                      //   color: ColorManager.black,
+                                      //   fontSize: FontSize.s16,
+                                      // ),
+                                      style: theme.textTheme.headlineSmall,
                                     ),
                                     onTap: () {
                                       // Do something when the option is tapped
@@ -534,7 +525,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     //   color: ColorManager.black,
                     //   fontSize: FontSize.s16,
                     // ),
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: theme.textTheme.headlineMedium,
                   ),
                   trailing: Icon(
                     Icons.keyboard_arrow_right,
@@ -560,37 +551,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 child: Text(
                   'More options',
-                  style: getBoldStyle(
-                    color: ColorManager.primary,
-                    fontSize: FontSize.s14,
-                  ),
+                
+                  style: theme.textTheme.displaySmall,
                 ),
               ),
               ListTile(
-                iconColor: ColorManager.black,
-                textColor: ColorManager.black,
-                tileColor: ColorManager.white,
+                
                 onTap: () {
                   String password = "";
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text('Are you sure?'),
+                      title: Text('Are you sure?', style: theme.textTheme.titleMedium,),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             "You won't be able to recover your account",
-                            style: getRegularStyle(
-                              fontSize: FontSize.s16,
-                              color: ColorManager.black,
-                            ),
+                            // style: getRegularStyle(
+                            //   fontSize: FontSize.s16,
+                            //   color: ColorManager.black,
+                            // ),
+                            style: theme.textTheme.titleLarge,
                           ),
                           SizedBox(
                             height: AppHeight.h12,
                           ),
                           TextFormField(
-                            cursorColor: Theme.of(context).primaryColor,
+                            cursorColor: theme.primaryColor,
                             decoration: InputDecoration(
                               labelText: 'Enter your password to confirm',
                               focusColor: Colors.redAccent,
@@ -620,10 +608,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           TextButton(
                             child: Text(
                               'Confirm delete',
-                              style: getBoldStyle(
-                                fontSize: FontSize.s16,
-                                color: ColorManager.primary,
-                              ),
+                              // style: getBoldStyle(
+                              //   fontSize: FontSize.s16,
+                              //   color: ColorManager.primary,
+                              // ),
+                              style: theme.textTheme.headlineMedium,
                             ),
                             // onPressed: showConfirmButton
                             //     ? null

@@ -67,8 +67,9 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     BookProvider _bookProvider = context.watch<BookProvider>();
+    ThemeData _theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: ColorManager.lighterGrey,
+      // backgroundColor: ColorManager.lighterGrey,
       body: Stack(
         children: [
           // DetailsPageImageGallery(selectedPost: _bookProvider.selectedBook),
@@ -81,7 +82,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
               height: MediaQuery.of(context).size.height * 0.6,
               constraints: BoxConstraints(),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: _theme.colorScheme.background,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -118,27 +119,27 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                           .postDetailsScreenSelectedBook
                                           .bookName,
                                       softWrap: true,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                      ),
+                                      // style: TextStyle(
+                                      //   fontWeight: FontWeight.bold,
+                                      //   color: Colors.black,
+                                      //   fontSize: 18,
+                                      // ),
+                                      style: _theme.textTheme.displayLarge,
                                       textAlign: TextAlign.start,
                                     ),
                                   ),
                                   Container(
-                                    // width: MediaQuery.of(context).size.width *
-                                    //     0.1,
                                     width: 90.w,
                                     child: Text(
                                       _bookProvider
                                           .postDetailsScreenSelectedBook.author,
                                       softWrap: true,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey,
-                                        fontSize: 14,
-                                      ),
+                                      // style: TextStyle(
+                                      //   fontWeight: FontWeight.bold,
+                                      //   color: Colors.grey,
+                                      //   fontSize: 14,
+                                      // ),
+                                      style: _theme.textTheme.bodyMedium,
                                       textAlign: TextAlign.start,
                                     ),
                                   ),
@@ -224,10 +225,11 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           padding: EdgeInsets.only(top: AppPadding.p14),
                           child: Text(
                             'Description',
-                            style: getBoldStyle(
-                              color: ColorManager.black,
-                              fontSize: FontSize.s14,
-                            ),
+                            // style: getBoldStyle(
+                            //   color: ColorManager.black,
+                            //   fontSize: FontSize.s14,
+                            // ),
+                            style: _theme.textTheme.headlineSmall,
                             textAlign: TextAlign.start,
                           ),
                         ),
@@ -239,10 +241,13 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           child: Text(
                             _bookProvider
                                 .postDetailsScreenSelectedBook.description,
-                            style: getMediumStyle(
-                              color: ColorManager.grey,
-                              fontSize: FontSize.s14,
-                            ),
+                            // style: getMediumStyle(
+                            //   color: ColorManager.grey,
+                            //   fontSize: FontSize.s14,
+                            // ),
+                            // style:  _theme.textTheme.titleMedium ,
+
+                            style: _theme.textTheme.bodyMedium,
                             textAlign: TextAlign.start,
                           ),
                         ),
@@ -257,10 +262,11 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                             children: [
                               Text(
                                 'Comments',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
+                                // style: TextStyle(
+                                //   fontWeight: FontWeight.bold,
+                                //   fontSize: 15,
+                                // ),
+                                style: _theme.textTheme.headlineSmall,
                               ),
                               Expanded(
                                 child: Divider(
@@ -286,10 +292,11 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         ),
                         Text(
                           'Recommendations for you',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
+                          // style: TextStyle(
+                          //   fontWeight: FontWeight.bold,
+                          //   fontSize: 15,
+                          // ),
+                          style: _theme.textTheme.headlineSmall,
                         ),
                         Center(
                             child: CircularProgressIndicator(
@@ -384,6 +391,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   @override
   Widget build(BuildContext context) {
     BookProvider _bookProvider = context.watch<BookProvider>();
+    ThemeData _theme = Theme.of(context);
 
     if ((_bookProvider.userProvider.user as User).id ==
         _bookProvider.postDetailsScreenSelectedBook.userId) {
@@ -430,7 +438,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           },
           style: ElevatedButton.styleFrom(
             // primary: ColorManager.primaryColorWithOpacity,
-            backgroundColor: ColorManager.primary,
+            // backgroundColor: ColorManager.primary,
             minimumSize: const Size.fromHeight(40), // NEW
           ),
           child: const Text(
@@ -460,7 +468,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: ColorManager.primary,
+            // backgroundColor: ColorManager.primary,
             minimumSize: const Size.fromHeight(40), // NEW
           ),
           child: const Text(
@@ -482,8 +490,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           horizontal: AppPadding.p18,
           vertical: AppPadding.p8,
         ),
-        child: SizedBox(
+        child: Container(
           height: AppHeight.h40,
+          color: _theme.bottomSheetTheme.backgroundColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,11 +505,12 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                     child: Text(
                       'Total price',
                       softWrap: true,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        fontSize: FontSize.s12,
-                      ),
+                      // style: TextStyle(
+                      //   fontWeight: FontWeight.bold,
+                      //   color: Colors.grey,
+                      //   fontSize: FontSize.s12,
+                      // ),
+                      style: _theme.textTheme.headlineSmall,
                       textAlign: TextAlign.start,
                     ),
                   ),
@@ -511,11 +521,12 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                     child: Text(
                       'Rs. ${_bookProvider.postDetailsScreenSelectedBook.price}',
                       softWrap: true,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: FontSize.s17,
-                      ),
+                      // style: TextStyle(
+                      //   fontWeight: FontWeight.bold,
+                      //   color: Colors.black,
+                      //   fontSize: FontSize.s17,
+                      // ),
+                      style: _theme.textTheme.bodyMedium,
                       textAlign: TextAlign.start,
                     ),
                   ),
@@ -566,7 +577,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                     Flexible(
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                          vertical: AppPadding.p18,
+                                          vertical: AppPadding.p8,
                                           horizontal: AppPadding.p12,
                                         ),
                                         child: TextFormField(
@@ -575,9 +586,12 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                           focusNode: _bookProvider
                                               .postDetailsPageCartBottomSheetBuyerDateFocusNode,
                                           keyboardType: TextInputType.datetime,
-                                          cursorColor:
-                                              Theme.of(context).primaryColor,
+                                          textAlignVertical:
+                                              TextAlignVertical.top,
                                           decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.only(
+                                                left: AppPadding.p12,
+                                                bottom: AppPadding.p8),
                                             labelText: 'Your expected deadline',
                                             suffix: IconButton(
                                               icon: Icon(Icons.calendar_today),
@@ -630,8 +644,6 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     .toString(),
                                                 keyboardType:
                                                     TextInputType.number,
-                                                cursorColor: Theme.of(context)
-                                                    .primaryColor,
                                                 focusNode: _bookProvider
                                                     .postDetailsPageCartBottomSheetBuyerPriceFocusNode,
                                                 decoration: InputDecoration(
@@ -687,7 +699,12 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                             ),
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                color: Colors.grey[200],
+                                                // color: Colors.grey[200],
+                                                color: _theme.brightness ==
+                                                        Brightness.dark
+                                                    ? _theme
+                                                        .colorScheme.background
+                                                    : ColorManager.lightestGrey,
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               ),
@@ -701,7 +718,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             bookProvider,
                                                             child) =>
                                                         IconButton(
-                                                      color: Colors.black,
+                                                      // color: Colors.black,
                                                       padding: EdgeInsets.zero,
                                                       disabledColor:
                                                           Colors.grey,
@@ -743,15 +760,18 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
-                                                              style:
-                                                                  getBoldStyle(
-                                                                color:
-                                                                    ColorManager
-                                                                        .black,
-                                                                fontSize:
-                                                                    FontSize
-                                                                        .s17,
-                                                              ),
+                                                              // style:
+                                                              //     getBoldStyle(
+                                                              //   color:
+                                                              //       ColorManager
+                                                              //           .black,
+                                                              //   fontSize:
+                                                              //       FontSize
+                                                              //           .s17,
+                                                              // ),
+                                                              style: _theme
+                                                                  .textTheme
+                                                                  .headlineMedium,
                                                             ),
                                                             transitionBuilder: (Widget
                                                                     child,
@@ -769,7 +789,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                             bookProvider,
                                                             child) =>
                                                         IconButton(
-                                                      color: Colors.black,
+                                                      // color: Colors.black,
                                                       padding: EdgeInsets.zero,
                                                       disabledColor:
                                                           Colors.grey,
@@ -1219,6 +1239,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
   _createOrderRequest(
       BookProvider _bookProvider, Map<String, dynamic> requestInfo) {
     final _form = GlobalKey<FormState>();
+    ThemeData _theme = Theme.of(context);
     showModalBottomSheet(
       barrierColor: ColorManager.blackWithLowOpacity,
       isDismissible: _bookProvider.postDetailsScreenIsRequestOnProcess ||
@@ -1269,10 +1290,11 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       children: [
                         Text(
                           'Billing Information',
-                          style: getBoldStyle(
-                            color: ColorManager.black,
-                            fontSize: FontSize.s18,
-                          ),
+                          // style: getBoldStyle(
+                          //   color: ColorManager.black,
+                          //   fontSize: FontSize.s18,
+                          // ),
+                          style: _theme.textTheme.headlineLarge,
                         ),
                         SizedBox(
                           height: AppHeight.h4,
@@ -1307,8 +1329,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                     ? _bookProvider.billingInfo[
                                                         'first_name']
                                                     : null,
-                                                cursorColor: Theme.of(context)
-                                                    .primaryColor,
+                                                // cursorColor: Theme.of(context)
+                                                //     .primaryColor,
                                                 focusNode: _bookProvider
                                                     .postDetailsPageCartBottomSheetFirstNameFocusNode,
                                                 decoration: InputDecoration(
@@ -1348,8 +1370,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                                       .billingInfo['last_name']
                                                   : null,
                                               keyboardType: TextInputType.text,
-                                              cursorColor: Theme.of(context)
-                                                  .primaryColor,
+                                              // cursorColor: Theme.of(context)
+                                              //     .primaryColor,
                                               focusNode: _bookProvider
                                                   .postDetailsPageCartBottomSheetLastNameFocusNode,
                                               decoration: InputDecoration(
@@ -1392,8 +1414,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                           focusNode: _bookProvider
                                               .postDetailsPageCartBottomSheetEmailFocusNode,
                                           keyboardType: TextInputType.text,
-                                          cursorColor:
-                                              Theme.of(context).primaryColor,
+                                          // cursorColor:
+                                          //     Theme.of(context).primaryColor,
                                           decoration: InputDecoration(
                                             labelText: 'Email Address',
                                           ),
@@ -1428,8 +1450,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                           focusNode: _bookProvider
                                               .postDetailsPageCartBottomSheetPhoneNumberFocusNode,
                                           keyboardType: TextInputType.number,
-                                          cursorColor:
-                                              Theme.of(context).primaryColor,
+                                          // cursorColor:
+                                          //     Theme.of(context).primaryColor,
                                           decoration: InputDecoration(
                                             labelText: 'Phone Number',
                                           ),
@@ -1459,8 +1481,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                         focusNode: _bookProvider
                                             .postDetailsPageCartBottomSheetSideNoteFocusNode,
                                         keyboardType: TextInputType.multiline,
-                                        cursorColor:
-                                            Theme.of(context).primaryColor,
+                                        // cursorColor:
+                                        //     Theme.of(context).primaryColor,
                                         decoration: InputDecoration(
                                           labelText: 'Side Note',
                                         ),
@@ -1507,10 +1529,11 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       children: [
                         Text(
                           'Location',
-                          style: getBoldStyle(
-                            color: ColorManager.black,
-                            fontSize: FontSize.s18,
-                          ),
+                          // style: getBoldStyle(
+                          //   color: ColorManager.black,
+                          //   fontSize: FontSize.s18,
+                          // ),
+                          style: _theme.textTheme.headlineLarge,
                         ),
                         SizedBox(
                           height: AppHeight.h4,
@@ -1525,7 +1548,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton(
                                 isExpanded: true,
-                                style: getBoldStyle(color: ColorManager.black),
+                                // style: getBoldStyle(color: ColorManager.black),
                                 value: _bookProvider
                                     .billingInfo['convenient_location'],
                                 // value: _locationOptions[0],
@@ -1636,13 +1659,14 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                                   ? LoadingHelper.showTextLoading('Requesting')
                                   : Text(
                                       'Request Now',
-                                      style: getBoldStyle(
-                                        color: ColorManager.black,
-                                        fontSize: FontSize.s18,
-                                      ),
+                                      // style: getBoldStyle(
+                                      //   color: ColorManager.black,
+                                      //   fontSize: FontSize.s18,
+                                      // ),
+                                      style: _theme.textTheme.headlineLarge,
                                     ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: ColorManager.primary,
+                                // backgroundColor: ColorManager.primary,
                                 padding: EdgeInsets.symmetric(
                                   vertical: AppPadding.p12,
                                 ),

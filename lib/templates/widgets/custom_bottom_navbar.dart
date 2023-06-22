@@ -51,14 +51,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData _theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        // color: Colors.red,
+        color: _theme.bottomNavigationBarTheme.backgroundColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            // color: ColorManager.lightestGrey,
+            
             blurRadius: 10.0,
             spreadRadius: 1.0,
             offset: const Offset(0, -1),
@@ -80,6 +80,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       IconData iconData, String label, String route, int index) {
     final isSelected = index == widget.index;
 
+    ThemeData _theme = Theme.of(context);
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -97,16 +99,19 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           children: [
             Icon(
               iconData,
-              color: isSelected ? ColorManager.primary : ColorManager.lightGrey,
+              // color: isSelected ? ColorManager.primary : ColorManager.lightGrey,
+              color: isSelected ? _theme.bottomNavigationBarTheme.selectedIconTheme!.color :_theme.bottomNavigationBarTheme.unselectedIconTheme!.color,
               size: 30,
             ),
             SizedBox(height: 1),
             Text(
               label,
-              style: TextStyle(
-                color: isSelected ? ColorManager.primary : ColorManager.white,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+              // style: TextStyle(
+              // color: isSelected ? _theme.bottomNavigationBarTheme.selectedItemColor :_theme.bottomNavigationBarTheme.unselectedItemColor,
+              //   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              // ),
+              style: isSelected ? _theme.bottomNavigationBarTheme.selectedLabelStyle: _theme.bottomNavigationBarTheme.unselectedLabelStyle ,
+              
             ),
           ],
         ),

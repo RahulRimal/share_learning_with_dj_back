@@ -14,6 +14,7 @@ import '../screens/order_request_details_screen.dart';
 import '../screens/order_request_screen.dart';
 import '../screens/orders_screen.dart';
 import '../screens/orders_screen_new.dart';
+import '../screens/post_details_screen.dart';
 import '../screens/signup_screen.dart';
 import '../screens/single_post_screen.dart';
 import '../screens/user_interests_screen.dart';
@@ -61,6 +62,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SplashScreen());
       case RoutesManager.singlePostScreenRoute:
         return MaterialPageRoute(builder: (_) => SinglePostScreen());
+      case RoutesManager.postDetailsScreenRoute:
+        return MaterialPageRoute(builder: (_) => PostDetailsScreen());
       case RoutesManager.userPostsScreenRoute:
         return MaterialPageRoute(builder: (_) => UserPostsScreen());
       case RoutesManager.addPostScreenRoute:

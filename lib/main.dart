@@ -27,7 +27,6 @@ import 'templates/screens/order_request_details_screen.dart';
 import 'templates/screens/order_request_screen.dart';
 import 'templates/screens/order_requests_screen_for_seller.dart';
 import 'templates/screens/order_requests_for_seller_details_screen.dart';
-
 import 'templates/screens/orders_screen.dart';
 import 'templates/screens/orders_screen_new.dart';
 import 'templates/screens/post_details_screen.dart';

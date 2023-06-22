@@ -4,6 +4,7 @@ import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/view_models/providers/book_provider.dart';
 import 'package:share_learning/view_models/providers/comment_provider.dart';
+import 'package:share_learning/view_models/providers/theme_provider.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
@@ -29,20 +30,37 @@ class AppDrawer extends StatefulWidget {
   State<AppDrawer> createState() => _AppDrawerState();
 }
 
-class _AppDrawerState extends State<AppDrawer> {
+class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
+  
+  
+  UserProvider? userProvider;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<UserProvider>(context, listen: false)
-        .bindAppDrawerViewModel(context);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    // Register this object as an observer
+    WidgetsBinding.instance.addObserver(this);
+    // WidgetsBinding.instance.addObserver(this);
+    
+    userProvider!.bindAppDrawerViewModel(context);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    userProvider = Provider.of<UserProvider>(context, listen: false);
   }
 
   @override
   void dispose() {
-    Provider.of<UserProvider>(context, listen: false)
-        .unbindAppDrawerViewModel();
+    userProvider!.unbindAppDrawerViewModel();
+    // Unregister this object as an observer
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
 
   Widget getDrawerItem(BuildContext context, DrawerItem item) {
     UserProvider _userProvider = context.watch<UserProvider>();
@@ -130,8 +148,15 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: Provider.of<ThemeProvider>(context).isDarkMode ?
+             LinearGradient(
               colors: [
+                ColorManager.grey,
+                ColorManager.darkGrey,
+              ]):
+             LinearGradient(
+              colors: [
+                
                 ColorManager.lightPrimary,
                 ColorManager.primary,
               ],
@@ -144,7 +169,7 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
           ),
           padding: EdgeInsets.only(top: 40),
-          // color: ColorManager.lightPrimary,
+          
 
           child: Container(
             child: Column(
@@ -180,15 +205,10 @@ class _AppDrawerState extends State<AppDrawer> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          // users.user!.firstName,
+                          
                           (_userProvider.user as User).firstName.toString(),
-                          style: getBoldStyle(
-                              color: ColorManager.black,
-                              fontSize: FontSize.s18),
-                          // style: TextStyle(
-                          //   color: Colors.white,
-                          //   fontSize: FontSize.s18,
-                          // ),
+                          style: getBoldStyle(fontSize: FontSize.s18, color: ColorManager.white),
+                          // style: Theme.of(context).textTheme.headlineLarge,
                         ),
                       ],
                     ),
@@ -211,17 +231,16 @@ class _AppDrawerState extends State<AppDrawer> {
                 // Spacer(),
 
                 ListTile(
-                  // tileColor: ColorManager.white,
+                  tileColor: ColorManager.transparent,
                   leading: Icon(
                     Icons.logout,
-                    color: ColorManager.white,
+                    color: Provider.of<ThemeProvider>(context).isDarkMode ? ColorManager.whiteWithOpacity : ColorManager.white,
+                    
                   ),
                   title: Text(
                     'Log out',
-                    style: getBoldStyle(
-                      color: ColorManager.white,
-                      fontSize: FontSize.s18,
-                    ),
+                    
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
 
                   onTap: () async {

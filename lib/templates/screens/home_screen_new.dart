@@ -19,6 +19,7 @@ import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/templates/widgets/post_new.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_learning/view_models/providers/theme_provider.dart';
 
 import '../../models/session.dart';
 import '../../models/user.dart';
@@ -96,7 +97,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                     bottomLeft: Radius.circular(25),
                     bottomRight: Radius.circular(25),
                   ),
-                  color: ColorManager.primary,
+                  // color: Provider.of<ThemeProvider>(context).isDarkMode
+                  //     ? ColorManager.grey
+                  //     : ColorManager.primary,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               Container(
@@ -341,7 +345,6 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                             color: ColorManager.black,
                                           ),
                                   ),
-                                  selectedColor: ColorManager.primary,
                                   showCheckmark: false,
                                   selected: _bookProvider
                                           .homeScreenNewSelectedCategoryIndex ==

@@ -37,20 +37,34 @@ class WishlistedBooksScreen extends StatefulWidget {
   State<WishlistedBooksScreen> createState() => _WishlistedBooksScreenState();
 }
 
-class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> {
+class _WishlistedBooksScreenState extends State<WishlistedBooksScreen> with WidgetsBindingObserver {
   final _form = GlobalKey<FormState>();
+WishlistProvider? wishlistProvider;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<WishlistProvider>(context, listen: false)
-        .bindWishlistScreenViewModel(context);
+    wishlistProvider = Provider.of<WishlistProvider>(context, listen: false);
+
+    wishlistProvider!.bindWishlistScreenViewModel(context);
+
+    // Register this object as an observer
+    WidgetsBinding.instance.addObserver(this);
+    
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    wishlistProvider = Provider.of<WishlistProvider>(context, listen: false);
   }
 
   @override
   void dispose() {
-    Provider.of<WishlistProvider>(context, listen: false)
-        .unbindWishlistScreenViewModel();
+    wishlistProvider!.unbindWishlistScreenViewModel();
+    // Unregister this object as an observer
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

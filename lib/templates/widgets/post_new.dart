@@ -7,6 +7,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/wishlist.dart';
+import 'package:share_learning/view_models/providers/theme_provider.dart';
 import 'package:share_learning/view_models/providers/wishlist_provider.dart';
 import 'package:share_learning/templates/screens/post_details_screen.dart';
 
@@ -30,24 +31,36 @@ class PostNew extends StatefulWidget {
   final Book book;
 }
 
-class _PostNewState extends State<PostNew> {
+class _PostNewState extends State<PostNew> with WidgetsBindingObserver {
+  
+
+  BookProvider? bookProvider;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<BookProvider>(context, listen: false)
-        .bindPostNewWidget(context);
+    bookProvider = Provider.of<BookProvider>(context, listen: false);
+
+    bookProvider!.bindPostNewWidget(context);
+
+    // Register this object as an observer
+    WidgetsBinding.instance.addObserver(this);
+    // WidgetsBinding.instance.addObserver(this);
+    
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   Provider.of<BookProvider>(context, listen: false)
-  //       .didChangeDependencyPostNewWidget(context);
-  // }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    bookProvider = Provider.of<BookProvider>(context, listen: false);
+  }
 
   @override
   void dispose() {
-    Provider.of<BookProvider>(context, listen: false).unBindPostNewWidget();
+    bookProvider!.unBindPostNewWidget();
+    // Unregister this object as an observer
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -55,6 +68,7 @@ class _PostNewState extends State<PostNew> {
   Widget build(BuildContext context) {
     Book post = widget.book;
     BookProvider _bookProvider = context.watch<BookProvider>();
+    
 
     return Column(
       children: [
@@ -131,8 +145,8 @@ class _PostNewState extends State<PostNew> {
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              // color: ColorManager.white,
-              color: ColorManager.lightestGrey,
+              
+              color: Provider.of<ThemeProvider>(context).isDarkMode ? ColorManager.grey : ColorManager.lightestGrey,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),
@@ -145,7 +159,7 @@ class _PostNewState extends State<PostNew> {
                 Text(
                   post.bookName,
                   style: getBoldStyle(
-                    color: ColorManager.black,
+                    color:  ColorManager.black,
                     fontSize: FontSize.s16,
                   ),
                 ),
@@ -155,7 +169,7 @@ class _PostNewState extends State<PostNew> {
                 Text(
                   'Rs. ${post.price}',
                   style: getBoldStyle(
-                    color: ColorManager.grey,
+                    color: Provider.of<ThemeProvider>(context).isDarkMode ? ColorManager.lighterGrey: ColorManager.grey,
                     fontSize: FontSize.s14,
                   ),
                 ),
