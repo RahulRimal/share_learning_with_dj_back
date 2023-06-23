@@ -42,20 +42,16 @@ class _EditPostScreenState extends State<EditPostScreen> {
   // void didChangeDependencies() {
   //   final args = ModalRoute.of(context)!.settings.arguments as Map;
   //   String bookId = args['bookId'];
-
   //   if (bookId.isNotEmpty) {
   //     _bookProvider.editPostScreenEdittedBook =
   //         Provider.of<BookProvider>(context, listen: false).getBookById(bookId);
-
   //     _bookProvider.editPostScreenIspostType = _bookProvider.editPostScreenEdittedBook.postType == 'S' ? true : false;
   //     _bookProvider.editPostScreenPostTypeSelling = [_bookProvider.editPostScreenIspostType, !_bookProvider.editPostScreenIspostType];
   //     if (_first) _retrieveImage(_bookProvider.editPostScreenEdittedBook);
   //   } else
   //     print('Book Id Is Empty');
-
   //   _bookProvider.editPostScreenDatePickercontroller.text =
   //       DateFormat('yyyy-MM-dd').format(_bookProvider.editPostScreenEdittedBook.boughtDate).toString();
-
   //   super.didChangeDependencies();
   // }
 
@@ -68,9 +64,10 @@ class _EditPostScreenState extends State<EditPostScreen> {
         title: Text('Edit Post'),
         actions: <Widget>[
           _bookProvider.userProvider.user!.id ==
-                  _bookProvider.addPostScreenEdittedBook.userId
+                  _bookProvider.editPostScreenEdittedBook.userId
               ? IconButton(
                   icon: Icon(Icons.delete),
+                  
                   onPressed: () async {
                     // setState(() => _bookProvider.editPostScreenShowLoading = true);
                     _bookProvider.setEditPostScreenShowLoading(true);
@@ -108,7 +105,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            // color: Colors.white,
           ),
           child: Form(
             key: _form,

@@ -25,8 +25,11 @@ import 'view_models/providers/order_request_provider.dart';
 import 'view_models/providers/session_provider.dart';
 import 'view_models/providers/wishlist_provider.dart';
 
+
+
 Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  
   print('Handling a background message: ${message.messageId}');
   if (message.notification != null) {
     print("Message also contained a notification: ${message.notification}");
@@ -37,6 +40,8 @@ Future<void> _firebaseMessengingBackgroundHandler(RemoteMessage message) async {
       largeIcon: message.notification!.android?.imageUrl,
       payload: message.data,
     );
+    
+    // NotificationService.showBigTextNotification(title: message.notification!.title as String, body: message.notification!.body as String);
   }
 }
 
@@ -47,7 +52,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  // print(await messaging.getToken());
+
+  
+  
+  
 
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
@@ -74,10 +82,15 @@ Future<void> main() async {
         largeIcon: message.notification!.android?.imageUrl,
         payload: message.data,
       );
+      
+      // NotificationService.showBigTextNotification(title: message.notification!.title as String, body: message.notification!.body as String);
     }
   });
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessengingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessengingBackgroundHandler );
+  // This line is to initialize awesome notification so don't delete as it might be used in the future
   await NotificationService.initializeNotification();
+  // NotificationService.initialize();
+  
 
   runApp(MyApp());
 }

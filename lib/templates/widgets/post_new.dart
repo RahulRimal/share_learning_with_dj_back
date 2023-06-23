@@ -162,13 +162,41 @@ class _PostNewState extends State<PostNew> with WidgetsBindingObserver {
                 SizedBox(
                   height: AppHeight.h2,
                 ),
-                Text(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
                   'Rs. ${post.price}',
                   style: getBoldStyle(
                     color: Provider.of<ThemeProvider>(context).isDarkMode ? ColorManager.lighterGrey: ColorManager.grey,
                     fontSize: FontSize.s14,
                   ),
                 ),
+                    if(post.postType == 'S')
+                Text(
+                  'Selling',
+                  
+                  style: getBoldStyle(
+                    // color: Provider.of<ThemeProvider>(context).isDarkMode ? ColorManager.lighterGrey: ColorManager.grey,
+                    color: ColorManager.yellow,
+                    fontSize: FontSize.s12,
+                  ),
+                )
+                else
+                Text(
+                  'Buying',
+                  
+                  style: getBoldStyle(
+                    // color: Provider.of<ThemeProvider>(context).isDarkMode ? ColorManager.lighterGrey: ColorManager.grey,
+                    color: ColorManager.primary,
+                    fontSize: FontSize.s12,
+                  ),
+                )
+                  ],
+                ),
+                
+                
+                
               ],
             ),
           ),

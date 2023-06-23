@@ -23,14 +23,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+
   provider: ^6.0.2
   photo_view: ^0.14.0
-  intl: ^0.18.1
+  # intl: ^0.18.1
+  intl: ^0.18.0
+  
   nepali_date_picker: ^5.1.0
   image_picker: ^0.8.4+2
   path: ^1.8.0
   path_provider: ^2.0.5
-  # http: ^0.13.4
+  
   async: ^2.8.1
   flutter_svg: ^2.0.5
   # data_connection_checker: ^0.3.4
@@ -45,8 +49,11 @@ dependencies:
   firebase_core: ^2.11.0
   firebase_messaging: ^14.5.0
   awesome_notifications: ^0.7.4+1
+  # flutter_local_notifications: ^14.1.1
+  
   device_info_plus: ^8.0.0
   responsive_sizer: ^3.1.1
+  # flutter_localization: ^0.1.12
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

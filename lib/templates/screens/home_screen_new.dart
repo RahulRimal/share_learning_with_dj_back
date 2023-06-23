@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 
+
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:share_learning/view_models/providers/category_provider.dart';
 import 'package:share_learning/view_models/providers/book_filters_provider.dart';
@@ -20,6 +21,7 @@ import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../view_models/providers/book_provider.dart';
 import '../managers/routes_manager.dart';
+
 import '../utils/user_helper.dart';
 
 class HomeScreenNew extends StatefulWidget {
@@ -131,6 +133,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                               },
                             ),
                           ),
+                          // IconButton(onPressed: (){
+                            
+                          //   NotificationService.showNotification(title: 'Test', body: 'This is Test');
+                          // }, icon: Icon(Icons.notification_add,),),
                           IconButton(
                             padding: const EdgeInsets.only(
                               right: AppPadding.p20,

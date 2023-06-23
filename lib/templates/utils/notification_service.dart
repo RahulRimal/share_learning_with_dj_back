@@ -1,15 +1,15 @@
+// ================================ Code fir awesome notifications package starts here ================================
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:share_learning/data/book_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../main.dart';
 import '../../models/api_status.dart';
 import '../../models/order.dart';
 import '../../models/order_request.dart';
 import '../../models/session.dart';
 import '../managers/routes_manager.dart';
-
 class NotificationService {
   static Future<void> initializeNotification() async {
     await AwesomeNotifications().initialize(
@@ -32,12 +32,12 @@ class NotificationService {
       channelGroups: [
         NotificationChannelGroup(
           channelGroupKey: 'high_importance_channel_group',
+          
           channelGroupName: 'Group 1',
         )
       ],
       debug: true,
     );
-
     await AwesomeNotifications().isNotificationAllowed().then(
       (isAllowed) async {
         if (!isAllowed) {
@@ -45,7 +45,6 @@ class NotificationService {
         }
       },
     );
-
     await AwesomeNotifications().setListeners(
       onActionReceivedMethod: onActionReceivedMethod,
       onNotificationCreatedMethod: onNotificationCreatedMethod,
@@ -53,25 +52,21 @@ class NotificationService {
       onDismissActionReceivedMethod: onDismissActionReceivedMethod,
     );
   }
-
   /// Use this method to detect when a new notification or a schedule is created
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
     debugPrint('onNotificationCreatedMethod');
   }
-
   /// Use this method to detect every time that a new notification is displayed
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
     debugPrint('onNotificationDisplayedMethod');
   }
-
   /// Use this method to detect if the user dismissed a notification
   static Future<void> onDismissActionReceivedMethod(
       ReceivedAction receivedAction) async {
     debugPrint('onDismissActionReceivedMethod');
   }
-
   /// Use this method to detect when the user taps on a notification or action button
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
@@ -85,21 +80,17 @@ class NotificationService {
     //   );
     // }
     final Map<String, dynamic> payload = receivedAction.payload ?? {};
-
     // ---------------------------------------- Handle notification for order request object starts here----------------------------------------------------------------
     if (payload.containsKey('click_action') &&
         payload['click_action'] == 'GO_TO_ORDER_REQUEST_FOR_USER_SCREEN') {
       OrderRequest requestItem =
           orderRequestFromJson(convertToJsonParsable(payload['request_item']));
-
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String access = prefs.getString('accessToken') as String;
       String refresh = prefs.getString('refreshToken') as String;
-
       var response = await BookApi.getBookById(
           Session(accessToken: access, refreshToken: refresh),
           requestItem.product.id.toString());
-
       if (response is Success) {
         MyApp.navigatorKey.currentState?.pushNamed(
             RoutesManager.orderRequestForSellerDetailsScreenRoute,
@@ -109,11 +100,8 @@ class NotificationService {
             });
       }
     }
-
     // ---------------------------------------- Handle notification for order request object ends here----------------------------------------------------------------
-
     // ---------------------------------------- Handle notification for order object starts here----------------------------------------------------------------
-
     if (payload.containsKey('click_action') &&
         payload['click_action'] == 'GO_TO_ORDER_DETAILS_SCREEN') {
       Order order = orderFromJson(convertToJsonParsable(payload['order']));
@@ -121,14 +109,11 @@ class NotificationService {
           RoutesManager.orderDetailsScreenRoute,
           arguments: {'order': order});
     }
-
     // ---------------------------------------- Handle notification for order request object ends here----------------------------------------------------------------
   }
-
   static String convertToJsonParsable(String str) {
     return str.replaceAll("'", "\"");
   }
-
   static Future<void> showNotification({
     required final String title,
     required final String body,
@@ -144,7 +129,6 @@ class NotificationService {
     final int? interval,
   }) async {
     assert(!scheduled || (scheduled && interval != null));
-
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: -1,
@@ -172,3 +156,61 @@ class NotificationService {
     );
   }
 }
+
+// ================================ Code fir awesome notifications package ends here ================================
+
+
+
+
+
+// ================================ Code fir flutter_local_notifications package starts here ================================
+
+
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+// class NotificationService{
+
+//   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+//   // static Future initialize(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+//   static Future initialize() async {
+//     var androidInitialize = new AndroidInitializationSettings('mipmap/ic_launcher');
+//     // var iOSInitialize = new IOSInitializationSettings();
+//     var iOSInitialize = new DarwinInitializationSettings();
+//     var initializationsSettings = new InitializationSettings(android: androidInitialize,
+//         iOS: iOSInitialize);
+//     await flutterLocalNotificationsPlugin.initialize(initializationsSettings );
+
+//   // await flutterLocalNotificationsPlugin.isNotificationAllowed().then((isAllowed) async{
+//   //   if(!isAllowed){
+//   //     await flutterLocalNotificationsPlugin.per
+//   //   }
+//   // });
+//   }
+
+  
+//   static Future showBigTextNotification({var id =0,required String title, required String body,
+//     var payload
+//   } ) async {
+//     AndroidNotificationDetails androidPlatformChannelSpecifics =
+//     new AndroidNotificationDetails(
+//       'share_learning_id',
+//       'share_learning_channel_name',
+
+//       playSound: true,
+//       // sound: RawResourceAndroidNotificationSound('notification'),
+//       importance: Importance.max,
+//       priority: Priority.high,
+//     );
+
+//     var not= NotificationDetails(android: androidPlatformChannelSpecifics,
+//         // iOS: IOSNotificationDetails()
+        
+//     );
+//     await flutterLocalNotificationsPlugin.show(0, title, body,not );
+//   }
+
+// }
+
+
+// ================================ Code fir flutter_local_notifications package ends here ================================
