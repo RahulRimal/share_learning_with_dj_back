@@ -286,6 +286,56 @@ class BookApi {
     }
   }
 
+  static Future<Object> getUserBooksBySearchTerm(
+      String userId, String searchTerm) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI +
+          '/posts/?user=' +
+          userId +
+          '&search=' +
+          searchTerm);
+
+      var response = await http.get(
+        url,
+        // headers: {
+        //   HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        // },
+      );
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(code: response.statusCode, response: {
+          'books': booksFromJson(
+            json.encode((json.decode(response.body))['results']),
+          ),
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //   code: ApiStatusCode.unknownError,
+      //   errorResponse: ApiStrings.unknownErrorString,
+      // );
+    }
+  }
+
   static Future<Object> getBooksWithFilters(
       Map<String, dynamic> filters) async {
     try {
@@ -341,6 +391,57 @@ class BookApi {
   static Future<Object> getUserBooks(String userId) async {
     try {
       var url = Uri.parse(RemoteManager.BASE_URI + '/posts/?user=' + userId);
+      // var url = Uri.parse(RemoteManager.BASE_URI + '/posts/?user=3');
+
+      var response = await http.get(
+        url,
+        // headers: {
+        //   HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+        // },
+      );
+      // print(response.body);
+
+      if (response.statusCode == ApiStatusCode.responseSuccess) {
+        return Success(code: response.statusCode, response: {
+          'books': booksFromJson(
+            json.encode((json.decode(response.body))['results']),
+          ),
+          'next': (json.decode(response.body))['next'],
+          'previous': (json.decode(response.body))['previous']
+        });
+      }
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidResponseString,
+      );
+    } on HttpException {
+      return Failure(
+        code: ApiStatusCode.httpError,
+        errorResponse: ApiStrings.noInternetString,
+      );
+    } on FormatException {
+      return Failure(
+        code: ApiStatusCode.invalidResponse,
+        errorResponse: ApiStrings.invalidFormatString,
+      );
+    } catch (e) {
+      print(e.toString());
+      return Failure(code: 103, errorResponse: e.toString());
+      // return Failure(
+      //   code: ApiStatusCode.unknownError,
+      //   errorResponse: ApiStrings.unknownErrorString,
+      // );
+    }
+  }
+
+  static Future<Object> getUserBooksByCategory(
+      String userId, String categoryId) async {
+    try {
+      var url = Uri.parse(RemoteManager.BASE_URI +
+          '/posts/?user=' +
+          userId +
+          '&category=' +
+          categoryId);
       // var url = Uri.parse(RemoteManager.BASE_URI + '/posts/?user=3');
 
       var response = await http.get(

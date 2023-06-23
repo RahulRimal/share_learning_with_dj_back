@@ -93,3 +93,10 @@ mixin BaseViewModel on ChangeNotifier {
     notifyListeners();
   }
 }
+
+// // This class is to initialize the the providers on main.dart file as BaseViewModel being a mixin can't be instialized
+// class BaseViewModelInitiator with ChangeNotifier, BaseViewModel {
+//   initializeProviders(BuildContext context) {
+//     bindBaseViewModal(context);
+//   }
+// }

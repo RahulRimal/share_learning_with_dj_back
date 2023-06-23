@@ -100,8 +100,8 @@ class BookProvider
   // Future<List<double>> getMinAndMaxPrice() async {
   getMinAndMaxPrice() async {
     // If user tried to get min and max price after searching then show min and max prices for the searched books
-    var response =
-        await BookApi.getMinAndMaxPrice(homeScreenNewSearchTextController.text);
+    var response = await BookApi.getMinAndMaxPrice(
+        userPostsScreenSearchTextController.text);
     if (response is Success) {
       List<double> result = (response.response as Map)
           .values
@@ -167,7 +167,7 @@ class BookProvider
 
   getMoreBooks(String nextPageUrl) async {
     // setLoading(true);
-    homeScreenNewSetLoadingMorePosts(true);
+    userPostsScreenSetLoadingMorePosts(true);
     var response = await BookApi.getMoreBooks(nextPageUrl);
     // print(response);
 
@@ -189,10 +189,7 @@ class BookProvider
       setBookError(bookError);
     }
 
-    // bookFiltersProvider.setMinAndMaxPrice(
-    //     getMinPrice(_myBooks), getMaxPrice(_myBooks));
-
-    homeScreenNewSetLoadingMorePosts(false);
+    userPostsScreenSetLoadingMorePosts(false);
   }
 
   Future<dynamic> getBookByIdFromServer(
@@ -250,7 +247,7 @@ class BookProvider
       );
       setBookError(error);
     }
-    homeScreenNewSetEnableClearSearch(true);
+    userPostsScreenSetEnableClearSearch(true);
     setLoading(false);
   }
 
@@ -293,8 +290,8 @@ class BookProvider
     }
 
     // If user first searched then applied filters then we should apply search and filter
-    if (homeScreenNewSearchTextController.text.isNotEmpty) {
-      newFilters['search'] = homeScreenNewSearchTextController.text;
+    if (userPostsScreenSearchTextController.text.isNotEmpty) {
+      newFilters['search'] = userPostsScreenSearchTextController.text;
     }
 
     var response = await BookApi.getBooksWithFilters(newFilters);
@@ -332,8 +329,11 @@ class BookProvider
     var response = await BookApi.getUserBooks(userId);
     // print(response);
     if (response is Success) {
-      // setBooks(response.response as List<Book>);
-      return response.response;
+      setBooks((response.response as Map)['books'] as List<Book>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
+      // return response.response;
+      // return _myBooks;
     }
     if (response is Failure) {
       BookError error = new BookError(
@@ -342,6 +342,47 @@ class BookProvider
       );
       setBookError(error);
     }
+    setLoading(false);
+  }
+
+  Future<dynamic> getUserBooksByCategory(
+      String userId, String categoryId) async {
+    setLoading(true);
+    var response = await BookApi.getUserBooksByCategory(userId, categoryId);
+    // print(response);
+    if (response is Success) {
+      setBooks((response.response as Map)['books'] as List<Book>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
+      // return response.response;
+      // return _myBooks;
+    }
+    if (response is Failure) {
+      BookError error = new BookError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setBookError(error);
+    }
+    setLoading(false);
+  }
+
+  Future<dynamic> searchUserBooks(String userId, String searchTerm) async {
+    setLoading(true);
+    var response = await BookApi.getUserBooksBySearchTerm(userId, searchTerm);
+    if (response is Success) {
+      setBooks((response.response as Map)['books'] as List<Book>);
+      setNextPageUrl((response.response as Map)['next']);
+      setPreviousPageUrl((response.response as Map)['previous']);
+    }
+    if (response is Failure) {
+      BookError error = new BookError(
+        code: response.code,
+        message: response.errorResponse,
+      );
+      setBookError(error);
+    }
+    userPostsScreenSetEnableClearSearch(true);
     setLoading(false);
   }
 

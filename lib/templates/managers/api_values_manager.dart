@@ -13,7 +13,8 @@ class RemoteManager {
   // static const String BASE_URI = 'https://share-learning-api-xhui.onrender.com';
   // static const String BASE_URI = 'http://192.168.1.74:8000';
   // static const String BASE_URI = 'http://192.168.1.74:8000';
-  static const String BASE_URI = 'http://192.168.1.88:8000';
+  // static const String BASE_URI = 'http://192.168.1.88:8000';
+  static const String BASE_URI = 'http://192.168.1.72:8000';
   // static const String BASE_URI = 'http://192.168.1.66:8000';
   // static const String BASE_URI = 'http://192.168.1.85:8000';
   // static const String BASE_URI = 'http://192.168.1.15:8000';

@@ -220,11 +220,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? TextInputAction.done
                         : TextInputAction.next,
                     keyboardType: TextInputType.text,
+                    textAlignVertical:
+                        isPassword ? TextAlignVertical.top : null,
                     decoration: new InputDecoration(
-                      // contentPadding: EdgeInsets.symmetric(
-                      //   horizontal: AppPadding.p12,
-                      //   vertical: AppPadding.p2,
-                      // ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: AppPadding.p12,
+                        vertical: AppPadding.p0,
+                      ),
                       // contentPadding: EdgeInsets.only(
                       //   top: 0,
                       //   left: AppPadding.p12,

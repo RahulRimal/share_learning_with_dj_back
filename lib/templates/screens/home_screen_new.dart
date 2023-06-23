@@ -47,12 +47,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
   void initState() {
     super.initState();
     bookProvider = Provider.of<BookProvider>(context, listen: false);
-
     bookProvider!.bindHomeScreenNew(context);
 
     // Register this object as an observer
     WidgetsBinding.instance.addObserver(this);
-    // WidgetsBinding.instance.addObserver(this);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bookProvider!.getBooksAnnonimusly(
           Provider.of<SessionProvider>(context, listen: false).session
@@ -81,395 +80,393 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
     _bookProvider.setBillingInfo();
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          toolbarHeight: 15.h,
-          flexibleSpace: Stack(
-            children: [
-              Container(
-                height: 12.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(25),
-                    bottomRight: Radius.circular(25),
+    return GestureDetector(
+      // onWillPop: () async {
+      //   _bookProvider.homeScreenNewSearchFocusNode.unfocus();
+      //   return true;
+      // },
+      onTap: () {
+        // Unfocus the TextFormField when the user taps outside
+        _bookProvider.homeScreenNewSearchFocusNode.unfocus();
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            toolbarHeight: 15.h,
+            flexibleSpace: Stack(
+              children: [
+                Container(
+                  height: 12.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(25),
+                      bottomRight: Radius.circular(25),
+                    ),
+                    // color: Provider.of<ThemeProvider>(context).isDarkMode
+                    //     ? ColorManager.grey
+                    //     : ColorManager.primary,
+                    color: Theme.of(context).primaryColor,
                   ),
-                  // color: Provider.of<ThemeProvider>(context).isDarkMode
-                  //     ? ColorManager.grey
-                  //     : ColorManager.primary,
-                  color: Theme.of(context).primaryColor,
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: ColorManager.black,
-                          radius: 20,
-                          child: Builder(
-                            builder: (context) {
-                              return IconButton(
-                                icon: Icon(
-                                  Icons.menu,
-                                  size: AppSize.s22,
-                                ),
-                                onPressed: () =>
-                                    Scaffold.of(context).openDrawer(),
-                                color: ColorManager.white,
-                              );
-                            },
-                          ),
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.only(
-                            right: AppPadding.p20,
-                            top: AppPadding.p4,
-                            bottom: AppPadding.p4,
-                          ),
-                          iconSize: AppSize.s40,
-                          onPressed: () => Navigator.pushNamed(context,
-                              RoutesManager.userProfileEditScreenRoute),
-                          icon: _bookProvider.userProvider.user != null
-                              ? (_bookProvider.userProvider.user as User)
-                                          .image ==
-                                      null
-                                  ? CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage(ImageAssets.noProfile),
-                                    )
-                                  : CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          UserHelper.userProfileImage(
-                                              _bookProvider.userProvider.user
-                                                  as User)),
-                                    )
-                              : Container(),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: AppHeight.h20,
-                    ),
-                    Row(
-                      children: [
-                        Form(
-                          // key: _bookProvider.homeScreenNewSearchFormKey,
-                          key: _form,
-                          child: Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: TextFormField(
-                                controller: _bookProvider
-                                    .homeScreenNewSearchTextController,
-                                focusNode:
-                                    _bookProvider.homeScreenNewSearchFocusNode,
-                                cursorColor: ColorManager.primary,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: ColorManager.primary,
-                                    ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: ColorManager.black,
+                            radius: 20,
+                            child: Builder(
+                              builder: (context) {
+                                return IconButton(
+                                  icon: Icon(
+                                    Icons.menu,
+                                    size: AppSize.s22,
                                   ),
-                                  prefixIcon: Icon(Icons.search),
-                                  prefixIconColor: ColorManager.primary,
-                                  suffixIcon: _bookProvider
-                                          .homeScreenNewEnableClearSearch
-                                      ? IconButton(
-                                          icon: Icon(Icons.cancel_outlined),
-                                          onPressed: () {
-                                            _bookProvider
-                                                .homeScreenNewSearchTextController
-                                                .text = '';
-                                            _bookProvider
-                                                .homeScreenNewSetEnableClearSearch(
-                                                    false);
+                                  onPressed: () =>
+                                      Scaffold.of(context).openDrawer(),
+                                  color: ColorManager.white,
+                                );
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            padding: const EdgeInsets.only(
+                              right: AppPadding.p20,
+                              top: AppPadding.p4,
+                              bottom: AppPadding.p4,
+                            ),
+                            iconSize: AppSize.s40,
+                            onPressed: () => Navigator.pushNamed(context,
+                                RoutesManager.userProfileEditScreenRoute),
+                            icon: _bookProvider.userProvider.user != null
+                                ? (_bookProvider.userProvider.user as User)
+                                            .image ==
+                                        null
+                                    ? CircleAvatar(
+                                        backgroundImage:
+                                            AssetImage(ImageAssets.noProfile),
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            UserHelper.userProfileImage(
+                                                _bookProvider.userProvider.user
+                                                    as User)),
+                                      )
+                                : Container(),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: AppHeight.h20,
+                      ),
+                      Row(
+                        children: [
+                          Form(
+                            // key: _bookProvider.homeScreenNewSearchFormKey,
+                            key: _form,
+                            child: Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: TextFormField(
+                                  controller: _bookProvider
+                                      .homeScreenNewSearchTextController,
+                                  focusNode: _bookProvider
+                                      .homeScreenNewSearchFocusNode,
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.search),
+                                    prefixIconColor: ColorManager.primary,
+                                    suffixIcon: _bookProvider
+                                            .homeScreenNewEnableClearSearch
+                                        ? IconButton(
+                                            icon: Icon(Icons.cancel_outlined),
+                                            onPressed: () {
+                                              _bookProvider
+                                                  .homeScreenNewSearchTextController
+                                                  .text = '';
+                                              _bookProvider
+                                                  .homeScreenNewSetEnableClearSearch(
+                                                      false);
 
-                                            // Call get Post to reload the view and also to set the next url to generic next url rather than next url of search query
-                                            _bookProvider.getBooksAnnonimusly(
-                                                _bookProvider.sessionProvider
-                                                    .session as Session);
-                                          },
-                                        )
-                                      : IconButton(
-                                          icon: Icon(Icons.send),
-                                          onPressed: () {
-                                            _bookProvider
-                                                .homeScreenNewGetSearchResult(
-                                                    _form);
-                                          },
-                                        ),
-                                  suffixIconColor: ColorManager.primary,
-                                  fillColor: ColorManager
-                                      .white, // Change the background color
-                                  filled: true,
-                                  focusColor: ColorManager
-                                      .grey, // Change the background color
-                                  labelText: 'Search',
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.never,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors
-                                          .red, // Change the border color if needed
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
+                                              // Call get Post to reload the view and also to set the next url to generic next url rather than next url of search query
+                                              _bookProvider.getBooksAnnonimusly(
+                                                  _bookProvider.sessionProvider
+                                                      .session as Session);
+                                            },
+                                          )
+                                        : IconButton(
+                                            icon: Icon(Icons.send),
+                                            onPressed: () {
+                                              _bookProvider
+                                                  .homeScreenNewGetSearchResult(
+                                                      _form);
+                                            },
+                                          ),
+                                    suffixIconColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? ColorManager.primary
+                                            : ColorManager.grey,
+
+                                    // focusColor: ColorManager
+                                    //     .grey, // Change the background color
+                                    labelText: 'Search',
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.never,
                                   ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors
-                                          .red, // Change the border color if needed
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
+                                  textInputAction: TextInputAction.done,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please provide the bookName';
+                                    }
+                                    return null;
+                                  },
+                                  onFieldSubmitted: (_) {
+                                    _bookProvider
+                                        .homeScreenNewGetSearchResult(_form);
+                                  },
                                 ),
-                                textInputAction: TextInputAction.done,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please provide the bookName';
-                                  }
-                                  return null;
-                                },
-                                onFieldSubmitted: (_) {
-                                  _bookProvider
-                                      .homeScreenNewGetSearchResult(_form);
-                                },
                               ),
                             ),
                           ),
-                        ),
-                        AnimatedContainer(
-                          duration: const Duration(
-                              milliseconds:
-                                  700), // Adjust the duration as needed
-                          curve:
-                              Curves.easeInOut, // Adjust the curve as desired
-                          width: _bookProvider.homeScreenNewShowFilterButton
-                              ? AppHeight.h60
-                              : 0, // Define the desired height when visible or hidden
-                          child: CircleAvatar(
-                            backgroundColor: ColorManager.black,
-                            radius: 20,
-                            child: !_bookProvider.homeScreenNewShowFilterButton
-                                ? null
-                                : IconButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        barrierColor:
-                                            ColorManager.blackWithLowOpacity,
-                                        isScrollControlled: true,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    AppRadius.r20),
-                                                topRight: Radius.circular(
-                                                    AppRadius.r20))),
-                                        context: context,
-                                        builder: (context) {
-                                          return Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.9,
-                                            // height: 9.h,
-                                            // height: 300,
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: AppPadding.p20,
-                                            ),
+                          AnimatedContainer(
+                            duration: const Duration(
+                                milliseconds:
+                                    700), // Adjust the duration as needed
+                            curve:
+                                Curves.easeInOut, // Adjust the curve as desired
+                            width: _bookProvider.homeScreenNewShowFilterButton
+                                ? AppHeight.h60
+                                : 0, // Define the desired height when visible or hidden
+                            child: CircleAvatar(
+                              backgroundColor: ColorManager.black,
+                              radius: 20,
+                              child: !_bookProvider
+                                      .homeScreenNewShowFilterButton
+                                  ? null
+                                  : IconButton(
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          barrierColor:
+                                              ColorManager.blackWithLowOpacity,
+                                          isScrollControlled: true,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(
+                                                      AppRadius.r20),
+                                                  topRight: Radius.circular(
+                                                      AppRadius.r20))),
+                                          context: context,
+                                          builder: (context) {
+                                            return Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.9,
+                                              // height: 9.h,
+                                              // height: 300,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: AppPadding.p20,
+                                              ),
 
-                                            child: BookFiltersWidget(
-                                                booksToFilter:
-                                                    _bookProvider.books),
-                                            // child: BookFiltersWidget(),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(Icons.settings),
-                                    color: ColorManager.white,
-                                  ),
+                                              child: BookFiltersWidget(
+                                                  booksToFilter:
+                                                      _bookProvider.books),
+                                              // child: BookFiltersWidget(),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: Icon(Icons.settings),
+                                      color: ColorManager.white,
+                                    ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        body: _bookProvider.loading == true
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : SingleChildScrollView(
-                // controller: _bookProvider.scrollController,
-                controller: _bookProvider.homeScreenNewGetScrollController(),
-                child: Container(
-                  padding: EdgeInsets.only(
-                    bottom: AppPadding.p12,
-                  ),
-                  // color: ColorManager.lighterGrey,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: AppHeight.h75,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount:
-                                _bookProvider.homeScreenNewCategories.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 6),
-                                child: FilterChip(
-                                  label: Text(
-                                    _bookProvider
-                                        .homeScreenNewCategories[index].name,
-                                    style: _bookProvider
-                                                .homeScreenNewSelectedCategoryIndex ==
-                                            index
-                                        ? getBoldStyle(
-                                            // color: ColorManager.black,
-                                            color: ColorManager.white,
-                                          )
-                                        : getMediumStyle(
-                                            color: ColorManager.black,
-                                          ),
-                                  ),
-                                  showCheckmark: false,
-                                  selected: _bookProvider
-                                          .homeScreenNewSelectedCategoryIndex ==
-                                      index,
-                                  onSelected: (bool isSelected) async {
-                                    if (_bookProvider
-                                            .homeScreenNewSelectedCategoryIndex !=
-                                        index) {
-                                      _bookProvider
-                                              .homeScreenNewSelectedCategoryIndex =
-                                          index;
-                                      if (_bookProvider
-                                              .homeScreenNewCategories[_bookProvider
-                                                  .homeScreenNewSelectedCategoryIndex]
-                                              .name
-                                              .toLowerCase() !=
-                                          'all') {
-                                        _bookProvider.getBooksByCategory(
-                                            _bookProvider.sessionProvider
-                                                .session as Session,
-                                            _bookProvider
-                                                .categoryProvider
-                                                .categories[_bookProvider
-                                                        .homeScreenNewSelectedCategoryIndex -
-                                                    1]
-                                                .id
-                                                .toString());
-                                      } else
-                                        _bookProvider.getBooksAnnonimusly(
-                                            _bookProvider.sessionProvider
-                                                .session as Session);
-                                    }
-                                  },
-                                ),
-                              );
-                            }),
+                        ],
                       ),
-                      if (_bookProvider.bookFiltersProvider.showFilteredResult)
-                        // if (_bookFiltesProvider.showFilteredResult)
-                        Consumer<BookFiltersProvider>(
-                          builder: (ctx, books, child) {
-                            if (books.filteredBooks.length <= 0) {
-                              return Center(
-                                child: Text(
-                                  'No books found',
-                                  style: getBoldStyle(
-                                      fontSize: FontSize.s20,
-                                      color: ColorManager.primary),
-                                ),
-                              );
-                            } else {
-                              return MasonryGridView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: AppPadding.p8,
-                                ),
-                                gridDelegate:
-                                    SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2),
-                                itemCount: books.filteredBooks.length,
-                                itemBuilder: (ctx, idx) => PostNew(
-                                  book: books.filteredBooks[idx],
-                                ),
-                              );
-                            }
-                          },
-                        )
-                      else if (_bookProvider.homeScreenNewSearchTextController
-                              .text.isNotEmpty &&
-                          _bookProvider.books.isEmpty)
-                        Center(
-                          child: Text(
-                            'No books found',
-                            style: getBoldStyle(
-                                fontSize: FontSize.s20,
-                                color: ColorManager.primary),
-                          ),
-                        )
-                      else if (_bookProvider.books.isNotEmpty)
-                        MasonryGridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppPadding.p8,
-                          ),
-                          gridDelegate:
-                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          itemCount: _bookProvider.books.length,
-                          itemBuilder: (ctx, idx) => PostNew(
-                            book: _bookProvider.books[idx],
-                          ),
-                        )
-                      else
-                        Center(
-                          child: Text(
-                            'No books found',
-                            style: getBoldStyle(
-                                fontSize: FontSize.s20,
-                                color: ColorManager.primary),
-                          ),
-                        ),
-                      _bookProvider.homeScreenNewLoadingMorePosts
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppPadding.p18,
-                              ),
-                              child: CircularProgressIndicator(
-                                color: Colors.red,
-                              ),
-                            )
-                          : Container(),
                     ],
                   ),
                 ),
-              ),
-        // drawer: AppDrawer(authenticatedSession, null),
-        drawer: AppDrawer(),
-        bottomNavigationBar: CustomBottomNavigationBar(
-          index: 0,
+              ],
+            ),
+          ),
+
+          body: _bookProvider.loading == true
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SingleChildScrollView(
+                  // controller: _bookProvider.scrollController,
+                  controller: _bookProvider.homeScreenNewGetScrollController(),
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      bottom: AppPadding.p12,
+                    ),
+                    // color: ColorManager.lighterGrey,
+                    child: Column(
+                      children: [
+                        Consumer<CategoryProvider>(
+                          builder: (context, categoryProvider, child) =>
+                              SizedBox(
+                            height: AppHeight.h75,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    // _bookProvider.homeScreenNewCategories.length,
+                                    categoryProvider.categories.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6),
+                                    child: FilterChip(
+                                      label: Text(
+                                        // _bookProvider
+                                        //     .homeScreenNewCategories[index].name,
+                                        categoryProvider.categories[index].name,
+                                        style: _bookProvider
+                                                    .homeScreenNewSelectedCategoryIndex ==
+                                                index
+                                            ? getBoldStyle(
+                                                // color: ColorManager.black,
+                                                color: ColorManager.white,
+                                              )
+                                            : getMediumStyle(
+                                                color: ColorManager.black,
+                                              ),
+                                      ),
+                                      showCheckmark: false,
+                                      selected: _bookProvider
+                                              .homeScreenNewSelectedCategoryIndex ==
+                                          index,
+                                      onSelected: (bool isSelected) async {
+                                        if (_bookProvider
+                                                .homeScreenNewSelectedCategoryIndex !=
+                                            index) {
+                                          _bookProvider
+                                                  .homeScreenNewSelectedCategoryIndex =
+                                              index;
+                                          if (categoryProvider
+                                                  .categories[_bookProvider
+                                                      .homeScreenNewSelectedCategoryIndex]
+                                                  .name
+                                                  .toLowerCase() !=
+                                              'all') {
+                                            _bookProvider.getBooksByCategory(
+                                                _bookProvider.sessionProvider
+                                                    .session as Session,
+                                                _bookProvider
+                                                    .categoryProvider
+                                                    .categories[_bookProvider
+                                                            .homeScreenNewSelectedCategoryIndex -
+                                                        1]
+                                                    .id
+                                                    .toString());
+                                          } else
+                                            _bookProvider.getBooksAnnonimusly(
+                                                _bookProvider.sessionProvider
+                                                    .session as Session);
+                                        }
+                                      },
+                                    ),
+                                  );
+                                }),
+                          ),
+                        ),
+                        if (_bookProvider
+                            .bookFiltersProvider.showFilteredResult)
+                          Consumer<BookFiltersProvider>(
+                            builder: (ctx, books, child) {
+                              if (books.filteredBooks.length <= 0) {
+                                return Center(
+                                  child: Text(
+                                    'No books found',
+                                    style: getBoldStyle(
+                                        fontSize: FontSize.s20,
+                                        color: ColorManager.primary),
+                                  ),
+                                );
+                              } else {
+                                return MasonryGridView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppPadding.p8,
+                                  ),
+                                  gridDelegate:
+                                      SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2),
+                                  itemCount: books.filteredBooks.length,
+                                  itemBuilder: (ctx, idx) => PostNew(
+                                    book: books.filteredBooks[idx],
+                                  ),
+                                );
+                              }
+                            },
+                          )
+                        else if (_bookProvider.homeScreenNewSearchTextController
+                                .text.isNotEmpty &&
+                            _bookProvider.books.isEmpty)
+                          Center(
+                            child: Text(
+                              'No books found',
+                              style: getBoldStyle(
+                                  fontSize: FontSize.s20,
+                                  color: ColorManager.primary),
+                            ),
+                          )
+                        else if (_bookProvider.books.isNotEmpty)
+                          MasonryGridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppPadding.p8,
+                            ),
+                            gridDelegate:
+                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemCount: _bookProvider.books.length,
+                            itemBuilder: (ctx, idx) => PostNew(
+                              book: _bookProvider.books[idx],
+                            ),
+                          )
+                        else
+                          Center(
+                            child: Text(
+                              'No books found',
+                              style: getBoldStyle(
+                                  fontSize: FontSize.s20,
+                                  color: ColorManager.primary),
+                            ),
+                          ),
+                        _bookProvider.homeScreenNewLoadingMorePosts
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: AppPadding.p18,
+                                ),
+                                child: CircularProgressIndicator(
+                                  color: Colors.red,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  ),
+                ),
+          // drawer: AppDrawer(authenticatedSession, null),
+          drawer: AppDrawer(),
+          bottomNavigationBar: CustomBottomNavigationBar(
+            index: 0,
+          ),
         ),
       ),
     );

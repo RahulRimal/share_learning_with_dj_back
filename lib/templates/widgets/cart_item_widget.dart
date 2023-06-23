@@ -86,6 +86,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
         Provider.of<SessionProvider>(context).session as Session;
 
     CartProvider _carts = context.watch<CartProvider>();
+    ThemeData _theme = Theme.of(context);
 
     return FutureBuilder(
         future: _carts.getCartItemBook(
@@ -107,7 +108,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                   margin: EdgeInsets.all(AppMargin.m8),
                   padding: EdgeInsets.all(AppPadding.p8),
                   decoration: BoxDecoration(
-                    color: ColorManager.white,
+                    // color: ColorManager.white,
+                    color: _theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(
                       5.00,
                     ),
@@ -149,13 +151,14 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                         orderedBook.bookName,
                                         maxLines: null,
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          color: Colors.indigo,
-                                          fontSize: 12,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 0.50,
-                                        ),
+                                        // style: TextStyle(
+                                        //   color: Colors.indigo,
+                                        //   fontSize: 12,
+                                        //   fontFamily: 'Poppins',
+                                        //   fontWeight: FontWeight.w700,
+                                        //   letterSpacing: 0.50,
+                                        // ),
+                                        style: _theme.textTheme.headlineMedium,
                                       ),
                                     ),
                                     // Padding(
@@ -205,10 +208,12 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                                 title: Text('Are you sure?'),
                                                 content: Text(
                                                   'This will remove the item from  your cart',
-                                                  style: getRegularStyle(
-                                                    fontSize: FontSize.s16,
-                                                    color: ColorManager.black,
-                                                  ),
+                                                  // style: getRegularStyle(
+                                                  //   fontSize: FontSize.s16,
+                                                  //   color: ColorManager.black,
+                                                  // ),
+                                                  style: _theme
+                                                      .textTheme.bodyMedium,
                                                 ),
                                                 actions: [
                                                   TextButton(
@@ -272,25 +277,27 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                           "Unit Price",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            color: ColorManager.black,
-                                            fontSize: FontSize.s12,
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.50,
-                                          ),
+                                          // style: TextStyle(
+                                          //   color: ColorManager.black,
+                                          //   fontSize: FontSize.s12,
+                                          //   fontFamily: 'Poppins',
+                                          //   fontWeight: FontWeight.w700,
+                                          //   letterSpacing: 0.50,
+                                          // ),
+                                          style: _theme.textTheme.bodyMedium,
                                         ),
                                         Text(
                                           "Rs. ${widget.cartItem.totalPrice}",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            color: Colors.lightBlue,
-                                            fontSize: 12,
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.50,
-                                          ),
+                                          // style: TextStyle(
+                                          //   color: Colors.lightBlue,
+                                          //   fontSize: 12,
+                                          //   fontFamily: 'Poppins',
+                                          //   fontWeight: FontWeight.w700,
+                                          //   letterSpacing: 0.50,
+                                          // ),
+                                          style: _theme.textTheme.headlineSmall,
                                         ),
                                       ],
                                     ),
@@ -406,7 +413,10 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                     .cart as Cart,
                                 _edittedItem,
                               ),
-                              child: Text('Update Cart'),
+                              child: Text(
+                                'Update Cart',
+                                style: _theme.textTheme.headlineSmall,
+                              ),
                             ),
                           );
                         },

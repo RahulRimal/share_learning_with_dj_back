@@ -320,10 +320,11 @@ class ThemeManager {
           getRegularStyle(fontSize: FontSize.s12, color: ColorManager.black),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      // contentPadding: EdgeInsets.all(AppPadding.p8),
       hintStyle: getRegularStyle(color: ColorManager.grey1),
       labelStyle: getMediumStyle(color: ColorManager.darkGrey),
       errorStyle: getRegularStyle(color: ColorManager.error),
+      fillColor: ColorManager.white,
+      filled: true,
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(
           color: ColorManager.grey,
@@ -378,11 +379,10 @@ class ThemeManager {
     colorScheme: ColorScheme(
       primary: ColorManager.primary,
       primaryContainer: ColorManager.lightPrimary,
-      secondary: ColorManager.grey,
-      secondaryContainer: ColorManager.grey,
+      secondary: ColorManager.lightestGrey,
+      secondaryContainer: ColorManager.white,
       surface: ColorManager.white,
-      background: ColorManager.white,
-      // background: ColorManager.whiteWithOpacity,
+      background: ColorManager.whiteWithOpacity,
       error: ColorManager.error,
       onPrimary: ColorManager.white,
       onSecondary: ColorManager.white,
@@ -527,6 +527,8 @@ class ThemeManager {
       hintStyle: getRegularStyle(color: ColorManager.lightestGrey),
       labelStyle: getMediumStyle(color: ColorManager.lighterGrey),
       errorStyle: getRegularStyle(color: ColorManager.white),
+      fillColor: ColorManager.darkGrey,
+      filled: true,
       focusColor: ColorManager.primary,
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(
@@ -569,10 +571,10 @@ class ThemeManager {
       primary: ColorManager.primary,
       primaryContainer: ColorManager.lightPrimary,
       secondary: ColorManager.grey,
-      secondaryContainer: ColorManager.grey,
+      secondaryContainer: ColorManager.darkGrey,
       surface: ColorManager.darkGrey,
-      background: ColorManager.darkGrey,
-      // background: ColorManager.grey,
+      // background: ColorManager.darkGrey,
+      background: ColorManager.grey,
       error: ColorManager.error,
       onPrimary: ColorManager.white,
       onSecondary: ColorManager.white,

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_learning/view_models/base_view_model.dart';
 import 'package:share_learning/view_models/providers/theme_provider.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
 
@@ -195,7 +196,7 @@ class MyApp extends StatelessWidget {
                     create: (context) => ThemeProvider(),
                     builder: (context, _) {
                       final themeProvider = Provider.of<ThemeProvider>(context);
-                      // Provider.of<ThemeProvider>(context, listen: false);
+
                       return MaterialApp(
                         navigatorKey: navKey,
                         onGenerateRoute: RouteGenerator.getRoute,

@@ -69,6 +69,10 @@ class CategoryProvider with ChangeNotifier {
       // setCategories(response.response);
       setCategories(
           (response.response as Map)['categories'] as List<PostCategory>);
+      _categories.insert(
+        0,
+        PostCategory(id: 0, name: 'All', postsCount: 0),
+      );
       setNextPageUrl((response.response as Map)['next']);
       setPreviousPageUrl((response.response as Map)['previous']);
     }

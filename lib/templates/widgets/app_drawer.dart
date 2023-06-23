@@ -31,8 +31,6 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
-  
-  
   UserProvider? userProvider;
 
   @override
@@ -42,7 +40,7 @@ class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
     // Register this object as an observer
     WidgetsBinding.instance.addObserver(this);
     // WidgetsBinding.instance.addObserver(this);
-    
+
     userProvider!.bindAppDrawerViewModel(context);
   }
 
@@ -60,7 +58,6 @@ class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-
 
   Widget getDrawerItem(BuildContext context, DrawerItem item) {
     UserProvider _userProvider = context.watch<UserProvider>();
@@ -94,9 +91,9 @@ class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
               _userProvider
                   .bookProvider.userPostsScreenViewModelSelectedUserId = null;
             Navigator.pushNamed(
-              context,
-              item.route,
-            );
+                context,
+                // item.route,
+                RoutesManager.userPostsScreenRoute);
             if (item.route == RoutesManager.userProfileEditScreenRoute) {
               Navigator.pushNamed(
                 context,
@@ -148,29 +145,25 @@ class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
         ),
         child: Container(
           decoration: BoxDecoration(
-            gradient: Provider.of<ThemeProvider>(context).isDarkMode ?
-             LinearGradient(
-              colors: [
-                ColorManager.grey,
-                ColorManager.darkGrey,
-              ]):
-             LinearGradient(
-              colors: [
-                
-                ColorManager.lightPrimary,
-                ColorManager.primary,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: Provider.of<ThemeProvider>(context).isDarkMode
+                ? LinearGradient(colors: [
+                    ColorManager.grey,
+                    ColorManager.darkGrey,
+                  ])
+                : LinearGradient(
+                    colors: [
+                      ColorManager.lightPrimary,
+                      ColorManager.primary,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(30),
               bottomRight: Radius.circular(30),
             ),
           ),
           padding: EdgeInsets.only(top: 40),
-          
-
           child: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,9 +198,10 @@ class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          
                           (_userProvider.user as User).firstName.toString(),
-                          style: getBoldStyle(fontSize: FontSize.s18, color: ColorManager.white),
+                          style: getBoldStyle(
+                              fontSize: FontSize.s18,
+                              color: ColorManager.white),
                           // style: Theme.of(context).textTheme.headlineLarge,
                         ),
                       ],
@@ -234,15 +228,14 @@ class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
                   tileColor: ColorManager.transparent,
                   leading: Icon(
                     Icons.logout,
-                    color: Provider.of<ThemeProvider>(context).isDarkMode ? ColorManager.whiteWithOpacity : ColorManager.white,
-                    
+                    color: Provider.of<ThemeProvider>(context).isDarkMode
+                        ? ColorManager.whiteWithOpacity
+                        : ColorManager.white,
                   ),
                   title: Text(
                     'Log out',
-                    
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-
                   onTap: () async {
                     _userProvider.AppDrawerViewModelLogOut(context);
                   },

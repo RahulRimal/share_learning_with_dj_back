@@ -58,7 +58,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   _profilePageUI(UserProvider userProvider) {
-    ThemeData theme = Theme.of(context);
+    ThemeData _theme = Theme.of(context);
     // if (userSession.loading) {
     if (userProvider.sessionProvider.loading) {
       return Container(
@@ -80,17 +80,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       children: [
         // ---------------------- User top section starts here ----------------------------
         Container(
-          
           child: Column(
             children: [
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
+                    margin: EdgeInsets.only(
+                      bottom: AppMargin.m4,
+                    ),
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      
-                      color: theme.colorScheme.background,
+                      color: _theme.colorScheme.secondaryContainer,
                     ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -147,8 +148,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             // 'Rahul Rimal',
                                             UserHelper.userDisplayName(
                                                 userProvider.user!),
-                                            
-                                            style: theme.textTheme.displayMedium,
+
+                                            style:
+                                                _theme.textTheme.displayMedium,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.only(
@@ -162,7 +164,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               //   color: ColorManager.black,
                                               //   fontSize: FontSize.s14,
                                               // ),
-                                              style: theme.textTheme.headlineSmall,
+                                              style: _theme
+                                                  .textTheme.headlineSmall,
                                             ),
                                           ),
                                         ],
@@ -176,11 +179,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             vertical: AppPadding.p2,
                                           ),
                                           child: Text(
-                                            
-                                            userProvider.user!.email as String,
-                                            
-                                            style: theme.textTheme.titleSmall
-                                          ),
+                                              userProvider.user!.email
+                                                  as String,
+                                              style:
+                                                  _theme.textTheme.titleSmall),
                                         ),
                                       ],
                                     ),
@@ -274,8 +276,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     Text(
                                       'Description',
                                       textAlign: TextAlign.start,
-                                      
-                                      style: theme.textTheme.headlineSmall,
+                                      style: _theme.textTheme.headlineSmall,
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
@@ -285,8 +286,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         UserHelper.userDescription(
                                             userProvider.user!),
                                         softWrap: true,
-                                        
-                                        style: theme.textTheme.bodySmall,
+
+                                        style: _theme.textTheme.bodySmall,
                                       ),
                                     ),
                                   ],
@@ -304,8 +305,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ),
         // ---------------------- User top section ends here ----------------------------
+
         // ---------------------- User content section starts here ----------------------------
         Container(
+          // color: _theme.colorScheme.background,
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -320,11 +324,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   //   color: ColorManager.primary,
                   //   fontSize: FontSize.s14,
                   // ),
-                  style: theme.textTheme.displaySmall,
+                  style: _theme.textTheme.displaySmall,
                 ),
               ),
               ListTile(
-                
                 onTap: () {
                   Navigator.of(context)
                       .pushNamed(RoutesManager.wishlistedBooksScreenRoute);
@@ -339,7 +342,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   //   color: ColorManager.black,
                   //   fontSize: FontSize.s16,
                   // ),
-                  style: theme.textTheme.headlineMedium,
+                  style: _theme.textTheme.headlineMedium,
                 ),
                 trailing: Icon(
                   Icons.keyboard_arrow_right,
@@ -347,7 +350,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
               ),
               ListTile(
-                
                 onTap: () {
                   Navigator.of(context)
                       .pushNamed(RoutesManager.userPostsScreenRoute);
@@ -362,7 +364,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   //   color: ColorManager.black,
                   //   fontSize: FontSize.s16,
                   // ),
-                  style: theme.textTheme.headlineMedium,
+                  style: _theme.textTheme.headlineMedium,
                 ),
                 trailing: Icon(
                   Icons.keyboard_arrow_right,
@@ -391,11 +393,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   //   color: ColorManager.primary,
                   //   fontSize: FontSize.s14,
                   // ),
-                  style: theme.textTheme.displaySmall,
+                  style: _theme.textTheme.displaySmall,
                 ),
               ),
               ListTile(
-                
                 onTap: () {
                   // Define a list of options
                   List<String> languages = [
@@ -427,7 +428,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     //   color: ColorManager.black,
                                     //   fontSize: FontSize.s16,
                                     // ),
-                                    style: theme.textTheme.headlineSmall,
+                                    style: _theme.textTheme.headlineSmall,
                                   ),
                                   onTap: () {
                                     // Do something when the option is tapped
@@ -452,7 +453,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   //   color: ColorManager.black,
                   //   fontSize: FontSize.s16,
                   // ),
-                  style: theme.textTheme.headlineMedium,
+                  style: _theme.textTheme.headlineMedium,
                 ),
                 trailing: Icon(
                   Icons.keyboard_arrow_right,
@@ -461,7 +462,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ),
               Consumer<ThemeProvider>(
                 builder: (context, themeProvider, child) => ListTile(
-                  
                   onTap: () {
                     // Define a list of options
                     // List<String> appThemes = [
@@ -499,7 +499,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       //   color: ColorManager.black,
                                       //   fontSize: FontSize.s16,
                                       // ),
-                                      style: theme.textTheme.headlineSmall,
+                                      style: _theme.textTheme.headlineSmall,
                                     ),
                                     onTap: () {
                                       // Do something when the option is tapped
@@ -525,7 +525,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     //   color: ColorManager.black,
                     //   fontSize: FontSize.s16,
                     // ),
-                    style: theme.textTheme.headlineMedium,
+                    style: _theme.textTheme.headlineMedium,
                   ),
                   trailing: Icon(
                     Icons.keyboard_arrow_right,
@@ -551,18 +551,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 child: Text(
                   'More options',
-                
-                  style: theme.textTheme.displaySmall,
+                  style: _theme.textTheme.displaySmall,
                 ),
               ),
               ListTile(
-                
                 onTap: () {
                   String password = "";
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text('Are you sure?', style: theme.textTheme.titleMedium,),
+                      title: Text(
+                        'Are you sure?',
+                        style: _theme.textTheme.titleMedium,
+                      ),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -572,13 +573,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             //   fontSize: FontSize.s16,
                             //   color: ColorManager.black,
                             // ),
-                            style: theme.textTheme.titleLarge,
+                            style: _theme.textTheme.titleLarge,
                           ),
                           SizedBox(
                             height: AppHeight.h12,
                           ),
                           TextFormField(
-                            cursorColor: theme.primaryColor,
+                            cursorColor: _theme.primaryColor,
                             decoration: InputDecoration(
                               labelText: 'Enter your password to confirm',
                               focusColor: Colors.redAccent,
@@ -612,7 +613,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               //   fontSize: FontSize.s16,
                               //   color: ColorManager.primary,
                               // ),
-                              style: theme.textTheme.headlineMedium,
+                              style: _theme.textTheme.headlineMedium,
                             ),
                             // onPressed: showConfirmButton
                             //     ? null
@@ -671,7 +672,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     UserProvider _userProvider = context.watch<UserProvider>();
     return Scaffold(
-      backgroundColor: ColorManager.lightestGrey,
+      // backgroundColor: ColorManager.lightestGrey,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         actions: [
           IconButton(

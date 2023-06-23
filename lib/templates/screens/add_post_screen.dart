@@ -87,8 +87,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-          ),
+              // color: Colors.white,
+              ),
           child: Form(
             key: _form,
             child: ListView(

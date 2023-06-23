@@ -26,7 +26,7 @@ mixin HomeScreenNewViewModel on BaseViewModel {
   ScrollController? homeScreenNewScrollController;
   bool homeScreenNewLoadingMorePosts = false;
 
-  List<PostCategory> homeScreenNewCategories = [];
+  // List<PostCategory> homeScreenNewCategories = [];
 
   homeScreenNewGetSearchResult(
       GlobalKey<FormState> homeScreenNewSearchFormKey) async {
@@ -79,11 +79,11 @@ mixin HomeScreenNewViewModel on BaseViewModel {
     homeScreenNewSearchFocusNode = FocusNode();
     homeScreenNewSearchTextController = TextEditingController();
 
-    homeScreenNewCategories = categoryProvider.categories;
-    homeScreenNewCategories.insert(
-      0,
-      PostCategory(id: 0, name: 'All', postsCount: bookProvider.books.length),
-    );
+    // homeScreenNewCategories = categoryProvider.categories;
+    // homeScreenNewCategories.insert(
+    //   0,
+    //   PostCategory(id: 0, name: 'All', postsCount: bookProvider.books.length),
+    // );
 
     // Registering FMC Device sarts here
     FCMDeviceHelper.registerDeviceToFCM(sessionProvider.session as Session);
@@ -496,83 +496,170 @@ mixin EditPostScreenViewModel on BaseViewModel, ChangeNotifier {
   }
 }
 
-mixin UserPostsScreenViewModel on BaseViewModel, ChangeNotifier {
-  late int _selectedCategoryIndex;
+// mixin UserPostsScreenViewModel on BaseViewModel, ChangeNotifier {
+//   late int _selectedCategoryIndex;
+//   int? _selectedUserId;
+//   late List<Book> _userBooks;
+//   // Making it nullable because i can check it for empty and not empty to show no books found text if list is not null but is empty, if we initialize it with empty list then we can't check if search result is empty
+//   List<Book>? _filteredBooks;
+//   final _searchTextController = TextEditingController();
+//   late FocusNode _searchFocusNode;
+//   bool userPostScreenEnableClearSearch = false;
+//   bool userPostScreenShowFilterButton = false;
+//   ScrollController? userPostScreenScrollController;
+//   // late List<PostCategory> _categories;
+//   int get userPostsScreenViewModelSelectedCategoryIndex =>
+//       _selectedCategoryIndex;
+//   set userPostsScreenViewModelSelectedCategoryIndex(int index) =>
+//       _selectedCategoryIndex = index;
+//   int? get userPostsScreenViewModelSelectedUserId => _selectedUserId;
+//   set userPostsScreenViewModelSelectedUserId(int? index) =>
+//       _selectedUserId = index;
+//   List<Book> get userPostsScreenViewModelUserBooks => _userBooks;
+//   set userPostsScreenViewModelUserBooks(List<Book> books) => _userBooks = books;
+//   List<Book>? get userPostsScreenViewModelSelectedFilteredBooks =>
+//       _filteredBooks;
+//   set userPostsScreenViewModelSelectedFilteredBooks(
+//           List<Book>? filteredBooks) =>
+//       _filteredBooks = filteredBooks;
+//   get userPostsScreenViewModelSearchTextController => _searchTextController;
+//   get userPostsScreenViewModelSearchFocusNode => _searchFocusNode;
+//   // List<PostCategory> get userPostsScreenViewModelCategories => _categories;
+//   // set userPostsScreenViewModelCategories(List<PostCategory> categories) =>
+//   //     _categories = categories;
+//   bindUserPostsScreenViewModel(BuildContext context) {
+//     bindBaseViewModal(context);
+//     _searchFocusNode = FocusNode();
+//     _selectedCategoryIndex = 0;
+//     // _categories = categoryProvider.categories;
+//     // _categories.insert(
+//     //   0,
+//     //   PostCategory(id: 0, name: 'All', postsCount: bookProvider.books.length),
+//     // );
+//   }
+//   unBindUserPostsScreenViewModel() {
+//     _searchTextController.dispose();
+//     _searchFocusNode.dispose();
+//   }
+//   userPostScreenSetEnableClearSearch(bool value) {
+//     userPostScreenEnableClearSearch = value;
+//     notifyListeners();
+//   }
+//   homeScreenNewSetShowFiltersButton(bool value) {
+//     userPostScreenShowFilterButton = value;
+//     notifyListeners();
+//   }
+//   userPostScreenGetScrollController() {
+//     userPostScreenScrollController = ScrollController();
+//     userPostScreenScrollController!.addListener(userPostScreenScrollListener);
+//     return userPostScreenScrollController;
+//   }
+//   userPostScreenScrollListener() async {
+//     if (userPostScreenScrollController!.position.pixels ==
+//         userPostScreenScrollController!.position.maxScrollExtent) {
+//       if (bookProvider.nextPageUrl != null) {
+//         await bookProvider.getMoreBooks(bookProvider.nextPageUrl as String);
+//       }
+//     }
+//   }
+//   userPostsScreenViewModelSearchUserBooks(GlobalKey<FormState> form) {
+//     final _isValid = form.currentState!.validate();
+//     if (!_isValid) {
+//       return false;
+//     }
+//     form.currentState!.save();
+//     _searchFocusNode.unfocus();
+//     _selectedCategoryIndex = 0;
+//     bookFiltersProvider.clearFilters();
+//     // If user userId is set then show result of that specific user's book otherwise show result of current user's book
+//     if (_selectedUserId == null)
+//       bookProvider.searchUserBooks(
+//           userProvider.user!.id, _searchTextController.text.toLowerCase());
+//     // List<Book> allBooks = bookProvider.postsByUser(userProvider.user!.id);
+//     else
+//       bookProvider.searchUserBooks(
+//           _selectedUserId as String, _searchTextController.text.toLowerCase());
+//     // List<Book> allBooks = bookProvider.postsByUser(userProvider.user!.id);
+//     notifyListeners();
+//   }
+// }
+
+mixin UserPostsScreenViewModel on BaseViewModel {
+  // This flag will be used to render either send button or clear button on search bar. I need to use this because i can't clear the search bar if searchtext is not empty because the search will not work on text change but on button click. So the search might not have been completed even if the text is not empty
+  bool userPostsScreenEnableClearSearch = false;
+  bool userPostsScreenShowFilterButton = false;
+
+  FocusNode userPostsScreenSearchFocusNode = FocusNode();
+  int userPostsScreenSelectedCategoryIndex = 0;
+  late TextEditingController userPostsScreenSearchTextController;
+  ScrollController? userPostsScreenScrollController;
+  bool userPostsScreenLoadingMorePosts = false;
+
   int? _selectedUserId;
-  late List<Book> _userBooks;
-  // Making it nullable because i can check it for empty and not empty to show no books found text if list is not null but is empty, if we initialize it with empty list then we can't check if search result is empty
-  List<Book>? _filteredBooks;
-  final _searchTextController = TextEditingController();
-  late FocusNode _searchFocusNode;
-
-  late List<PostCategory> _categories;
-
-  int get userPostsScreenViewModelSelectedCategoryIndex =>
-      _selectedCategoryIndex;
-  set userPostsScreenViewModelSelectedCategoryIndex(int index) =>
-      _selectedCategoryIndex = index;
 
   int? get userPostsScreenViewModelSelectedUserId => _selectedUserId;
   set userPostsScreenViewModelSelectedUserId(int? index) =>
       _selectedUserId = index;
 
-  List<Book> get userPostsScreenViewModelUserBooks => _userBooks;
-  set userPostsScreenViewModelUserBooks(List<Book> books) => _userBooks = books;
-
-  List<Book>? get userPostsScreenViewModelSelectedFilteredBooks =>
-      _filteredBooks;
-  set userPostsScreenViewModelSelectedFilteredBooks(
-          List<Book>? filteredBooks) =>
-      _filteredBooks = filteredBooks;
-
-  get userPostsScreenViewModelSearchTextController => _searchTextController;
-
-  get userPostsScreenViewModelSearchFocusNode => _searchFocusNode;
-
-  List<PostCategory> get userPostsScreenViewModelCategories => _categories;
-
-  set userPostsScreenViewModelCategories(List<PostCategory> categories) =>
-      _categories = categories;
-
-  bindUserPostsScreenViewModel(BuildContext context) {
-    bindBaseViewModal(context);
-    _searchFocusNode = FocusNode();
-    _selectedCategoryIndex = 0;
-    _categories = categoryProvider.categories;
-    _categories.insert(
-      0,
-      PostCategory(id: 0, name: 'All', postsCount: bookProvider.books.length),
-    );
-  }
-
-  unBindUserPostsScreenViewModel() {
-    _searchTextController.dispose();
-    _searchFocusNode.dispose();
-  }
-
-  userPostsScreenViewModelSearchUserBooks(GlobalKey<FormState> form) {
-    final _isValid = form.currentState!.validate();
-    if (!_isValid) {
+  userPostsScreenGetSearchResult(
+      GlobalKey<FormState> userPostsScreenSearchFormKey) async {
+    final isValid = userPostsScreenSearchFormKey.currentState!.validate();
+    if (!isValid) {
       return false;
     }
-    form.currentState!.save();
-    _searchFocusNode.unfocus();
-    _selectedCategoryIndex = 0;
-    List<Book> allBooks = bookProvider.postsByUser(userProvider.user!.id);
+    userPostsScreenSearchFormKey.currentState!.save();
+    userPostsScreenSearchFocusNode.unfocus();
+    userPostsScreenSelectedCategoryIndex = 0;
+    // Clear the filters while searchig
+    bookFiltersProvider.clearFilters();
+    bookProvider.searchUserBooks(sessionProvider.userProvider.user!.id,
+        userPostsScreenSearchTextController.text);
+  }
 
-    String searchTerm = _searchTextController.text.toLowerCase();
+  userPostsScreenGetScrollController() {
+    userPostsScreenScrollController = ScrollController();
+    userPostsScreenScrollController!.addListener(userPostsScreenScrollListener);
+    return userPostsScreenScrollController;
+  }
 
-    List<Book> _filteredBookList = [];
+  userPostsScreenSetEnableClearSearch(bool value) {
+    userPostsScreenEnableClearSearch = value;
+    notifyListeners();
+  }
 
-    for (Book book in allBooks) {
-      if (book.bookName.toLowerCase().contains(searchTerm)) {
-        _filteredBookList.add(book);
+  userPostsScreenSetShowFiltersButton(bool value) {
+    userPostsScreenShowFilterButton = value;
+    notifyListeners();
+  }
+
+  userPostsScreenSetLoadingMorePosts(bool value) {
+    userPostsScreenLoadingMorePosts = value;
+    notifyListeners();
+  }
+
+  userPostsScreenScrollListener() async {
+    if (userPostsScreenScrollController!.position.pixels ==
+        userPostsScreenScrollController!.position.maxScrollExtent) {
+      if (bookProvider.nextPageUrl != null) {
+        await bookProvider.getMoreBooks(bookProvider.nextPageUrl as String);
       }
     }
+  }
 
-    // setState(() {
-    _filteredBooks = _filteredBookList;
-    notifyListeners();
-    // });
+  binduserPostsScreenViewModel(BuildContext context) {
+    bindBaseViewModal(context);
+    userPostsScreenSelectedCategoryIndex = 0;
+    userPostsScreenSearchFocusNode = FocusNode();
+    userPostsScreenSearchTextController = TextEditingController();
+
+    // This will show the filters icon after 3 seconds of homescreen being loaded
+    Timer(Duration(seconds: 3), () {
+      userPostsScreenSetShowFiltersButton(true);
+    });
+  }
+
+  unBinduserPostsScreenViewModel() {
+    userPostsScreenSearchFocusNode.dispose();
+    userPostsScreenScrollController!.dispose();
   }
 }
