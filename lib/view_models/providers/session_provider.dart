@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share_learning/data/session_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../base_view_model.dart';
 import '../session_view_model.dart';
@@ -63,7 +64,11 @@ class SessionProvider
     if (response is Success) {
       // setSession(response.response as Session);
       setSession(response.response as Session);
+      SharedPreferences prefs = await preferences;
+      prefs.setString('accessToken', _session!.accessToken);
+      prefs.setString('refreshToken', _session!.refreshToken);
       setLoading(false);
+
       return true;
     }
     if (response is Failure) {

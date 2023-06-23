@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/order_request_screen.dart';
-import 'package:share_learning/templates/screens/user_profile_screen.dart';
-import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
 
 import '../managers/routes_manager.dart';
-import '../screens/cart_screen.dart';
-import '../screens/home_screen_new.dart';
 
 // ignore: must_be_immutable
 class CustomBottomNavigationBar extends StatefulWidget {

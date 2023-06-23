@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/models/session.dart';
-import 'package:share_learning/models/user.dart';
-import 'package:share_learning/view_models/providers/book_provider.dart';
-import 'package:share_learning/view_models/providers/comment_provider.dart';
-import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/view_models/providers/theme_provider.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
@@ -12,14 +7,8 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/login_screen.dart';
-import 'package:share_learning/templates/screens/user_posts_screen.dart';
-import 'package:share_learning/templates/screens/user_profile_edit_screen.dart';
-import 'package:share_learning/templates/screens/wishlisted_books_screen.dart';
-import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../managers/routes_manager.dart';
 

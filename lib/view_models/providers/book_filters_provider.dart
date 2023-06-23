@@ -1,12 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:share_learning/view_models/base_view_model.dart';
 
 import '../../models/book.dart';
-import '../../models/post_category.dart';
 import '../book_filters_view_model.dart';
-import 'book_provider.dart';
-import 'category_provider.dart';
 
 class BookFiltersProvider
     with ChangeNotifier, BaseViewModel, BookFiltersViewModel {

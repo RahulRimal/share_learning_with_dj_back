@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/models/order_request.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/view_models/providers/cart_provider.dart';
 import 'package:share_learning/view_models/providers/order_request_provider.dart';
 import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
@@ -14,15 +13,12 @@ import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 
-import 'package:share_learning/templates/utils/alert_helper.dart';
 
 import '../../models/book.dart';
 import '../../models/cart.dart';
 
 import '../managers/routes_manager.dart';
-import '../utils/loading_helper.dart';
 import '../widgets/custom_bottom_navbar.dart';
-import 'order_request_details_screen.dart';
 
 class OrderRequestScreen extends StatefulWidget {
   const OrderRequestScreen({Key? key}) : super(key: key);

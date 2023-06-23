@@ -13,7 +13,6 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/home_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
@@ -22,8 +21,6 @@ import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
 
 import '../../models/cart_item.dart';
 import '../managers/routes_manager.dart';
-import 'edit_post_screen.dart';
-import 'user_posts_screen.dart';
 
 // ignore: must_be_immutable
 class SinglePostScreen extends StatelessWidget {

@@ -1,15 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
-import 'package:share_learning/view_models/providers/session_provider.dart';
+import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/user_profile_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
-import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
 import '../managers/assets_manager.dart';
@@ -27,9 +24,26 @@ class UserProfileEditScreen extends StatefulWidget {
 class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
   final _form = GlobalKey<FormState>();
 
+  
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<UserProvider>(context, listen: false)
+        .bindUserProfileEditScreenViewModel(context);
+  }
+
+  @override
+  void dispose() {
+    Provider.of<UserProvider>(context, listen: false)
+        .unbindUserProfileEditScreenViewModel();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     UserProvider _userProvider = context.watch<UserProvider>();
+    ThemeData _theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -237,11 +251,12 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                       child: TextButton(
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).primaryColor),
+                              ColorManager.primary,),
                         ),
                         onPressed: () async {
-                          setState(() => _userProvider
-                              .userProfileEditScreenShowLoading = true);
+                          
+                          _userProvider
+                                      .userProfileEditScreenSetShowLoading(true);
 
                           if (_userProvider.userProfileEditScreenShowLoading) {
                             AlertHelper.showLoading();
@@ -249,10 +264,12 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
 
                           if (await _userProvider
                               .userProfileEditScreenUpdateProfile(_form))
-                            setState(() => {
+                            
+                                  // _userProvider
+                                  //     .userProfileEditScreenShowLoading = false;
                                   _userProvider
-                                      .userProfileEditScreenShowLoading = false
-                                });
+                                      .userProfileEditScreenSetShowLoading(false);
+                                
                           Navigator.pushReplacementNamed(
                             context,
                             RoutesManager.userProfileScreenRoute,
@@ -260,10 +277,11 @@ class _UserProfileEditScreenState extends State<UserProfileEditScreen> {
                         },
                         child: Text(
                           'Update Profile',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          // style: TextStyle(
+                          //   color: Colors.white,
+                          //   fontWeight: FontWeight.bold,
+                          // ),
+                          style: _theme.textTheme.headlineSmall,
                         ),
                       ),
                     )

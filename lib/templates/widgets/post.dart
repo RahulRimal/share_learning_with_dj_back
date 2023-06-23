@@ -3,7 +3,6 @@ import 'package:khalti/khalti.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
-import 'package:share_learning/templates/screens/single_post_screen.dart';
 
 import '../managers/routes_manager.dart';
 

@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/view_models/providers/book_provider.dart';
-import 'package:share_learning/view_models/providers/session_provider.dart';
-import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 
-import '../../models/post_category.dart';
 import '../../view_models/providers/book_filters_provider.dart';
 import '../../view_models/providers/category_provider.dart';
 import '../managers/assets_manager.dart';
@@ -981,8 +977,8 @@ class _UserPostsScreenState extends State<UserPostsScreen>
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bookProvider!.getUserBooks(
-          (Provider.of<UserProvider>(context, listen: false).user as User).id);
+      bookProvider!.userPostsScreengetUserBooks(
+          );
     });
   }
 
@@ -1317,8 +1313,7 @@ class _UserPostsScreenState extends State<UserPostsScreen>
                                                     .toString());
                                           } else
                                             _bookProvider.getBooksAnnonimusly(
-                                                _bookProvider.sessionProvider
-                                                    .session as Session);
+                                                );
                                         }
                                       },
                                     ),

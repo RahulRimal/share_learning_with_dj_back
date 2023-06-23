@@ -1,15 +1,11 @@
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
-import 'package:share_learning/models/wishlist.dart';
 import 'package:share_learning/view_models/providers/theme_provider.dart';
-import 'package:share_learning/view_models/providers/wishlist_provider.dart';
-import 'package:share_learning/templates/screens/post_details_screen.dart';
 
 import '../../models/session.dart';
 import '../../view_models/providers/book_provider.dart';

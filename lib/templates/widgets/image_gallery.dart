@@ -7,7 +7,6 @@ import 'package:share_learning/templates/widgets/custom_image.dart';
 
 import '../../view_models/providers/user_provider.dart';
 import '../managers/routes_manager.dart';
-import '../screens/edit_post_screen.dart';
 
 // ignore: must_be_immutable
 class ImageGallery extends StatefulWidget {

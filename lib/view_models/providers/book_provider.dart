@@ -1,34 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:nepali_date_picker/nepali_date_picker.dart';
-import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
-import 'package:provider/provider.dart';
 import 'package:share_learning/data/book_api.dart';
 import 'package:share_learning/models/api_status.dart';
 import 'package:share_learning/models/order_item.dart';
 import 'package:share_learning/models/session.dart';
-import 'package:share_learning/models/wishlist.dart';
-import 'package:share_learning/view_models/providers/cart_provider.dart';
-import 'package:share_learning/view_models/providers/user_provider.dart';
 import '../../models/book.dart';
-import '../../models/post_category.dart';
-import '../../models/user.dart';
-import '../../templates/utils/system_helper.dart';
 import '../billing_info_widget_wiew_model.dart';
 import '../book_view_model.dart';
 import '../post_details_view_model.dart';
 import '../post_new_widget_view_model.dart';
-import 'book_filters_provider.dart';
-import 'category_provider.dart';
-import 'order_provider.dart';
-import 'order_request_provider.dart';
-import 'session_provider.dart';
-import 'wishlist_provider.dart';
 import '../base_view_model.dart';
 
 class BookProvider
@@ -134,11 +117,11 @@ class BookProvider
     setLoading(false);
   }
 
-  getBooksAnnonimusly(Session loggedInSession) async {
+  getBooksAnnonimusly() async {
     setLoading(true);
 
-    // var response = await BookApi.getBooks(uId);
-    var response = await BookApi.getAnnonimusPosts(loggedInSession);
+    
+    var response = await BookApi.getAnnonimusPosts(sessionProvider.session as Session);
     // print(response);
 
     if (response is Success) {

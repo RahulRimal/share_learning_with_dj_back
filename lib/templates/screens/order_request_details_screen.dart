@@ -4,10 +4,8 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 
-import '../../models/book.dart';
 import '../../models/cart.dart';
 import '../../models/cart_item.dart';
-import '../../models/order_request.dart';
 import '../../models/session.dart';
 import '../../view_models/providers/cart_provider.dart';
 import '../../view_models/providers/order_request_provider.dart';
@@ -16,7 +14,6 @@ import '../managers/font_manager.dart';
 import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 import '../widgets/billing_info.dart';
-import 'home_screen_new.dart';
 
 class OrderRequestDetailsScreen extends StatefulWidget {
   // static const routeName = 'order-request-details-screen';

@@ -1,9 +1,7 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/view_models/providers/category_provider.dart';
 import 'package:share_learning/view_models/providers/book_filters_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
@@ -11,21 +9,16 @@ import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/user_profile_screen.dart';
-import 'package:share_learning/templates/utils/system_helper.dart';
 import 'package:share_learning/templates/widgets/app_drawer.dart';
 import 'package:share_learning/templates/widgets/book_filters.dart';
 import 'package:share_learning/templates/widgets/custom_bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/templates/widgets/post_new.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:share_learning/view_models/providers/theme_provider.dart';
 
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../view_models/providers/book_provider.dart';
-import '../../view_models/providers/session_provider.dart';
-import '../../view_models/providers/user_provider.dart';
 import '../managers/routes_manager.dart';
 import '../utils/user_helper.dart';
 
@@ -53,10 +46,12 @@ class _HomeScreenNewState extends State<HomeScreenNew>
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bookProvider!.getBooksAnnonimusly(
-          Provider.of<SessionProvider>(context, listen: false).session
-              as Session);
+      bookProvider!.getBooksAnnonimusly();
+          
     });
+
+    
+
   }
 
   @override
@@ -196,8 +191,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
                                               // Call get Post to reload the view and also to set the next url to generic next url rather than next url of search query
                                               _bookProvider.getBooksAnnonimusly(
-                                                  _bookProvider.sessionProvider
-                                                      .session as Session);
+                                                  );
                                             },
                                           )
                                         : IconButton(
@@ -369,8 +363,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                     .toString());
                                           } else
                                             _bookProvider.getBooksAnnonimusly(
-                                                _bookProvider.sessionProvider
-                                                    .session as Session);
+                                                );
                                         }
                                       },
                                     ),

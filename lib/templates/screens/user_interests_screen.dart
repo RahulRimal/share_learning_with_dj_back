@@ -125,17 +125,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/models/api_status.dart';
-import 'package:share_learning/models/session.dart';
-import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/home_screen_new.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../view_models/providers/user_provider.dart';
-import '../utils/alert_helper.dart';
 
 class UserInterestsScreen extends StatefulWidget {
   @override

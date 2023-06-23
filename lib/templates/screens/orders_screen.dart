@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/templates/widgets/order_item_widget.dart';
 
 import '../../models/session.dart';
-import '../../view_models/providers/cart_provider.dart';
 import '../../view_models/providers/order_provider.dart';
 import '../managers/assets_manager.dart';
 import '../managers/color_manager.dart';

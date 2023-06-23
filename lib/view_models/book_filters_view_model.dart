@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:share_learning/view_models/providers/book_provider.dart';
 
 import '../models/book.dart';
 import '../models/post_category.dart';

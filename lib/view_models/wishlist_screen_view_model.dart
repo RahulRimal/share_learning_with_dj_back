@@ -3,7 +3,6 @@ import 'package:share_learning/view_models/base_view_model.dart';
 
 import '../models/post_category.dart';
 import '../models/session.dart';
-import '../models/user.dart';
 
 mixin WishlistScreenViewModel on BaseViewModel {
   late int selectedCategoryIndex;

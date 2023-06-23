@@ -54,14 +54,14 @@ class BookApi {
     }
   }
 
-  static Future<Object> getAnnonimusPosts(Session loggedInUser) async {
+  static Future<Object> getAnnonimusPosts(Session loggedInSession) async {
     try {
       var url = Uri.parse(RemoteManager.BASE_URI + '/posts/');
 
       var response = await http.get(
         url,
         headers: {
-          HttpHeaders.authorizationHeader: "SL " + loggedInUser.accessToken,
+          HttpHeaders.authorizationHeader: "SL " + loggedInSession.accessToken,
         },
       );
       // print(response.body);

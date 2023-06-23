@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/view_models/providers/order_provider.dart';
-import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 

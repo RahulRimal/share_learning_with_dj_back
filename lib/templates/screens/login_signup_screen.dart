@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
-import 'package:share_learning/templates/screens/login_screen.dart';
-import 'package:share_learning/templates/screens/signup_screen.dart';
 
 import '../managers/routes_manager.dart';
 

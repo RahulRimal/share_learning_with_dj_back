@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
-import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/book.dart';
 import 'package:share_learning/models/post_category.dart';
 import 'package:share_learning/models/session.dart';
 import 'package:share_learning/view_models/providers/book_provider.dart';
-import 'package:share_learning/view_models/providers/category_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/widgets/image_gallery.dart';
 
-import '../../models/user.dart';
-import '../../view_models/providers/user_provider.dart';
 import '../managers/routes_manager.dart';
 import '../utils/alert_helper.dart';
 
@@ -545,7 +538,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       }
                       if (await _bookProvider.editPostScreenUpdatePost(_form)) {
                         setState(() =>
-                            {_bookProvider.editPostScreenShowLoading = false});
+                            _bookProvider.editPostScreenShowLoading = false);
                         AlertHelper.showToastAlert(
                             'Posted Updated Successfully');
 

@@ -3,13 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/home_screen_new.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 
-import '../../models/book.dart';
 import '../../models/cart.dart';
 import '../../models/cart_item.dart';
-import '../../models/order_request.dart';
 import '../../models/session.dart';
 import '../../view_models/providers/cart_provider.dart';
 import '../../view_models/providers/order_request_provider.dart';

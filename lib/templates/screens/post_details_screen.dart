@@ -1,30 +1,20 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:nepali_date_picker/nepali_date_picker.dart' as picker;
-import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
-import 'package:share_learning/templates/screens/cart_screen.dart';
-import 'package:share_learning/templates/screens/edit_post_screen.dart';
-import 'package:share_learning/templates/screens/order_request_screen.dart';
 import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/post_comments_new.dart';
 import 'package:share_learning/view_models/providers/book_provider.dart';
 
-import '../../models/book.dart';
 import '../../models/cart.dart';
 import '../../models/cart_item.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/providers/cart_provider.dart';
 import '../../view_models/providers/order_request_provider.dart';
 import '../../view_models/providers/session_provider.dart';
-import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/font_manager.dart';
 import '../managers/routes_manager.dart';
@@ -241,12 +231,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           child: Text(
                             _bookProvider
                                 .postDetailsScreenSelectedBook.description,
-                            // style: getMediumStyle(
-                            //   color: ColorManager.grey,
-                            //   fontSize: FontSize.s14,
-                            // ),
-                            // style:  _theme.textTheme.titleMedium ,
-
+                            
                             style: _theme.textTheme.bodyMedium,
                             textAlign: TextAlign.start,
                           ),
@@ -256,16 +241,14 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         Padding(
                           padding: const EdgeInsets.only(
                             top: AppPadding.p20,
+                            
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 'Comments',
-                                // style: TextStyle(
-                                //   fontWeight: FontWeight.bold,
-                                //   fontSize: 15,
-                                // ),
+                                
                                 style: _theme.textTheme.headlineSmall,
                               ),
                               Expanded(
@@ -273,29 +256,22 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                   thickness: 1,
                                   height: 5,
                                   indent: 15,
-                                  color: Theme.of(context).primaryColor,
+                                  // color: Theme.of(context).primaryColor,
+                                  color: ColorManager.primary,
                                 ),
                               ),
                             ],
                           ),
                         ),
-
-                        // PostCommentsNew(
-                        //   _bookProvider.sessionProvider,
-                        //   _bookProvider.user,
-                        //   _bookProvider.selectedBook.id,
-                        // ),
                         PostCommentsNew(),
 
                         SizedBox(
-                          height: 30,
+                          height: 20,
                         ),
                         Text(
                           'Recommendations for you',
-                          // style: TextStyle(
-                          //   fontWeight: FontWeight.bold,
-                          //   fontSize: 15,
-                          // ),
+                          
+                          
                           style: _theme.textTheme.headlineSmall,
                         ),
                         Center(
@@ -333,7 +309,7 @@ class SinglePostCommenstSection extends StatefulWidget {
 class _SinglePostCommenstSectionState extends State<SinglePostCommenstSection> {
   @override
   Widget build(BuildContext context) {
-    BookProvider _bookProvider = context.watch<BookProvider>();
+    
 
     return Column(
       children: [
@@ -559,8 +535,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                           ),
                           context: context,
                           builder: (context) {
-                            ValueNotifier<bool> _shouldRequest =
-                                ValueNotifier(false);
+                            
                             return Padding(
                               padding: EdgeInsets.only(
                                 top: AppPadding.p8,

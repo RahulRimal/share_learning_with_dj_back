@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:share_learning/models/post_category.dart';
-import 'package:share_learning/view_models/providers/category_provider.dart';
 import 'package:share_learning/view_models/providers/wishlist_provider.dart';
 
 import 'package:share_learning/templates/managers/color_manager.dart';
@@ -19,14 +17,9 @@ import '../../models/book.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
 import '../../view_models/providers/book_filters_provider.dart';
-import '../../view_models/providers/book_provider.dart';
-import '../../view_models/providers/session_provider.dart';
-import '../../view_models/providers/user_provider.dart';
-import '../managers/api_values_manager.dart';
 import '../managers/assets_manager.dart';
 import '../managers/routes_manager.dart';
 import '../utils/user_helper.dart';
-import 'user_profile_screen.dart';
 
 class WishlistedBooksScreen extends StatefulWidget {
   const WishlistedBooksScreen({Key? key}) : super(key: key);

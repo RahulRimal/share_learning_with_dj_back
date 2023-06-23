@@ -13,17 +13,6 @@ import '../templates/managers/enum_managers.dart';
 import '../templates/managers/font_manager.dart';
 import '../templates/managers/routes_manager.dart';
 import '../templates/managers/style_manager.dart';
-import '../templates/screens/add_post_screen.dart';
-import '../templates/screens/cart_screen.dart';
-import '../templates/screens/home_screen_new.dart';
-import '../templates/screens/login_screen.dart';
-import '../templates/screens/order_details_screen.dart';
-import '../templates/screens/order_request_screen.dart';
-import '../templates/screens/order_requests_screen_for_seller.dart';
-import '../templates/screens/orders_screen_new.dart';
-import '../templates/screens/user_interests_screen.dart';
-import '../templates/screens/user_posts_screen.dart';
-import '../templates/screens/user_profile_screen.dart';
 import '../templates/utils/alert_helper.dart';
 import '../templates/utils/system_helper.dart';
 import '../templates/widgets/app_drawer.dart';
@@ -111,6 +100,11 @@ mixin UserProfileEditScreenViewModel on BaseViewModel {
   }
 
   unbindUserProfileEditScreenViewModel() {}
+
+  void userProfileEditScreenSetShowLoading(bool value) {
+    userProfileEditScreenShowLoading = value;
+    notifyListeners();
+  }
 
   Future<void> userProfileEditScreenGetPicture() async {
     final imageFiles = await userProfileEditScreenImagePicker.pickImage(
@@ -321,7 +315,7 @@ mixin LoginScreenViewModel on BaseViewModel {
             (sessionProvider.sessionError!.message as Map)
                 .forEach((key, value) {
               if (value is List) {
-                value.forEach((item) => {data.add(item.toString())});
+                value.forEach((item) => data.add(item.toString()));
               } else {
                 data.add(value.toString());
               }
@@ -482,7 +476,7 @@ mixin SignUpScreenViewModel on BaseViewModel {
           List<String> data = [];
           (userProvider.userError!.message as Map).forEach((key, value) {
             if (value is List) {
-              value.forEach((item) => {data.add(item.toString())});
+              value.forEach((item) => data.add(item.toString()));
             } else {
               data.add(value.toString());
             }
@@ -708,7 +702,7 @@ mixin AppDrawerViewModel on BaseViewModel {
 
   unbindAppDrawerViewModel() {}
 
-  AppDrawerViewModelLogOut(BuildContext context) async {
+  appDrawerViewModelLogOut(BuildContext context) async {
     bookProvider.setBooks([]);
 
     commentProvider.setComments([]);

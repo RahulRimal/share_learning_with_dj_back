@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_learning/models/session.dart';
@@ -7,15 +6,9 @@ import 'package:share_learning/models/user.dart';
 import 'package:share_learning/templates/managers/values_manager.dart';
 import 'package:share_learning/view_models/providers/book_provider.dart';
 import 'package:share_learning/view_models/providers/comment_provider.dart';
-import 'package:share_learning/view_models/providers/user_provider.dart';
 import 'package:share_learning/templates/managers/color_manager.dart';
-import 'package:share_learning/templates/managers/font_manager.dart';
-import 'package:share_learning/templates/managers/style_manager.dart';
-import 'package:share_learning/templates/screens/user_posts_screen.dart';
-import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/utils/user_helper.dart';
 
-import '../../models/comment.dart';
 import '../managers/routes_manager.dart';
 
 // class PostCommentsNew extends StatelessWidget {
@@ -545,13 +538,10 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                               itemCount: _commentProvider.comments.length,
                               itemBuilder: (context, index) {
                                 return Container(
-                                  padding: EdgeInsets.all(10),
+                                  
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
-                                    // color: Colors.grey[100],
-                                    color: _theme.brightness == Brightness.dark
-                                        ? ColorManager.grey
-                                        : ColorManager.lightestGrey,
+                                    
                                   ),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -602,7 +592,7 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                                                       BorderRadius.circular(20),
                                                   // color: Colors.white,
                                                   color: _theme
-                                                      .colorScheme.background,
+                                                      .colorScheme.secondaryContainer,
                                                 ),
                                                 child: Row(
                                                   mainAxisAlignment:
@@ -827,9 +817,8 @@ class _PostCommentsNewState extends State<PostCommentsNew>
                     ),
                     // Add your comment starts here !!
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 5,
-                        vertical: 15,
+                      padding: EdgeInsets.all(AppPadding.p4
+                        
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

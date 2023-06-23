@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 child: FutureBuilder(
                   // future: books.getBooks(authenticatedSession),
-                  future: _books.getBooksAnnonimusly(authenticatedSession),
+                  future: _books.getBooksAnnonimusly(),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -239,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     : FutureBuilder(
                         future:
-                            _books.getBooksAnnonimusly(authenticatedSession),
+                            _books.getBooksAnnonimusly(),
                         builder: (ctx, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {

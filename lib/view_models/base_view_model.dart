@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_learning/models/book.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/session.dart';
-import '../models/user.dart';
 import 'providers/book_filters_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/category_provider.dart';

@@ -20,7 +20,6 @@ import '../../models/cart.dart';
 
 import '../managers/routes_manager.dart';
 import '../widgets/custom_bottom_navbar.dart';
-import 'order_requests_for_seller_details_screen.dart';
 
 class OrderRequestsScreenForSeller extends StatefulWidget {
   const OrderRequestsScreenForSeller({Key? key}) : super(key: key);

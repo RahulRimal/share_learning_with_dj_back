@@ -9,8 +9,6 @@ import '../models/user.dart';
 import '../templates/managers/color_manager.dart';
 import '../templates/managers/routes_manager.dart';
 import '../templates/managers/values_manager.dart';
-import '../templates/screens/home_screen_new.dart';
-import '../templates/screens/login_screen.dart';
 import '../templates/utils/alert_helper.dart';
 import '../templates/utils/internet_connection.dart';
 

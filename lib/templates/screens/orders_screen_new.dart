@@ -1,26 +1,20 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/order_item.dart';
-import 'package:share_learning/view_models/providers/book_provider.dart';
 import 'package:share_learning/view_models/providers/order_provider.dart';
-import 'package:share_learning/view_models/providers/session_provider.dart';
 import 'package:share_learning/templates/managers/assets_manager.dart';
 import 'package:share_learning/templates/managers/font_manager.dart';
 import 'package:share_learning/templates/managers/style_manager.dart';
-import 'package:share_learning/templates/screens/order_details_screen.dart';
 
 import '../../models/book.dart';
 import '../../models/order.dart';
 import '../../models/session.dart';
 import '../../models/user.dart';
-import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/routes_manager.dart';
 import '../managers/values_manager.dart';
 import '../utils/user_helper.dart';
-import '../widgets/order_item_widget.dart';
 
 class OrdersScreenNew extends StatefulWidget {
   // static const routeName = '/orders-list-new';
@@ -544,8 +538,10 @@ class _OrdersWidgetState extends State<OrdersWidget> {
             _orderInfo[index]['isExpanded'] = !isExpanded;
           });
         }),
+        
         children: _orderInfo.map<ExpansionPanel>((Map<String, dynamic> item) {
           return ExpansionPanel(
+            
             headerBuilder: (context, isExpanded) {
               double totalPrice = 0;
 
@@ -560,7 +556,7 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                 width: isExpanded
                     ? AppHeight.h20
                     : 0, // Define the desired height when visible or hidden
-                color: ColorManager.primaryColorWithOpacity,
+                 
                 child: ListTile(
                   tileColor: isExpanded
                       ? ColorManager.transparent

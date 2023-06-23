@@ -11,7 +11,6 @@ import 'package:share_learning/templates/utils/system_helper.dart';
 import '../models/book.dart';
 import '../models/post_category.dart';
 import '../models/session.dart';
-import '../models/user.dart';
 import '../templates/utils/alert_helper.dart';
 import 'base_view_model.dart';
 
@@ -614,6 +613,15 @@ mixin UserPostsScreenViewModel on BaseViewModel {
     bookFiltersProvider.clearFilters();
     bookProvider.searchUserBooks(sessionProvider.userProvider.user!.id,
         userPostsScreenSearchTextController.text);
+  }
+
+
+  userPostsScreengetUserBooks(){
+    if(_selectedUserId != null)
+  bookProvider.getUserBooks(_selectedUserId.toString());
+  else
+    bookProvider.getUserBooks(sessionProvider.userProvider.user!.id);
+
   }
 
   userPostsScreenGetScrollController() {

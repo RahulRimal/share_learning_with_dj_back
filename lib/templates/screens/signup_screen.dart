@@ -1,19 +1,12 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/models/user.dart';
 import 'package:share_learning/view_models/providers/user_provider.dart';
-import 'package:share_learning/templates/screens/login_screen.dart';
-import 'package:share_learning/templates/utils/alert_helper.dart';
 import 'package:share_learning/templates/widgets/beizer_container.dart';
 
 import '../managers/assets_manager.dart';
-import '../managers/color_manager.dart';
-import '../managers/font_manager.dart';
 import '../managers/routes_manager.dart';
-import '../managers/style_manager.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key, this.title}) : super(key: key);

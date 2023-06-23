@@ -5,11 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/order.dart';
 import '../../models/session.dart';
-import '../../models/user.dart';
 import '../../view_models/providers/book_provider.dart';
-import '../../view_models/providers/cart_provider.dart';
-import '../../view_models/providers/order_provider.dart';
-import '../../view_models/providers/session_provider.dart';
 import '../../view_models/providers/user_provider.dart';
 import '../managers/color_manager.dart';
 import '../managers/enum_managers.dart';
@@ -17,7 +13,6 @@ import '../managers/font_manager.dart';
 import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
 import '../managers/values_manager.dart';
-import '../screens/home_screen_new.dart';
 import '../utils/loading_helper.dart';
 import '../utils/payment.dart';
 
