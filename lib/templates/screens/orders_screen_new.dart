@@ -63,7 +63,7 @@ class _OrdersScreenNewState extends State<OrdersScreenNew>
   @override
   Widget build(BuildContext context) {
     OrderProvider _orderProvider = context.watch<OrderProvider>();
-
+    ThemeData _theme = Theme.of(context);
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -80,9 +80,12 @@ class _OrdersScreenNewState extends State<OrdersScreenNew>
                     Text(
                       'Orders',
                       style: getBoldStyle(
-                        color: ColorManager.black,
+                        color: _theme.brightness == Brightness.dark
+                            ? ColorManager.white
+                            : ColorManager.black,
                         fontSize: FontSize.s24,
                       ),
+                      // style: _theme.textTheme.headlineLarge,
                     ),
                     FutureBuilder(
                       future: _orderProvider.userProvider.getUserByToken(
@@ -182,13 +185,16 @@ class _OrdersScreenNewState extends State<OrdersScreenNew>
                       Text(
                         'Last 3 Months',
                         style: getBoldStyle(
-                          color: ColorManager.black,
+                          // color: ColorManager.black,
+                          color: _theme.brightness == Brightness.dark
+                              ? ColorManager.whiteWithOpacity
+                              : ColorManager.black,
                           fontSize: FontSize.s20,
                         ),
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorManager.white,
+                          // backgroundColor: ColorManager.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: AppPadding.p12,
                             vertical: AppPadding.p8,
@@ -316,6 +322,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget>
   @override
   Widget build(BuildContext context) {
     OrderProvider _orderProvider = context.watch<OrderProvider>();
+    ThemeData _theme = Theme.of(context);
 
     if (orderItemBook == null) {
       return FutureBuilder(
@@ -338,7 +345,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget>
 
                 return Container(
                   decoration: BoxDecoration(
-                    color: ColorManager.lighterGrey,
+                    color: _theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(
                       AppRadius.r12,
                     ),
@@ -353,7 +360,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget>
                           right: AppMargin.m14,
                         ),
                         decoration: BoxDecoration(
-                          color: ColorManager.grey,
+                          // color: ColorManager.grey,
                           borderRadius: BorderRadius.circular(
                             AppRadius.r12,
                           ),
@@ -374,37 +381,39 @@ class _OrderItemWidgetState extends State<OrderItemWidget>
                             Text(
                               product.bookName,
                               softWrap: true,
-                              style: getBoldStyle(
-                                color: ColorManager.black,
-                                fontSize: FontSize.s16,
-                              ),
+                              // style: getBoldStyle(
+                              //   color: ColorManager.black,
+                              //   fontSize: FontSize.s16,
+                              // ),
+                              style: _theme.textTheme.headlineMedium,
                             ),
                             SizedBox(
                               height: AppHeight.h4,
                             ),
-                            Text(
-                              'Unit price: Rs. ${product.price.toString()}',
-                              style: getMediumStyle(
-                                color: ColorManager.grey,
-                                fontSize: FontSize.s14,
-                              ),
-                            ),
+                            Text('Unit price: Rs. ${product.price.toString()}',
+                                // style: getMediumStyle(
+                                //   color: ColorManager.grey,
+                                //   fontSize: FontSize.s14,
+                                // ),
+                                style: _theme.textTheme.bodyMedium),
                             Text(
                               'Quantity: ${widget.orderItem.quantity.toString()}',
-                              style: getMediumStyle(
-                                color: ColorManager.grey,
-                                fontSize: FontSize.s14,
-                              ),
+                              // style: getMediumStyle(
+                              //   color: ColorManager.grey,
+                              //   fontSize: FontSize.s14,
+                              // ),
+                              style: _theme.textTheme.bodyMedium,
                             ),
                             SizedBox(
                               height: AppHeight.h4,
                             ),
                             Text(
                               'Total: Rs. ${(product.price * widget.orderItem.quantity).toString()}',
-                              style: getMediumStyle(
-                                color: ColorManager.grey,
-                                fontSize: FontSize.s14,
-                              ),
+                              // style: getMediumStyle(
+                              //   color: ColorManager.grey,
+                              //   fontSize: FontSize.s14,
+                              // ),
+                              style: _theme.textTheme.bodyMedium,
                             ),
                           ],
                         ),
@@ -418,7 +427,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget>
     } else {
       return Container(
         decoration: BoxDecoration(
-          color: ColorManager.lighterGrey,
+          color: _theme.colorScheme.secondary,
           borderRadius: BorderRadius.circular(
             AppRadius.r12,
           ),
@@ -454,38 +463,42 @@ class _OrderItemWidgetState extends State<OrderItemWidget>
                   Text(
                     orderItemBook!.bookName,
                     softWrap: true,
-                    style: getBoldStyle(
-                      color: ColorManager.black,
-                      fontSize: FontSize.s16,
-                    ),
+                    // style: getBoldStyle(
+                    //   color: ColorManager.black,
+                    //   fontSize: FontSize.s16,
+                    // ),
+                    style: _theme.textTheme.headlineMedium,
                   ),
                   SizedBox(
                     height: AppHeight.h4,
                   ),
                   Text(
                     'Unit price: Rs. ${orderItemBook!.price.toString()}',
-                    style: getMediumStyle(
-                      color: ColorManager.grey,
-                      fontSize: FontSize.s14,
-                    ),
+                    // style: getMediumStyle(
+                    //   color: ColorManager.grey,
+                    //   fontSize: FontSize.s14,
+                    // ),
+                    style: _theme.textTheme.bodyMedium,
                   ),
                   Text(
                     // 'Quantity: ${_orderProvider.ordersItemWidgetOrderItemBook.quantity.toString()}',
                     'Quantity: ${orderItemBook!.bookCount.toString()}',
-                    style: getMediumStyle(
-                      color: ColorManager.grey,
-                      fontSize: FontSize.s14,
-                    ),
+                    // style: getMediumStyle(
+                    //   color: ColorManager.grey,
+                    //   fontSize: FontSize.s14,
+                    // ),
+                    style: _theme.textTheme.bodyMedium,
                   ),
                   SizedBox(
                     height: AppHeight.h4,
                   ),
                   Text(
                     'Total: Rs. ${(orderItemBook!.price * orderItemBook!.bookCount).toString()}',
-                    style: getMediumStyle(
-                      color: ColorManager.grey,
-                      fontSize: FontSize.s14,
-                    ),
+                    // style: getMediumStyle(
+                    //   color: ColorManager.grey,
+                    //   fontSize: FontSize.s14,
+                    // ),
+                    style: _theme.textTheme.bodyMedium,
                   ),
                 ],
               ),
@@ -523,6 +536,7 @@ class _OrdersWidgetState extends State<OrdersWidget> {
   @override
   Widget build(BuildContext context) {
     OrderProvider _orderProvider = context.watch<OrderProvider>();
+    ThemeData _theme = Theme.of(context);
     return SingleChildScrollView(
       child: ExpansionPanelList(
         expansionCallback: ((index, isExpanded) {
@@ -546,17 +560,22 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                 width: isExpanded
                     ? AppHeight.h20
                     : 0, // Define the desired height when visible or hidden
+                color: ColorManager.primaryColorWithOpacity,
                 child: ListTile(
+                  tileColor: isExpanded
+                      ? ColorManager.transparent
+                      : _theme.colorScheme.secondary,
                   contentPadding: EdgeInsets.symmetric(
                     vertical: AppPadding.p2,
                     horizontal: AppPadding.p8,
                   ),
                   title: Text(
                     'Order placed on ${DateFormat('d MMMM y').format(item['order'].placedAt)}',
-                    style: getBoldStyle(
-                      color: ColorManager.black,
-                      fontSize: FontSize.s16,
-                    ),
+                    // style: getBoldStyle(
+                    //   color: ColorManager.black,
+                    //   fontSize: FontSize.s16,
+                    // ),
+                    style: _theme.textTheme.headlineMedium,
                   ),
                   subtitle: (item['order'].deliveryInfo != null &&
                           item['order'].deliveryInfo['status'] == 'T')
@@ -568,8 +587,9 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                                 Text(
                                   'Delivering on ${DateFormat('d MMMM y').format(DateTime.parse((item['order'] as Order).deliveryInfo!['expected_delivery_date']))}',
                                   style: getBoldStyle(
-                                      color: Colors.orange,
-                                      fontSize: FontSize.s14),
+                                    color: Colors.orange,
+                                    fontSize: FontSize.s14,
+                                  ),
                                 ),
                               ],
                             ),
@@ -588,9 +608,10 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                             ),
                             Text(
                               'Total: Rs.${totalPrice.toString()}',
-                              style: getMediumStyle(
-                                color: ColorManager.black,
-                              ),
+                              // style: getMediumStyle(
+                              //   color: ColorManager.black,
+                              // ),
+                              style: _theme.textTheme.bodySmall,
                             ),
                           ],
                         )
@@ -635,9 +656,10 @@ class _OrdersWidgetState extends State<OrdersWidget> {
                             ),
                             Text(
                               'Total: Rs.${totalPrice.toString()}',
-                              style: getMediumStyle(
-                                color: ColorManager.black,
-                              ),
+                              // style: getMediumStyle(
+                              //   color: ColorManager.black,
+                              // ),
+                              style: _theme.textTheme.bodySmall,
                             ),
                           ],
                         ),

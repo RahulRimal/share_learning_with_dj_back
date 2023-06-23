@@ -76,57 +76,73 @@ class _AppDrawerState extends State<AppDrawer> with WidgetsBindingObserver {
             color: Colors.white,
           ),
           onTap: () {
-            if (item.route == RoutesManager.homeScreenRoute)
-              Navigator.pushNamed(
-                context,
-                item.route,
-              );
-            if (item.route == RoutesManager.addPostScreenRoute)
-              Navigator.pushNamed(
-                context,
-                item.route,
-              );
-            if (item.route == RoutesManager.userPostsScreenRoute)
+            if (item.route == RoutesManager.userPostsScreenRoute) {
               // Set selected user to null so current user books will be fetched, otherwise books of selected user will be fetched
               _userProvider
                   .bookProvider.userPostsScreenViewModelSelectedUserId = null;
-            Navigator.pushNamed(
-                context,
-                // item.route,
-                RoutesManager.userPostsScreenRoute);
-            if (item.route == RoutesManager.userProfileEditScreenRoute) {
+              Navigator.pushNamed(
+                  context,
+                  // item.route,
+                  RoutesManager.userPostsScreenRoute);
+            } else
               Navigator.pushNamed(
                 context,
                 item.route,
               );
-            }
-            if (item.route == RoutesManager.cartScreenRoute)
-              Navigator.pushNamed(
-                context,
-                item.route,
-              );
-            if (item.route == RoutesManager.orderRequestScreenRoute)
-              Navigator.pushNamed(
-                context,
-                item.route,
-              );
-            if (item.route == RoutesManager.orderRequestsScreenForSellerRoute)
-              Navigator.pushNamed(
-                context,
-                item.route,
-              );
-            if (item.route == RoutesManager.ordersScreenNewRoute)
-              Navigator.pushNamed(
-                context,
-                item.route,
-              );
-            if (item.route == RoutesManager.userInterestsScreenRoute) {
-              Navigator.pushNamed(
-                context,
-                item.route,
-              );
-            }
-          }),
+          }
+
+          // if (item.route == RoutesManager.homeScreenRoute)
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // if (item.route == RoutesManager.addPostScreenRoute)
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // if (item.route == RoutesManager.userPostsScreenRoute)
+          //   // Set selected user to null so current user books will be fetched, otherwise books of selected user will be fetched
+          //   _userProvider
+          //       .bookProvider.userPostsScreenViewModelSelectedUserId = null;
+          // Navigator.pushNamed(
+          //     context,
+          //     // item.route,
+          //     RoutesManager.userPostsScreenRoute);
+          // if (item.route == RoutesManager.userProfileEditScreenRoute) {
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // }
+          // if (item.route == RoutesManager.cartScreenRoute)
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // if (item.route == RoutesManager.orderRequestScreenRoute)
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // if (item.route == RoutesManager.orderRequestsScreenForSellerRoute)
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // if (item.route == RoutesManager.ordersScreenNewRoute)
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // if (item.route == RoutesManager.userInterestsScreenRoute) {
+          //   Navigator.pushNamed(
+          //     context,
+          //     item.route,
+          //   );
+          // }
+          // },
+          ),
     );
   }
 

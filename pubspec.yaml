@@ -24,21 +24,22 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.2
-  photo_view: ^0.13.0
-  intl: ^0.17.0
+  photo_view: ^0.14.0
+  intl: ^0.18.1
   nepali_date_picker: ^5.1.0
   image_picker: ^0.8.4+2
   path: ^1.8.0
   path_provider: ^2.0.5
-  http: ^0.13.4
+  # http: ^0.13.4
   async: ^2.8.1
   flutter_svg: ^2.0.5
-  data_connection_checker: ^0.3.4
+  # data_connection_checker: ^0.3.4
+
   bot_toast: ^4.0.1
   khalti_flutter: ^2.2.1
   esewa_client: ^0.1.1
   shared_preferences: ^2.0.13
-  google_sign_in: ^5.1.1
+  google_sign_in: ^6.1.4
   google_fonts: ^4.0.3
   flutter_staggered_grid_view: ^0.6.2
   firebase_core: ^2.11.0

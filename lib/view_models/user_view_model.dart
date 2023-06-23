@@ -672,7 +672,7 @@ mixin AppDrawerViewModel on BaseViewModel {
     DrawerItem(
       icon: Icons.person,
       title: 'Your Profile',
-      route: RoutesManager.userProfileEditScreenRoute,
+      route: RoutesManager.userProfileScreenRoute,
     ),
     DrawerItem(
       title: 'Your Cart',

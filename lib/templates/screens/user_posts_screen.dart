@@ -1054,6 +1054,49 @@ class _UserPostsScreenState extends State<UserPostsScreen>
                               },
                             ),
                           ),
+                          if (_bookProvider
+                                      .userPostsScreenViewModelSelectedUserId !=
+                                  null &&
+                              _bookProvider.userProvider.user!.id !=
+                                  _bookProvider
+                                      .userPostsScreenViewModelSelectedUserId
+                                      .toString())
+                            FutureBuilder(
+                              future: _bookProvider.userProvider.getUserById(
+                                  // _bookProvider.userProvider.user!.id),
+                                  _bookProvider
+                                      .userPostsScreenViewModelSelectedUserId
+                                      .toString()),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return CircularProgressIndicator(
+                                    color: ColorManager.secondary,
+                                  );
+                                } else {
+                                  if (snapshot.hasError) {
+                                    return Container();
+                                  } else {
+                                    User user = snapshot.data as User;
+                                    return Text(
+                                      "${user.firstName}'s Posts",
+                                      style: getBoldStyle(
+                                        color: ColorManager.white,
+                                        fontSize: FontSize.s16,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                            )
+                          else
+                            Text(
+                              'Your Posts',
+                              style: getBoldStyle(
+                                color: ColorManager.white,
+                                fontSize: FontSize.s16,
+                              ),
+                            ),
                           IconButton(
                             padding: const EdgeInsets.only(
                               right: AppPadding.p20,
