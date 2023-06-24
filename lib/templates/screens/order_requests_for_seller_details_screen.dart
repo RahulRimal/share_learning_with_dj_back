@@ -44,6 +44,8 @@ class _OrderRequestForSellerDetailsScreenState
   Widget build(BuildContext context) {
     OrderRequestProvider _orderRequestProvider =
         context.watch<OrderRequestProvider>();
+        ThemeData _theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Request'),
@@ -65,7 +67,8 @@ class _OrderRequestForSellerDetailsScreenState
               SizedBox(height: 16.0),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  // color: Colors.white,
+                  color: _theme.colorScheme.secondary,
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
@@ -81,14 +84,10 @@ class _OrderRequestForSellerDetailsScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      // currentUser.id ==
-                      //         _orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.id.toString()
-                      //     ? 'You have received an offer from ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the following item:'
-                      //     : 'You have sent an offer to ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.lastName} for the following item:',
+                      
                       'You have received an offer from ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the following item:',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
+                      
+                      style: _theme.textTheme.titleSmall,
                     ),
                     SizedBox(height: 8.0),
                     Row(
@@ -99,13 +98,18 @@ class _OrderRequestForSellerDetailsScreenState
                           _orderRequestProvider
                               .orderRequestForSellerDetailsScreenViewModelRequestedProduct
                               .bookName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          // style: TextStyle(
+                          //   fontWeight: FontWeight.bold,
+                          // ),
+                          style: _theme.textTheme.headlineMedium,
                         ),
+                        // If post type is buying then do not show the book price as it is shown in buyer's offer
+                        if(_orderRequestProvider
+                              .orderRequestForSellerDetailsScreenViewModelRequestedProduct.postType=='S')
+                        
                         Text(
                           'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestedProduct.price}',
-                          // '\$25.00',
+                          
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -120,9 +124,10 @@ class _OrderRequestForSellerDetailsScreenState
                       // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
+                      // style: TextStyle(
+                      //   color: Colors.grey[600],
+                      // ),
+                      style: _theme.textTheme.bodySmall,
                     ),
                     SizedBox(height: 16.0),
                     // ----------------------- Show this row when selling user has send the offer price start here -----------------------------
@@ -159,16 +164,17 @@ class _OrderRequestForSellerDetailsScreenState
                       children: [
                         Text(
                           '${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName}\'s offer Price',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          
+                          style: _theme.textTheme.titleMedium,
                         ),
+                        if(_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice == _orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.product.unitPrice)
+                        Text(
+                          'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
+                          style: _theme.textTheme.bodyMedium,
+                        )else
                         Text(
                           'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
-                          // '\$20.00',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: _theme.textTheme.bodyMedium,
                         ),
                       ],
                     ),
@@ -192,9 +198,17 @@ class _OrderRequestForSellerDetailsScreenState
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          if(_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice == _orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.product.unitPrice)
+                          Text(
+                            'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
+                            
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )else
                           Text(
                             'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
-                            // '\$20.00',
+                            
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
@@ -208,9 +222,8 @@ class _OrderRequestForSellerDetailsScreenState
                       children: [
                         Text(
                           'Quantity',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          
+                          style: _theme.textTheme.titleMedium,
                         ),
                         Text(
                           // '1',
@@ -218,34 +231,27 @@ class _OrderRequestForSellerDetailsScreenState
                               .orderRequestForSellerDetailsScreenViewModelRequestItem
                               .quantity
                               .toString(),
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                          ),
+                          // style: TextStyle(
+                          //   color: Colors.grey[600],
+                          // ),
+                          style: _theme.textTheme.bodyMedium,
                         ),
                       ],
                     ),
                     SizedBox(height: 16.0),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text(
-                    //       'Shipping Method',
-                    //       style: TextStyle(
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //     Text(
-                    //       'Standard',
-                    //       style: TextStyle(
-                    //         color: Colors.grey[600],
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    
                   ],
                 ),
               ),
               SizedBox(height: AppHeight.h20),
+              // if (_orderRequestProvider
+              //             .orderRequestForSellerDetailsScreenViewModelRequestItem
+              //             .priceChangedBySeller !=
+              //         null &&
+              //     _orderRequestProvider
+              //             .orderRequestForSellerDetailsScreenViewModelRequestItem
+              //             .priceChangedBySeller ==
+              //         true)
               if (_orderRequestProvider
                           .orderRequestForSellerDetailsScreenViewModelRequestItem
                           .priceChangedBySeller !=
@@ -253,10 +259,12 @@ class _OrderRequestForSellerDetailsScreenState
                   _orderRequestProvider
                           .orderRequestForSellerDetailsScreenViewModelRequestItem
                           .priceChangedBySeller ==
-                      true)
+                      true && _orderRequestProvider
+                          .orderRequestForSellerDetailsScreenViewModelRequestItem.product.postType=='S')
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    
+                    color: _theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(8.0),
                     boxShadow: [
                       BoxShadow(
@@ -275,15 +283,13 @@ class _OrderRequestForSellerDetailsScreenState
                         children: [
                           Text(
                             'Request status',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            
+                            style: _theme.textTheme.headlineSmall,
                           ),
                           Text(
                             'Pending',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            
+                            style: _theme.textTheme.bodyMedium,
                           ),
                         ],
                       ),
@@ -293,7 +299,7 @@ class _OrderRequestForSellerDetailsScreenState
                       Text(
                         'We will let you know when ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} responds to the request',
                         style: TextStyle(
-                          // color: Colors.grey[600],
+                          
                           color: ColorManager.yellow,
                         ),
                       ),
@@ -315,7 +321,7 @@ class _OrderRequestForSellerDetailsScreenState
                     SizedBox(height: 16.0),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: _theme.colorScheme.secondary,
                         borderRadius: BorderRadius.circular(8.0),
                         boxShadow: [
                           BoxShadow(
@@ -332,95 +338,20 @@ class _OrderRequestForSellerDetailsScreenState
                         children: [
                           Text(
                             'By accepting this offer, you agree to sell the following item to ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the price of Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice} each :',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                            ),
+                            // style: TextStyle(
+                            //   color: Colors.grey[600],
+                            // ),
+                            style: _theme.textTheme.bodyMedium,
                           ),
                           SizedBox(height: 8.0),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(
-                          //       'Product Name',
-                          //       style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //       ),
-                          //     ),
-                          //     Text(
-                          //       '\$25.00',
-                          //       style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          // SizedBox(height: 8.0),
-                          // Text(
-                          //   'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
-                          //   style: TextStyle(
-                          //     color: Colors.grey[600],
-                          //   ),
-                          // ),
-                          // SizedBox(height: 16.0),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(
-                          //       'Offer Price',
-                          //       style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //       ),
-                          //     ),
-                          //     Text(
-                          //       '\$20.00',
-                          //       style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          // SizedBox(height: 8.0),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(
-                          //       'Quantity',
-                          //       style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //       ),
-                          //     ),
-                          //     Text(
-                          //       '1',
-                          //       style: TextStyle(
-                          //         color: Colors.grey[600],
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          // SizedBox(height: 16.0),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(
-                          //       'Shipping Method',
-                          //       style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //       ),
-                          //     ),
-                          //     Text(
-                          //       'Standard',
-                          //       style: TextStyle(
-                          //         color: Colors.grey[600],
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
+                          
                           SizedBox(height: 16.0),
                           Text(
                             'Please review the terms of the sale carefully before accepting. Once you accept, the sale is final and binding.',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                            ),
+                            // style: TextStyle(
+                            //   color: Colors.grey[600],
+                            // ),
+                            style: _theme.textTheme.bodyMedium,
                           ),
                           SizedBox(height: 16.0),
                           Row(
@@ -499,7 +430,7 @@ class _OrderRequestForSellerDetailsScreenState
                                                     .id)) {
                                           AlertHelper.showToastAlert(
                                               'Request deleted successfully');
-                                          // Navigator.pop(context);
+                                          
                                           Navigator.of(context)
                                               .pushReplacementNamed(
                                                   RoutesManager
@@ -524,9 +455,7 @@ class _OrderRequestForSellerDetailsScreenState
                                 onPressed: () async {
                                   CartProvider carts =
                                       Provider.of(context, listen: false);
-                                  // setState(() {
-                                  //   _isLoading = true;
-                                  // });
+                                  
                                   var tempCart =
                                       await carts.createTemporaryCart(
                                           Provider.of<SessionProvider>(context,
@@ -579,7 +508,7 @@ class _OrderRequestForSellerDetailsScreenState
                                               cartId: tempCart.id,
                                               billingInfo: _orderRequestProvider
                                                   .orderRequestForSellerDetailsScreenViewModelRequestItem
-                                                  .billingInfo,
+                                                  .billingInfo as Map<String, dynamic>,
                                               paymentMethod: 'C')) {
                                         // Delete the order request when the order has been palced
                                         if (await Provider.of<
@@ -636,7 +565,7 @@ class _OrderRequestForSellerDetailsScreenState
                     SizedBox(height: AppHeight.h8),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: _theme.colorScheme.secondary,
                         borderRadius: BorderRadius.circular(8.0),
                         boxShadow: [
                           BoxShadow(
@@ -659,7 +588,7 @@ class _OrderRequestForSellerDetailsScreenState
                             keyboardType: TextInputType.number,
                             cursorColor: Theme.of(context).primaryColor,
                             decoration: InputDecoration(
-                              labelText: 'Change requst price',
+                              labelText: 'Change offer price',
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
@@ -700,8 +629,8 @@ class _OrderRequestForSellerDetailsScreenState
                                             _orderRequestProvider
                                                 .orderRequestForSellerDetailsScreenViewModelRequestItem
                                                 .id),
-                                    // child: Text('Update Request Price'),
-                                    child: Text('Request for this price'),
+                                    
+                                    child: Text('Offer this price'),
                                   )
                                 : Container();
                           },

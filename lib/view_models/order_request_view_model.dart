@@ -23,7 +23,7 @@ mixin OrderRequestScreenViewModel on BaseViewModel {
       orderRequestProvider.sessionProvider.session as Session,
       orderRequestId,
     )) {
-      AlertHelper.showToastAlert('Book deleted from the cart');
+      AlertHelper.showToastAlert('Request for the book has been deleted');
       return true;
     }
     AlertHelper.showToastAlert('Something went wrong, Please try again!');

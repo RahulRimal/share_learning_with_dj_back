@@ -23,7 +23,7 @@ class OrderRequest {
   // String? and bool? because they can be null for the first time
   String? sellerOfferPrice;
   bool? priceChangedBySeller;
-  Map<String, dynamic> billingInfo;
+  Map<String, dynamic>? billingInfo;
 
   OrderRequest({
     required this.id,
@@ -73,11 +73,13 @@ class RequestedProduct {
   int id;
   String bookName;
   String unitPrice;
+  String postType;
 
   RequestedProduct({
     required this.id,
     required this.bookName,
     required this.unitPrice,
+    required this.postType,
   });
 
   factory RequestedProduct.fromJson(Map<String, dynamic> json) =>
@@ -85,12 +87,14 @@ class RequestedProduct {
         id: json["id"],
         bookName: json["book_name"],
         unitPrice: json["unit_price"],
+        postType: json["post_type"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "book_name": bookName,
         "unit_price": unitPrice,
+        "post_type": postType,
       };
 }
 

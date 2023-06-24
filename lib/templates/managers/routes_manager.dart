@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_learning/templates/screens/order_details_screen.dart';
+import 'package:share_learning/templates/screens/order_requests_for_seller_details_screen.dart';
 import 'package:share_learning/templates/screens/splash_screen.dart';
 
 import '../screens/add_post_screen.dart';
@@ -12,6 +13,7 @@ import '../screens/login_signup_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/order_request_details_screen.dart';
 import '../screens/order_request_screen.dart';
+import '../screens/order_requests_screen_for_seller.dart';
 import '../screens/orders_screen.dart';
 import '../screens/orders_screen_new.dart';
 import '../screens/post_details_screen.dart';
@@ -45,7 +47,7 @@ class RoutesManager {
   static const String orderRequestScreenRoute = '/order-request-list';
   static const String orderRequestDetailsScreenRoute = 'order-request-details';
   static const String orderRequestsScreenForSellerRoute =
-      'order-request-details';
+      'order-request-for-user-screen';
 
   static const String orderRequestForSellerDetailsScreenRoute =
       'order-request-for-user-details-screen';
@@ -94,6 +96,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => OrderRequestScreen());
       case RoutesManager.orderRequestDetailsScreenRoute:
         return MaterialPageRoute(builder: (_) => OrderRequestDetailsScreen());
+      case RoutesManager.orderRequestsScreenForSellerRoute:
+        return MaterialPageRoute(builder: (_) => OrderRequestsScreenForSeller());
+        case RoutesManager.orderRequestForSellerDetailsScreenRoute:
+          return MaterialPageRoute(builder: (_) => OrderRequestForSellerDetailsScreen());
       case RoutesManager.orderScreenRoute:
         return MaterialPageRoute(builder: (_) => OrderScreen());
       case RoutesManager.ordersScreenNewRoute:

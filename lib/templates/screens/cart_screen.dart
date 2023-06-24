@@ -25,17 +25,28 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   final _form = GlobalKey<FormState>();
 
+CartProvider? cartProvider;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<CartProvider>(context, listen: false)
-        .bindCartScreenViewModel(context);
+    cartProvider = Provider.of<CartProvider>(context, listen: false);
+    cartProvider!.bindCartScreenViewModel(context);
+
+    
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    cartProvider = Provider.of<CartProvider>(context, listen: false);
   }
 
   @override
   void dispose() {
-    Provider.of<CartProvider>(context, listen: false)
-        .unBindCartScreenViewModel();
+    cartProvider!.unBindCartScreenViewModel();
     super.dispose();
   }
 

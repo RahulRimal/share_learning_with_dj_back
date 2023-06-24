@@ -291,7 +291,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
       //   selectedPost: _bookProvider.selectedBook,
       //   loggedInUser: _bookProvider.user,
       // ),
-      bottomSheet: CartBottomSheet(),
+      bottomSheet: PostDetailsScreenBottomSheet(),
     );
   }
 }
@@ -352,16 +352,16 @@ class _SinglePostCommenstSectionState extends State<SinglePostCommenstSection> {
   }
 }
 
-class CartBottomSheet extends StatefulWidget {
-  const CartBottomSheet({
+class PostDetailsScreenBottomSheet extends StatefulWidget {
+  const PostDetailsScreenBottomSheet({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<CartBottomSheet> createState() => _CartBottomSheetState();
+  State<PostDetailsScreenBottomSheet> createState() => _PostDetailsScreenBottomSheetState();
 }
 
-class _CartBottomSheetState extends State<CartBottomSheet> {
+class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSheet> {
   final _form = GlobalKey<FormState>();
 
   @override
@@ -369,7 +369,481 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
     BookProvider _bookProvider = context.watch<BookProvider>();
     ThemeData _theme = Theme.of(context);
 
-    if ((_bookProvider.userProvider.user as User).id ==
+    if(_bookProvider.postDetailsScreenSelectedBook.postType=='S')
+    return _widgetForSellingTypePost();
+    else
+    return _widgetForBuyingTypePost();
+  }
+    _widgetForBuyingTypePost(){
+    BookProvider _bookProvider = context.watch<BookProvider>();
+    ThemeData _theme = Theme.of(context);
+      if ((_bookProvider.userProvider.user as User).id ==
+        _bookProvider.postDetailsScreenSelectedBook.userId) {
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPadding.p14,
+          vertical: AppPadding.p4,
+        ),
+        child: ElevatedButton(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.05,
+            alignment: Alignment.center,
+            child: Text(
+              'Edit post',
+              style: getBoldStyle(
+                color: ColorManager.white,
+                fontSize: FontSize.s16,
+              ),
+            ),
+          ),
+          onPressed: () {
+            _bookProvider.setEditPostScreenSelectedBook(
+                _bookProvider.postDetailsScreenSelectedBook);
+            Navigator.of(context)
+                .pushNamed(RoutesManager.editPostScreenRoute, arguments: {});
+          },
+        ),
+      );
+    }
+    if (_bookProvider.orderRequestProvider.orderRequestsByUserContains(
+        int.parse(_bookProvider.postDetailsScreenSelectedBook.id))) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppPadding.p12,
+          horizontal: AppPadding.p12,
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              RoutesManager.orderRequestScreenRoute,
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            // backgroundColor: ColorManager.primary,
+            minimumSize: const Size.fromHeight(40), // NEW
+          ),
+          child: const Text(
+            "Check request status",
+            style: TextStyle(
+              fontSize: FontSize.s16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(AppPadding.p8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppPadding.p18,
+          vertical: AppPadding.p8,
+        ),
+        child: Container(
+          height: AppHeight.h40,
+          color: _theme.bottomSheetTheme.backgroundColor,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Text(
+                      'Total price',
+                      softWrap: true,
+                      
+                      style: _theme.textTheme.headlineSmall,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: AppPadding.p2,
+                    ),
+                    child: Text(
+                      'Rs. ${_bookProvider.postDetailsScreenSelectedBook.price}',
+                      softWrap: true,
+                      
+                      style: _theme.textTheme.bodyMedium,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                ],
+              ),
+              _bookProvider.orderRequestProvider.orderRequestsByUser
+                          .firstWhereOrNull((orderRequest) =>
+                              orderRequest.product.id ==
+                              int.parse(_bookProvider
+                                  .postDetailsScreenSelectedBook.id)) !=
+                      null
+                  ? ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Check request progress',
+                      ),
+                    )
+                  : ElevatedButton.icon(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          barrierColor: ColorManager.blackWithLowOpacity,
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(AppRadius.r20),
+                              topRight: Radius.circular(
+                                AppRadius.r20,
+                              ),
+                            ),
+                          ),
+                          context: context,
+                          builder: (context) {
+                            
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                top: AppPadding.p20,
+                                left: AppPadding.p12,
+                                right: AppPadding.p12,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom + AppPadding.p12,
+                              ),
+                              child: Form(
+                                key: _form,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: AppPadding.p8,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: AppPadding.p12,
+                                              ),
+                                              child: TextFormField(
+                                                initialValue: _bookProvider
+                                                    .postDetailsScreenSelectedBook
+                                                    .price
+                                                    .round()
+                                                    .toString(),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                focusNode: _bookProvider
+                                                    .postDetailsPageCartBottomSheetBuyerPriceFocusNode,
+                                                decoration: InputDecoration(
+                                                  prefix: Text('Rs. '),
+                                                  labelText:
+                                                      'Your offer price per piece',
+                                                  focusColor: Colors.redAccent,
+                                                ),
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                autovalidateMode:
+                                                    AutovalidateMode.always,
+                                                onFieldSubmitted: (_) {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(_bookProvider
+                                                          .postDetailsPageCartBottomSheetBuyerBooksCountFocusNode);
+                                                },
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return 'Price can\'t be empty';
+                                                  }
+                                                  if (double.tryParse(value) ==
+                                                      null) {
+                                                    return 'Invalid number';
+                                                  }
+                                                  return null;
+                                                },
+                                                onChanged: (value) {
+                                                  _bookProvider
+                                                      .postDetailsScreenSetExpectedUnitPrice(
+                                                          double.parse(value));
+                                                  if (_bookProvider
+                                                          .postDetailsScreenExpectedUnitPrice ==
+                                                      _bookProvider
+                                                          .postDetailsScreenSelectedBook
+                                                          .price) {
+                                                    _bookProvider
+                                                        .postDetailsScreenSetEnableRequestButton(
+                                                            false);
+                                                  } else {
+                                                    _bookProvider
+                                                        .postDetailsScreenSetEnableRequestButton(
+                                                            true);
+                                                  }
+                                                  // });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: AppPadding.p12,
+                                            ),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                // color: Colors.grey[200],
+                                                color: _theme.brightness ==
+                                                        Brightness.dark
+                                                    ? _theme
+                                                        .colorScheme.background
+                                                    : ColorManager.lightestGrey,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Consumer<BookProvider>(
+                                                    builder: (context,
+                                                            bookProvider,
+                                                            child) =>
+                                                        IconButton(
+                                                      // color: Colors.black,
+                                                      padding: EdgeInsets.zero,
+                                                      disabledColor:
+                                                          Colors.grey,
+                                                      splashRadius:
+                                                          AppRadius.r12,
+                                                      onPressed: bookProvider
+                                                                  .postDetailsScreenItemCount >
+                                                              1
+                                                          ? () {
+                                                              // setState(() {
+                                                              bookProvider
+                                                                  .postDetailsScreenSetItemCount(
+                                                                      bookProvider
+                                                                              .postDetailsScreenItemCount -
+                                                                          1);
+
+                                                              // });
+                                                            }
+                                                          : null,
+                                                      icon: Icon(Icons.remove),
+                                                    ),
+                                                  ),
+                                                  Consumer<BookProvider>(
+                                                    builder: (context,
+                                                            bookProvider,
+                                                            child) =>
+                                                        AnimatedSwitcher(
+                                                            duration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            child: Text(
+                                                              bookProvider
+                                                                  .postDetailsScreenItemCount
+                                                                  .toString(),
+                                                              key: ValueKey(
+                                                                  bookProvider
+                                                                      .postDetailsScreenItemCount),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              // style:
+                                                              //     getBoldStyle(
+                                                              //   color:
+                                                              //       ColorManager
+                                                              //           .black,
+                                                              //   fontSize:
+                                                              //       FontSize
+                                                              //           .s17,
+                                                              // ),
+                                                              style: _theme
+                                                                  .textTheme
+                                                                  .headlineMedium,
+                                                            ),
+                                                            transitionBuilder: (Widget
+                                                                    child,
+                                                                Animation<
+                                                                        double>
+                                                                    animation) {
+                                                              return ScaleTransition(
+                                                                  scale:
+                                                                      animation,
+                                                                  child: child);
+                                                            }),
+                                                  ),
+                                                  Consumer<BookProvider>(
+                                                    builder: (context,
+                                                            bookProvider,
+                                                            child) =>
+                                                        IconButton(
+                                                      // color: Colors.black,
+                                                      padding: EdgeInsets.zero,
+                                                      disabledColor:
+                                                          Colors.grey,
+                                                      splashRadius:
+                                                          AppRadius.r12,
+                                                      onPressed: bookProvider
+                                                                  .postDetailsScreenSelectedBook
+                                                                  .bookCount >
+                                                              bookProvider
+                                                                  .postDetailsScreenItemCount
+                                                          ? () {
+                                                              // setState(() {
+                                                              bookProvider
+                                                                  .postDetailsScreenSetItemCount(
+                                                                      bookProvider
+                                                                              .postDetailsScreenItemCount +
+                                                                          1);
+                                                              // });
+                                                            }
+                                                          : null,
+                                                      icon: Icon(Icons.add),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Consumer<BookProvider>(
+                                      builder:
+                                          (context, bookProvider, child) =>
+                                              ElevatedButton.icon(
+                                                style: _theme.brightness == Brightness.dark ? ButtonStyle(
+                                                  backgroundColor: MaterialStateProperty.all( ColorManager.primary,),
+                                                ): null,
+                                        
+                                        icon: bookProvider
+                                                .postDetailsScreenIsRequestOnProcess
+                                            ? SizedBox(
+                                                height: AppHeight.h20,
+                                                width: AppHeight.h20,
+                                                child:
+                                                    CircularProgressIndicator
+                                                        .adaptive(
+                                                  strokeWidth: 3,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          Colors.white),
+                                                  backgroundColor:
+                                                      ColorManager.primary,
+                                                ),
+                                              )
+                                            : Container(),
+                                        label: bookProvider
+                                      .postDetailsScreenIsRequestOnProcess
+                                  ? LoadingHelper.showTextLoading('Sending you offer')
+                                  : Text(
+                                      'Send the offer',
+                                      
+                                      style: _theme.textTheme.headlineLarge,
+                                    ),
+
+                                        
+                                        onPressed: !bookProvider
+                                                .postDetailsScreenEnableRequestButton
+                                            ? null
+                                            : () async {
+
+                                              bookProvider.postDetailsScreenSetIsRequestOnProcess(true);
+                                                final isValid = _form
+                                                    .currentState!
+                                                    .validate();
+                                                if (!isValid) {
+                                                  AlertHelper.showToastAlert(
+                                                      'Something went wrong');
+                                                }
+                                                bookProvider.postDetailsScreenSetEnableRequestButton(false);
+                                                
+                                                _form.currentState!.save();
+                                                Map<String, dynamic>
+                                                    requestInfo = {
+                                                  'product_id': _bookProvider
+                                                      .postDetailsScreenSelectedBook
+                                                      .id,
+                                                  'quantity': _bookProvider
+                                                      .postDetailsScreenItemCount,
+                                                  'requested_price':
+                                                      _bookProvider
+                                                          .postDetailsScreenSelectedBook.price,
+                                                  'seller_offer_price': _bookProvider.postDetailsScreenExpectedUnitPrice,
+                                                  'changed_by_seller': true,
+                                                };
+                                    
+                                                if (await Provider.of<
+                                                  OrderRequestProvider>(context,
+                                              listen: false)
+                                          .createOrderRequest(
+                                              Provider.of<SessionProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .session as Session,
+                                              
+                                              json.decode(json.encode( requestInfo)))) {
+                                        bookProvider
+                                            .postDetailsScreenSetIsRequestOnProcess(
+                                                false);
+                                        AlertHelper.showToastAlert(
+                                            'Offer has been sent successfully');
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        // Navigator.pop(context);
+                                      } else {
+                                        AlertHelper.showToastAlert(
+                                            'Something went wrong');
+                                      }
+                                      bookProvider
+                                          .postDetailsScreenSetEnableRequestButton(
+                                              false);
+                                      bookProvider
+                                          .postDetailsScreenSetIsRequestOnProcess(
+                                              false);
+                                               
+                                              },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.bookmark),
+                      label: Text(
+                        
+                        'I have this book',
+                        style: getBoldStyle(color: ColorManager.white),
+                      ),
+                    ),
+            ],
+          ),
+        ),
+      ),
+    );
+  
+
+  }
+
+
+  _widgetForSellingTypePost(){
+    BookProvider _bookProvider = context.watch<BookProvider>();
+    ThemeData _theme = Theme.of(context);
+      if ((_bookProvider.userProvider.user as User).id ==
         _bookProvider.postDetailsScreenSelectedBook.userId) {
       return Padding(
         padding: EdgeInsets.symmetric(
@@ -428,6 +902,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
           ),
         ),
       );
+    
     }
     if (_bookProvider.orderRequestProvider.orderRequestsByUserContains(
         int.parse(_bookProvider.postDetailsScreenSelectedBook.id))) {
@@ -1200,7 +1675,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       },
                       icon: Icon(Icons.shopping_cart),
                       label: Text(
-                        // 'Add to cart',
+                        
                         'Get this book',
                       ),
                     ),
@@ -1209,6 +1684,8 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
         ),
       ),
     );
+  
+
   }
 
   _createOrderRequest(

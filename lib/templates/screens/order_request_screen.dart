@@ -392,32 +392,38 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        if(widget.requestedItem.product.postType == 'B')
+                                        Text(
+                                          "Requested unit price",
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.left,
+                                          
+                                          style: _theme.textTheme.bodyMedium,
+                                        )
+                                        else
                                         Text(
                                           "Unit Price",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
-                                          // style: TextStyle(
-                                          //   color: ColorManager.black,
-                                          //   fontSize: FontSize.s12,
-                                          //   fontFamily: 'Poppins',
-                                          //   fontWeight: FontWeight.w700,
-                                          //   letterSpacing: 0.50,
-                                          // ),
+                                          
                                           style: _theme.textTheme.bodyMedium,
                                         ),
+                                        // if(widget.requestedItem.product.postType == 'B' && widget.requestedItem.requestedPrice == widget.requestedItem.product.unitPrice)
                                         Text(
                                           "Rs. ${widget.requestedItem.product.unitPrice}",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
-                                          // style: TextStyle(
-                                          //   color: Colors.lightBlue,
-                                          //   fontSize: FontSize.s14,
-                                          //   fontFamily: 'Poppins',
-                                          //   fontWeight: FontWeight.w700,
-                                          //   letterSpacing: 0.50,
-                                          // ),
+                                          
                                           style: _theme.textTheme.headlineSmall,
-                                        ),
+                                        )
+                                        // // if(widget.requestedItem.product.postType == 'B' && widget.requestedItem.requestedPrice != widget.requestedItem.product.unitPrice)
+                                        // else Text(
+                                        //   "Rs. ${widget.requestedItem.requestedPrice}",
+                                        //   overflow: TextOverflow.ellipsis,
+                                        //   textAlign: TextAlign.left,
+                                          
+                                        //   style: _theme.textTheme.headlineSmall,
+                                        // ),
                                       ],
                                     ),
                                     // --------------------------Original Unit Price ends here-----------------------
@@ -432,30 +438,35 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        if(widget.requestedItem.product.postType == 'B')
+                                        Text(
+                                          "Offered unit price",
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.left,
+                                          
+                                          style: _theme.textTheme.bodyMedium,
+                                        )
+                                        else
                                         Text(
                                           "Requested unit price",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
-                                          // style: TextStyle(
-                                          //   color: ColorManager.black,
-                                          //   fontSize: FontSize.s12,
-                                          //   fontFamily: 'Poppins',
-                                          //   fontWeight: FontWeight.w700,
-                                          //   letterSpacing: 0.50,
-                                          // ),
+                                          
                                           style: _theme.textTheme.bodyMedium,
                                         ),
+                                    if(widget.requestedItem.product.postType == 'B' && widget.requestedItem.requestedPrice == widget.requestedItem.product.unitPrice)
+                                        Text(
+                                          "Rs. ${widget.requestedItem.sellerOfferPrice}",
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.left,
+                                          
+                                          style: _theme.textTheme.headlineSmall,
+                                        ) else
                                         Text(
                                           "Rs. ${widget.requestedItem.requestedPrice}",
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.left,
-                                          // style: TextStyle(
-                                          //   color: Colors.lightBlue,
-                                          //   fontSize: FontSize.s14,
-                                          //   fontFamily: 'Poppins',
-                                          //   fontWeight: FontWeight.w700,
-                                          //   letterSpacing: 0.50,
-                                          // ),
+                                          
                                           style: _theme.textTheme.headlineSmall,
                                         ),
                                       ],

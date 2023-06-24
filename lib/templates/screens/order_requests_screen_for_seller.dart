@@ -127,25 +127,7 @@ class _OrderRequestsScreenForSellerState
                   ],
                 ),
               ),
-              // carts.cart!.items!.length <= 0
-              // orderRequests.orderRequests.length <= 0
-              //     ? Center(
-              //         child: Padding(
-              //           padding: const EdgeInsets.only(top: AppPadding.p45),
-              //           child: Text(
-              //             'No request for the order found',
-              //             style: getBoldStyle(
-              //               fontSize: FontSize.s20,
-              //               color: ColorManager.primary,
-              //             ),
-              //           ),
-              //         ),
-              //       )
-              //     : Expanded(
-              //         child: OrderRequestList(
-              //             orderRequests: orderRequests,
-              //             authendicatedSession: authendicatedSession),
-              //       ),
+              
               FutureBuilder(
                 future: _orderRequestProvider.getRequestsForUser(
                     _orderRequestProvider.sessionProvider.session as Session),
@@ -245,48 +227,7 @@ class OrderRequestItemWidget extends StatefulWidget {
 }
 
 class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
-  // ValueNotifier<bool> _showRequestButton = ValueNotifier(false);
-  // ValueNotifier<bool> _showOrderButton = ValueNotifier(false);
-  // bool _isLoading = false;
-
-  // double _newRequestPrice = 0;
-
-  // _shouldShowRequestButton() {
-  //   if (_newRequestPrice != double.parse(widget.requestedItem.requestedPrice) &&
-  //       _newRequestPrice !=
-  //           double.parse(widget.requestedItem.product.unitPrice)) {
-  //     _showRequestButton.value = true;
-  //     return;
-  //   }
-  //   _showRequestButton.value = false;
-  // }
-
-  // _shouldShowOrderButton() {
-  //   if (_newRequestPrice ==
-  //       double.parse(widget.requestedItem.product.unitPrice)) {
-  //     _showOrderButton.value = true;
-  //     return;
-  //   }
-  //   _showOrderButton.value = false;
-  // }
-
-  // Future<bool> _updateRequestPrice(
-  //     String requestId, double newRequestPrice) async {
-  //   await Provider.of<OrderRequests>(context, listen: false)
-  //       .updateRequestPrice(widget.requestedItem.id, _newRequestPrice)
-  //       .then(
-  //     (value) {
-  //       if (value) {
-  //         AlertHelper.showToastAlert('Request price changed');
-
-  //         _showRequestButton.value = false;
-  //       } else
-  //         AlertHelper.showToastAlert("Something went wrong, Please try again!");
-  //     },
-  //   );
-
-  //   return true;
-  // }
+  
 
   _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
     bool value = await Provider.of<CartProvider>(context, listen: false)
@@ -299,42 +240,16 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
       AlertHelper.showToastAlert('Something went wrong, Please try again!');
   }
 
-  // _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-  //   await Provider.of<Carts>(context, listen: false)
-  //       .deleteCartItem(userSession, cartId, cartItemId)
-  //       .then(
-  //     (value) {
-  //       if (value) {
-  //         BotToast.showSimpleNotification(
-  //           title: 'Book deleted from the cart',
-  //           duration: Duration(seconds: 3),
-  //           backgroundColor: ColorManager.primary,
-  //           titleStyle: getBoldStyle(color: ColorManager.white),
-  //           align: Alignment(-1, -1),
-  //           hideCloseButton: true,
-  //         );
-  //       } else
-  //         BotToast.showSimpleNotification(
-  //           title: 'Something went wrong, Please try again!',
-  //           duration: Duration(seconds: 3),
-  //           backgroundColor: ColorManager.primary,
-  //           titleStyle: getBoldStyle(color: ColorManager.white),
-  //           align: Alignment(-1, -1),
-  //           hideCloseButton: true,
-  //         );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     OrderRequest requestedItem = widget.requestedItem;
     Session authendicatedSession =
         Provider.of<SessionProvider>(context).session as Session;
 
-    // Carts _carts = context.watch<Carts>();
     OrderRequestProvider _orderRequestProvider =
         context.watch<OrderRequestProvider>();
+
+        ThemeData _theme = Theme.of(context);
 
     return FutureBuilder(
         // future: _carts.getCartItemBook(
@@ -357,7 +272,8 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                 return Container(
                   margin: EdgeInsets.all(AppMargin.m8),
                   decoration: BoxDecoration(
-                    color: ColorManager.white,
+                    // color: ColorManager.whit,
+                    color: _theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(
                       5.00,
                     ),
@@ -416,13 +332,14 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                           requestedBook.bookName,
                                           maxLines: null,
                                           textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 12,
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.50,
-                                          ),
+                                          // style: TextStyle(
+                                          //   color: Colors.indigo,
+                                          //   fontSize: 12,
+                                          //   fontFamily: 'Poppins',
+                                          //   fontWeight: FontWeight.w700,
+                                          //   letterSpacing: 0.50,
+                                          // ),
+                                          style: _theme.textTheme.headlineMedium,
                                         ),
                                       ),
                                       Padding(
@@ -443,10 +360,11 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                   title: Text('Are you sure?'),
                                                   content: Text(
                                                     'The request will be deleted forever',
-                                                    style: getRegularStyle(
-                                                      fontSize: FontSize.s16,
-                                                      color: ColorManager.black,
-                                                    ),
+                                                    // style: getRegularStyle(
+                                                    //   fontSize: FontSize.s16,
+                                                    //   color: ColorManager.black,
+                                                    // ),
+                                                    style: _theme.textTheme.bodyMedium,
                                                   ),
                                                   actions: [
                                                     TextButton(
@@ -523,17 +441,19 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 top: 1.00,
                                                 bottom: 1.00,
                                               ),
+
                                               child: Text(
                                                 "Unit Price",
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  color: ColorManager.black,
-                                                  fontSize: FontSize.s12,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w700,
-                                                  letterSpacing: 0.50,
-                                                ),
+                                                // style: TextStyle(
+                                                //   color: ColorManager.black,
+                                                //   fontSize: FontSize.s12,
+                                                //   fontFamily: 'Poppins',
+                                                //   fontWeight: FontWeight.w700,
+                                                //   letterSpacing: 0.50,
+                                                // ),
+                                                style: _theme.textTheme.bodySmall,
                                               ),
                                             ),
                                             Padding(
@@ -545,13 +465,14 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 "Rs. ${widget.requestedItem.product.unitPrice}",
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  color: Colors.lightBlue,
-                                                  fontSize: FontSize.s14,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w700,
-                                                  letterSpacing: 0.50,
-                                                ),
+                                                // style: TextStyle(
+                                                //   color: Colors.lightBlue,
+                                                //   fontSize: FontSize.s14,
+                                                //   fontFamily: 'Poppins',
+                                                //   fontWeight: FontWeight.w700,
+                                                //   letterSpacing: 0.50,
+                                                // ),
+                                                style: _theme.textTheme.headlineSmall,
                                               ),
                                             ),
                                           ],
@@ -571,17 +492,26 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 top: 1.00,
                                                 bottom: 1.00,
                                               ),
-                                              child: Text(
+                                              
+                                              child: (widget.requestedItem.product.postType == 'B') ? Text(
+                                                "Offered unit price",
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.left,
+                                                // style: TextStyle(
+                                                //   color: ColorManager.black,
+                                                //   fontSize: FontSize.s12,
+                                                //   fontFamily: 'Poppins',
+                                                //   fontWeight: FontWeight.w700,
+                                                //   letterSpacing: 0.50,
+                                                // ),
+                                                style: _theme.textTheme.bodySmall,
+                                              )
+                                              :Text(
                                                 "Requested unit price",
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  color: ColorManager.black,
-                                                  fontSize: FontSize.s12,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w700,
-                                                  letterSpacing: 0.50,
-                                                ),
+                                                
+                                                style: _theme.textTheme.bodySmall,
                                               ),
                                             ),
                                             Padding(
@@ -589,17 +519,25 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 top: 1.00,
                                                 bottom: 1.00,
                                               ),
-                                              child: Text(
+                                              child: (widget.requestedItem.product.postType == 'B') ?  Text(
+                                                "Rs. ${widget.requestedItem.sellerOfferPrice}",
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.left,
+                                                // style: TextStyle(
+                                                //   color: Colors.lightBlue,
+                                                //   fontSize: FontSize.s14,
+                                                //   fontFamily: 'Poppins',
+                                                //   fontWeight: FontWeight.w700,
+                                                //   letterSpacing: 0.50,
+                                                // ),
+                                                style: _theme.textTheme.headlineSmall,
+                                              )
+                                              :Text(
                                                 "Rs. ${widget.requestedItem.requestedPrice}",
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  color: Colors.lightBlue,
-                                                  fontSize: FontSize.s14,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w700,
-                                                  letterSpacing: 0.50,
-                                                ),
+                                                
+                                                style: _theme.textTheme.headlineSmall,
                                               ),
                                             ),
                                           ],

@@ -25,23 +25,38 @@ class OrderRequestDetailsScreen extends StatefulWidget {
 }
 
 class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
+  
+
+  
+OrderRequestProvider? orderRequesyProvider;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<OrderRequestProvider>(context, listen: false)
-        .bindOrderRequestDetailsScreenViewModel(context);
+    orderRequesyProvider = Provider.of<OrderRequestProvider>(context, listen: false);
+    orderRequesyProvider!.bindOrderRequestDetailsScreenViewModel(context);
+
+    
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Added this line to save the reference of provider so it doesn't throw an exception on dispose
+    orderRequesyProvider = Provider.of<OrderRequestProvider>(context, listen: false);
   }
 
   @override
   void dispose() {
-    Provider.of<OrderRequestProvider>(context, listen: false)
-        .unBindOrderRequestDetailsScreenViewModel();
+    orderRequesyProvider!.unBindOrderRequestDetailsScreenViewModel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    OrderRequestProvider _orderRequest = context.watch<OrderRequestProvider>();
+    OrderRequestProvider _orderRequestProvider = context.watch<OrderRequestProvider>();
+    ThemeData _theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -64,7 +79,8 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
               SizedBox(height: 16.0),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  // color: Colors.white,
+                  color: _theme.colorScheme.secondary,
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
@@ -80,10 +96,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'You have sent an offer to ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName} ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.lastName} for the following item:',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
+                      'You have sent an offer to ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName} ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.lastName} for the following item:',
+                      
+                      style: _theme.textTheme.titleSmall,
                     ),
                     SizedBox(height: 8.0),
                     Row(
@@ -92,16 +107,18 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         Text(
                           // 'Product Name',
 
-                          _orderRequest
+                          _orderRequestProvider
                               .orderRequestDetailsScreenViewModelRequestedProduct
                               .bookName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          
+                          style: _theme.textTheme.headlineMedium,
                         ),
+                        // If post type is buying then do not show the book price as it is shown in buyer's offer
+                        if(_orderRequestProvider
+                              .orderRequestDetailsScreenViewModelRequestedProduct.postType=='S')
                         Text(
-                          'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestedProduct.price}',
-                          // '\$25.00',
+                          'Rs. ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestedProduct.price}',
+                          
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -110,42 +127,24 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      _orderRequest
+                      _orderRequestProvider
                           .orderRequestDetailsScreenViewModelRequestedProduct
                           .description,
                       // 'Description of product goes here. It can be multiple lines long and should be informative enough for the buyer to make a decision.',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
+                      
+                      style: _theme.textTheme.bodySmall,
                     ),
                     SizedBox(height: 16.0),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text(
-                    //       'Offer Price',
-                    //       style: TextStyle(
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //     Text(
-                    //       'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
-                    //       // '\$20.00',
-                    //       style: TextStyle(
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    
                     // ----------------------- Show this row when selling user has send the offer price start here -----------------------------
                     // if price has been changed by the seller is false then buyer was the one to recently offer the price because the priceChangedBySeller is also not null which mean seller had offered some price before so show this before buyer's offer price
-                    if (_orderRequest
+                    if (_orderRequestProvider
                                 .orderRequestDetailsScreenViewModelRequestItem
                                 .priceChangedBySeller !=
                             null &&
-                        _orderRequest
+                        _orderRequestProvider
                                 .orderRequestDetailsScreenViewModelRequestItem
                                 .priceChangedBySeller ==
                             false)
@@ -153,17 +152,14 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            '${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
+                            
+                            style: _theme.textTheme.titleSmall,
                           ),
                           Text(
-                            'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
-                            // '\$20.00',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            'Rs. ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
+                            
+                            style: _theme.textTheme.bodySmall,
                           ),
                         ],
                       ),
@@ -172,16 +168,18 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                       children: [
                         Text(
                           'Your offer Price',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          
+                          style: _theme.textTheme.titleMedium,
                         ),
+                        if(_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.product.postType == 'B')
                         Text(
-                          'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
-                          // '\$20.00',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          'Rs. ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
+                          style: _theme.textTheme.bodyMedium,
+                        )
+                        else
+                        Text(
+                          'Rs. ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
+                          style: _theme.textTheme.bodyMedium,
                         ),
                       ],
                     ),
@@ -190,11 +188,11 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     SizedBox(height: 8.0),
                     // ----------------------- Show this row when selling user has send the offer price start here -----------------------------
                     // if price has been changed by the seller is true then seller was the one to recently offer the price so show this after buyer's offer price
-                    if (_orderRequest
+                    if (_orderRequestProvider
                                 .orderRequestDetailsScreenViewModelRequestItem
                                 .priceChangedBySeller !=
                             null &&
-                        _orderRequest
+                        _orderRequestProvider
                                 .orderRequestDetailsScreenViewModelRequestItem
                                 .priceChangedBySeller ==
                             true)
@@ -202,17 +200,22 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            '${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
+                            
+                            style: _theme.textTheme.titleMedium,
                           ),
+                          // If seller sent offer for buying type post then the price of buyer will not be in requested price but in the price of the post itself so show that
+                          if(_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.product.postType == 'B')
                           Text(
-                            'Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
-                            // '\$20.00',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            'Rs. ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.product.unitPrice.toString()}',
+                            
+                            style: _theme.textTheme.bodyMedium,
+                          )
+                          else
+                          Text(
+                            'Rs. ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
+                            
+                            style: _theme.textTheme.bodyMedium,
                           ),
                         ],
                       ),
@@ -223,19 +226,21 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                       children: [
                         Text(
                           'Quantity',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          // style: TextStyle(
+                          //   fontWeight: FontWeight.bold,
+                          // ),
+                          style: _theme.textTheme.titleMedium,
                         ),
                         Text(
                           // '1',
-                          _orderRequest
+                          _orderRequestProvider
                               .orderRequestDetailsScreenViewModelRequestItem
                               .quantity
                               .toString(),
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                          ),
+                          // style: TextStyle(
+                          //   color: Colors.grey[600],
+                          // ),
+                          style: _theme.textTheme.bodyMedium,
                         ),
                       ],
                     ),
@@ -244,19 +249,21 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                 ),
               ),
               SizedBox(height: 24.0),
-              if (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
-                          .priceChangedBySeller ==
-                      null ||
-                  (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
-                              .priceChangedBySeller !=
-                          null &&
-                      _orderRequest
-                              .orderRequestDetailsScreenViewModelRequestItem
-                              .priceChangedBySeller ==
-                          false))
+              // if (_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem
+              //             .priceChangedBySeller ==
+              //         null ||
+              //     (_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem
+              //                 .priceChangedBySeller !=
+              //             null &&
+              //         _orderRequestProvider
+              //                 .orderRequestDetailsScreenViewModelRequestItem
+              //                 .priceChangedBySeller ==
+              //             false))
+              if(_orderRequestProvider.userProvider.user!.id == orderRequesyProvider!.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.id.toString())
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    // color: Colors.white,
+                    color: _theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(8.0),
                     boxShadow: [
                       BoxShadow(
@@ -275,15 +282,18 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         children: [
                           Text(
                             'Request status',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            // style: TextStyle(
+                            //   fontWeight: FontWeight.bold,
+                            // ),
+                            style: _theme.textTheme.headlineSmall,
+                            
                           ),
                           Text(
                             'Pending',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            // style: TextStyle(
+                            //   fontWeight: FontWeight.bold,
+                            // ),
+                            style: _theme.textTheme.bodyMedium,
                           ),
                         ],
                       ),
@@ -291,7 +301,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         height: AppHeight.h8,
                       ),
                       Text(
-                        'We will let you know when ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName} responds to the request',
+                        'We will let you know when ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName} responds to the request',
                         style: TextStyle(
                           // color: Colors.grey[600],
                           color: ColorManager.yellow,
@@ -300,12 +310,13 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     ],
                   ),
                 ),
-              if (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
-                          .priceChangedBySeller !=
-                      null &&
-                  _orderRequest.orderRequestDetailsScreenViewModelRequestItem
-                          .priceChangedBySeller ==
-                      true)
+              // if (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
+              //             .priceChangedBySeller !=
+              //         null &&
+              //     _orderRequest.orderRequestDetailsScreenViewModelRequestItem
+              //             .priceChangedBySeller ==
+              //         true)
+              if(_orderRequestProvider.userProvider.user!.id == orderRequesyProvider!.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.id.toString())
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -337,7 +348,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'By accepting this offer, you agree to sell the following item to ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the price of Rs. ${_orderRequest.orderRequestDetailsScreenViewModelRequestItem.requestedPrice} each :',
+                            'By accepting this offer, you agree to sell the following item to ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the price of Rs. ${_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedPrice} each :',
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),
@@ -419,9 +430,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                                 context,
                                                 listen: false)
                                             .deleteOrderRequest(
-                                                _orderRequest.sessionProvider
+                                                _orderRequestProvider.sessionProvider
                                                     .session as Session,
-                                                _orderRequest
+                                                _orderRequestProvider
                                                     .orderRequestDetailsScreenViewModelRequestItem
                                                     .id)) {
                                           AlertHelper.showToastAlert(
@@ -465,21 +476,21 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                     CartItem edittedItem = new CartItem(
                                       id: 0,
                                       product: new Product(
-                                        id: int.parse(_orderRequest
+                                        id: int.parse(_orderRequestProvider
                                             .orderRequestDetailsScreenViewModelRequestedProduct
                                             .id),
-                                        bookName: _orderRequest
+                                        bookName: _orderRequestProvider
                                             .orderRequestDetailsScreenViewModelRequestedProduct
                                             .bookName,
-                                        unitPrice: _orderRequest
+                                        unitPrice: _orderRequestProvider
                                             .orderRequestDetailsScreenViewModelRequestedProduct
                                             .price
                                             .toString(),
                                       ),
-                                      negotiatedPrice: double.parse(_orderRequest
+                                      negotiatedPrice: double.parse(_orderRequestProvider
                                           .orderRequestDetailsScreenViewModelRequestItem
                                           .sellerOfferPrice as String),
-                                      quantity: _orderRequest
+                                      quantity: _orderRequestProvider
                                           .orderRequestDetailsScreenViewModelRequestItem
                                           .quantity,
                                       totalPrice: 0,
@@ -490,9 +501,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                       Provider.of<OrderRequestProvider>(context,
                                               listen: false)
                                           .deleteOrderRequest(
-                                              _orderRequest.sessionProvider
+                                              _orderRequestProvider.sessionProvider
                                                   .session as Session,
-                                              _orderRequest
+                                              _orderRequestProvider
                                                   .orderRequestDetailsScreenViewModelRequestItem
                                                   .id);
                                       return showModalBottomSheet(
@@ -590,17 +601,17 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                             ),
                             textInputAction: TextInputAction.done,
                             onChanged: (value) {
-                              _orderRequest
+                              _orderRequestProvider
                                       .orderRequestDetailsScreenViewModelNewRequestPrice =
                                   double.parse(value);
-                              _orderRequest
+                              _orderRequestProvider
                                   .orderRequestDetailsScreenViewModelShouldShowRequestButton(
-                                      double.parse(_orderRequest
+                                      double.parse(_orderRequestProvider
                                           .orderRequestDetailsScreenViewModelRequestItem
                                           .requestedPrice));
-                              _orderRequest
+                              _orderRequestProvider
                                   .orderRequestDetailsScreenViewModelShouldShowOrderButton(
-                                      _orderRequest
+                                      _orderRequestProvider
                                           .orderRequestDetailsScreenViewModelRequestItem);
                             },
                             validator: (value) {
@@ -614,16 +625,16 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         ),
 
                         ValueListenableBuilder(
-                          valueListenable: ValueNotifier(_orderRequest
+                          valueListenable: ValueNotifier(_orderRequestProvider
                               .orderRequestDetailsScreenViewModelShowRequestButton),
                           builder: (BuildContext context,
                               bool showRequestButton, Widget? child) {
                             return showRequestButton
                                 ? ElevatedButton(
-                                    onPressed: () => _orderRequest
+                                    onPressed: () => _orderRequestProvider
                                         .orderRequestDetailsScreenViewModelUpdateRequestPrice(
                                             context,
-                                            _orderRequest
+                                            _orderRequestProvider
                                                 .orderRequestDetailsScreenViewModelRequestItem
                                                 .id),
                                     // child: Text('Update Request Price'),
@@ -634,7 +645,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                         ),
 
                         ValueListenableBuilder(
-                          valueListenable: ValueNotifier(_orderRequest
+                          valueListenable: ValueNotifier(_orderRequestProvider
                               .orderRequestDetailsScreenViewModelShowOrderButton),
                           builder: (BuildContext context, bool showOrderButton,
                               Widget? child) {
@@ -660,20 +671,20 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                         CartItem edittedItem = new CartItem(
                                           id: 0,
                                           product: new Product(
-                                            id: int.parse(_orderRequest
+                                            id: int.parse(_orderRequestProvider
                                                 .orderRequestDetailsScreenViewModelRequestedProduct
                                                 .id),
-                                            bookName: _orderRequest
+                                            bookName: _orderRequestProvider
                                                 .orderRequestDetailsScreenViewModelRequestedProduct
                                                 .bookName,
-                                            unitPrice: _orderRequest
+                                            unitPrice: _orderRequestProvider
                                                 .orderRequestDetailsScreenViewModelRequestedProduct
                                                 .price
                                                 .toString(),
                                           ),
-                                          negotiatedPrice: _orderRequest
+                                          negotiatedPrice: _orderRequestProvider
                                               .orderRequestDetailsScreenViewModelNewRequestPrice,
-                                          quantity: _orderRequest
+                                          quantity: _orderRequestProvider
                                               .orderRequestDetailsScreenViewModelRequestItem
                                               .quantity,
                                           totalPrice: 0,
@@ -685,9 +696,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                                   context,
                                                   listen: false)
                                               .deleteOrderRequest(
-                                                  _orderRequest.sessionProvider
+                                                  _orderRequestProvider.sessionProvider
                                                       .session as Session,
-                                                  _orderRequest
+                                                  _orderRequestProvider
                                                       .orderRequestDetailsScreenViewModelRequestItem
                                                       .id);
                                           return showModalBottomSheet(
@@ -736,6 +747,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     ),
                   ],
                 ),
+            
             ],
           ),
         ),
