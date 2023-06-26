@@ -746,7 +746,7 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                                             : Container(),
                                         label: bookProvider
                                       .postDetailsScreenIsRequestOnProcess
-                                  ? LoadingHelper.showTextLoading('Sending you offer')
+                                  ? LoadingHelper.showTextLoading('Sending your offer')
                                   : Text(
                                       'Send the offer',
                                       
@@ -782,6 +782,7 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                                                           .postDetailsScreenSelectedBook.price,
                                                   'seller_offer_price': _bookProvider.postDetailsScreenExpectedUnitPrice,
                                                   'changed_by_seller': true,
+                                                  'billing_info': {},
                                                 };
                                     
                                                 if (await Provider.of<

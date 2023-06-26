@@ -76,12 +76,21 @@ mixin OrderRequestDetailsScreenViewModel on BaseViewModel {
 
   orderRequestDetailsScreenViewModelShouldShowRequestButton(
       double requestPrice) {
+    if (_newRequestPrice == 0) {
+      _showRequestButton = false;
+      _showOrderButton = false;
+      notifyListeners();
+      return;
+    }
     if (_newRequestPrice != requestPrice) {
       _showOrderButton = false;
       _showRequestButton = true;
+      notifyListeners();
       return;
     }
     _showRequestButton = false;
+    _showOrderButton = false;
+    notifyListeners();
   }
 
   orderRequestDetailsScreenViewModelShouldShowOrderButton(
@@ -174,11 +183,19 @@ mixin OrderRequestForSellerDetailsScreenViewModel on BaseViewModel {
 
   orderRequestForSellerDetailsScreenViewModelShouldShowRequestButton(
       double requestPrice) {
+    if (_newSellerOfferPrice == 0) {
+      _showRequestBtn = false;
+      notifyListeners();
+      return;
+    }
+
     if (_newSellerOfferPrice != requestPrice) {
       _showRequestBtn = true;
+      notifyListeners();
       return;
     }
     _showRequestBtn = false;
+    notifyListeners();
   }
 
   Future<bool>
