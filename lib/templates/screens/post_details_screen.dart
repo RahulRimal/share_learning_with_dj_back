@@ -362,7 +362,6 @@ class _PostDetailsScreenBottomSheetState
   @override
   Widget build(BuildContext context) {
     BookProvider _bookProvider = context.watch<BookProvider>();
-    ThemeData _theme = Theme.of(context);
 
     if (_bookProvider.postDetailsScreenSelectedBook.postType == 'S')
       return _widgetForSellingTypePost();
