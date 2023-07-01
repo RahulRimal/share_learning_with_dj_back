@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_learning/view_models/providers/session_provider.dart';
@@ -14,6 +16,7 @@ import '../../view_models/providers/order_provider.dart';
 import '../managers/font_manager.dart';
 import '../managers/routes_manager.dart';
 import '../managers/style_manager.dart';
+import '../utils/loading_helper.dart';
 
 class OrderRequestForSellerDetailsScreen extends StatefulWidget {
   // static const routeName = 'order-request-for-user-details-screen';
@@ -54,15 +57,26 @@ class _OrderRequestForSellerDetailsScreenState
                     .orderRequestForSellerDetailsScreenViewModelRequestedProduct
                     .postType ==
                 'S'
-            ? _sellerView(_orderRequestProvider)
-            : _buyerView(_orderRequestProvider),
+            ? SellingPostView()
+            : BuyingPostView(),
       ),
     );
   }
+}
 
-  Widget _sellerView(OrderRequestProvider _orderRequestProvider) {
+class SellingPostView extends StatefulWidget {
+  const SellingPostView({Key? key}) : super(key: key);
+
+  @override
+  State<SellingPostView> createState() => _SellingPostViewState();
+}
+
+class _SellingPostViewState extends State<SellingPostView> {
+  @override
+  Widget build(BuildContext context) {
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
     ThemeData _theme = Theme.of(context);
-
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       child: Column(
@@ -477,7 +491,7 @@ class _OrderRequestForSellerDetailsScreenState
                                           loggedInSession: _orderRequestProvider
                                               .sessionProvider
                                               .session as Session,
-                                          userId: _orderRequestProvider
+                                          customerId: _orderRequestProvider
                                               .orderRequestForSellerDetailsScreenViewModelRequestItem
                                               .requestingCustomer
                                               .id
@@ -622,8 +636,524 @@ class _OrderRequestForSellerDetailsScreenState
       ),
     );
   }
+}
 
-  Widget _buyerView(OrderRequestProvider _orderRequestProvider) {
+class BuyingPostView extends StatefulWidget {
+  const BuyingPostView({Key? key}) : super(key: key);
+
+  @override
+  State<BuyingPostView> createState() => _BuyingPostViewState();
+}
+
+class _BuyingPostViewState extends State<BuyingPostView> {
+  final _form = GlobalKey<FormState>();
+
+  _placeOrderForBuyingPost(OrderRequestProvider _orderRequestProvider) {
+    ThemeData _theme = Theme.of(context);
+    return showModalBottomSheet(
+      barrierColor: ColorManager.blackWithLowOpacity,
+      isDismissible: true,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(AppRadius.r20),
+          topRight: Radius.circular(
+            AppRadius.r20,
+          ),
+        ),
+      ),
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              padding: EdgeInsets.only(
+                left: AppPadding.p20,
+                right: AppPadding.p20,
+                bottom: AppPadding.p12,
+              ),
+              child: Column(
+                children: [
+                  // ----------------------    Name section starts here -----------------------------------
+
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppPadding.p12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Billing Information',
+                          style: _theme.textTheme.headlineLarge,
+                        ),
+                        SizedBox(
+                          height: AppHeight.h4,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Form(
+                                key: _form,
+                                child: ListView(
+                                  shrinkWrap: true,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                                initialValue: _orderRequestProvider
+                                                        .billingInfo
+                                                        .containsKey(
+                                                            'first_name')
+                                                    ? _orderRequestProvider
+                                                            .billingInfo[
+                                                        'first_name']
+                                                    : null,
+                                                focusNode: _orderRequestProvider
+                                                    .orderRequestsScreenForSellerViewModleFirstNameFocusNode,
+                                                decoration: InputDecoration(
+                                                  labelText: 'First Name',
+                                                  focusColor: Colors.redAccent,
+                                                ),
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                autovalidateMode:
+                                                    AutovalidateMode.always,
+                                                onFieldSubmitted: (_) {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(
+                                                          _orderRequestProvider
+                                                              .orderRequestsScreenForSellerViewModleLastNameFocusNode);
+                                                },
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return 'Please provide the first name';
+                                                  }
+                                                  return null;
+                                                },
+                                                onSaved: (value) {
+                                                  _orderRequestProvider
+                                                              .billingInfo[
+                                                          'first_name'] =
+                                                      value.toString();
+                                                }),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              initialValue:
+                                                  _orderRequestProvider
+                                                          .billingInfo
+                                                          .containsKey(
+                                                              'last_name')
+                                                      ? _orderRequestProvider
+                                                              .billingInfo[
+                                                          'last_name']
+                                                      : null,
+                                              keyboardType: TextInputType.text,
+                                              // cursorColor: Theme.of(context)
+                                              //     .primaryColor,
+                                              focusNode: _orderRequestProvider
+                                                  .orderRequestsScreenForSellerViewModleLastNameFocusNode,
+                                              decoration: InputDecoration(
+                                                labelText: 'Last Name',
+                                              ),
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              autovalidateMode:
+                                                  AutovalidateMode.always,
+                                              onFieldSubmitted: (_) {
+                                                FocusScope.of(context).requestFocus(
+                                                    _orderRequestProvider
+                                                        .orderRequestsScreenForSellerViewModleEmailFocusNode);
+                                              },
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return 'Please provide the last name';
+                                                }
+                                                return null;
+                                              },
+                                              onSaved: (value) {
+                                                _orderRequestProvider
+                                                            .billingInfo[
+                                                        'last_name'] =
+                                                    value.toString();
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                          initialValue: _orderRequestProvider
+                                                  .billingInfo
+                                                  .containsKey('email')
+                                              ? _orderRequestProvider
+                                                  .billingInfo['email']
+                                              : null,
+                                          focusNode: _orderRequestProvider
+                                              .orderRequestsScreenForSellerViewModleEmailFocusNode,
+                                          keyboardType: TextInputType.text,
+                                          decoration: InputDecoration(
+                                            labelText: 'Email Address',
+                                          ),
+                                          textInputAction: TextInputAction.next,
+                                          autovalidateMode:
+                                              AutovalidateMode.always,
+                                          onFieldSubmitted: (_) {
+                                            FocusScope.of(context).requestFocus(
+                                                _orderRequestProvider
+                                                    .orderRequestsScreenForSellerViewModlePhoneNumberFocusNode);
+                                          },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please provide email to receive notifications';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (value) {
+                                            _orderRequestProvider
+                                                    .billingInfo['email'] =
+                                                value.toString();
+                                          }),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                          initialValue: _orderRequestProvider
+                                                  .billingInfo
+                                                  .containsKey('phone')
+                                              ? _orderRequestProvider
+                                                  .billingInfo['phone']
+                                              : null,
+                                          focusNode: _orderRequestProvider
+                                              .orderRequestsScreenForSellerViewModlePhoneNumberFocusNode,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            labelText: 'Phone Number',
+                                          ),
+                                          textInputAction: TextInputAction.next,
+                                          autovalidateMode:
+                                              AutovalidateMode.always,
+                                          onFieldSubmitted: (_) {
+                                            FocusScope.of(context).requestFocus(
+                                                _orderRequestProvider
+                                                    .orderRequestsScreenForSellerViewModleSideNoteFocusNode);
+                                          },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please provide the phone number to be contacted';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (value) {
+                                            _orderRequestProvider
+                                                    .billingInfo['phone'] =
+                                                value.toString();
+                                          }),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                        focusNode: _orderRequestProvider
+                                            .orderRequestsScreenForSellerViewModleSideNoteFocusNode,
+                                        keyboardType: TextInputType.multiline,
+                                        decoration: InputDecoration(
+                                          labelText: 'Side Note',
+                                        ),
+                                        textInputAction:
+                                            TextInputAction.newline,
+                                        autovalidateMode:
+                                            AutovalidateMode.always,
+                                        minLines: 3,
+                                        maxLines: 7,
+                                        onSaved: (value) {
+                                          _orderRequestProvider
+                                                  .billingInfo['side_note'] =
+                                              value.toString();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // ----------------------    Name section ends here -----------------------------------
+                  // ----------------------    Sort by locations section ends here -----------------------------------
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppPadding.p12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Location',
+                          style: _theme.textTheme.headlineLarge,
+                        ),
+                        SizedBox(
+                          height: AppHeight.h4,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                            color: Colors.grey,
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                          )),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                                isExpanded: true,
+                                value: _orderRequestProvider
+                                    .billingInfo['convenient_location'],
+                                items: _orderRequestProvider.locationOptions
+                                    .map((option) => DropdownMenuItem(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: AppPadding.p12,
+                                            ),
+                                            child: Text(
+                                              option,
+                                            ),
+                                          ),
+                                          value: option,
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _orderRequestProvider
+                                      .setBillingInfoLocationData(
+                                          value as String);
+                                }),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // ----------------------    Sort by location section ends here -----------------------------------
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: Consumer<OrderRequestProvider>(
+                            builder: (context, orderRequestProvider, child) =>
+                                ElevatedButton.icon(
+                              icon: orderRequestProvider
+                                      .orderRequestsScreenForSellerViewModleIsRequestOnProcess
+                                  ? SizedBox(
+                                      height: AppHeight.h20,
+                                      width: AppHeight.h20,
+                                      child: CircularProgressIndicator.adaptive(
+                                        strokeWidth: 3,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                        backgroundColor: ColorManager.primary,
+                                      ),
+                                    )
+                                  : Container(),
+                              onPressed: orderRequestProvider
+                                      .orderRequestsScreenForSellerViewModleIsRequestOnProcess
+                                  ? null
+                                  : () async {
+                                      orderRequestProvider
+                                              .orderRequestsScreenForSellerViewModleIsRequestOnProcess =
+                                          true;
+
+                                      // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                                      // bool _orderPlacedSuccessfully = false;
+
+                                      final _isValid =
+                                          _form.currentState!.validate();
+                                      if (!_isValid) {
+                                        return;
+                                      }
+                                      _form.currentState!.save();
+
+                                      Map<String, dynamic> requestInfo = {
+                                        'product_id': orderRequestProvider
+                                            .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                            .id,
+                                        'quantity': orderRequestProvider
+                                            .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                            .quantity,
+                                        // If the buyer accepts the request then he is accepting the seller price offer.
+                                        'requested_price': orderRequestProvider
+                                            .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                            .sellerOfferPrice
+                                      };
+
+                                      requestInfo["billing_info"] = json.decode(
+                                          json.encode(_orderRequestProvider
+                                              .billingInfo));
+
+                                      // if (await Provider.of<OrderRequestProvider>(
+                                      //         context,
+                                      //         listen:
+                                      //             false)
+                                      //     .createOrderRequest(
+                                      //         Provider.of<SessionProvider>(context, listen: false).session
+                                      //             as Session,
+                                      //         requestInfo))
+                                      //          {
+                                      //   orderRequestProvider
+                                      //           .orderRequestsScreenForSellerViewModleIsRequestOnProcess =
+                                      //       false;
+                                      //   AlertHelper
+                                      //       .showToastAlert(
+                                      //           'Request has been sent successfully');
+                                      //   Navigator.pop(
+                                      //       context);
+                                      //   Navigator.pop(
+                                      //       context);
+                                      // } else {
+                                      //   AlertHelper
+                                      //       .showToastAlert(
+                                      //           'Something went wrong');
+                                      // }
+                                      // orderRequestProvider
+                                      //     .postDetailsScreenSetEnableRequestButton(
+                                      //         false);
+                                      // orderRequestProvider
+                                      //     .postDetailsScreenSetIsRequestOnProcess(
+                                      //         false);
+
+                                      CartProvider carts =
+                                          Provider.of(context, listen: false);
+
+                                      var tempCart =
+                                          await carts.createTemporaryCart(
+                                              Provider.of<SessionProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .session as Session);
+                                      if (tempCart is CartError) {
+                                        AlertHelper.showToastAlert(
+                                            'Something went wrong');
+                                      }
+                                      if (tempCart is Cart) {
+                                        CartItem edittedItem = new CartItem(
+                                          id: 0,
+                                          product: new Product(
+                                            id: int.parse(_orderRequestProvider
+                                                .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                                                .id),
+                                            bookName: _orderRequestProvider
+                                                .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                                                .bookName,
+                                            unitPrice: _orderRequestProvider
+                                                .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                                                .price
+                                                .toString(),
+                                          ),
+                                          negotiatedPrice: double.parse(
+                                              _orderRequestProvider
+                                                  .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                  .requestedPrice),
+                                          quantity: _orderRequestProvider
+                                              .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                              .quantity,
+                                          totalPrice: 0,
+                                        );
+                                        if (await carts.addItemToTemporaryCart(
+                                            tempCart, edittedItem)) {
+                                          if (await Provider.of<OrderProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .placeOrderForRequestingCustomer(
+                                                  loggedInSession:
+                                                      _orderRequestProvider
+                                                          .sessionProvider
+                                                          .session as Session,
+                                                  customerId: _orderRequestProvider
+                                                      .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                      .requestingCustomer
+                                                      .id
+                                                      .toString(),
+                                                  cartId: tempCart.id,
+                                                  billingInfo:
+                                                      _orderRequestProvider
+                                                          .billingInfo,
+                                                  paymentMethod: 'C')) {
+                                            // Delete the order request when the order has been palced
+                                            if (await Provider.of<
+                                                        OrderRequestProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .deleteOrderRequest(
+                                                    _orderRequestProvider
+                                                        .sessionProvider
+                                                        .session as Session,
+                                                    _orderRequestProvider
+                                                        .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                                        .id)) {
+                                              AlertHelper.showToastAlert(
+                                                  'Request accepted successfully');
+
+                                              Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      RoutesManager
+                                                          .homeScreenNewRoute);
+                                            }
+                                          }
+                                        }
+                                      } else {
+                                        AlertHelper.showToastAlert(
+                                            'Something went wrong');
+                                      }
+                                    },
+                              label: orderRequestProvider
+                                      .orderRequestsScreenForSellerViewModleIsRequestOnProcess
+                                  ? LoadingHelper.showTextLoading(
+                                      'Placing order')
+                                  : Text(
+                                      'Place the order',
+                                      style: _theme.textTheme.headlineLarge,
+                                    ),
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: AppPadding.p12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    OrderRequestProvider _orderRequestProvider =
+        context.watch<OrderRequestProvider>();
     ThemeData _theme = Theme.of(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
@@ -671,17 +1201,6 @@ class _OrderRequestForSellerDetailsScreenState
                           .bookName,
                       style: _theme.textTheme.headlineMedium,
                     ),
-                    // If post type is buying then do not show the book price as it is shown in buyer's offer
-                    // if(_orderRequestProvider
-                    //       .orderRequestForSellerDetailsScreenViewModelRequestedProduct.postType=='S')
-
-                    // Text(
-                    //   'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestedProduct.price}',
-
-                    //   style: TextStyle(
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
                   ],
                 ),
                 SizedBox(height: 8.0),
@@ -728,25 +1247,13 @@ class _OrderRequestForSellerDetailsScreenState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName}\'s offer Price',
+                      '${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
                       style: _theme.textTheme.titleMedium,
                     ),
-                    if (_orderRequestProvider
-                            .orderRequestForSellerDetailsScreenViewModelRequestItem
-                            .requestedPrice ==
-                        _orderRequestProvider
-                            .orderRequestForSellerDetailsScreenViewModelRequestItem
-                            .product
-                            .unitPrice)
-                      Text(
-                        'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
-                        style: _theme.textTheme.bodyMedium,
-                      )
-                    else
-                      Text(
-                        'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
-                        style: _theme.textTheme.bodyMedium,
-                      ),
+                    Text(
+                      'Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
+                      style: _theme.textTheme.bodyMedium,
+                    )
                   ],
                 ),
                 SizedBox(height: 8.0),
@@ -814,7 +1321,74 @@ class _OrderRequestForSellerDetailsScreenState
             ),
           ),
           SizedBox(height: AppHeight.h20),
+          // If the seller has accepted the requested price and the buyer has not started the order placement process then show this
           if (_orderRequestProvider
+                      .orderRequestForSellerDetailsScreenViewModelRequestItem
+                      .priceChangedBySeller ==
+                  true &&
+              _orderRequestProvider
+                      .orderRequestForSellerDetailsScreenViewModelRequestItem
+                      .requestedPrice ==
+                  _orderRequestProvider
+                      .orderRequestForSellerDetailsScreenViewModelRequestItem
+                      .sellerOfferPrice)
+            Container(
+              decoration: BoxDecoration(
+                color: _theme.colorScheme.secondary,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Request status',
+                        style: _theme.textTheme.headlineSmall,
+                      ),
+                      Text(
+                        'Pending',
+                        style: _theme.textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: AppHeight.h8,
+                  ),
+                  Text(
+                    'Seller has accepted your offer price of Rs.${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedPrice} each. Please provide the billing information to proceed to place the order',
+                    style: TextStyle(
+                      color: ColorManager.yellow,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      _placeOrderForBuyingPost(_orderRequestProvider);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: Text(
+                      'Place order now',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else if (_orderRequestProvider
                       .orderRequestForSellerDetailsScreenViewModelRequestItem
                       .priceChangedBySeller !=
                   null &&
@@ -825,7 +1399,7 @@ class _OrderRequestForSellerDetailsScreenState
             Column(
               children: [
                 SizedBox(height: 24.0),
-                // Accept offer for seller when he gets the request from the starts here
+                // Accept offer for buyer when he gets the request from seller the starts here
                 Text(
                   'Accept Offer',
                   style: TextStyle(
@@ -852,7 +1426,7 @@ class _OrderRequestForSellerDetailsScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'By accepting this offer, you agree to buy the following item from ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the price of Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice} each :',
+                        'By accepting this offer, you agree to buy the following item from ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.firstName} ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestedCustomer.lastName} for the price of Rs. ${_orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.sellerOfferPrice} each :',
                         style: _theme.textTheme.bodyMedium,
                       ),
                       SizedBox(height: 8.0),
@@ -959,83 +1533,560 @@ class _OrderRequestForSellerDetailsScreenState
                           ),
                           ElevatedButton(
                             onPressed: () async {
-                              CartProvider carts =
-                                  Provider.of(context, listen: false);
-
-                              var tempCart = await carts.createTemporaryCart(
-                                  Provider.of<SessionProvider>(context,
-                                          listen: false)
-                                      .session as Session);
-                              if (tempCart is CartError) {
-                                AlertHelper.showToastAlert(
-                                    'Something went wrong');
-                              }
-                              if (tempCart is Cart) {
-                                CartItem edittedItem = new CartItem(
-                                  id: 0,
-                                  product: new Product(
-                                    id: int.parse(_orderRequestProvider
-                                        .orderRequestForSellerDetailsScreenViewModelRequestedProduct
-                                        .id),
-                                    bookName: _orderRequestProvider
-                                        .orderRequestForSellerDetailsScreenViewModelRequestedProduct
-                                        .bookName,
-                                    unitPrice: _orderRequestProvider
-                                        .orderRequestForSellerDetailsScreenViewModelRequestedProduct
-                                        .price
-                                        .toString(),
-                                  ),
-                                  negotiatedPrice: double.parse(
-                                      _orderRequestProvider
-                                          .orderRequestForSellerDetailsScreenViewModelRequestItem
-                                          .requestedPrice),
-                                  quantity: _orderRequestProvider
-                                      .orderRequestForSellerDetailsScreenViewModelRequestItem
-                                      .quantity,
-                                  totalPrice: 0,
-                                );
-                                if (await carts.addItemToTemporaryCart(
-                                    tempCart, edittedItem)) {
-                                  if (await Provider.of<OrderProvider>(context,
-                                          listen: false)
-                                      .placeOrderForRequestingCustomer(
-                                          loggedInSession: _orderRequestProvider
-                                              .sessionProvider
-                                              .session as Session,
-                                          userId: _orderRequestProvider
-                                              .orderRequestForSellerDetailsScreenViewModelRequestItem
-                                              .requestingCustomer
-                                              .id
-                                              .toString(),
-                                          cartId: tempCart.id,
-                                          billingInfo: _orderRequestProvider
-                                              .orderRequestForSellerDetailsScreenViewModelRequestItem
-                                              .billingInfo as Map<String, dynamic>,
-                                          paymentMethod: 'C')) {
-                                    // Delete the order request when the order has been palced
-                                    if (await Provider.of<OrderRequestProvider>(
-                                            context,
-                                            listen: false)
-                                        .deleteOrderRequest(
-                                            _orderRequestProvider
-                                                .sessionProvider
-                                                .session as Session,
-                                            _orderRequestProvider
-                                                .orderRequestForSellerDetailsScreenViewModelRequestItem
-                                                .id)) {
-                                      AlertHelper.showToastAlert(
-                                          'Request accepted successfully');
-
-                                      Navigator.of(context)
-                                          .pushReplacementNamed(
-                                              RoutesManager.homeScreenNewRoute);
-                                    }
-                                  }
-                                }
-                              } else {
-                                AlertHelper.showToastAlert(
-                                    'Something went wrong');
-                              }
+                              _placeOrderForBuyingPost(_orderRequestProvider);
+                              //   showModalBottomSheet(
+                              //     barrierColor: ColorManager.blackWithLowOpacity,
+                              //     isDismissible: true,
+                              //     isScrollControlled: true,
+                              //     shape: RoundedRectangleBorder(
+                              //       borderRadius: BorderRadius.only(
+                              //         topLeft: Radius.circular(AppRadius.r20),
+                              //         topRight: Radius.circular(
+                              //           AppRadius.r20,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     context: context,
+                              //     builder: (context) {
+                              //       return SingleChildScrollView(
+                              //         child: Padding(
+                              //           padding: EdgeInsets.only(
+                              //               bottom: MediaQuery.of(context)
+                              //                   .viewInsets
+                              //                   .bottom),
+                              //           child: Container(
+                              //             padding: EdgeInsets.only(
+                              //               left: AppPadding.p20,
+                              //               right: AppPadding.p20,
+                              //               bottom: AppPadding.p12,
+                              //             ),
+                              //             child: Column(
+                              //               children: [
+                              //                 // ----------------------    Name section starts here -----------------------------------
+                              //                 Container(
+                              //                   padding: EdgeInsets.symmetric(
+                              //                     vertical: AppPadding.p12,
+                              //                   ),
+                              //                   child: Column(
+                              //                     crossAxisAlignment:
+                              //                         CrossAxisAlignment.start,
+                              //                     children: [
+                              //                       Text(
+                              //                         'Billing Information',
+                              //                         style: _theme.textTheme
+                              //                             .headlineLarge,
+                              //                       ),
+                              //                       SizedBox(
+                              //                         height: AppHeight.h4,
+                              //                       ),
+                              //                       Container(
+                              //                         decoration: BoxDecoration(),
+                              //                         child: Column(
+                              //                           mainAxisSize:
+                              //                               MainAxisSize.min,
+                              //                           children: [
+                              //                             Form(
+                              //                               key: _form,
+                              //                               child: ListView(
+                              //                                 shrinkWrap: true,
+                              //                                 children: [
+                              //                                   Row(
+                              //                                     children: [
+                              //                                       Expanded(
+                              //                                         child:
+                              //                                             Padding(
+                              //                                           padding:
+                              //                                               const EdgeInsets.all(
+                              //                                                   8.0),
+                              //                                           child: TextFormField(
+                              //                                               initialValue: _orderRequestProvider.billingInfo.containsKey('first_name') ? _orderRequestProvider.billingInfo['first_name'] : null,
+                              //                                               focusNode: _orderRequestProvider.orderRequestsScreenForSellerViewModleFirstNameFocusNode,
+                              //                                               decoration: InputDecoration(
+                              //                                                 labelText:
+                              //                                                     'First Name',
+                              //                                                 focusColor:
+                              //                                                     Colors.redAccent,
+                              //                                               ),
+                              //                                               textInputAction: TextInputAction.next,
+                              //                                               autovalidateMode: AutovalidateMode.always,
+                              //                                               onFieldSubmitted: (_) {
+                              //                                                 FocusScope.of(context).requestFocus(_orderRequestProvider.orderRequestsScreenForSellerViewModleLastNameFocusNode);
+                              //                                               },
+                              //                                               validator: (value) {
+                              //                                                 if (value!.isEmpty) {
+                              //                                                   return 'Please provide the first name';
+                              //                                                 }
+                              //                                                 return null;
+                              //                                               },
+                              //                                               onSaved: (value) {
+                              //                                                 _orderRequestProvider.billingInfo['first_name'] =
+                              //                                                     value.toString();
+                              //                                               }),
+                              //                                         ),
+                              //                                       ),
+                              //                                       Flexible(
+                              //                                         child:
+                              //                                             Padding(
+                              //                                           padding:
+                              //                                               const EdgeInsets.all(
+                              //                                                   8.0),
+                              //                                           child:
+                              //                                               TextFormField(
+                              //                                             initialValue: _orderRequestProvider.billingInfo.containsKey('last_name')
+                              //                                                 ? _orderRequestProvider.billingInfo['last_name']
+                              //                                                 : null,
+                              //                                             keyboardType:
+                              //                                                 TextInputType.text,
+                              //                                             // cursorColor: Theme.of(context)
+                              //                                             //     .primaryColor,
+                              //                                             focusNode:
+                              //                                                 _orderRequestProvider.orderRequestsScreenForSellerViewModleLastNameFocusNode,
+                              //                                             decoration:
+                              //                                                 InputDecoration(
+                              //                                               labelText:
+                              //                                                   'Last Name',
+                              //                                             ),
+                              //                                             textInputAction:
+                              //                                                 TextInputAction.next,
+                              //                                             autovalidateMode:
+                              //                                                 AutovalidateMode.always,
+                              //                                             onFieldSubmitted:
+                              //                                                 (_) {
+                              //                                               FocusScope.of(context)
+                              //                                                   .requestFocus(_orderRequestProvider.orderRequestsScreenForSellerViewModleEmailFocusNode);
+                              //                                             },
+                              //                                             validator:
+                              //                                                 (value) {
+                              //                                               if (value!
+                              //                                                   .isEmpty) {
+                              //                                                 return 'Please provide the last name';
+                              //                                               }
+                              //                                               return null;
+                              //                                             },
+                              //                                             onSaved:
+                              //                                                 (value) {
+                              //                                               _orderRequestProvider.billingInfo['last_name'] =
+                              //                                                   value.toString();
+                              //                                             },
+                              //                                           ),
+                              //                                         ),
+                              //                                       ),
+                              //                                     ],
+                              //                                   ),
+                              //                                   Padding(
+                              //                                     padding:
+                              //                                         const EdgeInsets
+                              //                                                 .all(
+                              //                                             8.0),
+                              //                                     child:
+                              //                                         TextFormField(
+                              //                                             initialValue: _orderRequestProvider.billingInfo.containsKey('email')
+                              //                                                 ? _orderRequestProvider.billingInfo[
+                              //                                                     'email']
+                              //                                                 : null,
+                              //                                             focusNode:
+                              //                                                 _orderRequestProvider
+                              //                                                     .orderRequestsScreenForSellerViewModleEmailFocusNode,
+                              //                                             keyboardType:
+                              //                                                 TextInputType
+                              //                                                     .text,
+                              //                                             decoration:
+                              //                                                 InputDecoration(
+                              //                                               labelText:
+                              //                                                   'Email Address',
+                              //                                             ),
+                              //                                             textInputAction:
+                              //                                                 TextInputAction
+                              //                                                     .next,
+                              //                                             autovalidateMode:
+                              //                                                 AutovalidateMode
+                              //                                                     .always,
+                              //                                             onFieldSubmitted:
+                              //                                                 (_) {
+                              //                                               FocusScope.of(context)
+                              //                                                   .requestFocus(_orderRequestProvider.orderRequestsScreenForSellerViewModlePhoneNumberFocusNode);
+                              //                                             },
+                              //                                             validator:
+                              //                                                 (value) {
+                              //                                               if (value!
+                              //                                                   .isEmpty) {
+                              //                                                 return 'Please provide email to receive notifications';
+                              //                                               }
+                              //                                               return null;
+                              //                                             },
+                              //                                             onSaved:
+                              //                                                 (value) {
+                              //                                               _orderRequestProvider.billingInfo['email'] =
+                              //                                                   value.toString();
+                              //                                             }),
+                              //                                   ),
+                              //                                   Padding(
+                              //                                     padding:
+                              //                                         const EdgeInsets
+                              //                                                 .all(
+                              //                                             8.0),
+                              //                                     child:
+                              //                                         TextFormField(
+                              //                                             initialValue: _orderRequestProvider.billingInfo.containsKey('phone')
+                              //                                                 ? _orderRequestProvider.billingInfo[
+                              //                                                     'phone']
+                              //                                                 : null,
+                              //                                             focusNode:
+                              //                                                 _orderRequestProvider
+                              //                                                     .orderRequestsScreenForSellerViewModlePhoneNumberFocusNode,
+                              //                                             keyboardType:
+                              //                                                 TextInputType
+                              //                                                     .number,
+                              //                                             decoration:
+                              //                                                 InputDecoration(
+                              //                                               labelText:
+                              //                                                   'Phone Number',
+                              //                                             ),
+                              //                                             textInputAction:
+                              //                                                 TextInputAction
+                              //                                                     .next,
+                              //                                             autovalidateMode:
+                              //                                                 AutovalidateMode
+                              //                                                     .always,
+                              //                                             onFieldSubmitted:
+                              //                                                 (_) {
+                              //                                               FocusScope.of(context)
+                              //                                                   .requestFocus(_orderRequestProvider.orderRequestsScreenForSellerViewModleSideNoteFocusNode);
+                              //                                             },
+                              //                                             validator:
+                              //                                                 (value) {
+                              //                                               if (value!
+                              //                                                   .isEmpty) {
+                              //                                                 return 'Please provide the phone number to be contacted';
+                              //                                               }
+                              //                                               return null;
+                              //                                             },
+                              //                                             onSaved:
+                              //                                                 (value) {
+                              //                                               _orderRequestProvider.billingInfo['phone'] =
+                              //                                                   value.toString();
+                              //                                             }),
+                              //                                   ),
+                              //                                   Padding(
+                              //                                     padding:
+                              //                                         const EdgeInsets
+                              //                                                 .all(
+                              //                                             8.0),
+                              //                                     child:
+                              //                                         TextFormField(
+                              //                                       focusNode:
+                              //                                           _orderRequestProvider
+                              //                                               .orderRequestsScreenForSellerViewModleSideNoteFocusNode,
+                              //                                       keyboardType:
+                              //                                           TextInputType
+                              //                                               .multiline,
+                              //                                       decoration:
+                              //                                           InputDecoration(
+                              //                                         labelText:
+                              //                                             'Side Note',
+                              //                                       ),
+                              //                                       textInputAction:
+                              //                                           TextInputAction
+                              //                                               .newline,
+                              //                                       autovalidateMode:
+                              //                                           AutovalidateMode
+                              //                                               .always,
+                              //                                       minLines: 3,
+                              //                                       maxLines: 7,
+                              //                                       onSaved:
+                              //                                           (value) {
+                              //                                         _orderRequestProvider
+                              //                                                 .billingInfo['side_note'] =
+                              //                                             value
+                              //                                                 .toString();
+                              //                                       },
+                              //                                     ),
+                              //                                   ),
+                              //                                 ],
+                              //                               ),
+                              //                             ),
+                              //                           ],
+                              //                         ),
+                              //                       ),
+                              //                     ],
+                              //                   ),
+                              //                 ),
+                              //                 // ----------------------    Name section ends here -----------------------------------
+                              //                 // ----------------------    Sort by locations section ends here -----------------------------------
+                              //                 Container(
+                              //                   padding: EdgeInsets.symmetric(
+                              //                     vertical: AppPadding.p12,
+                              //                   ),
+                              //                   child: Column(
+                              //                     crossAxisAlignment:
+                              //                         CrossAxisAlignment.start,
+                              //                     children: [
+                              //                       Text(
+                              //                         'Location',
+                              //                         style: _theme.textTheme
+                              //                             .headlineLarge,
+                              //                       ),
+                              //                       SizedBox(
+                              //                         height: AppHeight.h4,
+                              //                       ),
+                              //                       Container(
+                              //                         decoration: BoxDecoration(
+                              //                             border: Border.all(
+                              //                           color: Colors.grey,
+                              //                           width: 1.0,
+                              //                           style: BorderStyle.solid,
+                              //                         )),
+                              //                         child:
+                              //                             DropdownButtonHideUnderline(
+                              //                           child: DropdownButton(
+                              //                               isExpanded: true,
+                              //                               value: _orderRequestProvider
+                              //                                       .billingInfo[
+                              //                                   'convenient_location'],
+                              //                               items: _orderRequestProvider
+                              //                                   .locationOptions
+                              //                                   .map((option) =>
+                              //                                       DropdownMenuItem(
+                              //                                         child:
+                              //                                             Padding(
+                              //                                           padding:
+                              //                                               const EdgeInsets
+                              //                                                   .only(
+                              //                                             left: AppPadding
+                              //                                                 .p12,
+                              //                                           ),
+                              //                                           child:
+                              //                                               Text(
+                              //                                             option,
+                              //                                           ),
+                              //                                         ),
+                              //                                         value:
+                              //                                             option,
+                              //                                       ))
+                              //                                   .toList(),
+                              //                               onChanged: (value) {
+                              //                                 _orderRequestProvider
+                              //                                     .setBillingInfoLocationData(
+                              //                                         value
+                              //                                             as String);
+                              //                               }),
+                              //                         ),
+                              //                       ),
+                              //                     ],
+                              //                   ),
+                              //                 ),
+                              //                 // ----------------------    Sort by location section ends here -----------------------------------
+                              //                 Row(
+                              //                   mainAxisAlignment:
+                              //                       MainAxisAlignment
+                              //                           .spaceBetween,
+                              //                   children: [
+                              //                     Expanded(
+                              //                       child: Container(
+                              //                         decoration: BoxDecoration(
+                              //                           shape: BoxShape.rectangle,
+                              //                         ),
+                              //                         child: Consumer<
+                              //                             OrderRequestProvider>(
+                              //                           builder: (context,
+                              //                                   orderRequestProvider,
+                              //                                   child) =>
+                              //                               ElevatedButton.icon(
+                              //                             icon: orderRequestProvider
+                              //                                     .orderRequestsScreenForSellerViewModleIsRequestOnProcess
+                              //                                 ? SizedBox(
+                              //                                     height:
+                              //                                         AppHeight
+                              //                                             .h20,
+                              //                                     width: AppHeight
+                              //                                         .h20,
+                              //                                     child:
+                              //                                         CircularProgressIndicator
+                              //                                             .adaptive(
+                              //                                       strokeWidth:
+                              //                                           3,
+                              //                                       valueColor: AlwaysStoppedAnimation<
+                              //                                               Color>(
+                              //                                           Colors
+                              //                                               .white),
+                              //                                       backgroundColor:
+                              //                                           ColorManager
+                              //                                               .primary,
+                              //                                     ),
+                              //                                   )
+                              //                                 : Container(),
+                              //                             onPressed:
+                              //                                 orderRequestProvider
+                              //                                         .orderRequestsScreenForSellerViewModleIsRequestOnProcess
+                              //                                     ? null
+                              //                                     : () async {
+                              //                                         orderRequestProvider
+                              //                                                 .orderRequestsScreenForSellerViewModleIsRequestOnProcess =
+                              //                                             true;
+                              //                                         // I had to use the same code two times for direct order placement and indirect order placement so i just check the flag and show the notification of either success or failure
+                              //                                         // bool _orderPlacedSuccessfully = false;
+                              //                                         final _isValid = _form
+                              //                                             .currentState!
+                              //                                             .validate();
+                              //                                         if (!_isValid) {
+                              //                                           return;
+                              //                                         }
+                              //                                         _form
+                              //                                             .currentState!
+                              //                                             .save();
+                              //                                         Map<String,
+                              //                                                 dynamic>
+                              //                                             requestInfo =
+                              //                                             {
+                              //                                           'product_id':
+                              //                                               orderRequestProvider
+                              //                                                   .orderRequestForSellerDetailsScreenViewModelRequestItem
+                              //                                                   .id,
+                              //                                           'quantity': orderRequestProvider
+                              //                                               .orderRequestForSellerDetailsScreenViewModelRequestItem
+                              //                                               .quantity,
+                              //                                           // If the buyer accepts the request then he is accepting the seller price offer.
+                              //                                           'requested_price': orderRequestProvider
+                              //                                               .orderRequestForSellerDetailsScreenViewModelRequestItem
+                              //                                               .sellerOfferPrice
+                              //                                         };
+                              //                                         requestInfo[
+                              //                                                 "billing_info"] =
+                              //                                             json.decode(
+                              //                                                 json.encode(_orderRequestProvider.billingInfo));
+                              //                                         // if (await Provider.of<OrderRequestProvider>(
+                              //                                         //         context,
+                              //                                         //         listen:
+                              //                                         //             false)
+                              //                                         //     .createOrderRequest(
+                              //                                         //         Provider.of<SessionProvider>(context, listen: false).session
+                              //                                         //             as Session,
+                              //                                         //         requestInfo))
+                              //                                         //          {
+                              //                                         //   orderRequestProvider
+                              //                                         //           .orderRequestsScreenForSellerViewModleIsRequestOnProcess =
+                              //                                         //       false;
+                              //                                         //   AlertHelper
+                              //                                         //       .showToastAlert(
+                              //                                         //           'Request has been sent successfully');
+                              //                                         //   Navigator.pop(
+                              //                                         //       context);
+                              //                                         //   Navigator.pop(
+                              //                                         //       context);
+                              //                                         // } else {
+                              //                                         //   AlertHelper
+                              //                                         //       .showToastAlert(
+                              //                                         //           'Something went wrong');
+                              //                                         // }
+                              //                                         // orderRequestProvider
+                              //                                         //     .postDetailsScreenSetEnableRequestButton(
+                              //                                         //         false);
+                              //                                         // orderRequestProvider
+                              //                                         //     .postDetailsScreenSetIsRequestOnProcess(
+                              //                                         //         false);
+                              //                                         CartProvider
+                              //                                             carts =
+                              //                                             Provider.of(
+                              //                                                 context,
+                              //                                                 listen:
+                              //                                                     false);
+                              //                                         var tempCart = await carts.createTemporaryCart(Provider.of<SessionProvider>(
+                              //                                                 context,
+                              //                                                 listen:
+                              //                                                     false)
+                              //                                             .session as Session);
+                              //                                         if (tempCart
+                              //                                             is CartError) {
+                              //                                           AlertHelper
+                              //                                               .showToastAlert(
+                              //                                                   'Something went wrong');
+                              //                                         }
+                              //                                         if (tempCart
+                              //                                             is Cart) {
+                              //                                           CartItem
+                              //                                               edittedItem =
+                              //                                               new CartItem(
+                              //                                             id: 0,
+                              //                                             product:
+                              //                                                 new Product(
+                              //                                               id: int.parse(_orderRequestProvider
+                              //                                                   .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                              //                                                   .id),
+                              //                                               bookName: _orderRequestProvider
+                              //                                                   .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                              //                                                   .bookName,
+                              //                                               unitPrice: _orderRequestProvider
+                              //                                                   .orderRequestForSellerDetailsScreenViewModelRequestedProduct
+                              //                                                   .price
+                              //                                                   .toString(),
+                              //                                             ),
+                              //                                             negotiatedPrice: double.parse(_orderRequestProvider
+                              //                                                 .orderRequestForSellerDetailsScreenViewModelRequestItem
+                              //                                                 .requestedPrice),
+                              //                                             quantity: _orderRequestProvider
+                              //                                                 .orderRequestForSellerDetailsScreenViewModelRequestItem
+                              //                                                 .quantity,
+                              //                                             totalPrice:
+                              //                                                 0,
+                              //                                           );
+                              //                                           if (await carts.addItemToTemporaryCart(
+                              //                                               tempCart,
+                              //                                               edittedItem)) {
+                              //                                             if (await Provider.of<OrderProvider>(context, listen: false).placeOrderForRequestingCustomer(
+                              //                                                 loggedInSession: _orderRequestProvider.sessionProvider.session
+                              //                                                     as Session,
+                              //                                                 customerId:
+                              //                                                     _orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.requestingCustomer.id.toString(),
+                              //                                                 cartId: tempCart.id,
+                              //                                                 billingInfo: _orderRequestProvider.billingInfo,
+                              //                                                 paymentMethod: 'C')) {
+                              //                                               // Delete the order request when the order has been palced
+                              //                                               if (await Provider.of<OrderRequestProvider>(context, listen: false).deleteOrderRequest(
+                              //                                                   _orderRequestProvider.sessionProvider.session as Session,
+                              //                                                   _orderRequestProvider.orderRequestForSellerDetailsScreenViewModelRequestItem.id)) {
+                              //                                                 AlertHelper.showToastAlert('Request accepted successfully');
+                              //                                                 Navigator.of(context).pushReplacementNamed(RoutesManager.homeScreenNewRoute);
+                              //                                               }
+                              //                                             }
+                              //                                           }
+                              //                                         } else {
+                              //                                           AlertHelper
+                              //                                               .showToastAlert(
+                              //                                                   'Something went wrong');
+                              //                                         }
+                              //                                       },
+                              //                             label: orderRequestProvider
+                              //                                     .orderRequestsScreenForSellerViewModleIsRequestOnProcess
+                              //                                 ? LoadingHelper
+                              //                                     .showTextLoading(
+                              //                                         'Placing order')
+                              //                                 : Text(
+                              //                                     'Place the order',
+                              //                                     style: _theme
+                              //                                         .textTheme
+                              //                                         .headlineLarge,
+                              //                                   ),
+                              //                             style: ElevatedButton
+                              //                                 .styleFrom(
+                              //                               padding: EdgeInsets
+                              //                                   .symmetric(
+                              //                                 vertical:
+                              //                                     AppPadding.p12,
+                              //                               ),
+                              //                             ),
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                   ],
+                              //                 ),
+                              //               ],
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       );
+                              //     },
+                              //   );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
@@ -1126,12 +2177,17 @@ class _OrderRequestForSellerDetailsScreenState
                         return orderRequestProvider
                                 .orderRequestForSellerDetailsScreenViewModelShowRequestButton
                             ? ElevatedButton(
+                                // onPressed: () => _orderRequestProvider
+                                //     .orderRequestForSellerDetailsScreenViewModelUpdateSellerOfferPrice(
+                                //         context,
+                                //         _orderRequestProvider
+                                //             .orderRequestForSellerDetailsScreenViewModelRequestItem
+                                //             .id),
                                 onPressed: () => _orderRequestProvider
-                                    .orderRequestForSellerDetailsScreenViewModelUpdateSellerOfferPrice(
-                                        context,
-                                        _orderRequestProvider
-                                            .orderRequestForSellerDetailsScreenViewModelRequestItem
-                                            .id),
+                                    .orderRequestForSellerDetailsScreenViewModelUpdateBuyerRequestPrice(
+                                  context,
+                                  changedBySeller: false,
+                                ),
                                 child: Text('Offer this price'),
                               )
                             : Container();

@@ -167,17 +167,23 @@ class OrderRequestProvider
   }
 
   Future<bool> updateRequestPrice(
-      String requestId, double newRequestPrice) async {
-    var response =
-        await OrderRequestApi.updateRequestPrice(requestId, newRequestPrice);
+      String requestId, double newRequestPrice, bool changedBySeller) async {
+    var response = await OrderRequestApi.updateRequestPrice(
+        requestId, newRequestPrice, changedBySeller);
     // print(response);
 
     if (response is Success) {
-      final postIndex =
-          _orderRequestsByUser.indexWhere((element) => element.id == requestId);
-
       OrderRequest updatedRequest = response.response as OrderRequest;
-      _orderRequestsByUser[postIndex] = updatedRequest;
+      if (changedBySeller) {
+        final postIndex = _orderRequestsByUser
+            .indexWhere((element) => element.id == requestId);
+        _orderRequestsByUser[postIndex] = updatedRequest;
+      } else {
+        final postIndex = _orderRequestsForUser
+            .indexWhere((element) => element.id == requestId);
+        _orderRequestsForUser[postIndex] = updatedRequest;
+      }
+      print(_orderRequestsForUser);
       notifyListeners();
       return true;
     }
@@ -241,7 +247,9 @@ class OrderRequestProvider
     if (response is Success) {
       final postIndex = orderRequestsByUser
           .indexWhere((element) => element.id == orderRequestId);
-      orderRequestsByUser.removeAt(postIndex);
+      if (postIndex != -1) {
+        orderRequestsByUser.removeAt(postIndex);
+      }
       setLoading(false);
       notifyListeners();
       return true;

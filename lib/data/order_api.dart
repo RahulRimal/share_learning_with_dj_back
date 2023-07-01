@@ -341,7 +341,7 @@ class OrderApi {
   // This function places orders for buyer which is triggered by seller by accepting the offer
   static Future<Object> placeOrderForRequestingCustomer(
       Session currentSession,
-      String userId,
+      String customerId,
       String cartId,
       Map<String, dynamic> billingInfo,
       String paymentMethod) async {
@@ -349,7 +349,7 @@ class OrderApi {
       var url = Uri.parse(RemoteManager.BASE_URI + '/orders/');
       Map<String, dynamic> postBody = {
         "cart_id": cartId,
-        "user_id": userId,
+        "customer_id": customerId,
         "payment_method": paymentMethod,
         "billing_info": billingInfo,
       };

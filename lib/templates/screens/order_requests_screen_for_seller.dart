@@ -127,7 +127,6 @@ class _OrderRequestsScreenForSellerState
                   ],
                 ),
               ),
-              
               FutureBuilder(
                 future: _orderRequestProvider.getRequestsForUser(
                     _orderRequestProvider.sessionProvider.session as Session),
@@ -227,14 +226,12 @@ class OrderRequestItemWidget extends StatefulWidget {
 }
 
 class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
-  
-
-  _deleteCartItem(Session userSession, String cartId, String cartItemId) async {
-    bool value = await Provider.of<CartProvider>(context, listen: false)
-        .deleteCartItem(userSession, cartId, cartItemId);
+  _deleteRequestItem(Session userSession, String orderRequestId) async {
+    bool value = await Provider.of<OrderRequestProvider>(context, listen: false)
+        .deleteOrderRequest(userSession, orderRequestId);
     if (value) {
       AlertHelper.showToastAlert(
-        'Book deleted from the cart',
+        'Request deleted successfully',
       );
     } else
       AlertHelper.showToastAlert('Something went wrong, Please try again!');
@@ -249,7 +246,7 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
     OrderRequestProvider _orderRequestProvider =
         context.watch<OrderRequestProvider>();
 
-        ThemeData _theme = Theme.of(context);
+    ThemeData _theme = Theme.of(context);
 
     return FutureBuilder(
         // future: _carts.getCartItemBook(
@@ -339,7 +336,8 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                           //   fontWeight: FontWeight.w700,
                                           //   letterSpacing: 0.50,
                                           // ),
-                                          style: _theme.textTheme.headlineMedium,
+                                          style:
+                                              _theme.textTheme.headlineMedium,
                                         ),
                                       ),
                                       Padding(
@@ -364,7 +362,8 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                     //   fontSize: FontSize.s16,
                                                     //   color: ColorManager.black,
                                                     // ),
-                                                    style: _theme.textTheme.bodyMedium,
+                                                    style: _theme
+                                                        .textTheme.bodyMedium,
                                                   ),
                                                   actions: [
                                                     TextButton(
@@ -401,15 +400,9 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 ),
                                               ).then((_) {
                                                 if (userConfirmed) {
-                                                  _deleteCartItem(
+                                                  _deleteRequestItem(
                                                     authendicatedSession,
-                                                    Provider.of<CartProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .cart!
-                                                        .id,
-                                                    widget.requestedItem.id
-                                                        .toString(),
+                                                    requestedItem.id,
                                                   );
                                                 }
                                               });
@@ -441,7 +434,6 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 top: 1.00,
                                                 bottom: 1.00,
                                               ),
-
                                               child: Text(
                                                 "Unit Price",
                                                 overflow: TextOverflow.ellipsis,
@@ -453,7 +445,8 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 //   fontWeight: FontWeight.w700,
                                                 //   letterSpacing: 0.50,
                                                 // ),
-                                                style: _theme.textTheme.bodySmall,
+                                                style:
+                                                    _theme.textTheme.bodySmall,
                                               ),
                                             ),
                                             Padding(
@@ -472,7 +465,8 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 //   fontWeight: FontWeight.w700,
                                                 //   letterSpacing: 0.50,
                                                 // ),
-                                                style: _theme.textTheme.headlineSmall,
+                                                style: _theme
+                                                    .textTheme.headlineSmall,
                                               ),
                                             ),
                                           ],
@@ -492,53 +486,64 @@ class _OrderRequestItemWidgetState extends State<OrderRequestItemWidget> {
                                                 top: 1.00,
                                                 bottom: 1.00,
                                               ),
-                                              
-                                              child: (widget.requestedItem.product.postType == 'B') ? Text(
-                                                "Offered unit price",
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.left,
-                                                // style: TextStyle(
-                                                //   color: ColorManager.black,
-                                                //   fontSize: FontSize.s12,
-                                                //   fontFamily: 'Poppins',
-                                                //   fontWeight: FontWeight.w700,
-                                                //   letterSpacing: 0.50,
-                                                // ),
-                                                style: _theme.textTheme.bodySmall,
-                                              )
-                                              :Text(
-                                                "Requested unit price",
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.left,
-                                                
-                                                style: _theme.textTheme.bodySmall,
-                                              ),
+                                              child: (widget.requestedItem
+                                                          .product.postType ==
+                                                      'B')
+                                                  ? Text(
+                                                      "Offered unit price",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.left,
+                                                      // style: TextStyle(
+                                                      //   color: ColorManager.black,
+                                                      //   fontSize: FontSize.s12,
+                                                      //   fontFamily: 'Poppins',
+                                                      //   fontWeight: FontWeight.w700,
+                                                      //   letterSpacing: 0.50,
+                                                      // ),
+                                                      style: _theme
+                                                          .textTheme.bodySmall,
+                                                    )
+                                                  : Text(
+                                                      "Requested unit price",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.left,
+                                                      style: _theme
+                                                          .textTheme.bodySmall,
+                                                    ),
                                             ),
                                             Padding(
                                               padding: EdgeInsets.only(
                                                 top: 1.00,
                                                 bottom: 1.00,
                                               ),
-                                              child: (widget.requestedItem.product.postType == 'B') ?  Text(
-                                                "Rs. ${widget.requestedItem.sellerOfferPrice}",
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.left,
-                                                // style: TextStyle(
-                                                //   color: Colors.lightBlue,
-                                                //   fontSize: FontSize.s14,
-                                                //   fontFamily: 'Poppins',
-                                                //   fontWeight: FontWeight.w700,
-                                                //   letterSpacing: 0.50,
-                                                // ),
-                                                style: _theme.textTheme.headlineSmall,
-                                              )
-                                              :Text(
-                                                "Rs. ${widget.requestedItem.requestedPrice}",
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.left,
-                                                
-                                                style: _theme.textTheme.headlineSmall,
-                                              ),
+                                              child: (widget.requestedItem
+                                                          .product.postType ==
+                                                      'B')
+                                                  ? Text(
+                                                      "Rs. ${widget.requestedItem.sellerOfferPrice}",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.left,
+                                                      // style: TextStyle(
+                                                      //   color: Colors.lightBlue,
+                                                      //   fontSize: FontSize.s14,
+                                                      //   fontFamily: 'Poppins',
+                                                      //   fontWeight: FontWeight.w700,
+                                                      //   letterSpacing: 0.50,
+                                                      // ),
+                                                      style: _theme.textTheme
+                                                          .headlineSmall,
+                                                    )
+                                                  : Text(
+                                                      "Rs. ${widget.requestedItem.requestedPrice}",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.left,
+                                                      style: _theme.textTheme
+                                                          .headlineSmall,
+                                                    ),
                                             ),
                                           ],
                                         ),

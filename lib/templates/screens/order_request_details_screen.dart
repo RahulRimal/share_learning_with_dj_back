@@ -588,10 +588,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                             ? ElevatedButton(
                                 onPressed: () => orderRequestProvider
                                     .orderRequestDetailsScreenViewModelUpdateRequestPrice(
-                                        context,
-                                        orderRequestProvider
-                                            .orderRequestDetailsScreenViewModelRequestItem
-                                            .id),
+                                  context,
+                                  changedBySeller: false,
+                                ),
                                 child: Text('Request for this price'),
                               )
                             : Container();
@@ -718,7 +717,6 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
           SizedBox(height: 16.0),
           Container(
             decoration: BoxDecoration(
-              // color: Colors.white,
               color: _theme.colorScheme.secondary,
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
@@ -751,17 +749,17 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
 
                       style: _theme.textTheme.headlineMedium,
                     ),
-                    // If post type is buying then do not show the book price as it is shown in buyer's offer
-                    if (orderRequestProvider
-                            .orderRequestDetailsScreenViewModelRequestedProduct
-                            .postType ==
-                        'S')
-                      Text(
-                        'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestedProduct.price}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    // // If post type is buying then do not show the book price as it is shown in buyer's offer
+                    // if (orderRequestProvider
+                    //         .orderRequestDetailsScreenViewModelRequestedProduct
+                    //         .postType ==
+                    //     'S')
+                    //   Text(
+                    //     'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestedProduct.price}',
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 8.0),
@@ -789,13 +787,25 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
+                        '${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName}\'s offer Price',
                         style: _theme.textTheme.titleSmall,
                       ),
-                      Text(
-                        'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
-                        style: _theme.textTheme.bodySmall,
-                      ),
+                      if (orderRequestProvider
+                              .orderRequestDetailsScreenViewModelRequestItem
+                              .requestedPrice !=
+                          orderRequestProvider
+                              .orderRequestDetailsScreenViewModelRequestItem
+                              .product
+                              .unitPrice)
+                        Text(
+                          'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
+                          style: _theme.textTheme.bodyMedium,
+                        )
+                      else
+                        Text(
+                          'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.product.unitPrice.toString()}',
+                          style: _theme.textTheme.bodyMedium,
+                        ),
                     ],
                   ),
                 Row(
@@ -828,22 +838,24 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName}\'s offer Price',
+                        '${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName}\'s offer Price',
                         style: _theme.textTheme.titleMedium,
                       ),
                       // If seller sent offer for buying type post then the price of buyer will not be in requested price but in the price of the post itself so show that
                       if (orderRequestProvider
                               .orderRequestDetailsScreenViewModelRequestItem
+                              .requestedPrice !=
+                          orderRequestProvider
+                              .orderRequestDetailsScreenViewModelRequestItem
                               .product
-                              .postType ==
-                          'B')
+                              .unitPrice)
                         Text(
-                          'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.product.unitPrice.toString()}',
+                          'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedPrice.toString()}',
                           style: _theme.textTheme.bodyMedium,
                         )
                       else
                         Text(
-                          'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.sellerOfferPrice.toString()}',
+                          'Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.product.unitPrice.toString()}',
                           style: _theme.textTheme.bodyMedium,
                         ),
                     ],
@@ -874,22 +886,23 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
             ),
           ),
           SizedBox(height: 24.0),
-          // if (_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem
-          //             .priceChangedBySeller ==
-          //         null ||
-          //     (_orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem
-          //                 .priceChangedBySeller !=
-          //             null &&
-          //         _orderRequestProvider
-          //                 .orderRequestDetailsScreenViewModelRequestItem
-          //                 .priceChangedBySeller ==
-          //             false))
-          if (orderRequestProvider.userProvider.user!.id ==
-              orderRequesyProvider!
-                  .orderRequestDetailsScreenViewModelRequestItem
-                  .requestingCustomer
-                  .id
-                  .toString())
+          if (orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem
+                      .priceChangedBySeller ==
+                  null ||
+              (orderRequestProvider
+                          .orderRequestDetailsScreenViewModelRequestItem
+                          .priceChangedBySeller !=
+                      null &&
+                  orderRequestProvider
+                          .orderRequestDetailsScreenViewModelRequestItem
+                          .priceChangedBySeller ==
+                      true))
+            // if (orderRequestProvider.userProvider.user!.id ==
+            //     orderRequesyProvider!
+            //         .orderRequestDetailsScreenViewModelRequestItem
+            //         .requestingCustomer
+            //         .id
+            //         .toString())
             Container(
               decoration: BoxDecoration(
                 color: _theme.colorScheme.secondary,
@@ -922,27 +935,41 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                   SizedBox(
                     height: AppHeight.h8,
                   ),
-                  Text(
-                    'We will let you know when ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedCustomer.firstName} responds to the request',
-                    style: TextStyle(
-                      color: ColorManager.yellow,
+                  // If seller has accepted the buyer price and the buyer has not proceed with the order placement then show this text else show below text
+                  if (orderRequestProvider
+                          .orderRequestDetailsScreenViewModelRequestItem
+                          .requestedPrice ==
+                      orderRequestProvider
+                          .orderRequestDetailsScreenViewModelRequestItem
+                          .sellerOfferPrice)
+                    Text(
+                      'Waiting for the order confiramtion from ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName}\'s side. We will let you know when ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName} confirms the order',
+                      style: TextStyle(
+                        color: ColorManager.yellow,
+                      ),
+                    )
+                  else
+                    Text(
+                      'We will let you know when ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName} responds to the request',
+                      style: TextStyle(
+                        color: ColorManager.yellow,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
-          // if (_orderRequest.orderRequestDetailsScreenViewModelRequestItem
-          //             .priceChangedBySeller !=
-          //         null &&
-          //     _orderRequest.orderRequestDetailsScreenViewModelRequestItem
-          //             .priceChangedBySeller ==
-          //         true)
-          if (orderRequestProvider.userProvider.user!.id ==
-              orderRequesyProvider!
-                  .orderRequestDetailsScreenViewModelRequestItem
-                  .requestedCustomer
-                  .id
-                  .toString())
+          if (orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem
+                      .priceChangedBySeller !=
+                  null &&
+              orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem
+                      .priceChangedBySeller ==
+                  false)
+            // if (orderRequestProvider.userProvider.user!.id ==
+            //     orderRequesyProvider!
+            //         .orderRequestDetailsScreenViewModelRequestItem
+            //         .requestedCustomer
+            //         .id
+            //         .toString())
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -957,7 +984,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                 SizedBox(height: 16.0),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: _theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(8.0),
                     boxShadow: [
                       BoxShadow(
@@ -974,17 +1001,16 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                     children: [
                       Text(
                         'By accepting this offer, you agree to sell the following item to ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.firstName} ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestingCustomer.lastName} for the price of Rs. ${orderRequestProvider.orderRequestDetailsScreenViewModelRequestItem.requestedPrice} each :',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
+                        // style: TextStyle(
+                        //   color: Colors.grey[600],
+                        // ),
+                        style: _theme.textTheme.bodyMedium,
                       ),
                       SizedBox(height: 8.0),
                       SizedBox(height: 16.0),
                       Text(
                         'Please review the terms of the sale carefully before accepting. Once you accept, the sale is final and binding.',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
+                        style: _theme.textTheme.bodyMedium,
                       ),
                       SizedBox(height: 16.0),
                       Row(
@@ -1012,10 +1038,6 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                                       title: Text('Are you sure?'),
                                       content: Text(
                                         'This request will be deleted permanently!',
-                                        // style: getRegularStyle(
-                                        //   fontSize: FontSize.s16,
-                                        //   color: ColorManager.black,
-                                        // ),
                                         style: _theme.textTheme.labelLarge,
                                       ),
                                       actions: [
@@ -1083,81 +1105,99 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                             ),
                           ),
                           ElevatedButton(
+                            // onPressed: () async {
+                            //   CartProvider carts =
+                            //       Provider.of(context, listen: false);
+                            //   var tempCart = await carts.createTemporaryCart(
+                            //       Provider.of<SessionProvider>(context,
+                            //               listen: false)
+                            //           .session as Session);
+                            //   if (tempCart is CartError) {
+                            //     AlertHelper.showToastAlert(
+                            //         'Something went wrong');
+                            //   }
+                            //   if (tempCart is Cart) {
+                            //     CartItem edittedItem = new CartItem(
+                            //       id: 0,
+                            //       product: new Product(
+                            //         id: int.parse(orderRequestProvider
+                            //             .orderRequestDetailsScreenViewModelRequestedProduct
+                            //             .id),
+                            //         bookName: orderRequestProvider
+                            //             .orderRequestDetailsScreenViewModelRequestedProduct
+                            //             .bookName,
+                            //         unitPrice: orderRequestProvider
+                            //             .orderRequestDetailsScreenViewModelRequestedProduct
+                            //             .price
+                            //             .toString(),
+                            //       ),
+                            //       negotiatedPrice: double.parse(orderRequestProvider
+                            //           .orderRequestDetailsScreenViewModelRequestItem
+                            //           .sellerOfferPrice as String),
+                            //       quantity: orderRequestProvider
+                            //           .orderRequestDetailsScreenViewModelRequestItem
+                            //           .quantity,
+                            //       totalPrice: 0,
+                            //     );
+                            //     if (await carts.addItemToTemporaryCart(
+                            //         tempCart, edittedItem)) {
+                            //       // Delete the order request when the order has been palced
+                            //       Provider.of<OrderRequestProvider>(context,
+                            //               listen: false)
+                            //           .deleteOrderRequest(
+                            //               orderRequestProvider.sessionProvider
+                            //                   .session as Session,
+                            //               orderRequestProvider
+                            //                   .orderRequestDetailsScreenViewModelRequestItem
+                            //                   .id);
+                            //       return showModalBottomSheet(
+                            //         barrierColor:
+                            //             ColorManager.blackWithLowOpacity,
+                            //         isScrollControlled: true,
+                            //         shape: RoundedRectangleBorder(
+                            //           borderRadius: BorderRadius.only(
+                            //             topLeft: Radius.circular(AppRadius.r20),
+                            //             topRight: Radius.circular(
+                            //               AppRadius.r20,
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         context: context,
+                            //         builder: (context) {
+                            //           return Container(
+                            //             height:
+                            //                 MediaQuery.of(context).size.height *
+                            //                     0.9,
+                            //             padding: EdgeInsets.symmetric(
+                            //               horizontal: AppPadding.p20,
+                            //             ),
+                            //             child: BillingInfo(cartId: tempCart.id),
+                            //           );
+                            //         },
+                            //       );
+                            //     }
+                            //   } else {
+                            //     AlertHelper.showToastAlert(
+                            //         'Something went wrong');
+                            //   }
+                            // },
                             onPressed: () async {
-                              CartProvider carts =
-                                  Provider.of(context, listen: false);
-
-                              var tempCart = await carts.createTemporaryCart(
-                                  Provider.of<SessionProvider>(context,
-                                          listen: false)
-                                      .session as Session);
-                              if (tempCart is CartError) {
+                              // When seller accepts offer for buying post then update order request by making seller offer price same as requested price so that buyer can finally accept the pricing offer and proceed with billing info and order placement.
+                              orderRequesyProvider!
+                                      .orderRequestDetailsScreenViewModelNewRequestPrice =
+                                  double.parse(orderRequesyProvider!
+                                      .orderRequestDetailsScreenViewModelRequestItem
+                                      .requestedPrice);
+                              if (await orderRequesyProvider!
+                                  .orderRequestDetailsScreenViewModelUpdateRequestPrice(
+                                context,
+                                changedBySeller: true,
+                              )) {
                                 AlertHelper.showToastAlert(
-                                    'Something went wrong');
-                              }
-                              if (tempCart is Cart) {
-                                CartItem edittedItem = new CartItem(
-                                  id: 0,
-                                  product: new Product(
-                                    id: int.parse(orderRequestProvider
-                                        .orderRequestDetailsScreenViewModelRequestedProduct
-                                        .id),
-                                    bookName: orderRequestProvider
-                                        .orderRequestDetailsScreenViewModelRequestedProduct
-                                        .bookName,
-                                    unitPrice: orderRequestProvider
-                                        .orderRequestDetailsScreenViewModelRequestedProduct
-                                        .price
-                                        .toString(),
-                                  ),
-                                  negotiatedPrice: double.parse(orderRequestProvider
-                                      .orderRequestDetailsScreenViewModelRequestItem
-                                      .sellerOfferPrice as String),
-                                  quantity: orderRequestProvider
-                                      .orderRequestDetailsScreenViewModelRequestItem
-                                      .quantity,
-                                  totalPrice: 0,
-                                );
-                                if (await carts.addItemToTemporaryCart(
-                                    tempCart, edittedItem)) {
-                                  // Delete the order request when the order has been palced
-                                  Provider.of<OrderRequestProvider>(context,
-                                          listen: false)
-                                      .deleteOrderRequest(
-                                          orderRequestProvider.sessionProvider
-                                              .session as Session,
-                                          orderRequestProvider
-                                              .orderRequestDetailsScreenViewModelRequestItem
-                                              .id);
-                                  return showModalBottomSheet(
-                                    barrierColor:
-                                        ColorManager.blackWithLowOpacity,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(AppRadius.r20),
-                                        topRight: Radius.circular(
-                                          AppRadius.r20,
-                                        ),
-                                      ),
-                                    ),
-                                    context: context,
-                                    builder: (context) {
-                                      return Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.9,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: AppPadding.p20,
-                                        ),
-                                        child: BillingInfo(cartId: tempCart.id),
-                                      );
-                                    },
-                                  );
-                                }
+                                    'Offer has been accepted, we will let you know when buyer confirms the order');
                               } else {
                                 AlertHelper.showToastAlert(
-                                    'Something went wrong');
+                                    'Something went wrong while accepting the offer');
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -1188,7 +1228,7 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                 SizedBox(height: AppHeight.h8),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: _theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(8.0),
                     boxShadow: [
                       BoxShadow(
@@ -1252,10 +1292,9 @@ class _OrderRequestDetailsScreenState extends State<OrderRequestDetailsScreen> {
                             ? ElevatedButton(
                                 onPressed: () => orderRequestProvider
                                     .orderRequestDetailsScreenViewModelUpdateRequestPrice(
-                                        context,
-                                        orderRequestProvider
-                                            .orderRequestDetailsScreenViewModelRequestItem
-                                            .id),
+                                  context,
+                                  changedBySeller: true,
+                                ),
                                 // child: Text('Update Request Price'),
                                 child: Text('Request for this price'),
                               )

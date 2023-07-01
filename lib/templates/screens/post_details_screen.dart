@@ -231,7 +231,6 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           child: Text(
                             _bookProvider
                                 .postDetailsScreenSelectedBook.description,
-                            
                             style: _theme.textTheme.bodyMedium,
                             textAlign: TextAlign.start,
                           ),
@@ -241,14 +240,12 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         Padding(
                           padding: const EdgeInsets.only(
                             top: AppPadding.p20,
-                            
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 'Comments',
-                                
                                 style: _theme.textTheme.headlineSmall,
                               ),
                               Expanded(
@@ -270,8 +267,6 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         ),
                         Text(
                           'Recommendations for you',
-                          
-                          
                           style: _theme.textTheme.headlineSmall,
                         ),
                         Center(
@@ -309,8 +304,6 @@ class SinglePostCommenstSection extends StatefulWidget {
 class _SinglePostCommenstSectionState extends State<SinglePostCommenstSection> {
   @override
   Widget build(BuildContext context) {
-    
-
     return Column(
       children: [
         // Comments Starts here
@@ -358,10 +351,12 @@ class PostDetailsScreenBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<PostDetailsScreenBottomSheet> createState() => _PostDetailsScreenBottomSheetState();
+  State<PostDetailsScreenBottomSheet> createState() =>
+      _PostDetailsScreenBottomSheetState();
 }
 
-class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSheet> {
+class _PostDetailsScreenBottomSheetState
+    extends State<PostDetailsScreenBottomSheet> {
   final _form = GlobalKey<FormState>();
 
   @override
@@ -369,15 +364,16 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
     BookProvider _bookProvider = context.watch<BookProvider>();
     ThemeData _theme = Theme.of(context);
 
-    if(_bookProvider.postDetailsScreenSelectedBook.postType=='S')
-    return _widgetForSellingTypePost();
+    if (_bookProvider.postDetailsScreenSelectedBook.postType == 'S')
+      return _widgetForSellingTypePost();
     else
-    return _widgetForBuyingTypePost();
+      return _widgetForBuyingTypePost();
   }
-    _widgetForBuyingTypePost(){
+
+  _widgetForBuyingTypePost() {
     BookProvider _bookProvider = context.watch<BookProvider>();
     ThemeData _theme = Theme.of(context);
-      if ((_bookProvider.userProvider.user as User).id ==
+    if ((_bookProvider.userProvider.user as User).id ==
         _bookProvider.postDetailsScreenSelectedBook.userId) {
       return Padding(
         padding: EdgeInsets.symmetric(
@@ -458,7 +454,6 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                     child: Text(
                       'Total price',
                       softWrap: true,
-                      
                       style: _theme.textTheme.headlineSmall,
                       textAlign: TextAlign.start,
                     ),
@@ -470,7 +465,6 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                     child: Text(
                       'Rs. ${_bookProvider.postDetailsScreenSelectedBook.price}',
                       softWrap: true,
-                      
                       style: _theme.textTheme.bodyMedium,
                       textAlign: TextAlign.start,
                     ),
@@ -504,22 +498,22 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                           ),
                           context: context,
                           builder: (context) {
-                            
                             return Padding(
                               padding: EdgeInsets.only(
                                 top: AppPadding.p20,
                                 left: AppPadding.p12,
                                 right: AppPadding.p12,
                                 bottom:
-                                    MediaQuery.of(context).viewInsets.bottom + AppPadding.p12,
+                                    MediaQuery.of(context).viewInsets.bottom +
+                                        AppPadding.p12,
                               ),
                               child: Form(
                                 key: _form,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    
                                     Padding(
                                       padding: const EdgeInsets.only(
                                         bottom: AppPadding.p8,
@@ -719,47 +713,49 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                                       ),
                                     ),
                                     Consumer<BookProvider>(
-                                      builder:
-                                          (context, bookProvider, child) =>
-                                              ElevatedButton.icon(
-                                                style: _theme.brightness == Brightness.dark ? ButtonStyle(
-                                                  backgroundColor: MaterialStateProperty.all( ColorManager.primary,),
-                                                ): null,
-                                        
+                                      builder: (context, bookProvider, child) =>
+                                          ElevatedButton.icon(
+                                        style: _theme.brightness ==
+                                                Brightness.dark
+                                            ? ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  ColorManager.primary,
+                                                ),
+                                              )
+                                            : null,
                                         icon: bookProvider
                                                 .postDetailsScreenIsRequestOnProcess
                                             ? SizedBox(
                                                 height: AppHeight.h20,
                                                 width: AppHeight.h20,
-                                                child:
-                                                    CircularProgressIndicator
-                                                        .adaptive(
+                                                child: CircularProgressIndicator
+                                                    .adaptive(
                                                   strokeWidth: 3,
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          Colors.white),
+                                                          Color>(Colors.white),
                                                   backgroundColor:
                                                       ColorManager.primary,
                                                 ),
                                               )
                                             : Container(),
                                         label: bookProvider
-                                      .postDetailsScreenIsRequestOnProcess
-                                  ? LoadingHelper.showTextLoading('Sending your offer')
-                                  : Text(
-                                      'Send the offer',
-                                      
-                                      style: _theme.textTheme.headlineLarge,
-                                    ),
-
-                                        
+                                                .postDetailsScreenIsRequestOnProcess
+                                            ? LoadingHelper.showTextLoading(
+                                                'Sending your offer')
+                                            : Text(
+                                                'Send the offer',
+                                                style: _theme
+                                                    .textTheme.headlineLarge,
+                                              ),
                                         onPressed: !bookProvider
                                                 .postDetailsScreenEnableRequestButton
                                             ? null
                                             : () async {
-
-                                              bookProvider.postDetailsScreenSetIsRequestOnProcess(true);
+                                                bookProvider
+                                                    .postDetailsScreenSetIsRequestOnProcess(
+                                                        true);
                                                 final isValid = _form
                                                     .currentState!
                                                     .validate();
@@ -767,8 +763,10 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                                                   AlertHelper.showToastAlert(
                                                       'Something went wrong');
                                                 }
-                                                bookProvider.postDetailsScreenSetEnableRequestButton(false);
-                                                
+                                                bookProvider
+                                                    .postDetailsScreenSetEnableRequestButton(
+                                                        false);
+
                                                 _form.currentState!.save();
                                                 Map<String, dynamic>
                                                     requestInfo = {
@@ -777,43 +775,45 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                                                       .id,
                                                   'quantity': _bookProvider
                                                       .postDetailsScreenItemCount,
-                                                  'requested_price':
+                                                  'requested_price': _bookProvider
+                                                      .postDetailsScreenSelectedBook
+                                                      .price,
+                                                  'seller_offer_price':
                                                       _bookProvider
-                                                          .postDetailsScreenSelectedBook.price,
-                                                  'seller_offer_price': _bookProvider.postDetailsScreenExpectedUnitPrice,
+                                                          .postDetailsScreenExpectedUnitPrice,
                                                   'changed_by_seller': true,
                                                   'billing_info': {},
                                                 };
-                                    
+
                                                 if (await Provider.of<
-                                                  OrderRequestProvider>(context,
-                                              listen: false)
-                                          .createOrderRequest(
-                                              Provider.of<SessionProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .session as Session,
-                                              
-                                              json.decode(json.encode( requestInfo)))) {
-                                        bookProvider
-                                            .postDetailsScreenSetIsRequestOnProcess(
-                                                false);
-                                        AlertHelper.showToastAlert(
-                                            'Offer has been sent successfully');
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                        // Navigator.pop(context);
-                                      } else {
-                                        AlertHelper.showToastAlert(
-                                            'Something went wrong');
-                                      }
-                                      bookProvider
-                                          .postDetailsScreenSetEnableRequestButton(
-                                              false);
-                                      bookProvider
-                                          .postDetailsScreenSetIsRequestOnProcess(
-                                              false);
-                                               
+                                                            OrderRequestProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .createOrderRequest(
+                                                        Provider.of<SessionProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .session as Session,
+                                                        json.decode(json.encode(
+                                                            requestInfo)))) {
+                                                  bookProvider
+                                                      .postDetailsScreenSetIsRequestOnProcess(
+                                                          false);
+                                                  AlertHelper.showToastAlert(
+                                                      'Offer has been sent successfully');
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                  // Navigator.pop(context);
+                                                } else {
+                                                  AlertHelper.showToastAlert(
+                                                      'Something went wrong');
+                                                }
+                                                bookProvider
+                                                    .postDetailsScreenSetEnableRequestButton(
+                                                        false);
+                                                bookProvider
+                                                    .postDetailsScreenSetIsRequestOnProcess(
+                                                        false);
                                               },
                                       ),
                                     ),
@@ -826,7 +826,6 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                       },
                       icon: Icon(Icons.bookmark),
                       label: Text(
-                        
                         'I have this book',
                         style: getBoldStyle(color: ColorManager.white),
                       ),
@@ -836,15 +835,12 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
         ),
       ),
     );
-  
-
   }
 
-
-  _widgetForSellingTypePost(){
+  _widgetForSellingTypePost() {
     BookProvider _bookProvider = context.watch<BookProvider>();
     ThemeData _theme = Theme.of(context);
-      if ((_bookProvider.userProvider.user as User).id ==
+    if ((_bookProvider.userProvider.user as User).id ==
         _bookProvider.postDetailsScreenSelectedBook.userId) {
       return Padding(
         padding: EdgeInsets.symmetric(
@@ -903,7 +899,6 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
           ),
         ),
       );
-    
     }
     if (_bookProvider.orderRequestProvider.orderRequestsByUserContains(
         int.parse(_bookProvider.postDetailsScreenSelectedBook.id))) {
@@ -1011,7 +1006,6 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                           ),
                           context: context,
                           builder: (context) {
-                            
                             return Padding(
                               padding: EdgeInsets.only(
                                 top: AppPadding.p8,
@@ -1676,7 +1670,6 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
                       },
                       icon: Icon(Icons.shopping_cart),
                       label: Text(
-                        
                         'Get this book',
                       ),
                     ),
@@ -1685,8 +1678,6 @@ class _PostDetailsScreenBottomSheetState extends State<PostDetailsScreenBottomSh
         ),
       ),
     );
-  
-
   }
 
   _createOrderRequest(

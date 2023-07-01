@@ -104,9 +104,10 @@ mixin OrderRequestDetailsScreenViewModel on BaseViewModel {
   }
 
   Future<bool> orderRequestDetailsScreenViewModelUpdateRequestPrice(
-      BuildContext context, String requestId) async {
+      BuildContext context,
+      {required bool changedBySeller}) async {
     await orderRequestProvider
-        .updateRequestPrice(requestId, _newRequestPrice)
+        .updateRequestPrice(_requestItem.id, _newRequestPrice, changedBySeller)
         .then(
       (value) {
         if (value) {
@@ -125,6 +126,12 @@ mixin OrderRequestDetailsScreenViewModel on BaseViewModel {
 
 mixin OrderRequestsScreenForSellerViewModle on BaseViewModel {
   late TextEditingController _searchController;
+  late FocusNode _firstNameFocusNode;
+  late FocusNode _lastNameFocusNode;
+  late FocusNode _emailFocusNode;
+  late FocusNode _phoneNumberFocusNode;
+  late FocusNode _sideNoteFocusNode;
+  bool _isRequestOnProcess = false;
 
   TextEditingController
       get orderRequestsScreenForSellerViewModleSearchController =>
@@ -133,8 +140,55 @@ mixin OrderRequestsScreenForSellerViewModle on BaseViewModel {
           TextEditingController controller) =>
       _searchController = controller;
 
+  FocusNode get orderRequestsScreenForSellerViewModleFirstNameFocusNode =>
+      _firstNameFocusNode;
+
+  set orderRequestsScreenForSellerViewModleFirstNameFocusNode(
+          FocusNode focusNode) =>
+      _firstNameFocusNode = focusNode;
+
+  FocusNode get orderRequestsScreenForSellerViewModleLastNameFocusNode =>
+      _lastNameFocusNode;
+  set orderRequestsScreenForSellerViewModleLastNameFocusNode(
+          FocusNode focusNode) =>
+      _lastNameFocusNode = focusNode;
+
+  FocusNode get orderRequestsScreenForSellerViewModleEmailFocusNode =>
+      _emailFocusNode;
+  set orderRequestsScreenForSellerViewModleEmailFocusNode(
+          FocusNode orderRequest) =>
+      _emailFocusNode = orderRequest;
+
+  FocusNode get orderRequestsScreenForSellerViewModlePhoneNumberFocusNode =>
+      _phoneNumberFocusNode;
+
+  set orderRequestsScreenForSellerViewModlePhoneNumberFocusNode(
+          FocusNode focusNode) =>
+      _phoneNumberFocusNode = focusNode;
+
+  FocusNode get orderRequestsScreenForSellerViewModleSideNoteFocusNode =>
+      _sideNoteFocusNode;
+
+  set orderRequestsScreenForSellerViewModleSideNoteFocusNode(
+          FocusNode focusNode) =>
+      _sideNoteFocusNode = focusNode;
+
+  bool get orderRequestsScreenForSellerViewModleIsRequestOnProcess =>
+      _isRequestOnProcess;
+
+  set orderRequestsScreenForSellerViewModleIsRequestOnProcess(bool value) {
+    _isRequestOnProcess = value;
+    notifyListeners();
+  }
+
   bindOrderRequestsScreenForSellerViewModle(BuildContext context) {
     bindBaseViewModal(context);
+    _firstNameFocusNode = FocusNode();
+    _lastNameFocusNode = FocusNode();
+    _emailFocusNode = FocusNode();
+    _phoneNumberFocusNode = FocusNode();
+    _sideNoteFocusNode = FocusNode();
+    _searchController = TextEditingController();
   }
 
   unBindOrderRequestsScreenForSellerViewModle() {
@@ -188,6 +242,14 @@ mixin OrderRequestForSellerDetailsScreenViewModel on BaseViewModel {
       notifyListeners();
       return;
     }
+    if (_item.sellerOfferPrice != null) {
+      if (_newSellerOfferPrice ==
+          double.parse(_item.sellerOfferPrice.toString())) {
+        _showRequestBtn = false;
+        notifyListeners();
+        return;
+      }
+    }
 
     if (_newSellerOfferPrice != requestPrice) {
       _showRequestBtn = true;
@@ -210,6 +272,28 @@ mixin OrderRequestForSellerDetailsScreenViewModel on BaseViewModel {
 
           _showRequestBtn = false;
           Navigator.of(context).pop();
+        } else
+          AlertHelper.showToastAlert("Something went wrong, Please try again!");
+      },
+    );
+
+    return true;
+  }
+
+  Future<bool>
+      orderRequestForSellerDetailsScreenViewModelUpdateBuyerRequestPrice(
+          BuildContext context,
+          {required bool changedBySeller}) async {
+    await orderRequestProvider
+        .updateRequestPrice(_item.id, _newSellerOfferPrice, changedBySeller)
+        .then(
+      (value) {
+        if (value) {
+          AlertHelper.showToastAlert('Request price changed');
+
+          _showRequestBtn = false;
+          Navigator.of(context).pop();
+          notifyListeners();
         } else
           AlertHelper.showToastAlert("Something went wrong, Please try again!");
       },

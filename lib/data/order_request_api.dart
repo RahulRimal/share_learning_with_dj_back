@@ -281,16 +281,24 @@ class OrderRequestApi {
     }
   }
 
-  static Future<Object> updateRequestPrice(
-      String orderRequestId, double newRequestPrice) async {
+  static Future<Object> updateRequestPrice(String orderRequestId,
+      double newRequestPrice, bool changedBySeller) async {
     try {
       Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
       SharedPreferences prefs = await _prefs;
       String accessToken = prefs.getString('accessToken') as String;
-      Map<String, String> postBody = {
-        "requested_price": newRequestPrice.toString(),
-        "changed_by_seller": 'false'
-      };
+      Map<String, String> postBody;
+      if (changedBySeller) {
+        postBody = {
+          "seller_offer_price": newRequestPrice.toString(),
+          "changed_by_seller": 'true',
+        };
+      } else {
+        postBody = {
+          "requested_price": newRequestPrice.toString(),
+          "changed_by_seller": 'false',
+        };
+      }
       var url = Uri.parse(
           RemoteManager.BASE_URI + '/order_requests/' + orderRequestId + '/');
 

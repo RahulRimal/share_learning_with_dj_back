@@ -89,13 +89,13 @@ class OrderProvider
   Future<bool> placeOrderForRequestingCustomer(
       {required Session loggedInSession,
       required String cartId,
-      required String userId,
+      required String customerId,
       required Map<String, dynamic> billingInfo,
       required String paymentMethod}) async {
     setLoading(true);
     var response;
     response = await OrderApi.placeOrderForRequestingCustomer(
-        loggedInSession, userId, cartId, billingInfo, paymentMethod);
+        loggedInSession, customerId, cartId, billingInfo, paymentMethod);
 
     // print(response);
     if (response is Success) {
